@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>La Cuisine Ngọt - Mẫu giao diện</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent: #1e7fb8; /* màu xanh dương viền */
+      --brand: #3d5a45; /* màu chữ */
+      --muted: #6b6b6b;
+      --container: 1100px;
+    }
+    *{box-sizing:border-box}
+    body{font-family: 'Montserrat', Arial, sans-serif; color:var(--brand); margin:0; background:#fff}
+    .wrap{max-width:var(--container); margin:0 auto}
+
+    /* header */
+    header{border-bottom:6px solid #b63b3b;}
+    .topbar{display:flex; align-items:center; justify-content:space-between; padding:18px 10px;}
+    .logo{font-family: 'Great Vibes', cursive; font-size:30px; color:var(--brand)}
+
+    nav ul{display:flex; gap:28px; list-style:none; margin:0; padding:0; align-items:center}
+    nav a{text-decoration:none; color:var(--brand); font-weight:600}
+    .auth{color:#fff; background:#b63b3b; padding:8px 14px; border-radius:3px}
+
+    /* hero */
+    .hero{border-bottom:4px solid var(--accent);}
+    .hero img{width:100%; height:340px; object-fit:cover; display:block}
+
+    /* main */
+    main{padding:40px 10px}
+    .grid{display:grid; grid-template-columns: 1fr 420px; gap:40px; align-items:start}
+
+    /* gallery column */
+    .left-col{display:grid; grid-template-columns: 1fr 160px; gap:18px}
+    .big-photo{background:#f7f7f7; border-radius:12px; overflow:hidden; box-shadow:0 6px 18px rgba(8,30,30,0.06);}
+    .big-photo img{width:100%; height:420px; object-fit:cover; display:block}
+
+    .thumbs{display:flex; flex-direction:column; gap:18px}
+    .thumb{background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 6px 18px rgba(8,30,30,0.06);}
+    .thumb img{width:100%; height:120px; object-fit:cover; display:block}
+
+    /* right text column */
+    .right-col{padding-top:30px}
+    .welcome-small{color:var(--muted); text-align:center}
+    .welcome-logo{font-family:'Great Vibes', cursive; font-size:28px; text-align:center; margin:6px 0}
+    .welcome-text{color:#4f6a5f; line-height:1.7; font-size:15px; text-align:justify}
+
+    /* responsive */
+    @media (max-width:1000px){
+      .grid{grid-template-columns:1fr;}
+      .left-col{grid-template-columns:1fr;}
+      .thumb img{height:100px}
+      .big-photo img{height:320px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="logo">La Cuisine Ngọt</div>
+
+      <nav>
+        <ul>
+          <li><a href="#">SẢN PHẨM</a></li>
+          <li><a href="#">KHUYẾN MÃI</a></li>
+          <li><a href="#">LIÊN HỆ</a></li>
+        </ul>
+      </nav>
+
+      <div class="auth">ĐĂNG NHẬP/ĐĂNG KÍ</div>
+    </div>
+
+    <div class="hero">
+      <!-- source ảnh -->
+      <img alt="hero">
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <div class="left-col">
+        <div class="big-photo">
+          <!-- source ảnh -->
+          <img alt="bánh lớn">
+        </div>
+
+        <div>
+          <div class="thumbs">
+            <div class="thumb"><img alt="thumb1"></div>
+            <div class="thumb"><img alt="thumb2"></div>
+            <div class="thumb"><img alt="thumb3"></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="right-col">
+        <p class="welcome-small">Chào mừng bạn đến với</p>
+        <h2 class="welcome-logo">La Cuisine Ngọt!</h2>
+
+        <div class="welcome-text">
+          <p>Đây là “ngôi nhà nhỏ” của chúng mình, chất chứa từ niềm yêu dành cho bánh trái, sự đam mê với hương vị và lòng chân thành được lan toả những điều ngọt ngào nhất đến bạn. Ở đây, bạn có thể tìm thấy những “đứa con tinh thần” của chúng mình hiện diện rực rỡ và sống động qua từng sản phẩm chín chu và tâm huyết.</p>
+
+          <p>Ở đây, dù chỉ là một cuộc dạo chơi vô tình hay tìm kiếm có chủ đích, chúng mình mong bạn sẽ luôn cảm thấy dễ chịu, hài lòng và chọn được những hương vị thật êm ái để nuông chiều bạn thân hoặc để chia cùng người thương quý.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
