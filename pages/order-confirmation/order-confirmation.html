@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận đơn hàng - LA CUISINE NGỌT</title>
+    <meta name="description" content="Xác nhận đơn hàng thành công tại LA CUISINE NGỌT">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="order-confirmation.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../home/home.html">LA CUISINE NGỌT</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="../home/home.html" class="nav-link">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../products/products.html" class="nav-link">Sản phẩm</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../about/about.html" class="nav-link">Về chúng tôi</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../contact/contact.html" class="nav-link">Liên hệ</a>
+                </li>
+            </ul>
+            <div class="nav-actions">
+                <div class="user-actions">
+                    <a href="../cart/cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Order Confirmation Section -->
+    <section class="order-confirmation">
+        <div class="container">
+            <div class="confirmation-content">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                
+                <h1>Đặt hàng thành công!</h1>
+                <p class="confirmation-message">
+                    Cảm ơn bạn đã đặt hàng tại LA CUISINE NGỌT. 
+                    Chúng tôi đã nhận được đơn hàng của bạn và sẽ xử lý trong thời gian sớm nhất.
+                </p>
+                
+                <div class="order-details" id="orderDetails">
+                    <!-- Order details will be loaded dynamically -->
+                </div>
+                
+                <div class="next-steps">
+                    <h3>Bước tiếp theo</h3>
+                    <div class="steps-list">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Xác nhận đơn hàng</h4>
+                                <p>Chúng tôi sẽ gọi điện xác nhận đơn hàng trong vòng 30 phút</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Chuẩn bị bánh</h4>
+                                <p>Đội ngũ thợ làm bánh sẽ bắt đầu chuẩn bị bánh theo yêu cầu</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Giao hàng</h4>
+                                <p>Bánh sẽ được giao đến địa chỉ bạn đã cung cấp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-info">
+                    <h3>Thông tin liên hệ</h3>
+                    <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi:</p>
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <i class="fas fa-phone"></i>
+                            <span>0123 456 789</span>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@lacuisinengot.com</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="../home/home.html" class="btn-primary">Tiếp tục mua sắm</a>
+                    <a href="../products/products.html" class="btn-secondary">Xem sản phẩm khác</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LA CUISINE NGỌT</h3>
+                    <p>Thương hiệu bánh kem cao cấp hàng đầu Việt Nam</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Liên kết</h4>
+                    <ul>
+                        <li><a href="../home/home.html">Trang chủ</a></li>
+                        <li><a href="../products/products.html">Sản phẩm</a></li>
+                        <li><a href="../about/about.html">Về chúng tôi</a></li>
+                        <li><a href="../contact/contact.html">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Hướng dẫn đặt hàng</a></li>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Bảo mật thông tin</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Liên hệ</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
+                        <p><i class="fas fa-phone"></i> 0123 456 789</p>
+                        <p><i class="fas fa-envelope"></i> info@lacuisinengot.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 LA CUISINE NGỌT. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/main.js"></script>
+    <script src="order-confirmation.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LA CUISINE NGỌT - Bánh Kem Cao Cấp</title>
+    <meta name="description" content="LA CUISINE NGỌT - Thương hiệu bánh kem cao cấp hàng đầu Việt Nam">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/animations.css">
+    <link rel="stylesheet" href="home.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="home.html">LA CUISINE NGỌT</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="home.html" class="nav-link active">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../products/products.html" class="nav-link">Sản phẩm</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../about/about.html" class="nav-link">Về chúng tôi</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../contact/contact.html" class="nav-link">Liên hệ</a>
+                </li>
+            </ul>
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="Tìm kiếm bánh..." id="searchInput">
+                    <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="user-actions">
+                    <a href="../login/login.html" class="btn-login">Đăng nhập</a>
+                    <a href="../register/register.html" class="btn-register">Đăng ký</a>
+                    <a href="../cart/cart.html" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Bánh Kem Cao Cấp</h1>
+            <p>Thưởng thức hương vị tuyệt vời từ những chiếc bánh kem được làm thủ công với tình yêu</p>
+            <a href="../products/products.html" class="btn-primary">Khám phá ngay</a>
+        </div>
+        <div class="hero-image">
+            <img src="../../assets/images/hero-cake.jpg" alt="Bánh kem đặc biệt" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Câu chuyện của chúng tôi</h2>
+                    <p>LA CUISINE NGỌT được thành lập vào năm 2014 với ước mơ mang đến những chiếc bánh kem tuyệt vời nhất cho người Việt Nam. Từ một cửa hàng nhỏ ở trung tâm TP.HCM, chúng tôi đã phát triển thành một thương hiệu được tin tưởng và yêu mến trên toàn quốc.</p>
+                    <p>Với hơn 10 năm kinh nghiệm trong nghề, chúng tôi tự hào là đơn vị tiên phong trong việc áp dụng công nghệ hiện đại vào sản xuất bánh kem, đồng thời vẫn giữ được hương vị truyền thống và sự tỉ mỉ trong từng sản phẩm.</p>
+                </div>
+                <div class="about-image">
+                    <img src="../../assets/images/about-story.jpg" alt="Câu chuyện của chúng tôi" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                </div>
+            </div>
+            
+            <div class="mission-vision">
+                <div class="mission">
+                    <div class="mission-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Sứ mệnh</h3>
+                    <p>Mang đến những chiếc bánh kem chất lượng cao nhất, được làm từ nguyên liệu tươi ngon và tình yêu thương, góp phần tạo nên những khoảnh khắc hạnh phúc đáng nhớ trong cuộc đời mỗi người.</p>
+                </div>
+                <div class="vision">
+                    <div class="vision-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Tầm nhìn</h3>
+                    <p>Trở thành thương hiệu bánh kem hàng đầu Việt Nam và khu vực Đông Nam Á, được công nhận về chất lượng sản phẩm và dịch vụ xuất sắc.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Offer Section -->
+    <section class="what-we-offer">
+        <div class="container">
+            <h2 class="section-title">Chúng tôi cung cấp</h2>
+            <div class="offer-grid">
+                <div class="offer-card">
+                    <div class="offer-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <h3>Bánh sinh nhật</h3>
+                    <p>Những chiếc bánh đặc biệt cho ngày sinh nhật</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">
+                        <i class="fas fa-ring"></i>
+                    </div>
+                    <h3>Bánh cưới</h3>
+                    <p>Bánh cưới sang trọng cho ngày trọng đại</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">
+                        <i class="fas fa-cookie-bite"></i>
+                    </div>
+                    <h3>Bánh tráng miệng</h3>
+                    <p>Bánh ngọt thơm ngon cho bữa tráng miệng</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Bánh theo mùa</h3>
+                    <p>Bánh đặc trưng theo từng mùa trong năm</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ingredients Section -->
+    <section class="ingredients">
+        <div class="container">
+            <div class="ingredients-content">
+                <div class="ingredients-text">
+                    <h2>Nguyên liệu của chúng tôi</h2>
+                    <p>Chúng tôi chỉ sử dụng những nguyên liệu tốt nhất, được nhập khẩu từ các nhà cung cấp uy tín trên thế giới. Từ bột mì hữu cơ đến chocolate Bỉ cao cấp, từ trái cây tươi đến kem tươi nguyên chất, mỗi nguyên liệu đều được lựa chọn kỹ lưỡng để đảm bảo chất lượng tuyệt đối.</p>
+                    <p>Chúng tôi cam kết không sử dụng chất bảo quản, phẩm màu nhân tạo hay bất kỳ hóa chất độc hại nào. Mỗi chiếc bánh đều được làm thủ công với tình yêu và sự tỉ mỉ, mang đến hương vị tự nhiên và an toàn cho sức khỏe.</p>
+                    <ul class="ingredients-list">
+                        <li><i class="fas fa-check"></i> Bột mì hữu cơ nhập khẩu</li>
+                        <li><i class="fas fa-check"></i> Chocolate Bỉ cao cấp</li>
+                        <li><i class="fas fa-check"></i> Trái cây tươi theo mùa</li>
+                        <li><i class="fas fa-check"></i> Kem tươi nguyên chất</li>
+                        <li><i class="fas fa-check"></i> Trứng gà ta tươi</li>
+                        <li><i class="fas fa-check"></i> Bơ thực vật cao cấp</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2 class="section-title">Sản phẩm của chúng tôi</h2>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="blog">
+        <div class="container">
+            <h2 class="section-title">Nội dung hữu ích</h2>
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="../../assets/images/blog1.jpg" alt="Cách bảo quản bánh kem" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                    </div>
+                    <div class="blog-content">
+                        <h3>Cách bảo quản bánh kem đúng cách</h3>
+                        <p>Hướng dẫn chi tiết cách bảo quản bánh kem để giữ được hương vị và độ tươi ngon lâu nhất.</p>
+                        <a href="#" class="read-more">Đọc thêm</a>
+                    </div>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="../../assets/images/blog2.jpg" alt="Lịch sử bánh kem" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                    </div>
+                    <div class="blog-content">
+                        <h3>Lịch sử và nguồn gốc của bánh kem</h3>
+                        <p>Khám phá lịch sử lâu đời của bánh kem và sự phát triển qua các thời kỳ.</p>
+                        <a href="#" class="read-more">Đọc thêm</a>
+                    </div>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="../../assets/images/blog3.jpg" alt="Công thức làm bánh" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                    </div>
+                    <div class="blog-content">
+                        <h3>Công thức làm bánh kem cơ bản</h3>
+                        <p>Chia sẻ công thức làm bánh kem đơn giản mà bạn có thể thực hiện tại nhà.</p>
+                        <a href="#" class="read-more">Đọc thêm</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu">
+        <div class="container">
+            <h2 class="section-title">Thực đơn của chúng tôi</h2>
+            <div class="menu-grid">
+                <div class="menu-category">
+                    <div class="menu-image">
+                        <img src="../../assets/images/menu1.jpg" alt="Bánh kem chocolate" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                    </div>
+                    <div class="menu-content">
+                        <h3>Bánh kem Chocolate</h3>
+                        <p>Bánh kem chocolate thơm ngon với lớp kem mịn màng</p>
+                        <span class="price">250,000 VNĐ</span>
+                    </div>
+                </div>
+                <div class="menu-category">
+                    <div class="menu-image">
+                        <img src="../../assets/images/menu2.jpg" alt="Bánh kem vanilla" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                    </div>
+                    <div class="menu-content">
+                        <h3>Bánh kem Vanilla</h3>
+                        <p>Bánh kem vanilla truyền thống với hương vị tinh tế</p>
+                        <span class="price">200,000 VNĐ</span>
+                    </div>
+                </div>
+                <div class="menu-category">
+                    <div class="menu-image">
+                        <img src="../../assets/images/menu3.jpg" alt="Bánh kem dâu tây" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                    </div>
+                    <div class="menu-content">
+                        <h3>Bánh kem Dâu tây</h3>
+                        <p>Bánh kem dâu tây tươi ngon, ngọt ngào</p>
+                        <span class="price">280,000 VNĐ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Reviews Section -->
+    <section class="reviews">
+        <div class="container">
+            <h2 class="section-title">Đánh giá khách hàng</h2>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-image">
+                        <img src="../../assets/images/review1.jpg" alt="Khách hàng 1" onerror="this.src='../../assets/images/placeholder-person.jpg'">
+                    </div>
+                    <div class="review-content">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"Bánh kem rất ngon, chất lượng tuyệt vời. Tôi sẽ quay lại mua thêm!"</p>
+                        <h4>Nguyễn Thị A</h4>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-image">
+                        <img src="../../assets/images/review2.jpg" alt="Khách hàng 2" onerror="this.src='../../assets/images/placeholder-person.jpg'">
+                    </div>
+                    <div class="review-content">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"Dịch vụ chuyên nghiệp, bánh đẹp và ngon. Rất hài lòng!"</p>
+                        <h4>Trần Văn B</h4>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-image">
+                        <img src="../../assets/images/review3.jpg" alt="Khách hàng 3" onerror="this.src='../../assets/images/placeholder-person.jpg'">
+                    </div>
+                    <div class="review-content">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"Bánh kem đẹp mắt, hương vị thơm ngon. Cảm ơn LA CUISINE NGỌT!"</p>
+                        <h4>Lê Thị C</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Sellers Section -->
+    <section class="best-sellers">
+        <div class="container">
+            <h2 class="section-title">Sản phẩm bán chạy</h2>
+            <div class="best-sellers-grid">
+                <div class="best-seller-card">
+                    <div class="best-seller-image">
+                        <img src="../../assets/images/bestseller1.jpg" alt="Bánh kem chocolate" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                        <div class="best-seller-badge">Bán chạy</div>
+                    </div>
+                    <div class="best-seller-content">
+                        <h3>Bánh kem Chocolate</h3>
+                        <p>Bánh kem chocolate thơm ngon với lớp kem mịn màng</p>
+                        <span class="price">250,000 VNĐ</span>
+                    </div>
+                </div>
+                <div class="best-seller-card">
+                    <div class="best-seller-image">
+                        <img src="../../assets/images/bestseller2.jpg" alt="Bánh kem vanilla" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                        <div class="best-seller-badge">Bán chạy</div>
+                    </div>
+                    <div class="best-seller-content">
+                        <h3>Bánh kem Vanilla</h3>
+                        <p>Bánh kem vanilla truyền thống với hương vị tinh tế</p>
+                        <span class="price">200,000 VNĐ</span>
+                    </div>
+                </div>
+                <div class="best-seller-card">
+                    <div class="best-seller-image">
+                        <img src="../../assets/images/bestseller3.jpg" alt="Bánh kem dâu tây" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+                        <div class="best-seller-badge">Bán chạy</div>
+                    </div>
+                    <div class="best-seller-content">
+                        <h3>Bánh kem Dâu tây</h3>
+                        <p>Bánh kem dâu tây tươi ngon, ngọt ngào</p>
+                        <span class="price">280,000 VNĐ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2>Liên hệ với chúng tôi</h2>
+                    <p>Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn. Hãy liên hệ với chúng tôi để được tư vấn miễn phí.</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Đường ABC, Quận 1, TP.HCM</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>0123 456 789</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@lacuisinengot.com</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="newsletter">
+                    <h2>Đăng ký nhận tin</h2>
+                    <p>Nhận thông tin về sản phẩm mới và ưu đãi đặc biệt</p>
+                    <form class="newsletter-form">
+                        <input type="text" placeholder="Họ và tên" required>
+                        <input type="email" placeholder="Email" required>
+                        <button type="submit" class="btn-primary">Đăng ký</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LA CUISINE NGỌT</h3>
+                    <p>Thương hiệu bánh kem cao cấp hàng đầu Việt Nam</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Liên kết</h4>
+                    <ul>
+                        <li><a href="home.html">Trang chủ</a></li>
+                        <li><a href="../products/products.html">Sản phẩm</a></li>
+                        <li><a href="../about/about.html">Về chúng tôi</a></li>
+                        <li><a href="../contact/contact.html">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Hướng dẫn đặt hàng</a></li>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Bảo mật thông tin</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Liên hệ</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
+                        <p><i class="fas fa-phone"></i> 0123 456 789</p>
+                        <p><i class="fas fa-envelope"></i> info@lacuisinengot.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 LA CUISINE NGỌT. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/image-handler.js"></script>
+    <script src="home.js"></script>
+</body>
+</html>
+

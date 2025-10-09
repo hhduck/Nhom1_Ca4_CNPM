@@ -1,0 +1,12 @@
+# Redirect root to home page
+Redirect 301 / /pages/home/home.html
+
+# Set default page
+DirectoryIndex pages/home/home.html
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Redirect all requests to home page
+RewriteRule ^$ pages/home/home.html [L]
+
