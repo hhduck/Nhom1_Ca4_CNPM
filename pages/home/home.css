@@ -115,9 +115,20 @@
 }
 
 /* Hero Section */
+/* Hero Section */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Hero Section với ảnh nền overlay */
 .hero {
     padding: 120px 0 80px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -125,6 +136,25 @@
     overflow: hidden;
 }
 
+/* Ảnh nền chiếm 100% phía sau */
+.hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0
+}
+
+/* Lớp overlay tối để chữ dễ đọc hơn */
 .hero::before {
     content: '';
     position: absolute;
@@ -132,16 +162,24 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('../../assets/images/hero-pattern.svg') no-repeat center center;
-    background-size: cover;
-    opacity: 0.1;
-    z-index: 1;
+    background: linear-gradient(135deg, rgba(45, 80, 22, 0.8) 0%, rgba(45, 80, 22, 0.5) 100%);
+    z-index: 2;
 }
 
+/* Container để giữ content trong khung */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    position: relative;
+    z-index: 3;
+}
+
+/* Content nổi lên trên ảnh */
 .hero-content {
-    flex: 1;
-    max-width: 600px;
-    z-index: 2;
+    max-width: 650px;
+    z-index: 3;
     position: relative;
     animation: fadeInLeft 1s ease-out;
 }
@@ -149,38 +187,81 @@
 .hero-content h1 {
     font-size: 3.5rem;
     font-weight: 700;
-    color: #2d5016;
+    color: #ffffff;
     margin-bottom: 20px;
     line-height: 1.2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hero-content p {
     font-size: 1.3rem;
-    color: #666;
+    color: #f8f9fa;
     margin-bottom: 30px;
     line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.hero-image {
-    flex: 1;
-    text-align: center;
-    z-index: 2;
-    position: relative;
-    animation: fadeInRight 1s ease-out;
+.btn-primary {
+    display: inline-block;
+    padding: 15px 40px;
+    background: #ff6b6b;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
-.hero-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+.btn-primary:hover {
+    background: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
 }
 
-.hero-image img:hover {
-    transform: scale(1.05);
+/* Animations */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+    .hero {
+        padding: 80px 0 60px;
+        min-height: 80vh;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+}
 /* About Section */
 .about {
     padding: 80px 0;
