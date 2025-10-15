@@ -23,7 +23,7 @@
 
             <ul class="nav-menu">
                 <li><a href="#products">SẢN PHẨM</a></li>
-                <li><a href="#promotion">KHUYẾN MÃI</a></li>
+                <li><a href="#lienhe">KHUYẾN MÃI</a></li>
                 <li><a href="#contact">LIÊN HỆ</a></li>
             </ul>
             </ul>
@@ -148,17 +148,13 @@
             <div class="strategy-content">
             <h2>CHIẾN LƯỢC THU MUA ĐỘC ĐÁO</h2>
             <p>
-                Với tình yêu mãnh liệt dành cho trái cây Việt Nam, ngay từ những ngày đầu thành lập đến nay, The 350F luôn trung thành với nguồn nguyên liệu bản địa đặc sắc.
+                Với tình yêu mãnh liệt dành cho trái cây Việt Nam, ngay từ những ngày đầu thành lập đến nay, LA CUISINE NGỌT luôn trung thành với nguồn nguyên liệu bản địa đặc sắc.
             </p>
             <p>
                 Hiểu rằng mỗi vùng sẽ cho loại trái cây ngon tùy theo từng mùa riêng biệt, do đó, chúng tôi dành nhiều thời gian khảo sát các trang trại, nhà vườn tại nhiều địa phương trên khắp cả nước. Điều này tạo cơ hội để chúng tôi hiểu hơn về đặc tính của các loại trái cây, cách thức chăm bẵm độc đáo của người nông dân, tâm huyết của họ tại từng vùng miền và trên tất cả, chúng tôi may mắn tìm được những nhà vườn đạt chuẩn để cung ứng nguồn nguyên liệu lâu dài, chất lượng cho The 350F.
             </p>
             </div>
-            <!-- Ảnh minh họa bên phải section -->
-            <div class="strategy-image">
-            <!-- Thay đường dẫn src bằng ảnh của bạn -->
-            <img src="../../assets/images/Nho.png" alt="Nho tươi" />
-            </div>
+            
         </div>
     </section>
 
@@ -167,9 +163,242 @@
     <!-- Products Section -->
     <section id="products" class="products">
         <div class="container">
-            <h2 class="section-title">Sản phẩm của chúng tôi</h2>
+            <h2 class="section-title">SẢN PHẨM</h2>
+            
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all" data-target="#entremet">Entremet</button>
+                <button class="category-tab active" data-category="all" data-target="#mousse">Mousse</button>
+                <button class="category-tab active" data-category="all" data-target="#truyenthong">Truyền thống</button>
+                <button class="category-tab active" data-category="all" data-target="#phukien">Phụ kiện</button>
+            </div>
+
+            <p class="favorite-text">Sản phẩm được yêu thích</p>
+
+            <!-- Products Grid -->
             <div class="products-grid" id="productsGrid">
-                <!-- Products will be loaded dynamically -->
+                <!-- Product Card 1 -->
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="../../assets/images/Blanche Figues & Framboises.jpg" alt="Blanche Figues & Framboises" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Blanche Figues & Framboises</h3>
+                        <p class="product-price">650.000 VNĐ</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="../../assets/images/Mousse Chanh dây.jpg" alt="Mousse Chanh dây" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Mousse Chanh dây</h3>
+                        <p class="product-price">750.000 VNĐ</p>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="../../assets/images/Mousse Dưa lưới.jpg" alt="Mousse Dưa lưới" class="product-image">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Mousse Dưa lưới</h3>
+                        <p class="product-price">550.000 VNĐ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="entremet" class="entremet-section">
+        <div class="entremet-container">
+            <h2 class="entremet-title">Entremet</h2>
+            <div class="entremet-desc">
+            Đây là bánh kem kiểu Pháp cao cấp, kết hợp hài hòa giữa mousse, thạch trái cây và lớp bánh mịn. Mỗi chiếc bánh là một tác phẩm tinh tế, mang đến trải nghiệm đa tầng vị giác – béo, chua nhẹ, thanh mát và quyến rũ.
+            </div>
+            <div class="entremet-grid">
+                <div class="entremet-card">
+                    <div class="entremet-image-container">
+                        <img class="entremet-image" src="../../assets/images/Entremets Rose.jpg" alt="Entremets Rose" />
+                    </div>
+                    <div class="entremet-info">
+                        <div class="entremet-name">Entremets Rose</div>
+                        <div class="entremet-price">650,000 VND</div>
+                    </div>
+                </div>
+                <div class="entremet-card">
+                    <div class="entremet-image-container">
+                        <img class="entremet-image" src="../../assets/images/Lime and Basil Entremets.jpg" alt="Lime and Basil Entremets" />
+                    </div>
+                    <div class="entremet-info">
+                        <div class="entremet-name">Lime and Basil Entremets</div>
+                        <div class="entremet-price">600,000 VND</div>
+                    </div>
+                </div>
+                <div class="entremet-card">
+                    <div class="entremet-image-container">
+                        <img class="entremet-image" src="../../assets/images/Blanche Figues & Framboises.jpg" alt="Blanche Figues & Framboises" />
+                    </div>
+                    <div class="entremet-info">
+                        <div class="entremet-name">Blanche Figues & Framboises</div>
+                        <div class="entremet-price">650,000 VND</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="mousse" class="mousse-section">
+        <div class="mousse-container">
+            <h2 class="mousse-title">Mousse</h2>
+            <div class="mousse-desc">
+                Bánh mang đến trải nghiệm mềm mịn, mát lạnh với hương vị từ trái cây tươi, socola hay matcha. Không cần nướng, mỗi chiếc bánh là sự kết hợp tinh tế giữa kem tươi và gelatin, vừa thanh, vừa béo, hấp dẫn ngay từ miếng đầu tiên.
+            </div>
+            <div class="mousse-grid">
+                <div class="mousse-card">
+                    <div class="mousse-image-container">
+                        <img class="mousse-image" src="../../assets/images/Mousse Chanh dây.jpg" alt="Mousse Chanh dây" />
+                    </div>
+                    <div class="mousse-info">
+                        <div class="mousse-name">Mousse Chanh dây</div>
+                        <div class="mousse-price">550,000 VND</div>
+                    </div>
+                </div>
+                <div class="mousse-card">
+                    <div class="mousse-image-container">
+                        <img class="mousse-image" src="../../assets/images/Mousse Dưa lưới.jpg" alt="Mousse Dưa lưới" />
+                    </div>
+                    <div class="mousse-info">
+                        <div class="mousse-name">Mousse Dưa lưới</div>
+                        <div class="mousse-price">550,000 VND</div>
+                    </div>
+                </div>
+                <div class="mousse-card">
+                    <div class="mousse-image-container">
+                        <img class="mousse-image" src="../../assets/images/Mousse Việt quất.jpg" alt="Mousse Việt quất" />
+                    </div>
+                    <div class="mousse-info">
+                        <div class="mousse-name">Mousse Việt quất</div>
+                        <div class="mousse-price">550,000 VND</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="truyenthong" class="truyenthong-section">
+        <div class="truyenthong-container">
+            <h2 class="truyenthong-title">Truyền thống</h2>
+            <div class="truyenthong-desc">
+                Với cốt bánh bông lan xốp nhẹ, phủ kem tươi hoặc kem bơ béo ngậy, bánh kem truyền thống luôn là biểu tượng của những khoảnh khắc đáng nhớ. Hương vị quen thuộc, hình thức tinh tế – lựa chọn hoàn hảo cho sinh nhật, kỷ niệm hay những bữa tiệc ấm cúng.
+            </div>
+            <div class="truyenthong-grid">
+                <div class="truyenthong-card">
+                    <div class="truyenthong-image-container">
+                        <img class="truyenthong-image" src="../../assets/images/Earl Grey Bloom.jpg" alt="Rustic Coffee Cake" />
+                    </div>
+                    <div class="truyenthong-info">
+                        <div class="truyenthong-name">Rustic Coffee Cake</div>
+                        <div class="truyenthong-price">450,000 VND</div>
+                    </div>
+                </div>
+                <div class="truyenthong-card">
+                    <div class="truyenthong-image-container">
+                        <img class="truyenthong-image" src="../../assets/images/Rectangle 298.png" alt="Serenity Cake" />
+                    </div>
+                    <div class="truyenthong-info">
+                        <div class="truyenthong-name">Serenity Cake</div>
+                        <div class="truyenthong-price">500,000 VND</div>
+                    </div>
+                </div>
+                <div class="truyenthong-card">
+                    <div class="truyenthong-image-container">
+                        <img class="truyenthong-image" src="../../assets/images/Strawberry Cloud Cake.jpg" alt="Strawberry Cloud Cake" />
+                    </div>
+                    <div class="truyenthong-info">
+                        <div class="truyenthong-name">Strawberry Cloud Cake</div>
+                        <div class="truyenthong-price">500,000 VND</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="phukien" class="phukien-section">
+        <div class="phukien-container">
+            <h2 class="phukien-title">Phụ kiện</h2>
+            <div class="phukien-desc">
+                Không chỉ ngon miệng, chiếc bánh còn trở nên đặc biệt hơn nhờ những phụ kiện xinh xắn: nến sinh nhật, topper, ruy băng, hoa trang trí và hộp bánh sang trọng.Mỗi chi tiết nhỏ đều góp phần tạo nên một món quà hoàn hảo, giúp bạn gửi trọn thông điệp yêu thương đến người nhận.            </div>
+            <div class="phukien-grid">
+                <div class="phukien-card">
+                    <div class="phukien-image-container">
+                        <img class="phukien-image" src="../../assets/images/Rectangle 312.png" alt="Nón sinh nhật" />
+                    </div>
+                    <div class="phukien-info">
+                        <div class="phukien-name">Nón Sinh Nhật</div>
+                        <div class="phukien-price">10,000 VND</div>
+                    </div>
+                </div>
+                <div class="phukien-card">
+                    <div class="phukien-image-container">
+                        <img class="phukien-image" src="../../assets/images/Rectangle 309.png" alt="Pháo hoa" />
+                    </div>
+                    <div class="phukien-info">
+                        <div class="phukien-name">Pháo Hoa</div>
+                        <div class="phukien-price">55,000 VND</div>
+                    </div>
+                </div>
+                <div class="phukien-card">
+                    <div class="phukien-image-container">
+                        <img class="phukien-image" src="../../assets/images/Rectangle 306.png" alt="Bóng bay và dây trang trí" />
+                    </div>
+                    <div class="phukien-info">
+                        <div class="phukien-name">Bóng bay và dây trang trí</div>
+                        <div class="phukien-price">40,000 VND</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotion Section -->
+    <section id="lienhe" class="promotion-section">
+        <div class="promotion-hero">
+            <h2>KHUYẾN MÃI</h2>
+        </div>
+        
+        <div class="container">
+            <div class="promotion-grid">
+                <div class="promotion-item">
+                    <div class="promotion-image">
+                        <img src="placeholder1.jpg" alt="Khuyến mãi 1">
+                    </div>
+                    <p class="promotion-text">Áp dụng từ <strong>05/10/2025</strong><br>đến <strong>09/11/2025</strong></p>
+                </div>
+                
+                <div class="promotion-item">
+                    <div class="promotion-image">
+                        <img src="placeholder2.jpg" alt="Khuyến mãi 2">
+                    </div>
+                    <p class="promotion-text">Áp dụng từ <strong>01/10/2025</strong><br>đến <strong>01/11/2025</strong></p>
+                </div>
+                
+                <div class="promotion-item">
+                    <div class="promotion-image">
+                        <img src="placeholder3.jpg" alt="Khuyến mãi 3">
+                    </div>
+                    <p class="promotion-text">Áp dụng cho khách hàng<br>đặt được <strong>300 điểm</strong></p>
+                </div>
+                
+                <div class="promotion-item">
+                    <div class="promotion-image">
+                        <img src="placeholder4.jpg" alt="Khuyến mãi 4">
+                    </div>
+                    <p class="promotion-text">Áp dụng cho khách hàng<br>đạt được <strong>500 điểm</strong></p>
+                </div>
             </div>
         </div>
     </section>
@@ -177,34 +406,15 @@
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h2>Liên hệ với chúng tôi</h2>
-                    <p>Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn. Hãy liên hệ với chúng tôi để được tư vấn miễn phí.</p>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>123 Đường ABC, Quận 1, TP.HCM</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>0123 456 789</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>info@lacuisinengot.com</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="newsletter">
-                    <h2>Đăng ký nhận tin</h2>
-                    <p>Nhận thông tin về sản phẩm mới và ưu đãi đặc biệt</p>
-                    <form class="newsletter-form">
-                        <input type="text" placeholder="Họ và tên" required>
-                        <input type="email" placeholder="Email" required>
-                        <button type="submit" class="btn-primary">Đăng ký</button>
-                    </form>
-                </div>
+            <div class="contact-overlay">
+                <h2>LIÊN HỆ</h2>
+                <p class="contact-subtitle">Điền thông tin để La Cuisine Ngọt có thể liên hệ với bạn trong thời gian sớm nhất nhé.</p>
+                
+                <form class="contact-form">
+                    <input type="text" placeholder="Tên đệ" required>
+                    <textarea placeholder="Nội dung" rows="5" required></textarea>
+                    <button type="submit" class="btn-submit">Gửi đi</button>
+                </form>
             </div>
         </div>
     </section>
@@ -213,44 +423,28 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-section">
-                    <h3>LA CUISINE NGỌT</h3>
-                    <p>Thương hiệu bánh kem cao cấp hàng đầu Việt Nam</p>
+                <div class="footer-left">
+                    <h3 class="footer-logo">La Cuisine Ngọt</h3>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook"></i></a>
                         <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
-                <div class="footer-section">
-                    <h4>Liên kết</h4>
-                    <ul>
-                        <li><a href="home.html">Trang chủ</a></li>
-                        <li><a href="../products/products.html">Sản phẩm</a></li>
-                        <li><a href="../about/about.html">Về chúng tôi</a></li>
-                        <li><a href="../contact/contact.html">Liên hệ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Hỗ trợ</h4>
-                    <ul>
-                        <li><a href="#">Chính sách đổi trả</a></li>
-                        <li><a href="#">Hướng dẫn đặt hàng</a></li>
-                        <li><a href="#">Câu hỏi thường gặp</a></li>
-                        <li><a href="#">Bảo mật thông tin</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Liên hệ</h4>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                        <p><i class="fas fa-phone"></i> 0123 456 789</p>
-                        <p><i class="fas fa-envelope"></i> info@lacuisinengot.com</p>
+                
+                <div class="footer-locations">
+                    <div class="location">
+                        <h4>Ngọt GO TO (Tp HCMC)</h4>
+                        <p>123 An Dương Vương, phường Cầu Quan, TP.HCM</p>
+                    </div>
+                    <div class="location">
+                        <h4>Ngọt INSIDE (Phun Rang)</h4>
+                        <p>45 Ngô Gia Tự, P. Phú Lâm</p>
+                    </div>
+                    <div class="location">
+                        <h4>Ngọt AROUND (Thiết)</h4>
+                        <p>86 Nguyễn Tất Thành, p. Phun Thiệt, Lam Đồng</p>
                     </div>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 LA CUISINE NGỌT. Tất cả quyền được bảo lưu.</p>
             </div>
         </div>
     </footer>
@@ -260,4 +454,3 @@
     <script src="home.js"></script>
 </body>
 </html>
-
