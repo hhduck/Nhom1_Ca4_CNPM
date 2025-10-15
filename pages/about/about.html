@@ -9,49 +9,32 @@
     <link rel="stylesheet" href="about.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../home/home.html">LA CUISINE NGỌT</a>
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="../home/home.html" class="nav-link">Trang chủ</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../products/products.html" class="nav-link">Sản phẩm</a>
-                </li>
-                <li class="nav-item">
-                    <a href="about.html" class="nav-link active">Về chúng tôi</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../contact/contact.html" class="nav-link">Liên hệ</a>
-                </li>
-            </ul>
-            <div class="nav-actions">
-                <div class="search-box">
-                    <input type="text" placeholder="Tìm kiếm bánh..." id="searchInput">
-                    <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="user-actions">
-                    <a href="../login/login.html" class="btn-login">Đăng nhập</a>
-                    <a href="../register/register.html" class="btn-register">Đăng ký</a>
-                    <a href="../cart/cart.html" class="cart-icon">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count">0</span>
-                    </a>
-                </div>
-            </div>
-            <div class="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
+    <div class="nav-container">
+        <div class="nav-logo">
+            <a href="../home/home.html">La Cuisine Ngọt</a>
         </div>
-    </nav>
+
+        <ul class="nav-menu">
+            <li><a href="../products/products.html">SẢN PHẨM</a></li>
+            <li><a href="../promotion/promotion.html">KHUYẾN MÃI</a></li>
+            <li><a href="../contact/contact.html">LIÊN HỆ</a></li>
+        </ul>
+        
+        <div class="nav-icons">
+            <a href="#" class="nav-search"><i class="fas fa-search"></i></a>
+            <a href="../cart/cart.html" class="nav-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+            <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
+        </div>
+    </div>
+</nav>
 
     <!-- About Section -->
     <section class="about-page">
