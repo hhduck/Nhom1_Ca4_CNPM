@@ -1,0 +1,322 @@
+/**
+ * staff/order.css
+ * * Cập nhật màu chữ chung thành #395542.
+ */
+
+/*
+ * =========================================
+ * BỐ CỤC CHUNG
+ * =========================================
+ */
+body.order-page {
+    background-color: #EDDECD;
+    font-family: 'Crimson Text', serif;
+    /* BƯỚC 1: Đặt màu chữ mặc định cho toàn bộ trang */
+    color: #395542;
+}
+
+.staff-page-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.card-container {
+    background-color: #F4F1EC;
+    border-radius: 12px;
+    padding: 25px 30px;
+}
+
+/* Tiêu đề sẽ tự động kế thừa màu từ body */
+.card-container h2 {
+    font-family: 'Crimson Text', serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    /* Không cần khai báo color ở đây nữa, nó sẽ tự nhận màu #395542 */
+    margin: 0 0 25px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 20px;
+    border-bottom: 1.5px solid #395542;
+}
+
+/*
+ * =========================================
+ * THANH TÌM KIẾM VÀ BỘ LỌC
+ * =========================================
+ */
+.toolbar {
+    margin: 30px 0;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 14px 50px 14px 20px;
+    border: 1px solid #D4CFC3;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #fff;
+    font-style: italic;
+    font-family: 'Inter', sans-serif;
+}
+
+.filters label {
+    font-family: 'Crimson Text', serif;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    /* Chữ của bộ lọc cũng sẽ tự động kế thừa màu #395542 */
+}
+
+/* ... Các phần CSS khác không thay đổi ... */
+.search-bar {
+    position: relative;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #364D3C;
+    font-style: normal;
+}
+
+.search-bar .fa-search {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 18px;
+}
+
+.filters {
+    display: flex;
+    gap: 25px;
+}
+
+/*
+ * =========================================
+ * BẢNG ĐƠN HÀNG
+ * =========================================
+ */
+.table-wrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 10px 20px 20px 20px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 16px 10px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid #F0EDE5;
+    font-family: 'Inter', sans-serif;
+    /* Chữ trong bảng cũng sẽ tự động kế thừa màu #395542 */
+}
+
+.orders-table th {
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.orders-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/*
+ * =========================================
+ * CHI TIẾT ĐƠN HÀNG
+ * =========================================
+ */
+.order-detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr;
+    gap: 40px;
+}
+
+.detail-form {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 15px 25px;
+    border: 1px solid #E5E0D5;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #F0EDE5;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-row:last-child {
+    border-bottom: none;
+}
+
+.form-row:first-child {
+    font-weight: 500;
+    font-size: 13px;
+    text-transform: none;
+}
+
+.form-row label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-row input,
+.form-row select {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    font-size: 14px;
+    padding: 5px 0;
+    font-style: italic;
+    font-family: 'Inter', sans-serif;
+    /* BƯỚC 2: Ghi đè màu chữ cho các ô input để chúng có màu mới khi gõ */
+    color: #395542;
+}
+
+.form-row select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1em;
+    padding-right: 2rem;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+    outline: none;
+}
+
+/*
+ * =========================================
+ * KHU VỰC GHI CHÚ
+ * =========================================
+ */
+.notes-section label {
+    font-family: 'Inter', sans-serif;
+}
+
+.notes-section textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 12px;
+    border: 1px solid #D4CFC3;
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    /* Màu chữ trong ô textarea */
+    color: #395542;
+}
+
+.notes-section textarea:focus {
+    outline: none;
+    border-color: #364D3C;
+}
+
+.notes-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.notes-actions button {
+    padding: 9px 22px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Đảm bảo màu chữ của 2 nút này không bị ảnh hưởng */
+.notes-actions .btn-confirm {
+    background-color: #364D3C;
+    color: white;
+}
+
+.notes-actions .btn-cancel {
+    background-color: #F44336;
+    color: white;
+}
+
+/* =========================================
+   NÚT XỬ LÝ VÀ ICON CẬP NHẬT TRONG BẢNG
+   ========================================= */
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons button {
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Định dạng màu cho các loại nút */
+.btn-confirm {
+    background-color: #FFECB3;
+    color: #E65100;
+}
+
+/* Vàng */
+.btn-cancel-reason {
+    background-color: #F44336;
+    color: white;
+}
+
+/* Đỏ */
+.btn-disabled {
+    background-color: #364D3C;
+    color: white;
+}
+
+/* Xanh rêu */
+.btn-archived {
+    background-color: #616161;
+    color: white;
+}
+
+/* Xám đậm */
+.btn-view-reason {
+    background-color: #E0E0E0;
+    color: #424242;
+}
+
+/* Xám nhạt */
+
+/* Định dạng cho icon cập nhật */
+.update-icon {
+    color: #395542;
+    font-size: 18px;
+    text-decoration: none;
+}

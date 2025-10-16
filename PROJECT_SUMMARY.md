@@ -1,6 +1,6 @@
 # LA CUISINE NGỌT - Tổng Kết Dự Án
 
-## 🎯 Tổng Quan Dự Án
+## Tổng Quan Dự Án
 
 **Tên dự án:** LA CUISINE NGỌT - Website bán bánh kem cao cấp  
 **Ngôn ngữ:** HTML5, CSS3, JavaScript, PHP, SQL Server  
