@@ -3,131 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giỏ hàng - LA CUISINE NGỌT</title>
-    <meta name="description" content="Xem và quản lý giỏ hàng của bạn">
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <title>Giỏ hàng - La Cuisine Ngọt</title>
     <link rel="stylesheet" href="cart.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../home/home.html">LA CUISINE NGỌT</a>
-            </div>
+            <div class="nav-logo"><a href="../home/home.html">La Cuisine Ngọt</a></div>
             <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="../home/home.html" class="nav-link">Trang chủ</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../products/products.html" class="nav-link">Sản phẩm</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../about/about.html" class="nav-link">Về chúng tôi</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../contact/contact.html" class="nav-link">Liên hệ</a>
-                </li>
+                <li><a href="../products/products.html">SẢN PHẨM</a></li>
+                <li><a href="../promotion/promotion.html">KHUYẾN MÃI</a></li>
+                <li><a href="../contact/contact.html">LIÊN HỆ</a></li>
             </ul>
-            <div class="nav-actions">
-                <div class="search-box">
-                    <input type="text" placeholder="Tìm kiếm bánh..." id="searchInput">
-                    <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="user-actions">
-                    <a href="../login/login.html" class="btn-login">Đăng nhập</a>
-                    <a href="../register/register.html" class="btn-register">Đăng ký</a>
-                    <a href="cart.html" class="cart-icon active">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count">0</span>
-                    </a>
-                </div>
-            </div>
-            <div class="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+            <div class="nav-icons">
+                <a href="#" class="nav-cart"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></a>
+                <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
             </div>
         </div>
     </nav>
 
     <!-- Cart Section -->
-    <section class="cart-container">
-        <div class="container">
-            <h1 class="page-title">Giỏ hàng của bạn</h1>
-            
-            <div class="cart-content">
-                <div class="cart-items" id="cartItems">
-                    <!-- Cart items will be loaded dynamically -->
-                </div>
-                
-                <div class="cart-summary" id="cartSummary">
-                    <!-- Cart summary will be loaded dynamically -->
-                </div>
-            </div>
-            
-            <!-- Empty cart message -->
-            <div class="empty-cart" id="emptyCart" style="display: none;">
-                <div class="empty-cart-content">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h3>Giỏ hàng trống</h3>
-                    <p>Bạn chưa có sản phẩm nào trong giỏ hàng</p>
-                    <a href="../products/products.html" class="btn-primary">Tiếp tục mua sắm</a>
-                </div>
-            </div>
+    <section class="cart-container" id="cartContainer">
+        <div class="empty-cart">
+            <i class="fas fa-shopping-cart cart-icon"></i>
+            <p class="cart-text">Giỏ hàng trống, vui lòng thêm sản phẩm!</p>
+            <a href="../home/home.html" class="btn-primary">Quay lại trang chủ</a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>LA CUISINE NGỌT</h3>
-                    <p>Thương hiệu bánh kem cao cấp hàng đầu Việt Nam</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4>Liên kết</h4>
-                    <ul>
-                        <li><a href="../home/home.html">Trang chủ</a></li>
-                        <li><a href="../products/products.html">Sản phẩm</a></li>
-                        <li><a href="../about/about.html">Về chúng tôi</a></li>
-                        <li><a href="../contact/contact.html">Liên hệ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Hỗ trợ</h4>
-                    <ul>
-                        <li><a href="#">Chính sách đổi trả</a></li>
-                        <li><a href="#">Hướng dẫn đặt hàng</a></li>
-                        <li><a href="#">Câu hỏi thường gặp</a></li>
-                        <li><a href="#">Bảo mật thông tin</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Liên hệ</h4>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                        <p><i class="fas fa-phone"></i> 0123 456 789</p>
-                        <p><i class="fas fa-envelope"></i> info@lacuisinengot.com</p>
-                    </div>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>La Cuisine Ngọt</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 LA CUISINE NGỌT. Tất cả quyền được bảo lưu.</p>
+            <div class="footer-address">
+                <p><strong>Ngọt GO TO (TP.HCM)</strong><br>123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
+                <p><strong>Ngọt INSIDE (Phan Rang)</strong><br>85 Ngô Gia Tự, P. Phan Rang, Khánh Hòa</p>
+                <p><strong>Ngọt AROUND (Phan Thiết)</strong><br>86 Nguyễn Tất Thành, P. Phan Thiết, Lâm Đồng</p>
             </div>
         </div>
     </footer>
 
-    <script src="../../assets/js/main.js"></script>
     <script src="cart.js"></script>
 </body>
 </html>
-
