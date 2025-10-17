@@ -1,13 +1,15 @@
+/* --- TOÀN TRANG --- */
 body {
   font-family: 'Inter', sans-serif;
-  color: #333;
   margin: 0;
-  background-color: #fff;
+  background-color: #fffdf8;
+  color: #333;
 }
 
+/* --- HEADER --- */
 .header {
-  background-color: #304b3f;
-  color: #fff;
+  background-color: #395542;
+  color: white;
   padding: 12px 0;
 }
 
@@ -22,152 +24,223 @@ body {
 
 .logo {
   font-family: 'Dancing Script', cursive;
-  font-size: 28px;
+  font-size: 30px;
 }
 
 .nav-menu {
   list-style: none;
   display: flex;
   gap: 24px;
+  padding: 0;
+  margin: 0;
 }
 
 .nav-menu a {
+  color: white;
   text-decoration: none;
-  color: #fff;
-  font-weight: 500;
-  transition: color 0.3s;
+  transition: 0.3s;
 }
 
 .nav-menu a:hover {
   color: #e0c9a6;
 }
 
+/* --- PRODUCT PAGE --- */
 .product-page {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
+  max-width: 1300px;
+  margin: 60px auto;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* --- PHẦN TRÊN: HÌNH + THÔNG TIN BÊN PHẢI --- */
 .product-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 100px;
+  width: 100%;
+  margin-bottom: 80px;
 }
 
 .product-image img {
-  width: 420px;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  width: 740px;
+  height: 740px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .product-info {
   flex: 1;
+  max-width: 520px;
+  padding-top: 40px;
 }
 
 .product-info h2 {
-  font-size: 28px;
+  font-family: 'Crimson Text', serif;
+  font-size: 34px;
+  font-weight: 700;
   margin-bottom: 8px;
+  color: #333;
 }
 
 .price {
-  color: #304b3f;
-  font-weight: 600;
+  font-family: 'Crimson Text', serif;
+  color: #395542;
   font-size: 22px;
-  margin-bottom: 8px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
+/* --- Sửa lại: bỏ in nghiêng phần mô tả ngắn --- */
 .short-desc {
-  font-style: italic;
-  margin-bottom: 12px;
+  margin: 10px 0 20px;
+  font-style: normal;
+  font-weight: 500;
 }
 
+/* --- ACTION SECTION --- */
+.action-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+  align-items: center; /* ✅ Căn giữa so với mô tả */
+  width: 100%;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center; /* ✅ Nằm giữa */
+}
+
+/* Ô chọn số lượng */
 .quantity-control {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 16px 0;
+  border: 1px solid #395542;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 42px;
 }
 
 .quantity-control button {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #ccc;
-  background: #fff;
+  background-color: #395542;
+  color: white;
+  border: none;
+  width: 38px;
+  height: 100%;
   cursor: pointer;
   font-size: 18px;
-  transition: 0.3s;
+  font-weight: bold;
+  transition: background 0.25s ease;
 }
 
 .quantity-control button:hover {
-  background: #f1f1f1;
+  background-color: #395542;
 }
 
 .quantity-control input {
   width: 50px;
   text-align: center;
-  border: 1px solid #ccc;
-  padding: 4px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 16px;
-}
-
-.add-cart {
-  background-color: #304b3f;
-  color: white;
   border: none;
-  padding: 10px 18px;
+  outline: none;
+  font-weight: 600;
+  font-size: 16px;
+  background: #fff;
+}
+
+/* Nút Thêm vào giỏ & Mua ngay */
+.add-cart, .buy-now {
+  height: 48px;
+  width: 240px;
+  padding: 0 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
   cursor: pointer;
-  border-radius: 4px;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #395542;
+  color: #fff;
+}
+
+.add-cart:hover, .buy-now:hover {
+  background-color: #2f463d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
 .buy-now {
-  background-color: #e0c9a6;
-  color: #333;
-  border: none;
-  padding: 10px 18px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: 0.3s;
+  width: 83%;
 }
 
-.add-cart:hover,
-.buy-now:hover {
-  opacity: 0.9;
-}
-
+/* --- PHẦN THÔNG TIN SẢN PHẨM DƯỚI CÙNG --- */
 .product-details {
+  max-width: 740px; /* ✅ khớp với chiều ngang hình bánh */
+  margin-left: 130px; /* ✅ căn thẳng hàng với hình phía trên */
+  margin-right: auto;
   margin-top: 60px;
   line-height: 1.8;
+  color: #2c2c2c;
 }
 
 .product-details h3 {
-  color: #304b3f;
-  border-bottom: 2px solid #e0c9a6;
-  display: inline-block;
+  font-size: 20px;              /* Cỡ chữ trung bình, dễ đọc */
+  font-weight: 600;             /* Đậm vừa */
+  font-family: 'Inter', sans-serif;  /* Font rõ ràng, hiện đại */
+  color: #395542;               /* Xanh lá đậm hài hòa */
+  border-bottom: 2px solid #b5c4a6; /* Gạch chân nhẹ tạo điểm nhấn */
+  display: inline-block;        /* Đường kẻ chỉ bằng độ dài chữ */
   padding-bottom: 4px;
+  margin-bottom: 20px;
+  text-align: left;             /* Đảm bảo căn trái */
+  margin-left: -100px;           /* ✅ Dịch tiêu đề ra sát lề trái cho thẳng hàng với hình bánh */
 }
 
 .product-details h4 {
-  margin-top: 28px;
-  color: #304b3f;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #395542;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  margin-left: -100px;   
 }
 
-ul {
-  padding-left: 20px;
+.product-details p,
+.product-details li {
+  font-family: 'Inter', sans-serif;
+  font-size: 17px;
+  line-height: 1.8;
+  color: #333;
+  margin-left: -100px;   
 }
 
+.product-details ul {
+  margin-left: 20px;
+  list-style-type: disc;
+  margin-left: -100px;   
+}
+
+
+/* --- FOOTER --- */
 .footer {
-  background-color: #304b3f;
+  background-color: #395542;
   color: white;
   text-align: center;
-  padding: 16px;
-  margin-top: 60px;
+  padding: 20px;
+  margin-top: 80px;
 }
 
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
   .product-container {
     flex-direction: column;
@@ -176,5 +249,24 @@ ul {
 
   .product-image img {
     width: 100%;
+  }
+
+  .action-section {
+    align-items: center;
+    width: 100%;
+  }
+
+  .action-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .add-cart, .buy-now {
+    width: 100%;
+  }
+
+  .product-details {
+    margin-left: 0;
+    padding: 0 24px;
   }
 }
