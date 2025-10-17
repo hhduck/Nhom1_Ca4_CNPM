@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Entremets Rose - La Cuisine Ngọt</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="product.css">
+
+  <!-- Font Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- File CSS -->
+  <link rel="stylesheet" href="product.css" />
 </head>
 <body>
+  <!-- HEADER -->
   <header class="header">
     <div class="header-container">
       <h1 class="logo">La Cuisine Ngọt</h1>
@@ -16,63 +22,95 @@
           <li><a href="#">SẢN PHẨM</a></li>
           <li><a href="#">KHUYẾN MÃI</a></li>
           <li><a href="#">LIÊN HỆ</a></li>
-          <li><a href="#">ĐĂNG NHẬP/ĐĂNG KÍ</a></li>
+          <li><a href="#">ĐĂNG NHẬP / ĐĂNG KÍ</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
+  <!-- MAIN -->
   <main class="product-page">
     <div class="product-container">
+      <!-- HÌNH ẢNH -->
       <div class="product-image">
-        <img src="entremets-rose.jpg" alt="Entremets Rose">
+        <img src="../../assets/images/Rose-litchi-framboise-5-1154x1536.jpg" alt="Entremets Rose" />
       </div>
+
+      <!-- THÔNG TIN SẢN PHẨM -->
       <div class="product-info">
-        <h2>Entremets Rose</h2>
+        <h2 class="product-name">Entremets Rose</h2>
         <p class="price">650,000 VND</p>
         <p class="short-desc"><b>Hoa hồng – Vải thiều – Mâm xôi – Phô mai trắng</b></p>
-        <p>Chiếc entremets nhẹ như một khúc nhạc Pháp, hòa quyện hương hoa hồng thanh mát, vải thiều ngọt dịu, mâm xôi chua nhẹ và mousse phô mai trắng béo mềm. Từng lớp bánh được sắp đặt tỉ mỉ để mang đến cảm giác trong trẻo, tinh khiết và đầy nữ tính – “hương ngọt ngào” dành cho những tâm hồn yêu sự dịu dàng.</p>
+
+        <p>
+          Chiếc entremets nhẹ như một khúc nhạc Pháp, hòa quyện hương hoa hồng thanh thoát, vải thiều ngọt mát, mâm xôi chua nhẹ và mousse phô mai trắng béo mềm.
+        </p>
+        <p>
+          Từng lớp bánh được sắp đặt tỉ mỉ để mang đến cảm giác trong trẻo, tinh khôi và đầy nữ tính — “nụ hồng ngọt ngào” dành cho những tâm hồn yêu sự dịu dàng.
+        </p>
 
         <p><b>Kích thước:</b> 16cm</p>
 
-        <div class="quantity-control">
-          <button id="decrease">-</button>
-          <input type="text" id="quantity" value="1">
-          <button id="increase">+</button>
-        </div>
-
-        <div class="action-buttons">
-          <button class="add-cart">Thêm vào giỏ hàng</button>
+        <!-- KHU VỰC NÚT HÀNH ĐỘNG -->
+        <div class="action-section">
+          <div class="action-row">
+            <div class="quantity-control">
+              <button id="decrease">-</button>
+              <input type="text" id="quantity" value="1" />
+              <button id="increase">+</button>
+            </div>
+            <button class="add-cart">Thêm vào giỏ hàng</button>
+          </div>
           <button class="buy-now">Mua ngay</button>
         </div>
       </div>
     </div>
 
+    <!-- THÔNG TIN SẢN PHẨM CHI TIẾT -->
     <section class="product-details">
       <h3>THÔNG TIN SẢN PHẨM</h3>
-      <h4>MÔ TẢ</h4>
-      <p>Một chiếc entremets tựa như đóa hồng nở trong nắng sớm — nhẹ nhàng, tinh khôi và ngọt ngào theo cách riêng...</p>
 
-      <h4>CẤU TRÚC BÁNH</h4>
-      <ul>
-        <li><b>Lớp 1 – Biscuit Madeleine Framboise:</b> Bánh mềm nhẹ, thanh vị chua thanh từ mâm xôi tươi.</li>
-        <li><b>Lớp 2 – Confit Framboise:</b> Mứt mâm xôi đặc sánh đỏ ánh ruby, giữ trọn vị chua ngọt tự nhiên.</li>
-        <li><b>Lớp 3 – Crèmeux Litchi Rose:</b> Nhân vải thiều hoa hồng – mềm mịn, thanh tao và thơm dịu.</li>
-        <li><b>Lớp 4 – Mousse Phô mai trắng:</b> Béo nhẹ và tan ngay nơi đầu lưỡi.</li>
-        <li><b>Lớp 5 – Shortbread:</b> Đế bánh giòn tan, tạo điểm nhấn hài hòa.</li>
-      </ul>
+      <div class="detail-block">
+        <h4>MÔ TẢ</h4>
+        <p>
+          Một chiếc entremets tựa như đoá hồng nở trong nắng sớm — nhẹ nhàng, tinh khôi và ngọt ngào theo cách riêng. Entremets Rose là sự hòa quyện giữa vải thiều mọng nước, mâm xôi chua thanh, phô mai trắng béo mịn và hương hoa hồng phảng phất, tạo nên cảm giác trong trẻo, nữ tính và đầy tinh tế.
+        </p>
+        <p>
+          Bánh được hoàn thiện với những nguyên liệu tuyển chọn kỹ lưỡng: trái cây tươi nhập khẩu, kem phô mai mềm mượt, cốt bánh nướng thủ công và lớp mousse mịn nhẹ như mây. Mỗi muỗng bánh là một lát cắt của sự thanh thoát — dịu dàng mà vẫn đọng lại dư vị khó quên.
+        </p>
+        <p>
+          Một món bánh không chỉ để thưởng thức, mà còn để cảm nhận — như một bông hồng ngọt ngào mang hồn vị của La Cuisine Ngọt.
+        </p>
+      </div>
 
-      <h4>HƯỚNG DẪN SỬ DỤNG</h4>
-      <ul>
-        <li>Bảo quản trong ngăn mát tủ lạnh (2-6°C).</li>
-        <li>Dùng ngon nhất trong vòng 24 giờ sau khi nhận.</li>
-      </ul>
+      <div class="detail-block">
+        <h4>CẤU TRÚC BÁNH</h4>
+        <p><b>Lớp 1 – Biscuit Madeleine Framboise:</b> Cốt bánh mềm nhẹ, thấm vị chua thanh tự nhiên từ mâm xôi tươi.</p>
+        <p><b>Lớp 2 – Confit Framboise:</b> Mứt mâm xôi cô đặc nấu chậm, giữ trọn vị chua ngọt tươi mới.</p>
+        <p><b>Lớp 3 – Crémeux Litchi Rose:</b> Nhân kem vải thiều hòa cùng hương hoa hồng – mềm mịn, thanh tao và thơm dịu.</p>
+        <p><b>Lớp 4 – Mousse Fromage Blanc:</b> Lớp mousse phô mai trắng mịn như mây, mang vị béo nhẹ và cảm giác tan ngay nơi đầu lưỡi.</p>
+        <p><b>Lớp 5 – Shortbread:</b> Đế bánh bơ giòn tan, tạo điểm nhấn hài hòa cho tổng thể.</p>
+        <p>Trang trí bằng hoa edible, mâm xôi tươi và lớp xịt nhung trắng (velours) — tinh khôi, thanh lịch, mang đậm dấu ấn La Cuisine Ngọt.</p>
+      </div>
 
-      <h4>PHỤ KIỆN TẶNG KÈM</h4>
-      <p>Hộp đựng, nến, thiệp chúc mừng và dao nhựa xinh xắn.</p>
+      <div class="detail-block">
+        <h4>HƯỚNG DẪN SỬ DỤNG</h4>
+        <p>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C) để đảm bảo hương vị và kết cấu tốt nhất.</p>
+        <p>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</p>
+        <p>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</p>
+        <p>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</p>
+      </div>
+
+      <div class="detail-block">
+        <h4>PHỤ KIỆN TẶNG KÈM</h4>
+        <p>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</p>
+        <p>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</p>
+        <p>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</p>
+      </div>
     </section>
   </main>
 
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-container">
       <p>© 2025 La Cuisine Ngọt</p>
@@ -80,6 +118,7 @@
     </div>
   </footer>
 
+  <!-- JS -->
   <script src="product.js"></script>
 </body>
 </html>
