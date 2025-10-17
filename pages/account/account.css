@@ -1,0 +1,135 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Navbar */
+  .navbar {
+    background-color: #445B45;
+    color: white;
+    padding: 12px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .logo {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+  }
+  
+  .nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  /* Account Section */
+  .account-section {
+    background-color: #ffffff;
+    min-height: 90vh;
+    padding: 50px 80px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .account-container {
+    display: flex;
+    background-color: #EDDECD;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 1100px;
+    gap: 30px;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    background-color: #fff;
+    border-radius: 20px;
+    flex: 0 0 250px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sidebar .customer-name {
+    margin-bottom: 30px;
+    font-weight: 500;
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+    width: 100%;
+  }
+  
+  .sidebar-menu li {
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  
+  .sidebar-menu li.active,
+  .sidebar-menu li:hover {
+    background-color: #364D3C;
+    font-weight: 600;
+    color: #ffffff;
+  }
+  
+  /* Account Info */
+  .account-info {
+    flex: 1;
+    border-radius: 15px;
+    padding: 0px 350px;
+    margin-left: -300px;
+  }
+  
+  .account-title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+    color: #000;
+  }
+  
+  .info-content h3 {
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  label {
+    font-weight: 500;
+  }
+  
+  input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1.5px solid #364D3C;
+    width: 100%;
+    height: 40px;
+  }
+  
