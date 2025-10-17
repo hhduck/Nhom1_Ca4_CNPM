@@ -1,12 +1,9 @@
-# Redirect root to home page
-Redirect 301 / /pages/home/home.html
-
-# Set default page
-DirectoryIndex pages/home/home.html
-
 # Enable rewrite engine
 RewriteEngine On
 
-# Redirect all requests to home page
-RewriteRule ^$ pages/home/home.html [L]
+# Set the default file to serve when a directory is requested
+DirectoryIndex pages/home/home.html
 
+# Rule to internally rewrite the root URL to the home page
+# This handles requests for just "http://localhost/"
+RewriteRule ^$ /pages/home/home.html [L]
