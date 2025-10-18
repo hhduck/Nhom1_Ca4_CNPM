@@ -8,37 +8,48 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+          <div class="nav-logo">
+          <a href="home.html">La Cuisine Ngọt</a>
+          </div>
 
-  <!-- Thanh điều hướng -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="../home/home.html" class="logo">La Cuisine Ngọt</a>
-      <ul class="nav-menu">
-        <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
-        <li><a href="../home/home.html#lienhe">KHUYẾN MÃI</a></li>
-        <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
-        <li><a href="../cart/cart.html"><i class="fas fa-shopping-cart"></i></a></li>
-        <li><a href="../login/login.html"><i class="fas fa-user"></i></a></li>
-      </ul>
-    </div>
+          <ul class="nav-menu">
+              <li><a href="#products">SẢN PHẨM</a></li>
+              <li><a href="#lienhe">KHUYẾN MÃI</a></li>
+              <li><a href="#contact">LIÊN HỆ</a></li>
+              <div class="nav-icons">
+                  <a href="../cart/cart.html" class="nav-cart">
+                      <i class="fas fa-shopping-cart"></i>
+                  </a>
+                  <li><a href="../login/login.html"class="nav-login"><i class="fas fa-user"></i></a></li>
+                  </div>
+          </ul>
+
+      </div>
   </nav>
 
-  <!-- Nội dung chính -->
+  <!-- Account Section -->
   <section class="account-section">
     <div class="account-container">
       <!-- Sidebar -->
       <div class="sidebar">
         <p class="customer-name">(Tên khách hàng)</p>
         <ul class="sidebar-menu">
-          <li class="active">Thông tin</li>
+          <li>Thông tin</li>
           <li>Đơn hàng</li>
           <li>Đăng xuất</li>
         </ul>
       </div>
 
-      <!-- Khu vực thông tin -->
+      <!-- Account Info -->
       <div class="account-info">
         <h2 class="account-title">TÀI KHOẢN</h2>
         <div class="info-content">
@@ -55,11 +66,60 @@
 
             <label>Địa chỉ</label>
             <input type="text" placeholder="">
+
+            <h3>Thay đổi mật khẩu</h3>
+
+            <label>Mật khẩu hiện tại (bỏ trống nếu không đổi)</label>
+            <div class="password-field">
+              <input type="password" id="oldPassword">
+              <i class="fa-solid fa-eye-slash toggle-password" data-target="oldPassword"></i>
+            </div>
+
+            <label>Mật khẩu mới (bỏ trống nếu không đổi)</label>
+            <div class="password-field">
+              <input type="password" id="newPassword">
+              <i class="fa-solid fa-eye-slash toggle-password" data-target="newPassword"></i>
+            </div>
+
+            <label>Xác nhận mật khẩu mới</label>
+            <div class="password-field">
+              <input type="password" id="confirmPassword">
+              <i class="fa-solid fa-eye-slash toggle-password" data-target="confirmPassword"></i>
+            </div>
+
+            <button type="submit" class="save-btn">Lưu thay đổi</button>
           </form>
         </div>
       </div>
     </div>
   </section>
+  <!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+      <h2 class="footer-logo">La Cuisine Ngọt</h2>
+      <div class="social-links">
+  <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
+    <i class="fab fa-facebook"></i>
+  </a>
+  <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
+    <i class="fab fa-instagram"></i>
+  </a>
+</div>
+    </div>
 
+    <div class="footer-right">
+      <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
+</br>
+      <p><b>Ngọt INSIDE (Phan Rang)</b><br />85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p>
+    </br>
+      <p><b>Ngọt AROUND (Phan Thiết)</b><br />86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
+    </div>
+  </div>
+</footer>
+
+
+
+  <script src="account.js"></script>
 </body>
 </html>
