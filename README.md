@@ -11,7 +11,7 @@ LA CUISINE NGỌT là một website bán bánh kem cao cấp được phát tri�
 - **CSS3**: Styling với Flexbox, Grid, animations
 - **JavaScript (ES6+)**: Tương tác người dùng và API calls
 - **Font Awesome**: Icons
-- **Google Fonts**: Typography (Inter)
+- **Google Fonts**: Typography (Inter, Crimson Text)
 
 ### Backend
 - **PHP 7.4+**: Server-side logic
