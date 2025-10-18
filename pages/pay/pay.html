@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thanh toán và giao hàng | La Cuisine Ngọt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="pay.css" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">La Cuisine Ngọt</div>
+      <nav class="main-nav">
+        <a href="#">SẢN PHẨM</a>
+        <a href="#">KHUYẾN MÃI</a>
+        <a href="#">LIÊN HỆ</a>
+      </nav>
+      <div class="header-right">
+        <button class="icon-btn">🔍</button>
+        <button class="icon-btn">🛒 <span class="cart-count">0</span></button>
+        <a class="login-link" href="#">ĐĂNG NHẬP/ĐĂNG KÍ</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container page">
+    <section class="box checkout-box">
+      <h1 class="title">Thanh toán và giao hàng</h1>
+
+      <form id="checkoutForm" class="checkout-form" autocomplete="off">
+        <div class="form-row">
+          <div class="col col-4">
+            <h3>Thông tin người dùng</h3>
+            <label>Họ và tên <span class="required">*</span>
+              <input name="fullname" required type="text" placeholder="Nguyễn Văn A">
+            </label>
+            <label>Số điện thoại <span class="required">*</span>
+              <input name="phone" required type="tel" placeholder="09x xxx xxxx">
+            </label>
+            <label>Địa chỉ mail <span class="required">*</span>
+              <input name="email" required type="email" placeholder="email@domain.com">
+            </label>
+          </div>
+
+          <div class="col col-4">
+            <h3>Thông tin giao hàng</h3>
+            <label>Tỉnh/Thành phố <span class="required">*</span>
+              <input name="city" required type="text" placeholder="TP. Hồ Chí Minh">
+            </label>
+            <label>Phường/Xã <span class="required">*</span>
+              <input name="ward" required type="text" placeholder="Phường ...">
+            </label>
+            <label>Địa chỉ <span class="required">*</span>
+              <input name="address" required type="text" placeholder="Số nhà, tên đường">
+            </label>
+          </div>
+
+          <div class="col col-4">
+            <h3>Thời gian nhận bánh</h3>
+            <label>Ngày nhận bánh <span class="required">*</span>
+              <input name="date" required type="date">
+            </label>
+            <label>Khung giờ giao <span class="required">*</span>
+              <input name="timeSlot" required type="text" placeholder="10:00 - 12:00">
+            </label>
+          </div>
+
+          <div class="col col-4">
+            <h3>Ghi chú cho Ngọt</h3>
+            <textarea name="note" rows="7" placeholder="Ghi chú gửi cửa hàng, vd: Ghi 'Happy Birthday Mẹ Yêu' màu vàng"></textarea>
+          </div>
+        </div>
+
+        <h3 class="section-title">Đơn hàng của bạn</h3>
+
+        <div class="order-table-wrap">
+          <table class="order-table" id="orderTable">
+            <thead>
+              <tr>
+                <th class="th-product">Tên sản phẩm</th>
+                <th class="th-qty">Số lượng</th>
+                <th class="th-total">Tổng tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-price="500000">
+                <td>
+                  <div class="prod-title">Mousse Chanh dây</div>
+                  <div class="prod-note">(Ghi chú khách: Ghi chữ "Happy Birthday Mẹ Yêu" màu vàng)</div>
+                </td>
+                <td class="td-qty">1</td>
+                <td class="td-price">500.000</td>
+              </tr>
+
+              <tr data-price="650000">
+                <td>
+                  <div class="prod-title">Entremets Rose</div>
+                  <div class="prod-note">(Ghi chú khách: Ghi chữ "Mừng sinh nhật Vy" màu đỏ)</div>
+                </td>
+                <td class="td-qty">1</td>
+                <td class="td-price">650.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="order-footer">
+          <div class="totals">
+            <div><span>Tạm tính</span><strong id="subtotal">1.150.000</strong></div>
+            <div><span>Phí vận chuyển</span><strong id="shipping">Miễn phí</strong></div>
+            <div><span>VAT (8%)</span><strong id="vat">92.000</strong></div>
+            <div class="total-line"><span>Tổng tiền</span><strong id="grandtotal">1.242.000</strong></div>
+          </div>
+
+          <div class="order-actions">
+            <button id="placeOrder" class="btn">Đặt hàng</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- FOOTER --> 
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <h2 class="footer-logo">La Cuisine Ngọt</h2>
+        <div class="social-links">
+          <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
+            <i class="fab fa-instagram"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
+        <p><b>Ngọt INSIDE (Phan Rang)</b><br />85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p>
+        <p><b>Ngọt AROUND (Phan Thiết)</b><br />86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Font Awesome (icon mạng xã hội) -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <script src="pay.js"></script>
+</body>
+</html>
