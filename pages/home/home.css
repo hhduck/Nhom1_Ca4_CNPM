@@ -1,7 +1,7 @@
 /* Home Page Specific Styles */
 /* ===== NAVBAR ===== */
 .navbar {
-    background-color: #364D3C; /* xanh rêu đậm */
+    background-color: #395542; /* xanh rêu đậm */
     padding: 10px 60px;
     display: flex;
     justify-content: center;
@@ -19,16 +19,16 @@
     justify-content: space-between;
     align-items: center;
   }
-  
-  /* Logo */
-  .nav-logo a {
-    color: #fff;
-    font-family: 'Dancing Script', cursive;
-    font-size: 50px;
-    text-decoration: none;
-    letter-spacing: 1px;
-  }
-  
+/* Logo */
+.nav-logo a {
+  color: #fff;
+  font-family: 'Inspiration', cursive;
+  font-size: 52px;
+  font-weight: 200; 
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
   /* Menu */
   .nav-menu {
     list-style: none;
@@ -214,7 +214,7 @@
       background: #e3c78d;
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-      color: #364D3C ;
+      color: #395542 ;
   }
   
   /* Animations */
@@ -329,34 +329,38 @@
       padding-left: 20px;
   }
   
-  .about-text .welcome-small {
-      font-size: 1rem;
-      color: #999;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-  }
+/* --- Dòng chữ "Chào mừng bạn đến với" --- */
+.about-text .welcome-small {
+  font-family: 'Crimson Text', serif;
+  font-size: 20px;
+  color: #395542;
+  font-weight: 400; 
+  margin-bottom: 5px;
+}
+
+/* --- Dòng chữ "La Cuisine Ngọt!" --- */
+.about-text h2 {
+  font-family: 'Inspiration', cursive;
+  font-size: 42px;
+  color: #395542;
+  font-weight: 400; 
+  margin-top: 0;
+  margin-bottom: 20px;
+}
   
-  .about-text h2 {
-      font-size: 3rem;
-      font-weight: 400;
-      color: #2d5016;
-      margin-bottom: 30px;
-      font-family: 'Brush Script MT', cursive;
-      line-height: 1.2;
-  }
-  
-  .about-text .intro-paragraph {
-      font-size: 1rem;
-      color: #666;
-      line-height: 1.9;
-      margin-bottom: 25px;
-      text-align: justify;
-  }
+.about-text .intro-paragraph {
+  font-family: 'Inter', sans-serif;
+  font-size: 17px;
+  color: #395542;
+  line-height: 1.7;
+  margin-bottom: 18px;
+  text-align: justify;
+}
   
   .divider {
       width: 500px;
       height: 2px;
-      background: #032a02;
+      background: #395542;
       margin: 30px 0;
       margin-left: 60px; 
   }
@@ -458,7 +462,7 @@
   /* Định dạng ảnh */
   .ivm-img {
     width: 100%;                      /* Rộng tối đa 100% khối chứa */
-    max-width: 350px;                 /* Không quá 350px */
+    max-width: 500px;                 /* Không quá 350px */
     height: auto;                     /* Giữ tỉ lệ ảnh */
     border-radius: 18px;              /* Bo góc ảnh */
     object-fit: cover;                /* Ảnh che phủ đều khung */
@@ -469,11 +473,11 @@
   /* Cột chứa nội dung mô tả */
   .ivm-text-col {
     flex: 1 1 340px;                  /* Chiếm ít nhất 340px, co giãn được */
-    color: #2d5016;                   /* Màu chữ xanh lá */
+    color: #395542;                   /* Màu chữ xanh lá */
     display: flex;                    /* Flexbox cho layout dọc */
     flex-direction: column;           /* Cột dọc */
     justify-content: center;          /* Căn giữa theo chiều dọc */
-    margin: 0 20px;                   /* Lề trái/phải 20px */
+    margin: 0 35px;                   /* Lề trái/phải 20px */
   }
   
   /* Định dạng tiêu đề tầm nhìn & sứ mệnh */
@@ -482,17 +486,18 @@
     font-size: 1.4rem;                /* Cỡ chữ lớn */
     font-weight: 700;                 /* Đậm */
     margin-bottom: 12px;              /* Cách dưới 12px */
-    color: #2d5016;                   /* Màu xanh lá */
+    color: #395542;                   /* Màu xanh lá */
     letter-spacing: .5px;             /* Giãn chữ nhẹ */
   }
   
   /* Đường kẻ dưới tiêu đề Tầm nhìn */
-  .ivm-vision-border {
-    width: 100px;                     /* Rộng 100px */
-    height: 2.5px;                    /* Cao 2.5px */
-    background: #c5d8b1;              /* Màu xanh nhạt */
-    margin-bottom: 18px;              /* Cách dưới 18px */
-  }
+.ivm-vision-border,
+.ivm-mission-border {
+  width: 100px;
+  height: 2.5px;
+  background: #c5d8b1;
+  margin-bottom: 18px;
+}
   
   /* Định dạng văn bản mô tả */
   .ivm-vision p,
@@ -882,7 +887,7 @@
       font-size: 2.2rem;
       font-family: 'Inter', serif;
       font-weight: 600;
-      color: #274c2c;
+      color: #395542;
       margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -949,7 +954,7 @@
   .entremet-name {
       font-size: 1.1rem;
       font-weight: 500;
-      color: #274c2c;
+      color: #395542;
       margin-bottom: 15px;
       min-height: 50px;
       display: flex;
@@ -1057,7 +1062,7 @@
   .mousse-name {
       font-size: 1.1rem;
       font-weight: 500;
-      color: #274c2c;
+      color: #395542;
       margin-bottom: 15px;
       min-height: 50px;
       display: flex;
@@ -1067,7 +1072,7 @@
   .mousse-price {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #274c2c;
+      color: #395542;
   }
   
   /* Responsive */
@@ -1113,7 +1118,7 @@
   }
   .truyenthong-desc {
       text-align: center;
-      color: #3c5d3a;
+      color: #395542;
       font-size: 1.08rem;
       margin-bottom: 50px;
       max-width: 900px;
@@ -1273,7 +1278,7 @@
   .phukien-name {
       font-size: 1.05rem;
       font-weight: 500;
-      color: #274c2c;
+      color: #395542;
       margin-bottom: 12px;
       min-height: 28px;
       display: flex;
@@ -1283,7 +1288,7 @@
   .phukien-price {
       font-size: 1.1rem;
       font-weight: 600;
-      color: #274c2c;
+      color: #395542;
   }
   
   /* Responsive */
@@ -1338,7 +1343,7 @@
       z-index: 1;
       font-size: 3rem;
       font-weight: 600;
-      color: #055d05;
+      color: #395542;
       letter-spacing: 3px;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
@@ -1388,7 +1393,7 @@
   }
   
   .promotion-text strong {
-      color: #2d5016;
+      color: #395542;
       font-weight: 600;
   }
   
@@ -1503,7 +1508,7 @@
   .contact-form input:focus,
   .contact-form textarea:focus {
       outline: none;
-      border-color: #2d5016;
+      border-color: #395542;
       box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
   }
   
@@ -1514,7 +1519,7 @@
   
   .btn-submit {
       padding: 15px 40px;
-      background: #2d5016;
+      background: #395542;
       color: white;
       border: none;
       border-radius: 25px;
@@ -1526,121 +1531,114 @@
   }
   
   .btn-submit:hover {
-      background: #3d6b1f;
+      background: #395542;
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3);
   }
   
-  /* Footer */
-  .footer {
-      background: #2d5016;
-      color: white;
-      padding: 60px 0 30px;
+/* --- FOOTER --- */
+.footer {
+  background-color: #395542;
+  color: #f4f4f4;
+  padding: 40px 100px;
+  font-family: 'Crimson Text', serif;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-logo {
+  font-family: 'Inspiration', cursive;
+  font-size: 52px;
+  color: #fff;
+  font-weight: 200; 
+  text-decoration: none;
+  letter-spacing: 1px;
+
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+ width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2d5016;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.footer-right {
+  text-align: right;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.footer-right b {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
   }
-  
-  .footer-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-      gap: 40px;
+
+  .footer-right {
+    text-align: center;
   }
-  
-  .footer-left {
-      flex: 0 0 auto;
+}
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .product-container {
+    flex-direction: column;
+    align-items: center;
   }
-  
-  .footer-logo {
-    color: #fff;
-    font-family: 'Dancing Script', cursive;
-    font-size: 50px;
-    text-decoration: none;
-    letter-spacing: 1px;
+
+  .product-image img {
+    width: 100%;
   }
-  
-  .social-links {
-      display: flex;
-      gap: 15px;
+
+  .action-section {
+    align-items: center;
+    width: 100%;
   }
-  
-  .social-links a {
-   width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2d5016;
-      transition: all 0.3s ease;
+
+  .action-row {
+    flex-direction: column;
+    width: 100%;
   }
-  
-  .social-links a:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
+
+  .add-cart, .buy-now {
+    width: 100%;
   }
-  
-  .footer-locations {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-      flex: 1;
-      justify-content: flex-start;
-      align-items: flex-end;
-      text-align: right;
+
+  .product-details {
+    margin-left: 0;
+    padding: 0 24px;
   }
-  
-  .location h4 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: white;
-  }
-  
-  .location p {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.6;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 968px) {
-      .footer-content {
-          flex-direction: column;
-      }
-      
-      .footer-locations {
-          flex-direction: column;
-          gap: 30px;
-          justify-content: flex-start;
-      }
-  }
-  
-  @media (max-width: 768px) {
-      .contact-overlay {
-          padding: 40px 30px;
-      }
-      
-      .contact-overlay h2 {
-          font-size: 2rem;
-      }
-      
-      .footer-locations {
-          gap: 25px;
-      }
-  }
-  
-  @media (max-width: 480px) {
-      .contact-overlay {
-          padding: 30px 20px;
-      }
-      
-      .contact-overlay h2 {
-          font-size: 1.8rem;
-      }
-      
-      .contact-subtitle {
-          font-size: 0.9rem;
-      }
-  }
+}
