@@ -1,8 +1,4 @@
-/* staff/order.css - PHIÊN BẢN HOÀN CHỈNH, ĐÃ CĂN CHỈNH */
-
-/* =========================================
- * BỐ CỤC CHUNG
- * ========================================= */
+/* Bố cục chung cho page */
 body.order-page {
     background-color: #EDDECD;
     font-family: 'Crimson Text', serif;
@@ -35,9 +31,7 @@ body.order-page {
     border-bottom: 1.5px solid #E0D9CE;
 }
 
-/* =========================================
- * THANH TÌM KIẾM VÀ BỘ LỌC
- * ========================================= */
+/* Thanh tìm kiếm và lọc đơn hàng theo trạng thái */
 .toolbar {
     margin-bottom: 30px;
 }
@@ -74,7 +68,6 @@ body.order-page {
     align-items: center;
 }
 
-/* Thêm align-items */
 .filters label {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
@@ -85,17 +78,13 @@ body.order-page {
     cursor: pointer;
 }
 
-/* THAY ĐỔI 1: Tăng kích thước checkbox */
 .filters input[type="checkbox"] {
     width: 16px;
     height: 16px;
     cursor: pointer;
 }
 
-
-/* =========================================
- * BẢNG ĐƠN HÀNG
- * ========================================= */
+/* Bảng đơn hàng */
 .table-wrapper {
     background: white;
     border-radius: 12px;
@@ -109,24 +98,25 @@ body.order-page {
     border-collapse: collapse;
 }
 
-.orders-table th,
-.orders-table td {
+.orders-table th {
+    padding: 16px 10px;
+    text-align: left;
+    font-size: 12px;
+    border-bottom: 1.5px solid #E0D9CE;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.orders-table tbody td {
     padding: 16px 10px;
     text-align: left;
     font-size: 13px;
-    border-bottom: 1px solid #F0EDE5;
+    border-bottom: 1.5px solid #E0D9CE;
     font-family: 'Inter', sans-serif;
-    /* THAY ĐỔI 2: Căn giữa theo chiều dọc */
-    vertical-align: middle;
+    vertical-align: top;
 }
 
-.orders-table th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 12px;
-}
-
-/* THAY ĐỔI 3: Căn giữa cho cột cuối cùng */
 .orders-table th:last-child,
 .orders-table td:last-child {
     text-align: center;
@@ -134,6 +124,7 @@ body.order-page {
 
 .action-buttons {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
@@ -179,9 +170,7 @@ body.order-page {
     cursor: pointer;
 }
 
-/* =========================================
- * CHI TIẾT ĐƠN HÀNG (DẠNG XEM)
- * ========================================= */
+/* Xem chi tiết đơn hàng */
 .order-info-display {
     background-color: #FFFFFF;
     border-radius: 12px;
@@ -197,7 +186,7 @@ body.order-page {
     justify-content: space-between;
     align-items: center;
     padding: 18px 20px;
-    border-bottom: 1px solid #F0EDE5;
+    border-bottom: 1.5px solid #E0D9CE;
 }
 
 .info-row:last-child {
@@ -218,9 +207,7 @@ body.order-page {
     text-align: right;
 }
 
-/* =========================================
- * MODAL FORM NHẬP LÝ DO
- * ========================================= */
+/* Css form nhập lý do */
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -303,4 +290,101 @@ body.order-page {
 
 .btn-modal-confirm:hover {
     background-color: #d32f2f;
+}
+
+
+.orders-table,
+.order-table,
+table.orders,
+table.order-list,
+.orders-list,
+.order-list {
+    box-sizing: border-box;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td,
+.order-table th,
+.order-table td,
+table.orders th,
+table.orders td,
+table.order-list th,
+table.order-list td,
+.order-list th,
+.order-list td,
+.orders-list th,
+.orders-list td {
+    box-sizing: border-box;
+    vertical-align: middle !important;
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+    line-height: 1.2;
+}
+
+.action-buttons,
+.order-actions,
+.order-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+}
+
+.action-buttons button,
+.order-actions button,
+.order-buttons button,
+.orders-table td .btn,
+.orders-table td .button {
+    margin: 0;
+    padding: 8px 14px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.orders-table td img,
+.orders-table td svg,
+.orders-table td a,
+.orders-table td .icon,
+.order-table td img,
+.order-table td svg,
+.order-table td a {
+    vertical-align: middle;
+    display: inline-block;
+    max-height: 36px;
+}
+
+
+.orders-table td>*:where(h1, h2, h3, h4, h5, h6, p, div, button, span) {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.orders-table thead th,
+.order-table thead th {
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+@media (max-width: 640px) {
+
+    .action-buttons,
+    .order-actions,
+    .order-buttons {
+        gap: 6px;
+        align-items: center;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
 }
