@@ -3,129 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản trị - LA CUISINE NGỌT</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Quản trị - LA CUISINE VIET</title>
     <link rel="stylesheet" href="admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../pages/home/home.html">LA CUISINE NGỌT</a>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="../pages/home/home.html" class="logo">La Cuisine Ngọt</a>
+                <nav class="main-nav">
+                    <a class="nav-link" onclick="showPage('products')">Sản phẩm</a>
+                    <a class="nav-link" onclick="showPage('orders')">Đơn hàng</a>
+                    <a class="nav-link" onclick="showPage('users')">Người dùng</a>
+                    <a class="nav-link" onclick="showPage('reports')">Báo cáo</a>
+                    <a class="nav-link" onclick="showPage('promotions')">Khuyến mãi</a>
+                    <a class="nav-link" onclick="showPage('complaints')">Khiếu nại</a>
+                </nav>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="../pages/home/home.html" class="nav-link">Sản phẩm</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../pages/products/products.html" class="nav-link">Đơn hàng</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../pages/about/about.html" class="nav-link">Người dùng</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../pages/contact/contact.html" class="nav-link">Báo cáo</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../pages/contact/contact.html" class="nav-link">Khuyến mãi</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../pages/contact/contact.html" class="nav-link">Khiếu nại</a>
-                </li>
-            </ul>
-            <div class="nav-actions">
-                <div class="user-actions">
-                    <span class="admin-badge">Admin</span>
-                    <a href="../pages/home/home.html" class="btn-login">Về trang chủ</a>
-                    <a href="../pages/products/products.html" class="btn-login">Xem sản phẩm</a>
-                    <a href="../pages/home/home.html#products" class="btn-login">Xem mục Sản phẩm</a>
-                    <a href="#" onclick="logout()" class="btn-register">Đăng xuất</a>
-                </div>
-            </div>
-            <div class="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+            <div class="header-right">
+                <i class="fas fa-user icon"></i>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Admin Panel -->
-    <section class="admin-container">
-        <div class="container">
-            <div class="admin-header">
-                <h1>Bảng điều khiển quản trị</h1>
-                <p>Quản lý hệ thống bán bánh kem LA CUISINE NGỌT</p>
-            </div>
+    <!-- Page: Quản lý sản phẩm -->
+    <div id="products-page" class="page-content active">
+        <div class="content-container">
+            <h2 class="page-title">QUẢN LÝ SẢN PHẨM</h2>
             
-            <!-- Admin Navigation -->
-            <div class="admin-nav">
-                <a href="#" data-tab="dashboard" class="active">Tổng quan</a>
-                <a href="#" data-tab="products">Sản phẩm</a>
-                <a href="#" data-tab="orders">Đơn hàng</a>
-                <a href="#" data-tab="customers">Khách hàng</a>
-                <a href="#" data-tab="contacts">Liên hệ</a>
-                <a href="#" data-tab="statistics">Thống kê</a>
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="product-search" placeholder="Tìm kiếm sản phẩm..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <select class="filter-select" id="category-filter">
+                    <option value="">Tất cả danh mục</option>
+                    <option value="Entremet">Entremet</option>
+                    <option value="Mousse">Mousse</option>
+                    <option value="Truyền thống">Truyền thống</option>
+                    <option value="Phụ kiện">Phụ kiện</option>
+                </select>
+                <button class="btn-secondary" onclick="filterProducts()">Lọc</button>
+                <button class="btn-primary" onclick="showAddProductModal()">
+                    <span>Thêm sản phẩm</span>
+                    <i class="fas fa-plus"></i>
+                </button>
             </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>HÌNH</th>
+                            <th>TÊN BÁNH</th>
+                            <th>DANH MỤC</th>
+                            <th>GIÁ</th>
+                            <th>SL</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-tbody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: Quản lý đơn hàng -->
+    <div id="orders-page" class="page-content">
+        <div class="content-container">
+            <h2 class="page-title">QUẢN LÝ ĐƠN HÀNG</h2>
             
-            <!-- Admin Content -->
-            <div class="admin-content" id="adminContent">
+            <div class="order-search-section">
+                <div class="search-box-order">
+                    <input type="text" id="order-search" class="search-input" placeholder="Nhập mã đơn hàng...">
+                    <button class="search-btn-order" onclick="searchOrders()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="order-filter-tabs">
+                    <button class="order-tab-btn active" onclick="filterOrders('all')">Tất cả</button>
+                    <button class="order-tab-btn" onclick="filterOrders('preparing')">Đang chuẩn bị</button>
+                    <button class="order-tab-btn" onclick="filterOrders('shipping')">Đang giao</button>
+                    <button class="order-tab-btn" onclick="filterOrders('completed')">Hoàn thành</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table orders-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Thanh toán</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: Quản lý người dùng -->
+    <div id="users-page" class="page-content">
+        <div class="content-container">
+            <h2 class="page-title">QUẢN LÝ NGƯỜI DÙNG</h2>
+            
+            <div class="user-search-bar">
+                <div class="search-box-round">
+                    <input type="text" id="user-search" placeholder="Nhập tài khoản để tìm kiếm..." class="search-input-round">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <button class="icon-btn-round" onclick="showAddUserModal()">
+                    <i class="fas fa-user-plus"></i>
+                </button>
+            </div>
+
+            <div class="user-tabs">
+                <button class="user-tab-btn active" onclick="filterUsers('all')">Tất cả</button>
+                <button class="user-tab-btn" onclick="filterUsers('admin')">Quản trị viên</button>
+                <button class="user-tab-btn" onclick="filterUsers('staff')">Nhân viên</button>
+                <button class="user-tab-btn" onclick="filterUsers('customer')">Khách hàng</button>
+            </div>
+
+            <div class="user-cards-container" id="users-container">
+                <!-- User cards will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: Báo cáo -->
+    <div id="reports-page" class="page-content">
+        <div class="content-container">
+            <div class="report-header-section">
+                <h2 class="page-title">QUẢN LÝ BÁO CÁO</h2>
+                <div class="report-time-filters">
+                    <button class="time-filter-btn active" onclick="loadReportData('month')">Tháng</button>
+                    <button class="time-filter-btn" onclick="loadReportData('year')">Năm</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon-circle blue-bg">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">DOANH THU</div>
+                        <div class="stat-value" id="revenue-stat">23,100,000 VNĐ</div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon-circle green-bg">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">ĐƠN HÀNG</div>
+                        <div class="stat-value" id="orders-stat">45</div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon-circle orange-bg">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">ĐÃ GIAO</div>
+                        <div class="stat-value" id="delivered-stat">30</div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon-circle purple-bg">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">KHÁCH HÀNG MỚI</div>
+                        <div class="stat-value" id="customers-stat">12</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-box">
+                    <h3 class="chart-header">Doanh thu (tháng) (VNĐ)</h3>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3 class="chart-header">Sản phẩm bán chạy</h3>
+                    <canvas id="categoryChart"></canvas>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #4472C4;"></span>
+                            <span>Blanche Figures & Framboises</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #ED7D31;"></span>
+                            <span>Mousse Chanh dây</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #A5A5A5;"></span>
+                            <span>Mousse Dưa Lưới</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #FFC000;"></span>
+                            <span>Strawberry Cloud</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #5B9BD5;"></span>
+                            <span>Entremets Rose</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="top-products-section">
+                <div class="section-header-green">
+                    CHI TIẾT DOANH THU THEO SẢN PHẨM
+                </div>
+                <table class="products-report-table">
+                    <thead>
+                        <tr>
+                            <th>TÊN SẢN PHẨM</th>
+                            <th>SỐ LƯỢNG BÁN</th>
+                            <th>DOANH THU (VNĐ)</th>
+                            <th>TỶ LỆ DOANH THU (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-products-tbody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: Khuyến mãi -->
+    <div id="promotions-page" class="page-content">
+        <div class="content-container">
+            <h2 class="page-title">QUẢN LÝ KHUYẾN MÃI</h2>
+            
+            <div class="promo-form-section">
+                <h3 class="section-subtitle">Tạo khuyến mãi mới</h3>
+                <div class="promo-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Mã khuyến mãi</label>
+                        <input type="text" id="promo-code" class="form-input" placeholder="Nhập mã khuyến mãi">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tên khuyến mãi</label>
+                        <input type="text" id="promo-name" class="form-input" placeholder="Nhập tên khuyến mãi">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Loại khuyến mãi</label>
+                        <select class="form-input" id="promo-type">
+                            <option value="">Chọn loại khuyến mãi</option>
+                            <option value="percent">Giảm giá %</option>
+                            <option value="fixed">Giảm giá VNĐ</option>
+                            <option value="shipping">Miễn phí vận chuyển</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ngày bắt đầu</label>
+                        <input type="date" id="promo-start" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ngày kết thúc</label>
+                        <input type="date" id="promo-end" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Giá trị giảm</label>
+                        <input type="number" id="promo-value" class="form-input" placeholder="Nhập giá trị">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số lượng mã</label>
+                        <input type="number" id="promo-quantity" class="form-input" placeholder="Nhập số lượng">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Điều kiện áp dụng</label>
+                        <input type="text" id="promo-condition" class="form-input" placeholder="VD: Đơn hàng từ 500,000đ">
+                    </div>
+                </div>
+                <button class="btn-create-promo" onclick="createPromotion()">Tạo khuyến mãi mới</button>
+            </div>
+
+            <div class="promo-list-section">
+                <h3 class="section-subtitle">Danh sách khuyến mãi</h3>
+                <div class="promo-filter-tabs">
+                    <button class="promo-tab-btn active" onclick="filterPromotions('all')">Tất cả</button>
+                    <button class="promo-tab-btn" onclick="filterPromotions('pending')">Chưa áp dụng</button>
+                    <button class="promo-tab-btn" onclick="filterPromotions('active')">Đang áp dụng</button>
+                    <button class="promo-tab-btn" onclick="filterPromotions('expired')">Đã phát hết</button>
+                </div>
+
+                <div class="promo-cards-grid" id="promos-container">
+                    <!-- Promo cards will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: Khiếu nại -->
+    <div id="complaints-page" class="page-content">
+        <div class="content-container">
+            <h2 class="page-title">QUẢN LÝ KHIẾU NẠI</h2>
+            
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="complaint-search" class="search-input" placeholder="Tìm kiếm khiếu nại...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <button class="tab-btn active" onclick="filterComplaints('all')">Tất cả</button>
+                <button class="tab-btn" onclick="filterComplaints('pending')">Đang xử lý</button>
+                <button class="tab-btn" onclick="filterComplaints('resolved')">Đã xử lý</button>
+                <button class="tab-btn" onclick="filterComplaints('closed')">Đã đóng</button>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Mã KN</th>
+                            <th>Mã đơn hàng</th>
+                            <th>Khách hàng</th>
+                            <th>Nội dung</th>
+                            <th>Ngày tạo</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="complaints-tbody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Product -->
+    <div id="productModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 class="modal-title" id="product-modal-title">Thêm sản phẩm mới</h3>
+                <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label class="form-label">Tên sản phẩm *</label>
+                        <input type="text" id="product-name" class="form-input" placeholder="Nhập tên sản phẩm">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Danh mục *</label>
+                        <select id="product-category" class="form-input">
+                            <option value="">Chọn danh mục</option>
+                            <option value="Entremet">Entremet</option>
+                            <option value="Mousse">Mousse</option>
+                            <option value="Truyền thống">Truyền thống</option>
+                            <option value="Phụ kiện">Phụ kiện</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Giá (VNĐ) *</label>
+                        <input type="number" id="product-price" class="form-input" placeholder="Nhập giá">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số lượng *</label>
+                        <input type="number" id="product-quantity" class="form-input" placeholder="Nhập số lượng">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Mô tả</label>
+                        <textarea id="product-description" class="form-textarea" rows="4" placeholder="Nhập mô tả sản phẩm"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" id="product-id">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('productModal')">Hủy</button>
+                <button class="btn-primary" onclick="saveProduct()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Order Detail -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="order-modal-title">Chi tiết đơn hàng</h3>
+                <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="order-modal-body">
                 <!-- Content will be loaded dynamically -->
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>LA CUISINE NGỌT</h3>
-                    <p>Thương hiệu bánh kem cao cấp hàng đầu Việt Nam</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4>Liên kết</h4>
-                    <ul>
-                        <li><a href="../pages/home/home.html">Trang chủ</a></li>
-                        <li><a href="../pages/products/products.html">Sản phẩm</a></li>
-                        <li><a href="../pages/about/about.html">Về chúng tôi</a></li>
-                        <li><a href="../pages/contact/contact.html">Liên hệ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Hỗ trợ</h4>
-                    <ul>
-                        <li><a href="#">Chính sách đổi trả</a></li>
-                        <li><a href="#">Hướng dẫn đặt hàng</a></li>
-                        <li><a href="#">Câu hỏi thường gặp</a></li>
-                        <li><a href="#">Bảo mật thông tin</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Liên hệ</h4>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                        <p><i class="fas fa-phone"></i> 0123 456 789</p>
-                        <p><i class="fas fa-envelope"></i> info@lacuisinengot.com</p>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 LA CUISINE NGỌT. Tất cả quyền được bảo lưu.</p>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('orderModal')">Đóng</button>
+                <select id="order-status-select" class="form-input" style="margin-right: 8px;">
+                    <option value="preparing">Đang chuẩn bị</option>
+                    <option value="shipping">Đang giao</option>
+                    <option value="completed">Hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
+                </select>
+                <button class="btn-primary" onclick="updateOrderStatus()">Cập nhật trạng thái</button>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <script src="../assets/js/main.js"></script>
+    <!-- Modal: Add/Edit User -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="user-modal-title">Thêm người dùng mới</h3>
+                <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label class="form-label">Họ tên *</label>
+                        <input type="text" id="user-fullname" class="form-input" placeholder="Nhập họ tên">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Loại tài khoản *</label>
+                        <select id="user-role" class="form-input">
+                            <option value="customer">Khách hàng</option>
+                            <option value="staff">Nhân viên</option>
+                            <option value="admin">Quản trị viên</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại *</label>
+                        <input type="tel" id="user-phone" class="form-input" placeholder="Nhập số điện thoại">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" id="user-email" class="form-input" placeholder="Nhập email">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" id="user-address" class="form-input" placeholder="Nhập địa chỉ">
+                    </div>
+                </div>
+                <input type="hidden" id="user-id">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('userModal')">Hủy</button>
+                <button class="btn-primary" onclick="saveUser()">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Complaint Detail -->
+    <div id="complaintModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="complaint-modal-title">Chi tiết khiếu nại</h3>
+                <button class="modal-close" onclick="closeModal('complaintModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="complaint-modal-body">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('complaintModal')">Đóng</button>
+                <select id="complaint-status-select" class="form-input" style="margin-right: 8px;">
+                    <option value="pending">Chờ xử lý</option>
+                    <option value="processing">Đang xử lý</option>
+                    <option value="resolved">Đã xử lý</option>
+                    <option value="closed">Đã đóng</option>
+                </select>
+                <button class="btn-primary" onclick="updateComplaintStatus()">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Promotion Detail -->
+    <div id="promoDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="promo-detail-title">Chi tiết khuyến mãi</h3>
+                <button class="modal-close" onclick="closeModal('promoDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="promo-detail-body">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('promoDetailModal')">Đóng</button>
+                <button class="btn-primary" onclick="editPromotion()">Chỉnh sửa</button>
+            </div>
+        </div>
+    </div>
+
     <script src="admin.js"></script>
 </body>
 </html>
-
