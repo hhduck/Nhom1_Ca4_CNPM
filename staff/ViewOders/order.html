@@ -63,7 +63,7 @@
                             <th>Tổng tiền</th>
                             <th>Trạng thái</th>
                             <th>Xử lý</th>
-                            <th>Cập nhật</th>
+                            <th>Xem đơn hàng</th>
                         </tr>
                     </thead>
                     <tbody id="orders-table-body">
@@ -74,41 +74,25 @@
 
         <div class="card-container">
             <h2>Chi tiết đơn hàng</h2>
-            <div class="order-detail-grid">
-                <div class="order-info-display">
-                    <div class="info-header">
-                        <span class="header-field">Trường thông tin</span>
-                        <span class="header-content">Nội dung hiển thị</span>
+            <div class="order-info-display">
+                <div class="info-body">
+                    <div class="info-row"><label>Mã đơn hàng</label><span id="detail-order-id">Mã đơn hàng...</span>
                     </div>
-                    <div class="info-body">
-                        <div class="info-row"><label>Mã đơn hàng</label><span id="detail-order-id">Mã đơn hàng...</span>
-                        </div>
-                        <div class="info-row"><label>Tên khách hàng</label><span id="detail-customer-name">Tên khách
-                                hàng...</span></div>
-                        <div class="info-row"><label>Số điện thoại</label><span id="detail-phone">Nhập số điện
-                                thoại...</span></div>
-                        <div class="info-row"><label>Địa chỉ</label><span id="detail-address">Địa chỉ khách
-                                hàng...</span></div>
-                        <div class="info-row"><label>Ngày đặt</label><span id="detail-date">Ngày tạo đơn...</span></div>
-                        <div class="info-row"><label>Tổng tiền</label><span id="detail-total">Giá trị đơn...</span>
-                        </div>
-                        <div class="info-row"><label>Hình thức thanh toán</label><span id="detail-payment-method">(Chọn
-                                hình thức thanh toán)</span></div>
+                    <div class="info-row"><label>Tên khách hàng</label><span id="detail-customer-name">Tên khách
+                            hàng...</span></div>
+                    <div class="info-row"><label>Số điện thoại</label><span id="detail-phone">Nhập số điện
+                            thoại...</span></div>
+                    <div class="info-row"><label>Địa chỉ</label><span id="detail-address">Địa chỉ khách hàng...</span>
                     </div>
-                </div>
-                <div class="notes-section">
-                    <label for="notes">Ghi chú</label>
-                    <textarea id="notes" placeholder="Thêm ghi chú cho đơn hàng..."></textarea>
-                    <div class="notes-actions">
-                        <button class="btn-action-confirm">Xác nhận</button>
-                        <button class="btn-action-cancel">Hủy</button>
-                    </div>
+                    <div class="info-row"><label>Ngày đặt</label><span id="detail-date">Ngày tạo đơn...</span></div>
+                    <div class="info-row"><label>Tổng tiền</label><span id="detail-total">Giá trị đơn...</span></div>
+                    <div class="info-row"><label>Hình thức thanh toán</label><span id="detail-payment-method">(Chọn hình
+                            thức thanh toán)</span></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Modal nhập lý do hủy -->
     <div id="reasonModal" class="modal-backdrop">
         <div class="modal-content">
             <h3>Lý do hủy đơn hàng</h3>
@@ -120,7 +104,6 @@
         </div>
     </div>
 
-    <!-- Modal xem lý do hủy -->
     <div id="viewReasonModal" class="modal-backdrop">
         <div class="modal-content">
             <h3>Lý do hủy đơn hàng</h3>

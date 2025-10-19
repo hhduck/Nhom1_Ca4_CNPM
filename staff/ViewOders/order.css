@@ -1,4 +1,4 @@
-/* staff/order.css - PHIÊN BẢN HOÀN CHỈNH */
+/* staff/order.css - PHIÊN BẢN HOÀN CHỈNH, ĐÃ CĂN CHỈNH */
 
 /* =========================================
  * BỐ CỤC CHUNG
@@ -71,8 +71,10 @@ body.order-page {
 .filters {
     display: flex;
     gap: 25px;
+    align-items: center;
 }
 
+/* Thêm align-items */
 .filters label {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
@@ -80,7 +82,16 @@ body.order-page {
     align-items: center;
     gap: 8px;
     font-size: 14px;
+    cursor: pointer;
 }
+
+/* THAY ĐỔI 1: Tăng kích thước checkbox */
+.filters input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
 
 /* =========================================
  * BẢNG ĐƠN HÀNG
@@ -105,12 +116,20 @@ body.order-page {
     font-size: 13px;
     border-bottom: 1px solid #F0EDE5;
     font-family: 'Inter', sans-serif;
+    /* THAY ĐỔI 2: Căn giữa theo chiều dọc */
+    vertical-align: middle;
 }
 
 .orders-table th {
     font-weight: 600;
     text-transform: uppercase;
     font-size: 12px;
+}
+
+/* THAY ĐỔI 3: Căn giữa cho cột cuối cùng */
+.orders-table th:last-child,
+.orders-table td:last-child {
+    text-align: center;
 }
 
 .action-buttons {
@@ -153,37 +172,20 @@ body.order-page {
     color: #424242;
 }
 
-.update-icon {
+.view-icon {
     color: #395542;
     font-size: 18px;
     text-decoration: none;
+    cursor: pointer;
 }
 
 /* =========================================
- * CHI TIẾT ĐƠN HÀNG (2 CỘT)
+ * CHI TIẾT ĐƠN HÀNG (DẠNG XEM)
  * ========================================= */
-.order-detail-grid {
-    display: grid;
-    grid-template-columns: 2fr 1.2fr;
-    gap: 40px;
-}
-
 .order-info-display {
     background-color: #FFFFFF;
     border-radius: 12px;
     border: 1px solid #E5E0D5;
-}
-
-.info-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 14px 20px;
-    background-color: #F9F7F4;
-    border-bottom: 1.5px solid #E5E0D5;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: #7B6D5E;
 }
 
 .info-body {
@@ -214,71 +216,6 @@ body.order-page {
     font-style: italic;
     color: #555;
     text-align: right;
-}
-
-.notes-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.notes-section label {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.notes-section textarea {
-    width: 100%;
-    flex-grow: 1;
-    min-height: 150px;
-    padding: 12px;
-    border: 1px solid #D4CFC3;
-    border-radius: 6px;
-    resize: vertical;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    color: #395542;
-}
-
-.notes-section textarea:focus {
-    outline: none;
-    border-color: #364D3C;
-}
-
-.notes-actions {
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-}
-
-.notes-actions button {
-    padding: 10px 30px;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: background-color 0.2s;
-}
-
-.btn-action-confirm {
-    background-color: #364D3C;
-    color: white;
-}
-
-.btn-action-confirm:hover {
-    background-color: #2a3a2f;
-}
-
-.btn-action-cancel {
-    background-color: #F44336;
-    color: white;
-}
-
-.btn-action-cancel:hover {
-    background-color: #d32f2f;
 }
 
 /* =========================================
