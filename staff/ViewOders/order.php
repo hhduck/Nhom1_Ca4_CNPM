@@ -1,60 +1,82 @@
 <?php
+// order.php - PHIÊN BẢN CẬP NHẬT ĐẦY ĐỦ
 
-/**
- * FILE: order.php
- * MỤC ĐÍCH: Kết nối đến cơ sở dữ liệu, truy vấn tất cả đơn hàng từ bảng 'orders',
- * và trả về kết quả dưới dạng JSON để phía front-end (JavaScript) có thể sử dụng.
- */
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "la_cuisine_ngot";
 
-// BƯỚC 1: THÔNG TIN KẾT NỐI CƠ SỞ DỮ LIỆU ------------------------------------
-$servername = "localhost";        // Địa chỉ máy chủ CSDL, thường là 'localhost'
-$username = "root";               // Tên người dùng CSDL mặc định của XAMPP
-$password = "";                   // Mật khẩu CSDL mặc định của XAMPP là rỗng
-$dbname = "la_cuisine_ngot";    // Tên cơ sở dữ liệu bạn đã tạo
-
-// BƯỚC 2: TẠO KẾT NỐI ĐẾN MYSQL --------------------------------------------
-// Sử dụng MySQLi để tạo một đối tượng kết nối mới
 $conn = new mysqli($servername, $username, $password, $dbname);
-
-// Đặt bảng mã kết nối là UTF-8 để hỗ trợ tiếng Việt
 $conn->set_charset("utf8");
 
-// Kiểm tra nếu kết nối không thành công, dừng chương trình và báo lỗi
 if ($conn->connect_error) {
-    // die() sẽ dừng ngay lập tức việc thực thi mã PHP
-    die("Connection failed: " . $conn->connect_error);
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['error' => 'Connection failed: ' . $conn->connect_error]);
+    die();
 }
 
-// BƯỚC 3: TRUY VẤN VÀ LẤY DỮ LIỆU -------------------------------------------
-// Viết câu lệnh SQL để lấy tất cả các cột cần thiết từ bảng 'orders'
-// DATE_FORMAT() được dùng để định dạng ngày tháng thành 'dd/mm/yyyy' cho dễ đọc
-$sql = "SELECT id, customerName, DATE_FORMAT(orderDate, '%d/%m/%Y') AS date, total, status FROM orders";
+$method = $_SERVER['REQUEST_METHOD'];
 
-// Thực thi câu lệnh SQL và lưu kết quả vào biến $result
-$result = $conn->query($sql);
-
-// Chuẩn bị một mảng trống để chứa tất cả các đơn hàng lấy được
-$orders = array();
-
-// Kiểm tra xem câu lệnh truy vấn có trả về kết quả nào không
-if ($result && $result->num_rows > 0) {
-    // Nếu có, lặp qua từng dòng kết quả
-    // fetch_assoc() lấy một dòng kết quả dưới dạng một mảng kết hợp (tên cột => giá trị)
-    while ($row = $result->fetch_assoc()) {
-        // Thêm dòng dữ liệu (đơn hàng) vào mảng $orders
-        $orders[] = $row;
+// GET - Lấy danh sách đơn hàng
+if ($method === 'GET') {
+    $sql = "SELECT id, customerName, DATE_FORMAT(orderDate, '%d/%m/%Y') AS date, total, status, phone, address, paymentMethod, cancelReason FROM orders ORDER BY orderDate DESC";
+    $result = $conn->query($sql);
+    $orders = array();
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $orders[] = $row;
+        }
     }
+    header('Content-Type: application/json');
+    echo json_encode($orders);
+} 
+// POST - Cập nhật trạng thái đơn hàng (confirm/cancel)
+elseif ($method === 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    $orderId = $data['id'];
+    $newStatus = $data['status'];
+    $reason = isset($data['reason']) ? $data['reason'] : null;
+
+    if ($reason !== null && $newStatus === 'failed') {
+        $stmt = $conn->prepare("UPDATE orders SET status = ?, cancelReason = ? WHERE id = ?");
+        $stmt->bind_param("sss", $newStatus, $reason, $orderId);
+    } else {
+        $stmt = $conn->prepare("UPDATE orders SET status = ? WHERE id = ?");
+        $stmt->bind_param("ss", $newStatus, $orderId);
+    }
+
+    header('Content-Type: application/json');
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Cập nhật thành công']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Cập nhật thất bại: ' . $conn->error]);
+    }
+    $stmt->close();
+}
+// PUT - Cập nhật thông tin đơn hàng
+elseif ($method === 'PUT') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    $orderId = $data['id'];
+    $customerName = $data['customerName'];
+    $phone = isset($data['phone']) ? $data['phone'] : null;
+    $address = isset($data['address']) ? $data['address'] : null;
+    $total = isset($data['total']) ? $data['total'] : 0;
+    $paymentMethod = isset($data['paymentMethod']) ? $data['paymentMethod'] : null;
+
+    $stmt = $conn->prepare("UPDATE orders SET customerName = ?, phone = ?, address = ?, total = ?, paymentMethod = ? WHERE id = ?");
+    $stmt->bind_param("sssiss", $customerName, $phone, $address, $total, $paymentMethod, $orderId);
+
+    header('Content-Type: application/json');
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Cập nhật đơn hàng thành công']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Cập nhật thất bại: ' . $conn->error]);
+    }
+    $stmt->close();
 }
 
-// BƯỚC 4: TRẢ KẾT QUẢ DƯỚI DẠNG JSON ---------------------------------------
-// Thiết lập HTTP header để thông báo cho trình duyệt rằng nội dung trả về là JSON
-// Điều này rất quan trọng để hàm fetch() trong JavaScript có thể xử lý đúng
-header('Content-Type: application/json');
-
-// Sử dụng json_encode() để chuyển đổi mảng PHP ($orders) thành một chuỗi JSON
-// và in chuỗi đó ra. Đây chính là dữ liệu mà JavaScript sẽ nhận được.
-echo json_encode($orders);
-
-// BƯỚC 5: ĐÓNG KẾT NỐI -----------------------------------------------------
-// Giải phóng bộ nhớ và tài nguyên bằng cách đóng kết nối đến CSDL
 $conn->close();
+?>

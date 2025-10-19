@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cuisine Ngọt - Staff</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/animations.css">
+    <link rel="stylesheet" href="update.css">
+</head>
+
+<body class="update-page">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#">La Cuisine Ngọt</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#">Sản phẩm</a></li>
+                <li><a href="#">Người dùng</a></li>
+                <li><a href="#">Thanh toán</a></li>
+                <li><a href="#">Báo cáo</a></li>
+                <li><a href="#">Khuyến mãi</a></li>
+                <li><a href="#">Khiếu nại</a></li>
+                <li>
+                    <div class="nav-icons">
+                        <a href="#"><i class="fas fa-user"></i></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="staff-page-container">
+        <div class="card-container">
+            <h2 class="card-title">CẬP NHẬT TRẠNG THÁI</h2>
+            <div class="update-form-grid">
+                <div class="order-info-display">
+                    <div class="info-header">
+                        <span class="header-field">Trường thông tin</span>
+                        <span class="header-content">Nội dung hiển thị</span>
+                    </div>
+                    <div class="info-body">
+                        <div class="info-row"><label>Mã đơn hàng</label><span id="info-order-id">Mã đơn hàng...</span>
+                        </div>
+                        <div class="info-row"><label>Tên khách hàng</label><span id="info-customer-name">Tên khách
+                                hàng...</span></div>
+                        <div class="info-row"><label>Số điện thoại</label><span id="info-phone">Nhập số điện
+                                thoại...</span></div>
+                        <div class="info-row"><label>Địa chỉ</label><span id="info-address">Địa chỉ khách hàng...</span>
+                        </div>
+                        <div class="info-row"><label>Ngày đặt</label><span id="info-date">Ngày đặt...</span></div>
+                        <div class="info-row"><label>Tổng tiền</label><span id="info-total">Tổng tiền...</span></div>
+                        <div class="info-row"><label>Hình thức thanh toán</label><span id="info-payment-method">(Chọn
+                                hình thức thanh toán)</span></div>
+                    </div>
+                </div>
+                <form id="update-status-form" class="status-update-form">
+                    <div class="form-group">
+                        <label for="update-status">Trạng thái</label>
+                        <select id="update-status" name="status" required>
+                            <option value="" disabled selected>Chọn trạng thái</option>
+                            <option value="shipping">Đang giao</option>
+                            <option value="completed">Đã giao</option>
+                            <option value="cancelled">Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="update-notes">Ghi chú</label>
+                        <textarea id="update-notes" name="notes" placeholder="Nhập ghi chú..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-save-update">Lưu cập nhật</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card-container">
+            <h2 class="card-title">Danh sách đơn hàng</h2>
+            <div class="toolbar">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Tìm mã đơn hàng...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="status-legend">
+                    Hiển thị trạng thái hiện tại:
+                    <span class="legend-item"><span class="status-dot yellow"></span>"Đang giao"</span>
+                    <span class="legend-item"><span class="status-dot green"></span>"Đã giao"</span>
+                    <span class="legend-item"><span class="status-dot red"></span>"Đã hủy"</span>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Thời gian</th>
+                            <th>Người cập nhật</th>
+                            <th>Trạng thái đơn</th>
+                            <th>Ghi chú</th>
+                            <th>Cập nhật</th>
+                        </tr>
+                    </thead>
+                    <tbody id="update-orders-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="update.js"></script>
+</body>
+
+</html>

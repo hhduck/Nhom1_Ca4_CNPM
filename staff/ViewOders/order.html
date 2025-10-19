@@ -4,18 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách Đơn hàng</title>
+    <title>La Cuisine Ngọt - Quản Lý Đơn Hàng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/animations.css">
     <link rel="stylesheet" href="order.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap"
-        rel="stylesheet">
 </head>
-
-
 
 <body class="order-page">
     <nav class="navbar">
@@ -24,16 +23,18 @@
                 <a href="#">La Cuisine Ngọt</a>
             </div>
             <ul class="nav-menu">
-                <li><a href="#" class="nav-link active">Sản phẩm</a></li>
-                <li><a href="#" class="nav-link">Người dùng</a></li>
-                <li><a href="#" class="nav-link">Thanh toán</a></li>
-                <li><a href="#" class="nav-link">Báo cáo</a></li>
-                <li><a href="#" class="nav-link">Khuyến mãi</a></li>
-                <li><a href="#" class="nav-link">Khiếu nại</a></li>
+                <li><a href="#">Sản phẩm</a></li>
+                <li><a href="#">Người dùng</a></li>
+                <li><a href="#">Thanh toán</a></li>
+                <li><a href="#">Báo cáo</a></li>
+                <li><a href="#">Khuyến mãi</a></li>
+                <li><a href="#">Khiếu nại</a></li>
+                <li>
+                    <div class="nav-icons">
+                        <a href="#"><i class="fas fa-user"></i></a>
+                    </div>
+                </li>
             </ul>
-            <div class="nav-icons">
-                <a href="#"><i class="fas fa-user"></i></a>
-            </div>
         </div>
     </nav>
 
@@ -66,7 +67,6 @@
                         </tr>
                     </thead>
                     <tbody id="orders-table-body">
-                        <!-- Dữ liệu sẽ được load từ JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -74,64 +74,67 @@
 
         <div class="card-container">
             <h2>Chi tiết đơn hàng</h2>
-            <div id="info-tab" class="tab-content active">
-                <div class="order-detail-grid">
-                    <form id="detail-form" class="detail-form">
-                        <div class="form-row">
-                            <label>Mã đơn hàng</label>
-                            <input type="text" id="detail-order-id" readonly>
+            <div class="order-detail-grid">
+                <div class="order-info-display">
+                    <div class="info-header">
+                        <span class="header-field">Trường thông tin</span>
+                        <span class="header-content">Nội dung hiển thị</span>
+                    </div>
+                    <div class="info-body">
+                        <div class="info-row"><label>Mã đơn hàng</label><span id="detail-order-id">Mã đơn hàng...</span>
                         </div>
-                        <div class="form-row">
-                            <label>Tên khách hàng</label>
-                            <input type="text" id="detail-customer-name" readonly>
+                        <div class="info-row"><label>Tên khách hàng</label><span id="detail-customer-name">Tên khách
+                                hàng...</span></div>
+                        <div class="info-row"><label>Số điện thoại</label><span id="detail-phone">Nhập số điện
+                                thoại...</span></div>
+                        <div class="info-row"><label>Địa chỉ</label><span id="detail-address">Địa chỉ khách
+                                hàng...</span></div>
+                        <div class="info-row"><label>Ngày đặt</label><span id="detail-date">Ngày tạo đơn...</span></div>
+                        <div class="info-row"><label>Tổng tiền</label><span id="detail-total">Giá trị đơn...</span>
                         </div>
-                        <div class="form-row">
-                            <label>Số điện thoại</label>
-                            <input type="text" id="detail-phone" readonly>
-                        </div>
-                        <div class="form-row">
-                            <label>Địa chỉ</label>
-                            <input type="text" id="detail-address" readonly>
-                        </div>
-                        <div class="form-row">
-                            <label>Ngày đặt</label>
-                            <input type="text" id="detail-date" readonly>
-                        </div>
-                        <div class="form-row">
-                            <label>Tổng tiền</label>
-                            <input type="text" id="detail-total" readonly>
-                        </div>
-                        <div class="form-row">
-                            <label>Hình thức thanh toán</label>
-                            <select id="detail-payment-method">
-                                <option value="">( Chọn hình thức thanh toán )</option>
-                                <option value="cash">Tiền mặt</option>
-                                <option value="transfer">Chuyển khoản</option>
-                                <option value="ewallet">Ví điện tử</option>
-                            </select>
-                        </div>
-                    </form>
-
-                    <div class="notes-section">
-                        <label for="notes">Ghi chú</label>
-                        <textarea id="notes"></textarea>
-                        <div class="notes-actions">
-                            <button class="btn-confirm" id="btn-confirm-order">Xác nhận</button>
-                            <button class="btn-cancel" id="btn-cancel-order">Hủy</button>
-                        </div>
+                        <div class="info-row"><label>Hình thức thanh toán</label><span id="detail-payment-method">(Chọn
+                                hình thức thanh toán)</span></div>
+                    </div>
+                </div>
+                <div class="notes-section">
+                    <label for="notes">Ghi chú</label>
+                    <textarea id="notes" placeholder="Thêm ghi chú cho đơn hàng..."></textarea>
+                    <div class="notes-actions">
+                        <button class="btn-action-confirm">Xác nhận</button>
+                        <button class="btn-action-cancel">Hủy</button>
                     </div>
                 </div>
             </div>
+        </div>
+    </main>
 
-            <div id="display-tab" class="tab-content">
-                <div id="display-content">
-                    <!-- Nội dung hiện thị sẽ được load từ JavaScript -->
-                </div>
+    <!-- Modal nhập lý do hủy -->
+    <div id="reasonModal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3>Lý do hủy đơn hàng</h3>
+            <textarea id="reasonTextarea" placeholder="Nhập nội dung lý do..."></textarea>
+            <div class="modal-actions">
+                <button id="cancelModalBtn" class="btn-modal-cancel">Hủy bỏ</button>
+                <button id="confirmCancelBtn" class="btn-modal-confirm">Xác nhận hủy</button>
             </div>
         </div>
+    </div>
 
-    </main>
-    <script src = "order.js"></script>
+    <!-- Modal xem lý do hủy -->
+    <div id="viewReasonModal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3>Lý do hủy đơn hàng</h3>
+            <div id="viewReasonContent"
+                style="padding: 15px; background: white; border-radius: 6px; min-height: 100px; border: 1px solid #D4CFC3; font-family: 'Inter', sans-serif; color: #395542;">
+                Không có lý do.
+            </div>
+            <div class="modal-actions">
+                <button id="closeViewReasonBtn" class="btn-modal-cancel">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="order.js"></script>
 </body>
 
 </html>
