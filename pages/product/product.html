@@ -5,26 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Entremets Rose - La Cuisine Ngọt</title>
 
-  <!-- Font Google -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@600&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet" />
 
-  <!-- File CSS -->
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="product.css" />
 </head>
 <body>
-  <!-- HEADER -->
+
+  <!-- HEADER / NAVBAR -->
   <header class="header">
     <div class="header-container">
-      <h1 class="logo">La Cuisine Ngọt</h1>
-      <nav>
-        <ul class="nav-menu">
-          <li><a href="#">SẢN PHẨM</a></li>
-          <li><a href="#">KHUYẾN MÃI</a></li>
-          <li><a href="#">LIÊN HỆ</a></li>
-          <li><a href="#">ĐĂNG NHẬP / ĐĂNG KÍ</a></li>
-        </ul>
-      </nav>
+      <!-- LOGO -->
+      <div class="nav-logo">
+        <a href="../home/home.html">La Cuisine Ngọt</a>
+      </div>
+
+      <!-- THANH MENU CHÍNH -->
+      <ul class="nav-menu">
+        <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
+        <li><a href="../home/home.html#promo">KHUYẾN MÃI</a></li>
+        <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
+      </ul>
+
+      <!-- CỤM ICON VÀ ĐĂNG NHẬP -->
+      <div class="nav-right">
+        <div class="nav-cart-wrap">
+          <a href="../cart/cart.html" class="nav-cart">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-count">0</span>
+          </a>
+        </div>
+        <div class="nav-auth">
+          <a href="../login/login.html" class="nav-login">Đăng nhập / Đăng ký</a>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -41,17 +60,16 @@
         <h2 class="product-name">Entremets Rose</h2>
         <p class="price">650,000 VND</p>
         <p class="short-desc"><b>Hoa hồng – Vải thiều – Mâm xôi – Phô mai trắng</b></p>
-
-        <p>
-          Chiếc entremets nhẹ như một khúc nhạc Pháp, hòa quyện hương hoa hồng thanh thoát, vải thiều ngọt mát, mâm xôi chua nhẹ và mousse phô mai trắng béo mềm.
+        <p class="short-desc">
+          Chiếc entremets nhẹ như một khúc nhạc Pháp, hòa quyện hương hoa hồng thanh thoát,
+          vải thiều ngọt mát, mâm xôi chua nhẹ và mousse phô mai trắng béo mềm.
         </p>
-        <p>
-          Từng lớp bánh được sắp đặt tỉ mỉ để mang đến cảm giác trong trẻo, tinh khôi và đầy nữ tính — “nụ hồng ngọt ngào” dành cho những tâm hồn yêu sự dịu dàng.
-        </p>
+        <p class="short-desc">Từng lớp bánh được sắp đặt tỉ mỉ để mang đến cảm giác trong trẻo, tinh khôi
+          và đầy nữ tính — “nụ hồng ngọt ngào” dành cho những tâm hồn yêu sự dịu dàng</p>
 
         <p><b>Kích thước:</b> 16cm</p>
 
-        <!-- KHU VỰC NÚT HÀNH ĐỘNG -->
+        <!-- NÚT HÀNH ĐỘNG -->
         <div class="action-section">
           <div class="action-row">
             <div class="quantity-control">
@@ -66,7 +84,7 @@
       </div>
     </div>
 
-    <!-- THÔNG TIN SẢN PHẨM CHI TIẾT -->
+    <!-- THÔNG TIN CHI TIẾT -->
     <section class="product-details">
       <h3>THÔNG TIN SẢN PHẨM</h3>
 
@@ -76,7 +94,7 @@
           Một chiếc entremets tựa như đoá hồng nở trong nắng sớm — nhẹ nhàng, tinh khôi và ngọt ngào theo cách riêng. Entremets Rose là sự hòa quyện giữa vải thiều mọng nước, mâm xôi chua thanh, phô mai trắng béo mịn và hương hoa hồng phảng phất, tạo nên cảm giác trong trẻo, nữ tính và đầy tinh tế.
         </p>
         <p>
-          Bánh được hoàn thiện với những nguyên liệu tuyển chọn kỹ lưỡng: trái cây tươi nhập khẩu, kem phô mai mềm mượt, cốt bánh nướng thủ công và lớp mousse mịn nhẹ như mây. Mỗi muỗng bánh là một lát cắt của sự thanh thoát — dịu dàng mà vẫn đọng lại dư vị khó quên.
+          Bánh được hoàn thiện với những nguyên liệu tuyển chọn kỹ lưỡng: trái cây tươi nhập khẩu, kem phô mai mềm mượt, cốt bánh nướng thủ công và lớp mousse mịn nhẹ như mây.
         </p>
         <p>
           Một món bánh không chỉ để thưởng thức, mà còn để cảm nhận — như một bông hồng ngọt ngào mang hồn vị của La Cuisine Ngọt.
@@ -95,28 +113,47 @@
 
       <div class="detail-block">
         <h4>HƯỚNG DẪN SỬ DỤNG</h4>
-        <p>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C) để đảm bảo hương vị và kết cấu tốt nhất.</p>
-        <p>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</p>
-        <p>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</p>
-        <p>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</p>
+        <p>
+          Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).<br>
+          Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.<br>
+          Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.<br>
+          Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.
+        </p>
       </div>
 
       <div class="detail-block">
         <h4>PHỤ KIỆN TẶNG KÈM</h4>
-        <p>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</p>
-        <p>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</p>
-        <p>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</p>
+        <p>
+          Bộ dao, muỗng và dĩa gỗ thủ công tinh tế.<br>
+          Hộp nến nhỏ – hoàn hảo để biến bánh thành món quà.<br>
+          Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào.
+        </p>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-container">
-      <p>© 2025 La Cuisine Ngọt</p>
-      <p>Ngọt GO TO (TP.HCM) — 123 An Dương Vương, Q.5</p>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+      <h2 class="footer-logo">La Cuisine Ngọt</h2>
+      <div class="social-links">
+  <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
+    <i class="fab fa-facebook"></i>
+  </a>
+  <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
+    <i class="fab fa-instagram"></i>
+  </a>
+</div>
     </div>
-  </footer>
+
+    <div class="footer-right">
+      <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
+      <p><b>Ngọt INSIDE (Phan Rang)</b><br />85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p>
+      <p><b>Ngọt AROUND (Phan Thiết)</b><br />86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
+    </div>
+  </div>
+</footer>
 
   <!-- JS -->
   <script src="product.js"></script>
