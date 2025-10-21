@@ -1,20 +1,23 @@
 -- ============================================
--- LA CUISINE NGỌT - MYSQL DATABASE SCHEMA
--- Hệ thống quản lý bánh trực tuyến
+-- LA CUISINE NGỌT - DATABASE HOÀN CHỈNH
+-- ĐÃ SỬA LỖI DELIMITER
 -- ============================================
 
--- Create Database
-CREATE DATABASE IF NOT EXISTS lacuisinengot
+-- Xóa database cũ nếu có
+DROP DATABASE IF EXISTS lacuisinengot;
+
+-- Tạo database mới
+CREATE DATABASE lacuisinengot
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 USE lacuisinengot;
 
 -- ============================================
--- 1. USERS TABLE
+-- TẠO CÁC BẢNG
 -- ============================================
-DROP TABLE IF EXISTS Users;
 
+-- 1. USERS
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     Username VARCHAR(50) NOT NULL UNIQUE,
@@ -31,11 +34,7 @@ CREATE TABLE Users (
     LastLogin TIMESTAMP NULL
 );
 
--- ============================================
--- 2. CATEGORIES TABLE
--- ============================================
-DROP TABLE IF EXISTS Categories;
-
+-- 2. CATEGORIES
 CREATE TABLE Categories (
     CategoryID INT AUTO_INCREMENT PRIMARY KEY,
     CategoryName VARCHAR(100) NOT NULL,
@@ -49,11 +48,7 @@ CREATE TABLE Categories (
     FOREIGN KEY (ParentID) REFERENCES Categories(CategoryID)
 );
 
--- ============================================
--- 3. PRODUCTS TABLE
--- ============================================
-DROP TABLE IF EXISTS Products;
-
+-- 3. PRODUCTS
 CREATE TABLE Products (
     ProductID INT AUTO_INCREMENT PRIMARY KEY,
     ProductName VARCHAR(200) NOT NULL,
@@ -65,10 +60,10 @@ CREATE TABLE Products (
     Unit VARCHAR(20) DEFAULT 'cái',
     Status ENUM('available', 'out_of_stock', 'discontinued') DEFAULT 'available',
     ImageURL VARCHAR(255),
-    Weight DECIMAL(8,2), -- gram
+    Weight DECIMAL(8,2),
     Ingredients TEXT,
     Allergens VARCHAR(200),
-    ShelfLife INT, -- days
+    ShelfLife INT,
     StorageConditions VARCHAR(255),
     Views INT DEFAULT 0,
     SoldCount INT DEFAULT 0,
@@ -80,11 +75,7 @@ CREATE TABLE Products (
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
 
--- ============================================
--- 4. PRODUCT_IMAGES TABLE
--- ============================================
-DROP TABLE IF EXISTS ProductImages;
-
+-- 4. PRODUCT_IMAGES
 CREATE TABLE ProductImages (
     ImageID INT AUTO_INCREMENT PRIMARY KEY,
     ProductID INT NOT NULL,
@@ -96,11 +87,7 @@ CREATE TABLE ProductImages (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE
 );
 
--- ============================================
--- 5. ORDERS TABLE
--- ============================================
-DROP TABLE IF EXISTS Orders;
-
+-- 5. ORDERS
 CREATE TABLE Orders (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
     OrderCode VARCHAR(20) NOT NULL UNIQUE,
@@ -134,11 +121,7 @@ CREATE TABLE Orders (
     FOREIGN KEY (StaffID) REFERENCES Users(UserID)
 );
 
--- ============================================
--- 6. ORDER_ITEMS TABLE
--- ============================================
-DROP TABLE IF EXISTS OrderItems;
-
+-- 6. ORDER_ITEMS
 CREATE TABLE OrderItems (
     OrderItemID INT AUTO_INCREMENT PRIMARY KEY,
     OrderID INT NOT NULL,
@@ -152,11 +135,7 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
--- ============================================
--- 7. ORDER_STATUS_HISTORY TABLE
--- ============================================
-DROP TABLE IF EXISTS OrderStatusHistory;
-
+-- 7. ORDER_STATUS_HISTORY
 CREATE TABLE OrderStatusHistory (
     HistoryID INT AUTO_INCREMENT PRIMARY KEY,
     OrderID INT NOT NULL,
@@ -169,11 +148,7 @@ CREATE TABLE OrderStatusHistory (
     FOREIGN KEY (ChangedBy) REFERENCES Users(UserID)
 );
 
--- ============================================
--- 8. PROMOTIONS TABLE
--- ============================================
-DROP TABLE IF EXISTS Promotions;
-
+-- 8. PROMOTIONS
 CREATE TABLE Promotions (
     PromotionID INT AUTO_INCREMENT PRIMARY KEY,
     PromotionCode VARCHAR(50) NOT NULL UNIQUE,
@@ -183,7 +158,7 @@ CREATE TABLE Promotions (
     DiscountValue DECIMAL(10,2) DEFAULT 0,
     MinOrderValue DECIMAL(10,2) DEFAULT 0,
     MaxDiscount DECIMAL(10,2),
-    Quantity INT DEFAULT -1, -- -1 = unlimited
+    Quantity INT DEFAULT -1,
     UsedCount INT DEFAULT 0,
     UsageLimitPerUser INT DEFAULT 1,
     StartDate TIMESTAMP NOT NULL,
@@ -198,11 +173,7 @@ CREATE TABLE Promotions (
     FOREIGN KEY (CreatedBy) REFERENCES Users(UserID)
 );
 
--- ============================================
--- 9. PROMOTION_USAGE TABLE
--- ============================================
-DROP TABLE IF EXISTS PromotionUsage;
-
+-- 9. PROMOTION_USAGE
 CREATE TABLE PromotionUsage (
     UsageID INT AUTO_INCREMENT PRIMARY KEY,
     PromotionID INT NOT NULL,
@@ -215,11 +186,7 @@ CREATE TABLE PromotionUsage (
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
 );
 
--- ============================================
--- 10. COMPLAINTS TABLE
--- ============================================
-DROP TABLE IF EXISTS Complaints;
-
+-- 10. COMPLAINTS
 CREATE TABLE Complaints (
     ComplaintID INT AUTO_INCREMENT PRIMARY KEY,
     ComplaintCode VARCHAR(20) NOT NULL UNIQUE,
@@ -244,11 +211,7 @@ CREATE TABLE Complaints (
     FOREIGN KEY (AssignedTo) REFERENCES Users(UserID)
 );
 
--- ============================================
--- 11. COMPLAINT_RESPONSES TABLE
--- ============================================
-DROP TABLE IF EXISTS ComplaintResponses;
-
+-- 11. COMPLAINT_RESPONSES
 CREATE TABLE ComplaintResponses (
     ResponseID INT AUTO_INCREMENT PRIMARY KEY,
     ComplaintID INT NOT NULL,
@@ -261,11 +224,7 @@ CREATE TABLE ComplaintResponses (
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
--- ============================================
--- 12. REVIEWS TABLE
--- ============================================
-DROP TABLE IF EXISTS Reviews;
-
+-- 12. REVIEWS
 CREATE TABLE Reviews (
     ReviewID INT AUTO_INCREMENT PRIMARY KEY,
     ProductID INT NOT NULL,
@@ -287,11 +246,7 @@ CREATE TABLE Reviews (
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
 );
 
--- ============================================
--- 13. CART TABLE
--- ============================================
-DROP TABLE IF EXISTS Cart;
-
+-- 13. CART
 CREATE TABLE Cart (
     CartID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
@@ -305,11 +260,7 @@ CREATE TABLE Cart (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID) ON DELETE CASCADE
 );
 
--- ============================================
--- 14. WISHLIST TABLE
--- ============================================
-DROP TABLE IF EXISTS Wishlist;
-
+-- 14. WISHLIST
 CREATE TABLE Wishlist (
     WishlistID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
@@ -321,7 +272,7 @@ CREATE TABLE Wishlist (
 );
 
 -- ============================================
--- INDEXES
+-- TẠO INDEXES
 -- ============================================
 CREATE INDEX IX_Users_Email ON Users(Email);
 CREATE INDEX IX_Users_Role ON Users(Role);
@@ -336,24 +287,24 @@ CREATE INDEX IX_Promotions_Status ON Promotions(Status);
 CREATE INDEX IX_Complaints_Status ON Complaints(Status);
 
 -- ============================================
--- INSERT SAMPLE DATA
+-- INSERT DỮ LIỆU MẪU
 -- ============================================
 
--- Categories
+-- 1. Categories
 INSERT INTO Categories (CategoryID, CategoryName, Description, Slug, IsActive, DisplayOrder) VALUES
 (1, 'Entremet', 'Bánh entremet cao cấp với nhiều lớp hương vị tinh tế', 'entremet', TRUE, 1),
 (2, 'Mousse', 'Bánh mousse mềm mịn, nhẹ nhàng', 'mousse', TRUE, 2),
 (3, 'Truyền thống', 'Bánh truyền thống Việt Nam', 'truyen-thong', TRUE, 3),
 (4, 'Phụ kiện', 'Các phụ kiện trang trí bánh', 'phu-kien', TRUE, 4);
 
--- Users
+-- 2. Users (Password cho tất cả: password)
 INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role, Status) VALUES
 (1, 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Quản trị viên', 'admin@lacuisine.vn', '0901234567', 'admin', 'active'),
 (2, 'staff01', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nhân viên 1', 'staff01@lacuisine.vn', '0902345678', 'staff', 'active'),
 (3, 'customer01', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nguyễn Văn A', 'customer01@email.com', '0903456789', 'customer', 'active'),
 (4, 'customer02', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Thị B', 'customer02@email.com', '0904567890', 'customer', 'active');
 
--- Products
+-- 3. Products
 INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, OriginalPrice, Quantity, Status, ImageURL, Weight, ShelfLife, IsFeatured) VALUES
 (1, 'Entremets Rose', 1, 'Bánh kem kiểu Pháp cao cấp với mousse hương hồng', 650000, 750000, 15, 'available', '../../assets/images/Entremets Rose.jpg', 500, 3, TRUE),
 (2, 'Lime and Basil Entremets', 1, 'Entremet chanh và húng quế', 600000, 680000, 12, 'available', '../../assets/images/Lime and Basil Entremets.jpg', 500, 3, TRUE),
@@ -368,490 +319,121 @@ INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, Or
 (11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', '../../assets/images/Rectangle 309.png', 50, 365, FALSE),
 (12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', '../../assets/images/Rectangle 306.png', 100, 365, FALSE);
 
--- Promotions
+-- 4. Promotions
 INSERT INTO Promotions (PromotionID, PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy) VALUES
 (1, 'FREESHIP2025', 'Miễn phí vận chuyển', 'Miễn phí ship cho đơn hàng từ 500k', 'free_shipping', 0, 500000, -1, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'active', 'all', 1),
 (2, 'NEWUSER10', 'Giảm 10% cho khách mới', 'Giảm 10% cho đơn hàng đầu tiên', 'percent', 10, 300000, 100, '2025-01-01 00:00:00', '2025-06-30 23:59:59', 'active', 'new', 1),
 (3, 'GIAM50K', 'Giảm 50K', 'Giảm 50,000đ cho đơn từ 500k', 'fixed_amount', 50000, 500000, 50, '2025-01-15 00:00:00', '2025-02-15 23:59:59', 'active', 'all', 1);
 
--- ============================================
--- STORED PROCEDURES
--- ============================================
+-- 5. Orders (Đơn hàng mẫu)
+INSERT INTO Orders (OrderID, OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, Note, CreatedAt, CompletedAt) VALUES
+(1, 'ORD001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1200000, 0, 30000, 1230000, 'cod', 'paid', 'completed', NULL, DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 'ORD002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1100000, 50000, 30000, 1080000, 'bank_transfer', 'paid', 'shipping', NULL, DATE_SUB(NOW(), INTERVAL 2 DAY), NULL),
+(3, 'ORD003', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'momo', 'paid', 'preparing', 'Giao sau 15h', DATE_SUB(NOW(), INTERVAL 1 DAY), NULL),
+(4, 'ORD004', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1000000, 0, 30000, 1030000, 'cod', 'pending', 'pending', NULL, NOW(), NULL),
+(5, 'ORD005', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'bank_transfer', 'paid', 'completed', NULL, DATE_SUB(NOW(), INTERVAL 25 DAY), DATE_SUB(NOW(), INTERVAL 22 DAY));
 
--- SP: Get all products with category info
-DELIMITER //
-CREATE PROCEDURE sp_GetAllProducts(
-    IN p_Search VARCHAR(200),
-    IN p_CategoryID INT,
-    IN p_Status VARCHAR(20)
-)
-BEGIN
-    SELECT 
-        p.ProductID,
-        p.ProductName,
-        p.Description,
-        p.Price,
-        p.OriginalPrice,
-        p.Quantity,
-        p.Status,
-        p.ImageURL,
-        p.IsFeatured,
-        p.Views,
-        p.SoldCount,
-        c.CategoryID,
-        c.CategoryName
-    FROM Products p
-    LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
-    WHERE 
-        (p_Search IS NULL OR p.ProductName LIKE CONCAT('%', p_Search, '%') OR p.Description LIKE CONCAT('%', p_Search, '%') OR c.CategoryName LIKE CONCAT('%', p_Search, '%'))
-        AND (p_CategoryID IS NULL OR p.CategoryID = p_CategoryID)
-        AND (p_Status IS NULL OR p.Status = p_Status)
-    ORDER BY p.CreatedAt DESC;
-END //
-DELIMITER ;
+-- 6. Order Items (Chi tiết đơn hàng)
+INSERT INTO OrderItems (OrderID, ProductID, ProductName, ProductPrice, Quantity, Subtotal, Note) VALUES
+-- Đơn 1
+(1, 1, 'Entremets Rose', 650000, 1, 650000, NULL),
+(1, 4, 'Mousse Chanh Dây', 550000, 1, 550000, NULL),
+-- Đơn 2
+(2, 2, 'Lime and Basil Entremets', 600000, 1, 600000, NULL),
+(2, 5, 'Mousse Dưa Lưới', 550000, 1, 550000, NULL),
+-- Đơn 3
+(3, 3, 'Blanche Figues & Framboises', 650000, 1, 650000, 'Ít ngọt'),
+(3, 9, 'Strawberry Cloud Cake', 500000, 1, 500000, NULL),
+(3, 6, 'Mousse Việt Quất', 550000, 1, 550000, NULL),
+(3, 10, 'Nón Sinh Nhật', 10000, 5, 50000, NULL),
+-- Đơn 4
+(4, 7, 'Rustic Coffee Cake', 450000, 1, 450000, NULL),
+(4, 8, 'Serenity Cake', 500000, 1, 500000, NULL),
+(4, 11, 'Pháo Hoa', 55000, 1, 55000, NULL),
+-- Đơn 5
+(5, 1, 'Entremets Rose', 650000, 2, 1300000, NULL),
+(5, 4, 'Mousse Chanh Dây', 550000, 1, 550000, NULL),
+(5, 9, 'Strawberry Cloud Cake', 500000, 1, 500000, NULL);
 
--- SP: Get product by ID
-DELIMITER //
-CREATE PROCEDURE sp_GetProductByID(IN p_ProductID INT)
-BEGIN
-    SELECT 
-        p.*,
-        c.CategoryName
-    FROM Products p
-    LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
-    WHERE p.ProductID = p_ProductID;
-END //
-DELIMITER ;
+-- 7. Order Status History
+INSERT INTO OrderStatusHistory (OrderID, OldStatus, NewStatus, ChangedBy, Note, CreatedAt) VALUES
+(1, 'pending', 'confirmed', 1, 'Đơn hàng đã được xác nhận', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(1, 'confirmed', 'preparing', 1, 'Đang chuẩn bị bánh', DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(1, 'preparing', 'shipping', 1, 'Đã giao cho shipper', DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(1, 'shipping', 'completed', 1, 'Giao hàng thành công', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 'pending', 'confirmed', 1, 'Đơn hàng đã được xác nhận', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 'confirmed', 'preparing', 1, 'Đang chuẩn bị bánh', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(2, 'preparing', 'shipping', 1, 'Đang giao hàng', NOW()),
+(3, 'pending', 'confirmed', 1, 'Đơn hàng đã xác nhận', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(3, 'confirmed', 'preparing', 1, 'Đang chuẩn bị', NOW()),
+(5, 'pending', 'completed', 1, 'Đơn hàng hoàn thành', DATE_SUB(NOW(), INTERVAL 22 DAY));
 
--- SP: Get all orders with filters
-DELIMITER //
-CREATE PROCEDURE sp_GetAllOrders(
-    IN p_Search VARCHAR(200),
-    IN p_Status VARCHAR(20)
-)
-BEGIN
-    SELECT 
-        o.OrderID,
-        o.OrderCode,
-        o.CustomerID,
-        o.CustomerName,
-        o.CustomerPhone,
-        o.CustomerEmail,
-        o.ShippingAddress,
-        o.Ward,
-        o.District,
-        o.City,
-        o.TotalAmount,
-        o.DiscountAmount,
-        o.ShippingFee,
-        o.FinalAmount,
-        o.PaymentMethod,
-        o.PaymentStatus,
-        o.OrderStatus,
-        o.CreatedAt,
-        o.UpdatedAt,
-        u.FullName as CustomerFullName
-    FROM Orders o
-    LEFT JOIN Users u ON o.CustomerID = u.UserID
-    WHERE 
-        (p_Search IS NULL OR o.OrderCode LIKE CONCAT('%', p_Search, '%') OR o.CustomerName LIKE CONCAT('%', p_Search, '%'))
-        AND (p_Status IS NULL OR o.OrderStatus = p_Status)
-    ORDER BY o.CreatedAt DESC;
-END //
-DELIMITER ;
+-- 8. Reviews (Đánh giá sản phẩm)
+INSERT INTO Reviews (ProductID, UserID, OrderID, Rating, Title, Content, IsVerifiedPurchase, Status, CreatedAt) VALUES
+(1, 3, 1, 5, 'Bánh rất ngon!', 'Entremets Rose vị ngon, đẹp mắt, phục vụ tiệc sinh nhật rất ổn. Sẽ ủng hộ shop tiếp!', TRUE, 'approved', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(4, 3, 1, 4, 'Mousse chanh dây tươi mát', 'Vị chanh dây rất thơm, bánh mềm mịn. Chỉ có điều hơi chua một chút với mình.', TRUE, 'approved', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 4, 2, 5, 'Tuyệt vời!', 'Bánh Lime and Basil độc đáo, kết hợp vị chanh và húng quế rất mới lạ. Recommend!', TRUE, 'approved', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(3, 3, 5, 5, 'Chất lượng tuyệt hảo', 'Blanche Figues & Framboises xứng đáng 5 sao. Sang trọng, ngon miệng.', TRUE, 'approved', DATE_SUB(NOW(), INTERVAL 20 DAY)),
+(9, 3, 5, 4, 'Bánh dâu ngon', 'Strawberry Cloud Cake nhẹ nhàng, vị dâu tươi. Đóng gói đẹp.', TRUE, 'pending', DATE_SUB(NOW(), INTERVAL 20 DAY));
 
--- SP: Get order detail with items
-DELIMITER //
-CREATE PROCEDURE sp_GetOrderDetail(IN p_OrderID INT)
-BEGIN
-    -- Order info
-    SELECT 
-        o.*,
-        u.FullName as CustomerFullName
-    FROM Orders o
-    LEFT JOIN Users u ON o.CustomerID = u.UserID
-    WHERE o.OrderID = p_OrderID;
-    
-    -- Order items
-    SELECT 
-        oi.*,
-        p.ImageURL
-    FROM OrderItems oi
-    LEFT JOIN Products p ON oi.ProductID = p.ProductID
-    WHERE oi.OrderID = p_OrderID;
-END //
-DELIMITER ;
+-- 9. Complaints (Khiếu nại)
+INSERT INTO Complaints (ComplaintID, ComplaintCode, OrderID, CustomerID, ComplaintType, Title, Content, Status, Priority, CreatedAt, Resolution, ResolvedAt) VALUES
+(1, 'CPL001', 1, 3, 'product_quality', 'Bánh bị móp một góc', 'Khi nhận hàng, bánh Entremets Rose bị móp góc do quá trình vận chuyển. Tôi muốn được đổi sản phẩm mới.', 'processing', 'high', DATE_SUB(NOW(), INTERVAL 3 DAY), NULL, NULL),
+(2, 'CPL002', 5, 3, 'delivery', 'Giao hàng trễ 1 ngày', 'Đơn hàng được hẹn giao vào ngày 20/12 nhưng đến ngày 21/12 mới nhận được.', 'resolved', 'medium', DATE_SUB(NOW(), INTERVAL 10 DAY), 'Shop xin lỗi khách hàng và đã hoàn lại 50,000đ phí ship. Đã tặng voucher 100,000đ cho lần mua tiếp theo.', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(3, 'CPL003', 2, 4, 'service', 'Nhân viên tư vấn chưa nhiệt tình', 'Khi gọi điện hỏi về sản phẩm, nhân viên trả lời khá nhanh và không giải thích rõ ràng.', 'pending', 'low', DATE_SUB(NOW(), INTERVAL 1 DAY), NULL, NULL);
 
--- SP: Update order status
-DELIMITER //
-CREATE PROCEDURE sp_UpdateOrderStatus(
-    IN p_OrderID INT,
-    IN p_NewStatus VARCHAR(20),
-    IN p_ChangedBy INT,
-    IN p_Note VARCHAR(255)
-)
-BEGIN
-    DECLARE v_OldStatus VARCHAR(20);
-    
-    -- Get old status
-    SELECT OrderStatus INTO v_OldStatus FROM Orders WHERE OrderID = p_OrderID;
-    
-    -- Update order
-    UPDATE Orders 
-    SET 
-        OrderStatus = p_NewStatus,
-        UpdatedAt = CURRENT_TIMESTAMP,
-        ConfirmedAt = CASE WHEN p_NewStatus = 'confirmed' THEN CURRENT_TIMESTAMP ELSE ConfirmedAt END,
-        CompletedAt = CASE WHEN p_NewStatus = 'completed' THEN CURRENT_TIMESTAMP ELSE CompletedAt END,
-        CancelledAt = CASE WHEN p_NewStatus = 'cancelled' THEN CURRENT_TIMESTAMP ELSE CancelledAt END
-    WHERE OrderID = p_OrderID;
-    
-    -- Insert history
-    INSERT INTO OrderStatusHistory (OrderID, OldStatus, NewStatus, ChangedBy, Note)
-    VALUES (p_OrderID, v_OldStatus, p_NewStatus, p_ChangedBy, p_Note);
-    
-    -- Update product sold count if completed
-    IF p_NewStatus = 'completed' THEN
-        UPDATE Products p
-        INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
-        SET p.SoldCount = p.SoldCount + oi.Quantity
-        WHERE oi.OrderID = p_OrderID;
-    END IF;
-END //
-DELIMITER ;
+-- 10. Complaint Responses
+INSERT INTO ComplaintResponses (ComplaintID, UserID, UserType, Content, CreatedAt) VALUES
+(1, 1, 'admin', 'Chúng tôi xin lỗi về sự cố này. Shop sẽ giao sản phẩm mới cho bạn trong ngày hôm nay.', DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(2, 3, 'customer', 'Cảm ơn shop đã xử lý nhanh chóng!', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(2, 1, 'admin', 'Shop rất vui khi bạn hài lòng. Mong bạn tiếp tục ủng hộ!', DATE_SUB(NOW(), INTERVAL 5 DAY));
 
--- SP: Get all users
-DELIMITER //
-CREATE PROCEDURE sp_GetAllUsers(
-    IN p_Search VARCHAR(200),
-    IN p_Role VARCHAR(20)
-)
-BEGIN
-    SELECT 
-        UserID,
-        Username,
-        Email,
-        FullName,
-        Phone,
-        Address,
-        Role,
-        Status,
-        CreatedAt,
-        LastLogin
-    FROM Users
-    WHERE 
-        (p_Search IS NULL OR Username LIKE CONCAT('%', p_Search, '%') OR FullName LIKE CONCAT('%', p_Search, '%') OR Email LIKE CONCAT('%', p_Search, '%'))
-        AND (p_Role IS NULL OR Role = p_Role)
-    ORDER BY CreatedAt DESC;
-END //
-DELIMITER ;
+-- 11. Cart (Giỏ hàng mẫu)
+INSERT INTO Cart (UserID, ProductID, Quantity, Note) VALUES
+(3, 7, 1, NULL),
+(3, 12, 2, NULL),
+(4, 1, 1, 'Ít ngọt nhé shop'),
+(4, 10, 3, NULL);
 
--- SP: Get dashboard statistics
-DELIMITER //
-CREATE PROCEDURE sp_GetDashboardStats(IN p_Period VARCHAR(10))
-BEGIN
-    DECLARE v_StartDate TIMESTAMP;
-    
-    IF p_Period = 'month' THEN
-        SET v_StartDate = DATE_SUB(NOW(), INTERVAL 1 MONTH);
-    ELSE
-        SET v_StartDate = DATE_SUB(NOW(), INTERVAL 1 YEAR);
-    END IF;
-    
-    -- Revenue and orders
-    SELECT 
-        COALESCE(SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END), 0) as Revenue,
-        COUNT(*) as TotalOrders,
-        SUM(CASE WHEN OrderStatus = 'completed' THEN 1 ELSE 0 END) as DeliveredOrders,
-        (SELECT COUNT(*) FROM Users WHERE Role = 'customer' AND CreatedAt >= v_StartDate) as NewCustomers
-    FROM Orders
-    WHERE CreatedAt >= v_StartDate;
-    
-    -- Top products
-    SELECT 
-        p.ProductName,
-        SUM(oi.Quantity) as QuantitySold,
-        SUM(oi.Subtotal) as Revenue
-    FROM OrderItems oi
-    INNER JOIN Products p ON oi.ProductID = p.ProductID
-    INNER JOIN Orders o ON oi.OrderID = o.OrderID
-    WHERE o.OrderStatus = 'completed' AND o.CreatedAt >= v_StartDate
-    GROUP BY p.ProductID, p.ProductName
-    ORDER BY Revenue DESC
-    LIMIT 10;
-END //
-DELIMITER ;
+-- 12. Wishlist (Danh sách yêu thích)
+INSERT INTO Wishlist (UserID, ProductID) VALUES
+(3, 2),
+(3, 6),
+(4, 3),
+(4, 8);
 
--- SP: Get revenue chart data
-DELIMITER //
-CREATE PROCEDURE sp_GetRevenueChartData(IN p_Period VARCHAR(10))
-BEGIN
-    IF p_Period = 'month' THEN
-        -- Last 10 months
-        SELECT 
-            DATE_FORMAT(CreatedAt, '%m') as Period,
-            SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END) as Revenue
-        FROM Orders
-        WHERE CreatedAt >= DATE_SUB(NOW(), INTERVAL 10 MONTH)
-        GROUP BY DATE_FORMAT(CreatedAt, '%Y-%m'), DATE_FORMAT(CreatedAt, '%m')
-        ORDER BY DATE_FORMAT(CreatedAt, '%Y-%m');
-    ELSE
-        -- Last 12 months by year
-        SELECT 
-            YEAR(CreatedAt) as Period,
-            SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END) as Revenue
-        FROM Orders
-        WHERE CreatedAt >= DATE_SUB(NOW(), INTERVAL 5 YEAR)
-        GROUP BY YEAR(CreatedAt)
-        ORDER BY YEAR(CreatedAt);
-    END IF;
-END //
-DELIMITER ;
+-- 13. Product Images (Hình ảnh sản phẩm)
+INSERT INTO ProductImages (ProductID, ImageURL, AltText, IsPrimary, DisplayOrder) VALUES
+(1, '../../assets/images/Entremets Rose.jpg', 'Entremets Rose - View 1', TRUE, 1),
+(2, '../../assets/images/Lime and Basil Entremets.jpg', 'Lime and Basil - View 1', TRUE, 1),
+(3, '../../assets/images/Blanche Figues & Framboises.jpg', 'Blanche Figues - View 1', TRUE, 1);
 
--- SP: Get product sales chart data
-DELIMITER //
-CREATE PROCEDURE sp_GetProductSalesChartData()
-BEGIN
-    SELECT 
-        p.ProductName,
-        COUNT(oi.OrderItemID) as Quantity
-    FROM OrderItems oi
-    INNER JOIN Products p ON oi.ProductID = p.ProductID
-    INNER JOIN Orders o ON oi.OrderID = o.OrderID
-    WHERE o.OrderStatus = 'completed'
-    GROUP BY p.ProductID, p.ProductName
-    ORDER BY Quantity DESC
-    LIMIT 5;
-END //
-DELIMITER ;
+-- 14. Promotion Usage
+INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt) VALUES
+(2, 4, 2, 50000, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(3, 3, 5, 100000, DATE_SUB(NOW(), INTERVAL 25 DAY));
 
--- SP: Get all promotions
-DELIMITER //
-CREATE PROCEDURE sp_GetAllPromotions(IN p_Status VARCHAR(20))
-BEGIN
-    SELECT *
-    FROM Promotions
-    WHERE p_Status IS NULL OR Status = p_Status
-    ORDER BY CreatedAt DESC;
-END //
-DELIMITER ;
+-- Cập nhật số lần sử dụng khuyến mãi
+UPDATE Promotions SET UsedCount = 1 WHERE PromotionID = 2;
+UPDATE Promotions SET UsedCount = 1 WHERE PromotionID = 3;
 
--- SP: Get all complaints
-DELIMITER //
-CREATE PROCEDURE sp_GetAllComplaints(
-    IN p_Search VARCHAR(200),
-    IN p_Status VARCHAR(20)
-)
-BEGIN
-    SELECT 
-        c.ComplaintID,
-        c.ComplaintCode,
-        c.OrderID,
-        c.CustomerID,
-        c.ComplaintType,
-        c.Title,
-        c.Content,
-        c.Status,
-        c.Priority,
-        c.Resolution,
-        c.CompensationType,
-        c.CompensationValue,
-        c.CreatedAt,
-        c.UpdatedAt,
-        o.OrderCode,
-        u.FullName as CustomerName,
-        u.Phone as CustomerPhone,
-        o.ShippingAddress
-    FROM Complaints c
-    INNER JOIN Orders o ON c.OrderID = o.OrderID
-    INNER JOIN Users u ON c.CustomerID = u.UserID
-    WHERE 
-        (p_Search IS NULL OR c.ComplaintCode LIKE CONCAT('%', p_Search, '%') OR c.Title LIKE CONCAT('%', p_Search, '%'))
-        AND (p_Status IS NULL OR c.Status = p_Status)
-    ORDER BY c.CreatedAt DESC;
-END //
-DELIMITER ;
-
--- SP: Update complaint status
-DELIMITER //
-CREATE PROCEDURE sp_UpdateComplaintStatus(
-    IN p_ComplaintID INT,
-    IN p_NewStatus VARCHAR(20)
-)
-BEGIN
-    UPDATE Complaints
-    SET 
-        Status = p_NewStatus,
-        UpdatedAt = CURRENT_TIMESTAMP,
-        ResolvedAt = CASE WHEN p_NewStatus = 'resolved' THEN CURRENT_TIMESTAMP ELSE ResolvedAt END,
-        ClosedAt = CASE WHEN p_NewStatus = 'closed' THEN CURRENT_TIMESTAMP ELSE ClosedAt END
-    WHERE ComplaintID = p_ComplaintID;
-END //
-DELIMITER ;
+-- Cập nhật số lượng đã bán cho sản phẩm
+UPDATE Products SET SoldCount = 3 WHERE ProductID = 1;
+UPDATE Products SET SoldCount = 2 WHERE ProductID = 4;
+UPDATE Products SET SoldCount = 1 WHERE ProductID = 2;
+UPDATE Products SET SoldCount = 1 WHERE ProductID = 3;
+UPDATE Products SET SoldCount = 1 WHERE ProductID = 5;
+UPDATE Products SET SoldCount = 1 WHERE ProductID = 6;
+UPDATE Products SET SoldCount = 1 WHERE ProductID = 7;
+UPDATE Products SET SoldCount = 1 WHERE ProductID = 8;
+UPDATE Products SET SoldCount = 2 WHERE ProductID = 9;
+UPDATE Products SET SoldCount = 5 WHERE ProductID = 10;
+UPDATE Products SET SoldCount = 1 WHERE ProductID = 11;
 
 -- ============================================
--- VIEWS
+-- THÔNG BÁO HOÀN TẤT
 -- ============================================
-
--- View: Best selling products
-CREATE OR REPLACE VIEW vw_BestSellingProducts AS
-SELECT 
-    p.ProductID,
-    p.ProductName,
-    p.Price,
-    p.ImageURL,
-    c.CategoryName,
-    COALESCE(SUM(oi.Quantity), 0) as TotalSold,
-    COALESCE(SUM(oi.Subtotal), 0) as TotalRevenue,
-    COALESCE(AVG(CAST(r.Rating as DECIMAL(3,2))), 0) as AvgRating,
-    COUNT(DISTINCT r.ReviewID) as ReviewCount
-FROM Products p
-LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
-LEFT JOIN OrderItems oi ON p.ProductID = oi.ProductID
-LEFT JOIN Orders o ON oi.OrderID = o.OrderID AND o.OrderStatus = 'completed'
-LEFT JOIN Reviews r ON p.ProductID = r.ProductID AND r.Status = 'approved'
-GROUP BY p.ProductID, p.ProductName, p.Price, p.ImageURL, c.CategoryName;
-
--- View: Customer statistics
-CREATE OR REPLACE VIEW vw_CustomerStatistics AS
-SELECT 
-    u.UserID,
-    u.FullName,
-    u.Email,
-    u.Phone,
-    u.CreatedAt as RegistrationDate,
-    COUNT(o.OrderID) as TotalOrders,
-    COALESCE(SUM(o.FinalAmount), 0) as TotalSpent,
-    COALESCE(AVG(o.FinalAmount), 0) as AvgOrderValue,
-    MAX(o.CreatedAt) as LastOrderDate
-FROM Users u
-LEFT JOIN Orders o ON u.UserID = o.CustomerID AND o.OrderStatus != 'cancelled'
-WHERE u.Role = 'customer'
-GROUP BY u.UserID, u.FullName, u.Email, u.Phone, u.CreatedAt;
-
--- View: Order summary
-CREATE OR REPLACE VIEW vw_OrderSummary AS
-SELECT 
-    OrderStatus,
-    COUNT(*) as OrderCount,
-    SUM(FinalAmount) as TotalAmount,
-    AVG(FinalAmount) as AvgAmount,
-    MIN(CreatedAt) as EarliestOrder,
-    MAX(CreatedAt) as LatestOrder
-FROM Orders
-GROUP BY OrderStatus;
-
--- ============================================
--- TRIGGERS
--- ============================================
-
--- Trigger: Update product stock after order
-DELIMITER //
-CREATE TRIGGER tr_UpdateStock_AfterOrderItem
-AFTER INSERT ON OrderItems
-FOR EACH ROW
-BEGIN
-    UPDATE Products p
-    SET 
-        p.Quantity = p.Quantity - NEW.Quantity,
-        p.Status = CASE 
-            WHEN (p.Quantity - NEW.Quantity) <= 0 THEN 'out_of_stock'
-            ELSE p.Status
-        END
-    WHERE p.ProductID = NEW.ProductID;
-END //
-DELIMITER ;
-
--- Trigger: Auto-update timestamps
-DELIMITER //
-CREATE TRIGGER tr_Products_UpdateTimestamp
-BEFORE UPDATE ON Products
-FOR EACH ROW
-BEGIN
-    SET NEW.UpdatedAt = CURRENT_TIMESTAMP;
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER tr_Orders_UpdateTimestamp
-BEFORE UPDATE ON Orders
-FOR EACH ROW
-BEGIN
-    SET NEW.UpdatedAt = CURRENT_TIMESTAMP;
-END //
-DELIMITER ;
-
--- ============================================
--- FUNCTIONS
--- ============================================
-
--- Function: Calculate discount amount
-DELIMITER //
-CREATE FUNCTION fn_CalculateDiscount(
-    p_PromotionCode VARCHAR(50),
-    p_OrderAmount DECIMAL(12,2)
-)
-RETURNS DECIMAL(10,2)
-READS SQL DATA
-DETERMINISTIC
-BEGIN
-    DECLARE v_Discount DECIMAL(10,2) DEFAULT 0;
-    DECLARE v_Type VARCHAR(20);
-    DECLARE v_Value DECIMAL(10,2);
-    DECLARE v_MaxDiscount DECIMAL(10,2);
-    
-    SELECT 
-        PromotionType,
-        DiscountValue,
-        MaxDiscount
-    INTO v_Type, v_Value, v_MaxDiscount
-    FROM Promotions
-    WHERE PromotionCode = p_PromotionCode
-        AND Status = 'active'
-        AND NOW() BETWEEN StartDate AND EndDate
-        AND p_OrderAmount >= MinOrderValue
-        AND (Quantity = -1 OR UsedCount < Quantity);
-    
-    IF v_Type = 'percent' THEN
-        SET v_Discount = p_OrderAmount * v_Value / 100;
-        IF v_MaxDiscount IS NOT NULL AND v_Discount > v_MaxDiscount THEN
-            SET v_Discount = v_MaxDiscount;
-        END IF;
-    ELSEIF v_Type = 'fixed_amount' THEN
-        SET v_Discount = v_Value;
-    END IF;
-    
-    RETURN v_Discount;
-END //
-DELIMITER ;
-
--- Function: Check if promotion is valid
-DELIMITER //
-CREATE FUNCTION fn_IsPromotionValid(
-    p_PromotionCode VARCHAR(50),
-    p_OrderAmount DECIMAL(12,2)
-)
-RETURNS BOOLEAN
-READS SQL DATA
-DETERMINISTIC
-BEGIN
-    DECLARE v_IsValid BOOLEAN DEFAULT FALSE;
-    
-    IF EXISTS (
-        SELECT 1
-        FROM Promotions
-        WHERE PromotionCode = p_PromotionCode
-            AND Status = 'active'
-            AND NOW() BETWEEN StartDate AND EndDate
-            AND p_OrderAmount >= MinOrderValue
-            AND (Quantity = -1 OR UsedCount < Quantity)
-    ) THEN
-        SET v_IsValid = TRUE;
-    END IF;
-    
-    RETURN v_IsValid;
-END //
-DELIMITER ;
-
-SELECT 'Database schema, stored procedures, views, triggers, and functions created successfully!' as Message;
-
+SELECT 'Database created successfully!' as Status,
+       'lacuisinengot' as DatabaseName,
+       '14 tables' as TablesCreated,
+       'FULL DATA: 4 users, 12 products, 5 orders, 5 reviews, 3 complaints' as SampleData;
