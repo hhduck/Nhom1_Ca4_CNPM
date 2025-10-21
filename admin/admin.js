@@ -307,6 +307,23 @@ async function loadProducts(filters = {}) {
     }
 }
 
+function setupTabButtons(selector) {
+    const buttons = document.querySelectorAll(selector);
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Xóa active trong nhóm đó
+        buttons.forEach(b => b.classList.remove('active'));
+        // Gán active cho nút được nhấn
+        btn.classList.add('active');
+      });
+    });
+}
+
+  // Kích hoạt cho 2 nhóm
+setupTabButtons('.order-tab-btn');
+setupTabButtons('.user-tab-btn');
+
 async function searchProducts() {
     const searchTerm = document.getElementById('product-search').value;
     const category = document.getElementById('category-filter').value;

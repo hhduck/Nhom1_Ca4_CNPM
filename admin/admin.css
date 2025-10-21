@@ -31,9 +31,10 @@ body {
 }
 
 .logo {
+    font-family: 'Inspiration', cursive !important;
+    font-size: 52px;
     color: #fff;
-    font-family: 'Dancing Script', cursive;
-    font-size: 50px;
+    font-weight: 200; 
     text-decoration: none;
     letter-spacing: 1px;
 }
@@ -291,7 +292,7 @@ body {
     color: #991b1b;
 }
 
-/* Orders Page Styles (Hình 3) */
+/* Orders Page Styles  */
 .order-search-section {
     display: flex;
     flex-direction: column;

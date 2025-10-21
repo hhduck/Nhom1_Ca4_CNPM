@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản trị - LA CUISINE NGỌT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
 </head>
 <body>
     <!-- Header -->
@@ -24,7 +28,17 @@
                 </nav>
             </div>
             <div class="header-right">
-                <i class="fas fa-user icon"></i>
+                <div class="user-menu" style="position: relative;">
+                    <button id="userMenuBtn" class="icon-btn" aria-label="Tài khoản" style="background: none; border: none; cursor: pointer; padding: 8px;">
+                        <i class="fas fa-user icon"></i>
+                    </button>
+                    <div id="userDropdown" class="dropdown-menu" style="display:none; position:absolute; right:0; top:100%; background:#fff; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 10px 20px rgba(0,0,0,0.12); min-width:180px; z-index:1000;">
+                        <div style="padding:10px 12px; border-bottom:1px solid #f1f3f5; font-weight:600; color: #333;">Tài khoản</div>
+                        <a href="#" id="gotoAdmin" style="display:block; padding:10px 12px; color:#111; text-decoration:none; transition: background 0.2s;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='transparent'">Trang quản trị</a>
+                        <a href="../pages/home/home.html" style="display:block; padding:10px 12px; color:#111; text-decoration:none; transition: background 0.2s;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='transparent'">Trang chủ</a>
+                        <button id="logoutBtn" style="display:block; width:100%; text-align:left; padding:10px 12px; background:transparent; border:none; cursor:pointer; color:#c92a2a; transition: background 0.2s;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='transparent'">Đăng xuất</button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -507,7 +521,6 @@
             </div>
         </div>
     </div>
-
     <script src="admin.js"></script>
 </body>
 </html>

@@ -1,369 +1,209 @@
 <?php
 /**
- * Products API Endpoint
- * LA CUISINE NGỌT - Cake Selling Website
+ * Products API
+ * LA CUISINE NGỌT
+ * FILE: api/products.php
  */
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+require_once __DIR__ . '/config/database.php';
 
-require_once '../database/connection.php';
+enableCORS();
+
+$database = new Database();
+$db = $database->getConnection();
+
+$method = $_SERVER['REQUEST_METHOD'];
 
 try {
-    $method = $_SERVER['REQUEST_METHOD'];
-    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $pathParts = explode('/', trim($path, '/'));
-    
-    // Remove 'api' from path parts
-    if ($pathParts[0] === 'api') {
-        array_shift($pathParts);
-    }
-    
-    switch ($method) {
+    switch($method) {
         case 'GET':
-            handleGetProducts($pathParts);
+            if (isset($_GET['id'])) {
+                getProductById($db, $_GET['id']);
+            } else {
+                getAllProducts($db);
+            }
             break;
+            
         case 'POST':
-            handleCreateProduct($pathParts);
+            checkAdminPermission();
+            createProduct($db);
             break;
+            
         case 'PUT':
-            handleUpdateProduct($pathParts);
+            checkAdminPermission();
+            updateProduct($db);
             break;
+            
         case 'DELETE':
-            handleDeleteProduct($pathParts);
+            checkAdminPermission();
+            deleteProduct($db);
             break;
+            
         default:
-            handleError('Method not allowed', 405);
+            sendJsonResponse(false, null, "Method không được hỗ trợ", 405);
     }
-    
-} catch (Exception $e) {
+} catch(Exception $e) {
     error_log("Products API Error: " . $e->getMessage());
-    handleError('Internal server error', 500);
+    sendJsonResponse(false, null, "Có lỗi xảy ra", 500);
 }
 
-function handleGetProducts($pathParts) {
-    $productId = isset($pathParts[1]) ? (int)$pathParts[1] : null;
-    
-    if ($productId) {
-        getProductById($productId);
-    } else {
-        getProducts();
-    }
-}
-
-function getProducts() {
-    $featured = isset($_GET['featured']) ? (int)$_GET['featured'] : null;
-    $category = isset($_GET['category']) ? (int)$_GET['category'] : null;
+function getAllProducts($db) {
     $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
-    $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
-    $limit = isset($_GET['limit']) ? min(100, max(1, (int)$_GET['limit'])) : Config::ITEMS_PER_PAGE;
-    $offset = ($page - 1) * $limit;
+    $category = isset($_GET['category']) ? sanitizeInput($_GET['category']) : null;
+    $status = isset($_GET['status']) ? sanitizeInput($_GET['status']) : null;
     
-    $sql = "SELECT p.*, c.CategoryName 
-            FROM Products p 
-            INNER JOIN Categories c ON p.CategoryID = c.CategoryID 
-            WHERE p.IsActive = 1";
+    $query = "SELECT 
+                p.ProductID as product_id,
+                p.ProductName as product_name,
+                p.Description as description,
+                p.Price as price,
+                p.OriginalPrice as original_price,
+                p.Quantity as quantity,
+                p.Status as status,
+                p.ImageURL as image_url,
+                p.IsFeatured as is_featured,
+                p.Views as views,
+                p.SoldCount as sold_count,
+                c.CategoryID as category_id,
+                c.CategoryName as category_name,
+                p.CreatedAt as created_at,
+                p.UpdatedAt as updated_at
+              FROM Products p
+              LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
+              WHERE 1=1";
     
     $params = [];
     
-    if ($featured) {
-        $sql .= " AND p.IsFeatured = 1";
+    if ($search) {
+        $query .= " AND (p.ProductName LIKE :search OR p.Description LIKE :search OR c.CategoryName LIKE :search)";
+        $params[':search'] = "%$search%";
     }
     
     if ($category) {
-        $sql .= " AND p.CategoryID = ?";
-        $params[] = $category;
+        $query .= " AND c.CategoryName = :category";
+        $params[':category'] = $category;
     }
     
-    if ($search) {
-        $sql .= " AND (p.ProductName LIKE ? OR p.Description LIKE ? OR c.CategoryName LIKE ?)";
-        $searchTerm = "%{$search}%";
-        $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+    if ($status) {
+        $query .= " AND p.Status = :status";
+        $params[':status'] = $status;
     }
     
-    $sql .= " ORDER BY p.CreatedAt DESC";
+    $query .= " ORDER BY p.CreatedAt DESC";
     
-    // Get total count
-    $countSql = str_replace("SELECT p.*, c.CategoryName", "SELECT COUNT(*)", $sql);
-    $countResult = executeQuery($countSql, $params);
-    $totalItems = $countResult[0]['COUNT(*)'] ?? 0;
+    $stmt = $db->prepare($query);
+    $stmt->execute($params);
     
-    // Add pagination
-    $sql .= " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-    $params[] = $offset;
-    $params[] = $limit;
+    $products = $stmt->fetchAll();
     
-    $products = executeQuery($sql, $params);
-    
-    // Format products
-    $formattedProducts = array_map(function($product) {
-        return [
-            'id' => (int)$product['ProductID'],
-            'name' => $product['ProductName'],
-            'description' => $product['Description'],
-            'price' => (float)$product['Price'],
-            'category_id' => (int)$product['CategoryID'],
-            'category_name' => $product['CategoryName'],
-            'image_url' => $product['ImageURL'],
-            'ingredients' => $product['Ingredients'],
-            'is_featured' => (bool)$product['IsFeatured'],
-            'stock_quantity' => (int)$product['StockQuantity'],
-            'created_at' => $product['CreatedAt']
-        ];
-    }, $products);
-    
-    $response = [
-        'products' => $formattedProducts,
-        'pagination' => [
-            'current_page' => $page,
-            'per_page' => $limit,
-            'total_items' => (int)$totalItems,
-            'total_pages' => ceil($totalItems / $limit)
-        ]
-    ];
-    
-    sendSuccess($response);
+    sendJsonResponse(true, [
+        "products" => $products,
+        "total" => count($products)
+    ], "Lấy danh sách sản phẩm thành công");
 }
 
-function getProductById($productId) {
-    $sql = "SELECT p.*, c.CategoryName 
-            FROM Products p 
-            INNER JOIN Categories c ON p.CategoryID = c.CategoryID 
-            WHERE p.ProductID = ? AND p.IsActive = 1";
+function getProductById($db, $id) {
+    $query = "SELECT 
+                p.*,
+                c.CategoryName as category_name
+              FROM Products p
+              LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
+              WHERE p.ProductID = :id";
     
-    $products = executeQuery($sql, [$productId]);
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
     
-    if (empty($products)) {
-        handleError('Product not found', 404);
-    }
+    $product = $stmt->fetch();
     
-    $product = $products[0];
-    $formattedProduct = [
-        'id' => (int)$product['ProductID'],
-        'name' => $product['ProductName'],
-        'description' => $product['Description'],
-        'price' => (float)$product['Price'],
-        'category_id' => (int)$product['CategoryID'],
-        'category_name' => $product['CategoryName'],
-        'image_url' => $product['ImageURL'],
-        'ingredients' => $product['Ingredients'],
-        'is_featured' => (bool)$product['IsFeatured'],
-        'stock_quantity' => (int)$product['StockQuantity'],
-        'created_at' => $product['CreatedAt']
-    ];
-    
-    sendSuccess($formattedProduct);
-}
-
-function handleCreateProduct($pathParts) {
-    // Check if user is admin
-    if (!isAdmin()) {
-        handleError('Unauthorized', 401);
-    }
-    
-    $input = json_decode(file_get_contents('php://input'), true);
-    
-    if (!$input) {
-        handleError('Invalid JSON input', 400);
-    }
-    
-    validateRequired(['name', 'price', 'category_id'], $input);
-    
-    $name = sanitizeInput($input['name']);
-    $description = sanitizeInput($input['description'] ?? '');
-    $price = (float)$input['price'];
-    $categoryId = (int)$input['category_id'];
-    $imageUrl = sanitizeInput($input['image_url'] ?? '');
-    $ingredients = sanitizeInput($input['ingredients'] ?? '');
-    $isFeatured = (bool)($input['is_featured'] ?? false);
-    $stockQuantity = (int)($input['stock_quantity'] ?? 0);
-    
-    // Validate price
-    if ($price <= 0) {
-        handleError('Price must be greater than 0', 400);
-    }
-    
-    // Check if category exists
-    $categorySql = "SELECT CategoryID FROM Categories WHERE CategoryID = ? AND IsActive = 1";
-    $categoryResult = executeQuery($categorySql, [$categoryId]);
-    if (empty($categoryResult)) {
-        handleError('Category not found', 400);
-    }
-    
-    $sql = "INSERT INTO Products (ProductName, Description, Price, CategoryID, ImageURL, Ingredients, IsFeatured, StockQuantity) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    
-    $params = [$name, $description, $price, $categoryId, $imageUrl, $ingredients, $isFeatured, $stockQuantity];
-    
-    $result = executeNonQuery($sql, $params);
-    
-    if ($result > 0) {
-        $productId = getLastInsertId();
-        logActivity(getCurrentUserId(), 'create_product', "Created product: {$name}");
-        sendSuccess(['id' => $productId], 'Product created successfully');
+    if ($product) {
+        sendJsonResponse(true, $product, "Lấy thông tin sản phẩm thành công");
     } else {
-        handleError('Failed to create product', 500);
+        sendJsonResponse(false, null, "Không tìm thấy sản phẩm", 404);
     }
 }
 
-function handleUpdateProduct($pathParts) {
-    // Check if user is admin
-    if (!isAdmin()) {
-        handleError('Unauthorized', 401);
+function createProduct($db) {
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    if (empty($data['product_name']) || empty($data['category_id']) || empty($data['price'])) {
+        sendJsonResponse(false, null, "Thiếu thông tin bắt buộc", 400);
     }
     
-    $productId = isset($pathParts[1]) ? (int)$pathParts[1] : null;
+    $query = "INSERT INTO Products 
+              (ProductName, CategoryID, Description, Price, Quantity, Status, ImageURL) 
+              VALUES 
+              (:name, :category, :desc, :price, :quantity, :status, :image)";
     
-    if (!$productId) {
-        handleError('Product ID required', 400);
-    }
+    $stmt = $db->prepare($query);
     
-    $input = json_decode(file_get_contents('php://input'), true);
+    $stmt->bindParam(':name', sanitizeInput($data['product_name']));
+    $stmt->bindParam(':category', sanitizeInput($data['category_id']));
+    $stmt->bindParam(':desc', sanitizeInput($data['description'] ?? ''));
+    $stmt->bindParam(':price', $data['price']);
+    $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
+    $stmt->bindParam(':status', $data['status'] ?? 'available');
+    $stmt->bindParam(':image', $data['image_url'] ?? '');
     
-    if (!$input) {
-        handleError('Invalid JSON input', 400);
-    }
-    
-    // Check if product exists
-    $existingProduct = executeQuery("SELECT ProductID FROM Products WHERE ProductID = ?", [$productId]);
-    if (empty($existingProduct)) {
-        handleError('Product not found', 404);
-    }
-    
-    $updateFields = [];
-    $params = [];
-    
-    if (isset($input['name'])) {
-        $updateFields[] = "ProductName = ?";
-        $params[] = sanitizeInput($input['name']);
-    }
-    
-    if (isset($input['description'])) {
-        $updateFields[] = "Description = ?";
-        $params[] = sanitizeInput($input['description']);
-    }
-    
-    if (isset($input['price'])) {
-        $price = (float)$input['price'];
-        if ($price <= 0) {
-            handleError('Price must be greater than 0', 400);
-        }
-        $updateFields[] = "Price = ?";
-        $params[] = $price;
-    }
-    
-    if (isset($input['category_id'])) {
-        $categoryId = (int)$input['category_id'];
-        // Check if category exists
-        $categoryResult = executeQuery("SELECT CategoryID FROM Categories WHERE CategoryID = ? AND IsActive = 1", [$categoryId]);
-        if (empty($categoryResult)) {
-            handleError('Category not found', 400);
-        }
-        $updateFields[] = "CategoryID = ?";
-        $params[] = $categoryId;
-    }
-    
-    if (isset($input['image_url'])) {
-        $updateFields[] = "ImageURL = ?";
-        $params[] = sanitizeInput($input['image_url']);
-    }
-    
-    if (isset($input['ingredients'])) {
-        $updateFields[] = "Ingredients = ?";
-        $params[] = sanitizeInput($input['ingredients']);
-    }
-    
-    if (isset($input['is_featured'])) {
-        $updateFields[] = "IsFeatured = ?";
-        $params[] = (bool)$input['is_featured'];
-    }
-    
-    if (isset($input['stock_quantity'])) {
-        $updateFields[] = "StockQuantity = ?";
-        $params[] = (int)$input['stock_quantity'];
-    }
-    
-    if (isset($input['is_active'])) {
-        $updateFields[] = "IsActive = ?";
-        $params[] = (bool)$input['is_active'];
-    }
-    
-    if (empty($updateFields)) {
-        handleError('No fields to update', 400);
-    }
-    
-    $updateFields[] = "UpdatedAt = GETDATE()";
-    $params[] = $productId;
-    
-    $sql = "UPDATE Products SET " . implode(', ', $updateFields) . " WHERE ProductID = ?";
-    
-    $result = executeNonQuery($sql, $params);
-    
-    if ($result > 0) {
-        logActivity(getCurrentUserId(), 'update_product', "Updated product ID: {$productId}");
-        sendSuccess(null, 'Product updated successfully');
+    if ($stmt->execute()) {
+        sendJsonResponse(true, [
+            "product_id" => $db->lastInsertId()
+        ], "Thêm sản phẩm thành công", 201);
     } else {
-        handleError('Failed to update product', 500);
+        sendJsonResponse(false, null, "Không thể thêm sản phẩm", 500);
     }
 }
 
-function handleDeleteProduct($pathParts) {
-    // Check if user is admin
-    if (!isAdmin()) {
-        handleError('Unauthorized', 401);
-    }
+function updateProduct($db) {
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $pathParts = explode('/', trim($path, '/'));
+    $id = end($pathParts);
     
-    $productId = isset($pathParts[1]) ? (int)$pathParts[1] : null;
+    $data = json_decode(file_get_contents("php://input"), true);
     
-    if (!$productId) {
-        handleError('Product ID required', 400);
-    }
+    $query = "UPDATE Products SET 
+              ProductName = :name,
+              CategoryID = :category,
+              Description = :desc,
+              Price = :price,
+              Quantity = :quantity,
+              Status = :status
+              WHERE ProductID = :id";
     
-    // Check if product exists
-    $existingProduct = executeQuery("SELECT ProductName FROM Products WHERE ProductID = ?", [$productId]);
-    if (empty($existingProduct)) {
-        handleError('Product not found', 404);
-    }
+    $stmt = $db->prepare($query);
     
-    // Soft delete - set IsActive to 0
-    $sql = "UPDATE Products SET IsActive = 0, UpdatedAt = GETDATE() WHERE ProductID = ?";
-    $result = executeNonQuery($sql, [$productId]);
+    $stmt->bindParam(':id', $id);
+    $stmt->bindParam(':name', sanitizeInput($data['product_name']));
+    $stmt->bindParam(':category', sanitizeInput($data['category_id']));
+    $stmt->bindParam(':desc', sanitizeInput($data['description'] ?? ''));
+    $stmt->bindParam(':price', $data['price']);
+    $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
+    $stmt->bindParam(':status', $data['status'] ?? 'available');
     
-    if ($result > 0) {
-        $productName = $existingProduct[0]['ProductName'];
-        logActivity(getCurrentUserId(), 'delete_product', "Deleted product: {$productName}");
-        sendSuccess(null, 'Product deleted successfully');
+    if ($stmt->execute()) {
+        sendJsonResponse(true, null, "Cập nhật sản phẩm thành công");
     } else {
-        handleError('Failed to delete product', 500);
+        sendJsonResponse(false, null, "Không thể cập nhật sản phẩm", 500);
     }
 }
 
-// Helper functions
-function isAdmin() {
-    // This is a simplified check - in production, implement proper JWT authentication
-    $headers = getallheaders();
-    $token = $headers['Authorization'] ?? '';
-    if (strpos($token, 'Bearer ') === 0) {
-        $token = substr($token, 7);
-        if ($token === 'demo') { return true; }
-        // In production, validate JWT token here
-        return true; // simplified
+function deleteProduct($db) {
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $pathParts = explode('/', trim($path, '/'));
+    $id = end($pathParts);
+    
+    $query = "DELETE FROM Products WHERE ProductID = :id";
+    
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $id);
+    
+    if ($stmt->execute()) {
+        sendJsonResponse(true, null, "Xóa sản phẩm thành công");
+    } else {
+        sendJsonResponse(false, null, "Không thể xóa sản phẩm", 500);
     }
-    return false;
 }
-
-function getCurrentUserId() {
-    // This is a simplified implementation - in production, get from JWT token
-    return 1; // Admin user ID
-}
-
-?>
-

@@ -1,127 +1,183 @@
 <?php
 /**
- * Users API Endpoint
+ * Users API
+ * LA CUISINE NGỌT
+ * FILE: api/users.php
  */
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+require_once __DIR__ . '/config/database.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
+enableCORS();
 
-require_once '../database/connection.php';
+$database = new Database();
+$db = $database->getConnection();
+
+$method = $_SERVER['REQUEST_METHOD'];
 
 try {
-    $method = $_SERVER['REQUEST_METHOD'];
-    switch ($method) {
+    switch($method) {
         case 'GET':
-            handleListUsers();
+            checkAdminPermission();
+            getAllUsers($db);
             break;
+            
+        case 'POST':
+            checkAdminPermission();
+            createUser($db);
+            break;
+            
         case 'PUT':
-            handleUpdateUser();
+            checkAdminPermission();
+            updateUser($db);
             break;
+            
         case 'DELETE':
-            handleDeleteUser();
+            checkAdminPermission();
+            deleteUser($db);
             break;
+            
         default:
-            handleError('Method not allowed', 405);
+            sendJsonResponse(false, null, "Method không được hỗ trợ", 405);
     }
-} catch (Exception $e) {
-    error_log('Users API Error: '.$e->getMessage());
-    handleError('Internal server error', 500);
+} catch(Exception $e) {
+    error_log("Users API Error: " . $e->getMessage());
+    sendJsonResponse(false, null, "Có lỗi xảy ra", 500);
 }
 
-function requireAdmin() {
-    $headers = getallheaders();
-    $authHeader = $headers['Authorization'] ?? '';
-    if (strpos($authHeader, 'Bearer ') !== 0) { handleError('Unauthorized', 401); }
-    $token = substr($authHeader, 7);
-    $payload = validateJWT($token);
-    if (!$payload || ($payload['role'] ?? '') !== 'admin') { handleError('Unauthorized', 401); }
-    return $payload;
-}
-
-function handleListUsers() {
-    requireAdmin();
-    $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
-    $limit = isset($_GET['limit']) ? min(100, max(1, (int)$_GET['limit'])) : Config::ITEMS_PER_PAGE;
-    $offset = ($page - 1) * $limit;
-    $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : '';
-    $status = isset($_GET['status']) ? sanitizeInput($_GET['status']) : '';
-
-    $sql = "SELECT UserID, Username, Email, FullName, Phone, Address, Role, IsActive, CreatedAt, UpdatedAt FROM Users WHERE 1=1";
+function getAllUsers($db) {
+    $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
+    $role = isset($_GET['role']) ? sanitizeInput($_GET['role']) : null;
+    
+    $query = "SELECT 
+                UserID as id,
+                Username as username,
+                Email as email,
+                FullName as full_name,
+                Phone as phone,
+                Address as address,
+                Role as role,
+                Status as is_active,
+                Avatar as avatar,
+                CreatedAt as created_at,
+                LastLogin as last_login
+              FROM Users
+              WHERE 1=1";
+    
     $params = [];
+    
     if ($search) {
-        $sql .= " AND (Username LIKE ? OR Email LIKE ? OR FullName LIKE ?)";
-        $term = "%{$search}%";
-        $params = array_merge($params, [$term, $term, $term]);
+        $query .= " AND (Username LIKE :search OR FullName LIKE :search OR Email LIKE :search)";
+        $params[':search'] = "%$search%";
     }
-    if ($status !== '') {
-        $sql .= " AND IsActive = ?";
-        $params[] = ($status === 'active') ? 1 : 0;
+    
+    if ($role) {
+        $query .= " AND Role = :role";
+        $params[':role'] = $role;
     }
-    $sql .= " ORDER BY CreatedAt DESC";
-
-    $countSql = "SELECT COUNT(*) as total FROM (".$sql.") t";
-    $total = executeQuery($countSql, $params)[0]['total'] ?? 0;
-
-    $sql .= " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-    $params[] = $offset; $params[] = $limit;
-    $users = executeQuery($sql, $params);
-
-    $formatted = array_map(function($u){
-        return [
-            'id' => (int)$u['UserID'],
-            'username' => $u['Username'],
-            'email' => $u['Email'],
-            'full_name' => $u['FullName'],
-            'phone' => $u['Phone'],
-            'address' => $u['Address'],
-            'role' => $u['Role'],
-            'is_active' => (bool)$u['IsActive'],
-            'created_at' => $u['CreatedAt'],
-            'updated_at' => $u['UpdatedAt']
-        ];
-    }, $users);
-
-    sendSuccess(['users' => $formatted, 'pagination' => [
-        'current_page' => $page,
-        'per_page' => $limit,
-        'total_items' => (int)$total,
-        'total_pages' => ceil($total / $limit)
-    ]]);
+    
+    $query .= " ORDER BY CreatedAt DESC";
+    
+    $stmt = $db->prepare($query);
+    $stmt->execute($params);
+    
+    $users = $stmt->fetchAll();
+    
+    sendJsonResponse(true, [
+        "users" => $users,
+        "total" => count($users)
+    ], "Lấy danh sách người dùng thành công");
 }
 
-function handleUpdateUser() {
-    $admin = requireAdmin();
-    $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    if (!$id) { handleError('User ID required', 400); }
-    $input = json_decode(file_get_contents('php://input'), true);
-    if (!$input) { handleError('Invalid JSON input', 400); }
-    $fields = [];
-    $params = [];
-    if (isset($input['full_name'])) { $fields[] = 'FullName = ?'; $params[] = sanitizeInput($input['full_name']); }
-    if (isset($input['phone'])) { $fields[] = 'Phone = ?'; $params[] = sanitizeInput($input['phone']); }
-    if (isset($input['address'])) { $fields[] = 'Address = ?'; $params[] = sanitizeInput($input['address']); }
-    if (isset($input['role'])) { $fields[] = 'Role = ?'; $params[] = sanitizeInput($input['role']); }
-    if (isset($input['is_active'])) { $fields[] = 'IsActive = ?'; $params[] = (bool)$input['is_active']; }
-    if (empty($fields)) { handleError('No fields to update', 400); }
-    $fields[] = 'UpdatedAt = GETDATE()';
-    $params[] = $id;
-    $sql = 'UPDATE Users SET '.implode(', ', $fields).' WHERE UserID = ?';
-    $result = executeNonQuery($sql, $params);
-    if ($result > 0) { sendSuccess(null, 'User updated successfully'); } else { handleError('Failed to update user', 500); }
+function createUser($db) {
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    if (empty($data['fullname']) || empty($data['email'])) {
+        sendJsonResponse(false, null, "Thiếu thông tin bắt buộc", 400);
+    }
+    
+    $checkQuery = "SELECT UserID FROM Users WHERE Email = :email";
+    $checkStmt = $db->prepare($checkQuery);
+    $checkStmt->bindParam(':email', $data['email']);
+    $checkStmt->execute();
+    
+    if ($checkStmt->fetch()) {
+        sendJsonResponse(false, null, "Email đã tồn tại", 400);
+    }
+    
+    $username = explode('@', $data['email'])[0];
+    $defaultPassword = password_hash('123456', PASSWORD_DEFAULT);
+    
+    $query = "INSERT INTO Users 
+              (Username, Email, PasswordHash, FullName, Phone, Address, Role, Status) 
+              VALUES 
+              (:username, :email, :password, :fullname, :phone, :address, :role, 'active')";
+    
+    $stmt = $db->prepare($query);
+    
+    $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':email', sanitizeInput($data['email']));
+    $stmt->bindParam(':password', $defaultPassword);
+    $stmt->bindParam(':fullname', sanitizeInput($data['fullname']));
+    $stmt->bindParam(':phone', sanitizeInput($data['phone'] ?? ''));
+    $stmt->bindParam(':address', sanitizeInput($data['address'] ?? ''));
+    $stmt->bindParam(':role', $data['role'] ?? 'customer');
+    
+    if ($stmt->execute()) {
+        sendJsonResponse(true, [
+            "user_id" => $db->lastInsertId(),
+            "default_password" => "123456"
+        ], "Thêm người dùng thành công", 201);
+    } else {
+        sendJsonResponse(false, null, "Không thể thêm người dùng", 500);
+    }
 }
 
-function handleDeleteUser() {
-    requireAdmin();
-    $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
-    if (!$id) { handleError('User ID required', 400); }
-    $result = executeNonQuery('DELETE FROM Users WHERE UserID = ?', [$id]);
-    if ($result > 0) { sendSuccess(null, 'User deleted successfully'); } else { handleError('Failed to delete user', 500); }
+function updateUser($db) {
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $pathParts = explode('/', trim($path, '/'));
+    $id = end($pathParts);
+    
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    $query = "UPDATE Users SET 
+              FullName = :fullname,
+              Phone = :phone,
+              Address = :address,
+              Role = :role
+              WHERE UserID = :id";
+    
+    $stmt = $db->prepare($query);
+    
+    $stmt->bindParam(':id', $id);
+    $stmt->bindParam(':fullname', sanitizeInput($data['fullname']));
+    $stmt->bindParam(':phone', sanitizeInput($data['phone'] ?? ''));
+    $stmt->bindParam(':address', sanitizeInput($data['address'] ?? ''));
+    $stmt->bindParam(':role', $data['role']);
+    
+    if ($stmt->execute()) {
+        sendJsonResponse(true, null, "Cập nhật người dùng thành công");
+    } else {
+        sendJsonResponse(false, null, "Không thể cập nhật người dùng", 500);
+    }
 }
 
-?>
-
-
+function deleteUser($db) {
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $pathParts = explode('/', trim($path, '/'));
+    $id = end($pathParts);
+    
+    if ($id == 1) {
+        sendJsonResponse(false, null, "Không thể xóa tài khoản admin chính", 403);
+    }
+    
+    $query = "DELETE FROM Users WHERE UserID = :id";
+    
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $id);
+    
+    if ($stmt->execute()) {
+        sendJsonResponse(true, null, "Xóa người dùng thành công");
+    } else {
+        sendJsonResponse(false, null, "Không thể xóa người dùng", 500);
+    }
+}
