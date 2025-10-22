@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cuisine Ngọt - Xử lý Yêu cầu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/animations.css">
+    
+    <link rel="stylesheet" href="order.css">
+    
+    <link rel="stylesheet" href="complaint.css">
+</head>
+
+<body class="order-page">
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#">La Cuisine Ngọt</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#">Sản phẩm</a></li>
+                <li><a href="#">Người dùng</a></li>
+                <li><a href="#">Thanh toán</a></li>
+                <li><a href="#">Báo cáo</a></li>
+                <li><a href="#">Khuyến mãi</a></li>
+                <li><a href="#">Khiếu nại</a></li>
+                <li>
+                    <div class="nav-icons">
+                        <a href="#"><i class="fas fa-user"></i></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="staff-page-container">
+            
+        <h2 class="complaint-title">TIẾP NHẬN & XỬ LÝ YÊU CẦU KHÁCH HÀNG</h2>
+        
+        <div class="toolbar">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Tìm kiếm...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+
+        <h3 class="form-section-title">CHI TIẾT YÊU CẦU</h3>
+        
+        <form id="complaint-form">
+            
+            <div class="form-columns">
+                
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="customerName">Họ tên khách hàng:</label>
+                        <input type="text" id="customerName" value="NGUYỄN VĂN A" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Số điện thoại:</label>
+                        <input type="text" id="phoneNumber" value="0123456789" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="complaintType">Loại khiếu nại / Yêu cầu:</label>
+                        <select id="complaintType">
+                            <option value="delivery_late" selected>Giao hàng chậm</option>
+                            <option value="product_quality">Chất lượng sản phẩm</option>
+                            <option value="service">Thái độ phục vụ</option>
+                            <option value="other">Khác</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="complaintDetails">Nội dung chi tiết:</label>
+                        <textarea id="complaintDetails" placeholder="Nội dung chi tiết khiếu nại / yêu cầu"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="internalNote">Ghi chú xử lý nội bộ:</label>
+                        <input type="text" id="internalNote" placeholder="Nhập ghi chú...">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Trạng thái xử lý:</label>
+                        <select id="status">
+                            <option value="processing" selected>Đang xử lý</option>
+                            <option value="pending">Chờ xử lý</option>
+                            <option value="resolved">Đã giải quyết</option>
+                            <option value="closed">Đóng</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignedStaff">Nhân viên phụ trách:</label>
+                        <input type="text" id="assignedStaff" placeholder="Nhập tên nhân viên...">
+                    </div>
+                    <div class="form-group-button">
+                        <button type="button" class="btn btn-secondary">Phản hồi gửi lại khách</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary">Cập nhật tiến độ</button>
+                <button type="button" class="btn btn-secondary">Trả lời khách hàng</button>
+                <button type="submit" class="btn btn-primary-green">Lưu và đóng</button>
+            </div>
+            
+        </form>
+            
+    </main>
+
+</body>
+</html>

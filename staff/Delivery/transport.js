@@ -14,9 +14,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const existingReturnReasonDiv = document.getElementById('existingReturnReason');
     const returnToWarehouseBtn = document.getElementById('returnToWarehouseBtn');
 
-    // === Cấu hình (Thay đổi theo tên thư mục dự án của bạn trong htdocs) ===
-    // VD: /my_project_folder/api
-    const BASE_API_URL = '/NHOM1_CA4_CNPM/api'; // Đã đổi thành tên dự án của bạn
+    // === Cấu hình API ===
+    // Các file .php được đặt ngang hàng với file transport.html
+    const API_ENDPOINTS = {
+        getOrder: 'get_order.php',
+        confirmDelivery: 'confirm_delivery.php',
+        returnOrder: 'return_order.php'
+    };
 
     // === Trạng thái ban đầu của giao diện ===
     if (reasonTextArea) reasonTextArea.style.display = 'none';
@@ -25,36 +29,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // === Hàm để tải dữ liệu đơn hàng từ Backend và cập nhật giao diện ===
     async function loadOrderDetails(orderId) {
         if (!orderId) {
-            // Không làm gì nếu không có orderId, hoặc hiển thị một thông báo
-            // console.log('Không có mã đơn hàng để tải. Vui lòng cung cấp orderId qua URL.');
-            // Bạn có thể xóa hết dữ liệu cũ nếu muốn
+            // Reset giao diện nếu không có orderId
             if (orderIdInput) orderIdInput.value = '';
             if (customerNameInput) customerNameInput.value = '';
             if (phoneNumberInput) phoneNumberInput.value = '';
             if (deliveryAddressInput) deliveryAddressInput.value = '';
             if (deliveryDateInput) deliveryDateInput.value = '';
             if (noteInput) noteInput.value = '';
+
             // Reset trạng thái nút
-            if (confirmDeliveryBtn) {
-                confirmDeliveryBtn.disabled = true;
-                confirmDeliveryBtn.textContent = 'XÁC NHẬN GIAO HÀNG';
-                confirmDeliveryBtn.style.backgroundColor = '#6c757d';
-            }
-            if (returnOrderBtn) {
-                returnOrderBtn.disabled = true;
-                returnOrderBtn.textContent = 'TRẢ HÀNG';
-                returnOrderBtn.style.backgroundColor = '#6c757d';
-            }
-            if (returnToWarehouseBtn) {
-                returnToWarehouseBtn.disabled = true;
-                returnToWarehouseBtn.textContent = 'HOÀN HÀNG VỀ KHO';
-                returnToWarehouseBtn.style.backgroundColor = '#a0a0a0';
-            }
+            resetButtons();
             return;
         }
 
         try {
-            const response = await fetch(`${BASE_API_URL}/get_order.php?orderId=${orderId}`);
+            const response = await fetch(`${API_ENDPOINTS.getOrder}?orderId=${orderId}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Failed to fetch order details');
@@ -71,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (phoneNumberInput) phoneNumberInput.value = order.phoneNumber;
             if (deliveryAddressInput) deliveryAddressInput.value = order.deliveryAddress;
             if (deliveryDateInput) deliveryDateInput.value = order.deliveryDate;
-            if (noteInput) noteInput.value = order.note;
+            if (noteInput) noteInput.value = order.note || '';
 
             // --- Cập nhật giao diện dựa trên trạng thái đơn hàng ---
             if (order.status === 'Returned' && order.returnReason) {
@@ -94,10 +83,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Trạng thái nút "XÁC NHẬN GIAO HÀNG"
-            if (order.status === 'Confirmed' || order.status === 'Delivered' || order.status === 'Returned') {
+            // SỬA LỖI LOGIC: Chỉ disable khi ĐÃ GIAO hoặc ĐÃ TRẢ
+            if (order.status === 'Delivered' || order.status === 'Returned') {
                 if (confirmDeliveryBtn) {
                     confirmDeliveryBtn.disabled = true;
-                    confirmDeliveryBtn.textContent = 'ĐÃ XÁC NHẬN GIAO HÀNG';
+                    confirmDeliveryBtn.textContent = (order.status === 'Delivered') ? 'ĐÃ XÁC NHẬN GIAO HÀNG' : 'ĐƠN ĐÃ TRẢ';
                     confirmDeliveryBtn.style.backgroundColor = '#6c757d';
                 }
             } else {
@@ -125,15 +115,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (returnToWarehouseBtn) {
                         returnToWarehouseBtn.disabled = false;
                         returnToWarehouseBtn.textContent = 'HOÀN HÀNG VỀ KHO';
-                        returnToWarehouseBtn.style.backgroundColor = '#6c757d';
+                        returnToWarehouseBtn.style.backgroundColor = '#395542';
                     }
                 }
             } else {
-                if (returnOrderBtn) {
-                    returnOrderBtn.disabled = false;
-                    returnOrderBtn.textContent = 'TRẢ HÀNG';
-                    returnOrderBtn.style.backgroundColor = '#dc3545';
+                // Nếu đơn đã giao thì cũng không cho trả hàng nữa
+                if (order.status === 'Delivered') {
+                    if (returnOrderBtn) {
+                        returnOrderBtn.disabled = true;
+                        returnOrderBtn.textContent = 'TRẢ HÀNG';
+                        returnOrderBtn.style.backgroundColor = '#6c757d';
+                    }
+                } else {
+                    if (returnOrderBtn) {
+                        returnOrderBtn.disabled = false;
+                        returnOrderBtn.textContent = 'TRẢ HÀNG';
+                        returnOrderBtn.style.backgroundColor = '#dc3545';
+                    }
                 }
+
                 if (returnToWarehouseBtn) {
                     returnToWarehouseBtn.disabled = true;
                     returnToWarehouseBtn.style.backgroundColor = '#a0a0a0';
@@ -143,44 +143,47 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Lỗi khi tải thông tin đơn hàng:', error);
             alert('Không thể tải thông tin đơn hàng: ' + error.message);
+
             // Clear all fields on error
-            if (orderIdInput) orderIdInput.value = orderId; // Giữ lại ID đã nhập
+            if (orderIdInput) orderIdInput.value = orderId;
             if (customerNameInput) customerNameInput.value = '';
             if (phoneNumberInput) phoneNumberInput.value = '';
             if (deliveryAddressInput) deliveryAddressInput.value = '';
             if (deliveryDateInput) deliveryDateInput.value = '';
             if (noteInput) noteInput.value = '';
-            // Reset nút về trạng thái disabled để tránh thao tác lỗi
-            if (confirmDeliveryBtn) {
-                confirmDeliveryBtn.disabled = true;
-                confirmDeliveryBtn.textContent = 'XÁC NHẬN GIAO HÀNG';
-                confirmDeliveryBtn.style.backgroundColor = '#6c757d';
-            }
-            if (returnOrderBtn) {
-                returnOrderBtn.disabled = true;
-                returnOrderBtn.textContent = 'TRẢ HÀNG';
-                returnOrderBtn.style.backgroundColor = '#6c757d';
-            }
-            if (returnToWarehouseBtn) {
-                returnToWarehouseBtn.disabled = true;
-                returnToWarehouseBtn.textContent = 'HOÀN HÀNG VỀ KHO';
-                returnToWarehouseBtn.style.backgroundColor = '#a0a0a0';
-            }
+
+            resetButtons();
+        }
+    }
+
+    function resetButtons() {
+        if (confirmDeliveryBtn) {
+            confirmDeliveryBtn.disabled = true;
+            confirmDeliveryBtn.textContent = 'XÁC NHẬN GIAO HÀNG';
+            confirmDeliveryBtn.style.backgroundColor = '#6c757d';
+        }
+        if (returnOrderBtn) {
+            returnOrderBtn.disabled = true;
+            returnOrderBtn.textContent = 'TRẢ HÀNG';
+            returnOrderBtn.style.backgroundColor = '#6c757d';
+        }
+        if (returnToWarehouseBtn) {
+            returnToWarehouseBtn.disabled = true;
+            returnToWarehouseBtn.textContent = 'HOÀN HÀNG VỀ KHO';
+            returnToWarehouseBtn.style.backgroundColor = '#a0a0a0';
         }
     }
 
     // === Xử lý khi trang được tải ===
     const urlParams = new URLSearchParams(window.location.search);
-    const initialOrderId = urlParams.get('orderId'); // Bỏ giá trị mặc định 'DD003'
+    const initialOrderId = urlParams.get('orderId');
 
     if (orderIdInput && initialOrderId) {
-        orderIdInput.value = initialOrderId; // Hiển thị mã đơn hàng từ URL
-        loadOrderDetails(initialOrderId); // Tải chi tiết đơn hàng nếu có ID
+        orderIdInput.value = initialOrderId;
+        loadOrderDetails(initialOrderId);
     } else {
-        // console.log('Không có mã đơn hàng trên URL. Vui lòng truyền orderId, ví dụ: ?orderId=DD003');
-        // Vẫn gọi loadOrderDetails với null/undefined để nó reset giao diện
         loadOrderDetails(null);
-        alert('Vui lòng cung cấp mã đơn hàng qua URL để xem chi tiết. Ví dụ: ?orderId=DD003');
+        alert('Vui lòng cung cấp mã đơn hàng qua URL để xem chi tiết.\nVí dụ: transport.html?orderId=ORD001');
     }
 
     // === Xử lý sự kiện click cho các nút ===
@@ -192,7 +195,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const orderId = orderIdInput.value;
             if (confirm(`Xác nhận đã giao hàng cho đơn hàng ${orderId}?`)) {
                 try {
-                    const response = await fetch(`${BASE_API_URL}/confirm_delivery.php`, {
+                    // SỬA LỖI 1: Dùng API_ENDPOINTS.confirmDelivery
+                    const response = await fetch(API_ENDPOINTS.confirmDelivery, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ orderId: orderId })
@@ -220,17 +224,14 @@ document.addEventListener('DOMContentLoaded', function () {
             if (returnOrderBtn.disabled) return;
             const orderId = orderIdInput.value;
             if (confirm(`Bạn có chắc muốn đánh dấu đơn hàng ${orderId} là trả hàng?`)) {
-
                 if (reasonTextArea) {
                     reasonTextArea.style.display = 'block';
                     reasonTextArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-
                 if (toggleReasonBtn) toggleReasonBtn.textContent = 'Ẩn Lý do trả hàng';
-
                 if (returnToWarehouseBtn) {
                     returnToWarehouseBtn.disabled = false;
-                    returnToWarehouseBtn.style.backgroundColor = '#6c757d';
+                    returnToWarehouseBtn.style.backgroundColor = '#395542';
                 }
                 alert(`Đơn hàng ${orderId} đã được đánh dấu là trả hàng. Vui lòng nhập lý do và nhấn 'Hoàn hàng về kho'.`);
             }
@@ -268,7 +269,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (confirm(`Xác nhận hoàn hàng đơn hàng ${orderId} về kho với lý do:\n${reason}?`)) {
                 try {
-                    const response = await fetch(`${BASE_API_URL}/return_order.php`, {
+                    // SỬA LỖI 1: Dùng API_ENDPOINTS.returnOrder
+                    const response = await fetch(API_ENDPOINTS.returnOrder, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ orderId: orderId, returnReason: reason })

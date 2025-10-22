@@ -1,0 +1,277 @@
+/* complaint.css - PHIÊN BẢN SỬA LỖI LAYOUT VÀ THANH TÌM KIẾM */
+
+/* * 1. SỬA LỖI LAYOUT (THU HẸP NỘI DUNG & CÁCH LỀ) 
+ * Ghi đè max-width: 1400px của order.css
+ */
+body.order-page .staff-page-container {
+    max-width: 1200px;
+    /* Thu hẹp layout lại */
+    margin: 40px auto;
+    /* Tự động căn giữa */
+    padding: 0 20px;
+    /* Thêm padding 2 bên lề 20px */
+}
+
+/* * 2. SỬA LỖI THANH TÌM KIẾM (ICON LỆCH & CHIỀU CAO MỚI)
+ * Ghi đè toàn bộ style của .search-bar từ order.css
+ */
+
+/* Đảm bảo 100% container là relative để icon tuyệt đối bên trong nó */
+body.order-page .toolbar .search-bar {
+    position: relative;
+    width: 100%;
+}
+
+/* Style lại ô input cho CAO HƠN và có padding TRÁI */
+body.order-page .toolbar .search-bar input {
+    width: 100%;
+    padding: 22px 25px 22px 70px;
+    /* Tăng padding trên/dưới cho cao, tăng padding trái cho icon */
+    border: 1px solid #D4CFC3;
+    border-radius: 10px;
+    /* Bo góc nhiều hơn (giống ảnh) */
+    background-color: #FFFFFF;
+    font-style: italic;
+    font-size: 16px;
+    /* Cỡ chữ to hơn */
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    line-height: 1.5;
+    /* Căn chữ giữa (phòng trường hợp) */
+}
+
+/* Định vị lại icon TUYỆT ĐỐI bên trong .search-bar */
+body.order-page .toolbar .search-bar .fa-search {
+    position: absolute;
+    right: auto;
+    /* Xóa 'right' từ order.css */
+    left: 25px;
+    /* Đặt icon bên trái */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    /* Icon to hơn (giống ảnh) */
+    color: #777;
+    /* Icon màu xám */
+}
+
+/* * 3. STYLE CHO CÁC PHẦN CÒN LẠI CỦA TRANG
+ */
+
+/* Nền (chỉ để dự phòng) */
+body.order-page {
+    background-color: #EDDECD;
+    color: #395542;
+    font-family: 'Crimson Text', serif;
+}
+
+/* Tiêu đề chính: "TIẾP NHẬN & XỬ LÝ..." */
+.complaint-title {
+    font-family: 'Crimson Text', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0 0 25px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-bottom: 20px;
+    border-bottom: 1.5px solid #E0D9CE;
+    color: #395542;
+}
+
+/* Tiêu đề phụ "CHI TIẾT YÊU CẦU" */
+.form-section-title {
+    font-family: 'Crimson Text', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #395542;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Bố cục 2 cột của form */
+.form-columns {
+    display: flex;
+    gap: 40px;
+    /* Khoảng cách giữa 2 cột */
+}
+
+/* Từng cột */
+.form-column {
+    flex: 1;
+    /* Mỗi cột chiếm 50% không gian */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Khoảng cách giữa các mục trong 1 cột */
+}
+
+/* Từng mục (label + input) */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #395542;
+    margin-bottom: 8px;
+}
+
+/* Style cho các ô input THƯỜNG (không phải ô tìm kiếm) */
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 18px 20px;
+    /* Padding thấp hơn ô tìm kiếm */
+    border: 1px solid #D4CFC3;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    background-color: #FFFFFF;
+    color: #333;
+    box-sizing: border-box;
+}
+
+/* Style cho placeholder (chữ mờ) */
+.form-group ::placeholder {
+    color: #999;
+    font-style: italic;
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+}
+
+/* Input ở chế độ chỉ đọc (readonly) */
+.form-group input[readonly] {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    color: #555;
+    font-style: normal;
+}
+
+.form-group textarea {
+    min-height: 190px;
+    resize: vertical;
+}
+
+/* Style cho các nút bấm */
+.btn {
+    padding: 18px 30px;
+    /* Nút cao, đồng bộ với input */
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* Nút màu xanh lá (Lưu và đóng) */
+.btn-primary-green {
+    background-color: #364D3C;
+    color: white;
+}
+
+.btn-primary-green:hover {
+    background-color: #2d5016;
+}
+
+/* Nút màu trắng (Cập nhật, Trả lời, Phản hồi) */
+.btn-secondary {
+    background-color: #FFFFFF;
+    color: #395542;
+    border: 1px solid #D4CFC3;
+}
+
+.btn-secondary:hover {
+    background-color: #f9f9f9;
+    border-color: #395542;
+}
+
+/* Container cho nút "Phản hồi" (để đẩy nó xuống dưới) */
+.form-group-button {
+    margin-top: auto;
+    /* Đẩy nút này xuống cuối cột */
+}
+
+.form-group-button .btn-secondary {
+    width: 100%;
+    /* Làm cho nút rộng hết cỡ cột */
+}
+
+/* * ============================================
+ * PHẦN SỬA LỖI 3 NÚT BẤM (ĐÂY LÀ THAY ĐỔI)
+ * ============================================
+ */
+
+/* Container cho các nút cuối form - CĂN NGANG VÀ GIỮA (Giống hình ảnh) */
+.form-actions {
+    display: flex;
+    flex-direction: row;
+    /* <<< Xếp theo chiều ngang */
+    justify-content: center;
+    /* <<< Căn 3 nút ra giữa */
+
+    gap: 20px;
+    /* Khoảng cách giữa các nút */
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1.5px solid #E0D9CE;
+    /* Đường kẻ ngang */
+}
+
+/* Set chiều rộng 'auto' cho các nút, không giới hạn max-width */
+.form-actions .btn {
+    width: auto;
+    /* Chiều rộng tự động theo nội dung */
+    max-width: none;
+    /* Xóa max-width cũ (nếu có) */
+}
+
+/* Xóa bỏ margin-left (nếu còn) */
+.form-actions .btn-primary-green {
+    margin-left: 0;
+}
+
+
+/* Responsive cho di động */
+@media (max-width: 768px) {
+    .form-columns {
+        flex-direction: column;
+        /* Xếp 2 cột chồng lên nhau */
+        gap: 20px;
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+        /* Giảm chiều cao textarea trên di động */
+    }
+
+    /* * Sửa 3 nút bấm trên di động:
+     * Vẫn giữ XẾP DỌC và CĂN GIỮA
+     */
+    .form-actions {
+        flex-direction: column;
+        /* Xếp dọc trên di động */
+        align-items: center;
+        /* Căn giữa trên di động */
+        gap: 15px;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        max-width: 350px;
+        /* Giới hạn chiều rộng nút trên di động */
+    }
+
+    .form-actions .btn-primary-green {
+        margin-left: 0;
+    }
+}

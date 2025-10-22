@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cuisine Ngọt - Xử Lý Đơn Hàng</title>
+
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/animations.css">
+    <link rel="stylesheet" href="handleOrders.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="order-page">
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#">La Cuisine Ngọt</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#">Sản phẩm</a></li>
+                <li><a href="#">Người dùng</a></li>
+                <li><a href="#">Thanh toán</a></li>
+                <li><a href="#">Báo cáo</a></li>
+                <li><a href="#">Khuyến mãi</a></li>
+                <li><a href="#">Khiếu nại</a></li>
+                <li>
+                    <div class="nav-icons">
+                        <a href="#"><i class="fas fa-user"></i></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="staff-page-container">
+
+        <div class="card-container">
+
+            <h2 class="staff-order-title">XỬ LÝ ĐƠN HÀNG</h2>
+
+            <div class="order-filters">
+                <button class="filter-btn active-filter">Tất cả <i class="fas fa-caret-down"></i></button>
+                <button class="filter-btn">Đang chuẩn bị</button>
+                <button class="filter-btn">Đang giao</button>
+                <button class="filter-btn">Đã giao</button>
+                <button class="filter-btn">Đã hủy</button>
+            </div>
+
+            <div class="staff-order-table">
+
+                <div class="table-header">
+                    <div>Mã Đơn</div>
+                    <div>Khách Hàng</div>
+                    <div>Ngày Đặt</div>
+                    <div>Trạng Thái</div>
+                    <div>Ghi Chú Xử Lý</div>
+                </div>
+
+                <div class="table-row">
+                    <div class="cell-data">OD003</div>
+                    <div class="cell-data">NGUYỄN VĂN A</div>
+                    <div class="cell-data">1/9/2025</div>
+                    <div class="cell-data">đang giao</div>
+                    <div class="cell-note-action">
+                        <span class="note-preview">Không có ghi chú</span>
+                        <button class="btn-notify">Gửi thông báo</button>
+                    </div>
+                </div>
+
+                <div class="table-row">
+                    <div class="cell-data">OD002</div>
+                    <div class="cell-data">NGUYỄN LINH ĐAN</div>
+                    <div class="cell-data">22/9/2025</div>
+                    <div class="cell-data">đang giao</div>
+                    <div class="cell-note-action">
+                        <span class="note-preview">Giao buổi chiều</span>
+                        <button class="btn-notify">Gửi thông báo</button>
+                    </div>
+                </div>
+
+                <div class="table-row">
+                    <div class="cell-data">OD007</div>
+                    <div class="cell-data">LÊ THỊ THANH THANH</div>
+                    <div class="cell-data">25/9/2025</div>
+                    <div class="cell-data">đã giao</div>
+                    <div class="cell-note-action">
+                        <span class="note-preview">Không có ghi chú</span>
+                        <button class="btn-notify">Gửi thông báo</button>
+                    </div>
+                </div>
+
+                <div class="table-row">
+                    <div class="cell-data">OD008</div>
+                    <div class="cell-data">PHAN CẨM TIÊN</div>
+                    <div class="cell-data">30/9/2025</div>
+                    <div class="cell-data">đã giao</div>
+                    <div class="cell-note-action">
+                        <span class="note-preview">Khách dặn gọi trước 30p</span>
+                        <button class="btn-notify">Gửi thông báo</button>
+                    </div>
+                </div>
+
+                <div class="table-row">
+                    <div class="cell-data">OD004</div>
+                    <div class="cell-data">TRẦN MY</div>
+                    <div class="cell-data">10/10/2025</div>
+                    <div class="cell-data">đã hủy</div>
+                    <div class="cell-note-action">
+                        <span class="note-preview">Khách bom hàng</span>
+                        <button class="btn-notify">Gửi thông báo</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <script src="handleOrders.js"></script>
+</body>
+
+</html>

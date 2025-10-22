@@ -1,0 +1,265 @@
+/* handleOrders.css - CSS cho trang Xử Lý Đơn Hàng (Staff) */
+
+/* Ghi đè h2 từ order.css để XÓA đường viền dưới (vì ảnh không có) */
+.card-container h2.staff-order-title {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin: 0 0 30px 0;
+    /* Giữ lại các style chữ từ order.css */
+    font-family: 'Crimson Text', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #395542;
+}
+
+/* === THAY ĐỔI MÀU NỀN === */
+body.order-page {
+    background-color: #EDDECD;
+}
+
+/* === KẾT THÚC THAY ĐỔI === */
+
+
+/* Ghi đè layout từ order.css để thu hẹp lại */
+body.order-page .staff-page-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Khung chứa các nút lọc */
+.order-filters {
+    display: flex;
+    flex-wrap: wrap;
+    /* Cho phép xuống hàng trên di động */
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* Các nút lọc */
+.filter-btn {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    color: #395542;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-btn:hover {
+    opacity: 0.8;
+}
+
+/* Nút "Tất cả" (màu xanh lá) */
+.filter-btn.active-filter {
+    background-color: #364D3C;
+    color: #FFFFFF;
+}
+
+/* Bảng đơn hàng (dùng CSS Grid) */
+.staff-order-table {
+    display: grid;
+    /* 5 cột: Mã, Khách, Ngày, Trạng thái, Ghi chú */
+    grid-template-columns: 0.8fr 1.8fr 1.2fr 1.2fr 2fr;
+    width: 100%;
+    gap: 0 15px;
+    /* Chỉ có khoảng cách giữa các cột */
+}
+
+/* Tiêu đề bảng */
+.table-header {
+    /* Làm cho header này trải dài hết 5 cột */
+    grid-column: 1 / -1;
+
+    /* Bản thân header cũng là 1 grid con */
+    display: grid;
+    grid-template-columns: subgrid;
+    /* Kế thừa 5 cột từ cha */
+    gap: 0 15px;
+}
+
+.table-header div {
+    background-color: #364D3C;
+    color: #FFFFFF;
+    padding: 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+
+    /* Bo góc cho header */
+    border-radius: 8px;
+}
+
+/* Mỗi hàng dữ liệu */
+.table-row {
+    grid-column: 1 / -1;
+    /* Mỗi hàng cũng trải dài 5 cột */
+    display: grid;
+    grid-template-columns: subgrid;
+    /* Kế thừa 5 cột từ cha */
+    gap: 0 15px;
+    margin-top: 10px;
+    /* Khoảng cách giữa các hàng */
+}
+
+/* Ô dữ liệu thông thường */
+.cell-data {
+    background: #FFFFFF;
+    color: #333;
+    padding: 20px 15px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    /* Căn giữa text theo chiều dọc */
+}
+
+/* Ô Ghi chú đặc biệt */
+.cell-note-action {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 10px 15px;
+    /* Padding ít hơn để vừa nút */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Đẩy 2 item ra 2 bên */
+    gap: 10px;
+}
+
+/* Phần text ghi chú (ô xám) */
+.note-preview {
+    flex-grow: 1;
+    /* Cho phép ô này co giãn */
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #333;
+    font-style: italic;
+    background-color: #EFEFEF;
+    /* Màu xám nhạt */
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* Nút "Gửi thông báo" */
+.btn-notify {
+    background: #364D3C;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    /* Không bị gãy chữ */
+}
+
+.btn-notify:hover {
+    opacity: 0.8;
+}
+
+/* Responsive cho di động */
+@media (max-width: 992px) {
+
+    /* Cho 5 cột thành 3 cột */
+    .staff-order-table {
+        grid-template-columns: 1fr 1fr 1.5fr;
+    }
+
+    /* Ẩn 2 cột: Ngày đặt và Trạng thái */
+    .table-header div:nth-child(3),
+    .table-header div:nth-child(4),
+    .table-row .cell-data:nth-child(3),
+    .table-row .cell-data:nth-child(4) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Cho 3 cột thành 1 cột */
+    .staff-order-table {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .table-header {
+        display: none;
+        /* Ẩn hẳn header trên di động */
+    }
+
+    .table-row {
+        grid-template-columns: 1fr;
+        /* 1 cột duy nhất */
+        gap: 5px;
+        /* Khoảng cách giữa các cell */
+        margin-top: 15px;
+        padding: 15px;
+        background-color: #FFFFFF;
+        border-radius: 8px;
+    }
+
+    /* Hiển thị lại các cell đã ẩn */
+    .table-row .cell-data:nth-child(3),
+    .table-row .cell-data:nth-child(4) {
+        display: flex;
+    }
+
+    .cell-data,
+    .cell-note-action {
+        padding: 10px;
+        background-color: #f9f9f9;
+        /* Nền nhẹ cho từng cell */
+    }
+
+    /* Thêm tiêu đề giả cho mỗi cell */
+    .cell-data:nth-child(1)::before {
+        content: 'Mã Đơn: ';
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .cell-data:nth-child(2)::before {
+        content: 'Khách: ';
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .cell-data:nth-child(3)::before {
+        content: 'Ngày: ';
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .cell-data:nth-child(4)::before {
+        content: 'Trạng thái: ';
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .cell-note-action {
+        flex-direction: column;
+        /* Xếp dọc 2 item */
+        align-items: stretch;
+        /* Kéo dãn 2 item */
+    }
+
+    .note-preview {
+        margin-bottom: 10px;
+    }
+}
