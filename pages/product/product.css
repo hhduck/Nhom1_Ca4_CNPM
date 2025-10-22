@@ -3,45 +3,93 @@ body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   background-color: #fffdf8;
-  color: #333;
+  color: #000000;
 }
 
-/* --- HEADER --- */
+/* ===== NAVBAR (La Cuisine Ngọt style) ===== */
 .header {
   background-color: #395542;
-  color: white;
   padding: 12px 0;
+  color: white;
+  font-family: 'Inter', sans-serif;
 }
 
 .header-container {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 0 24px;
 }
 
-.logo {
-  font-family: 'Dancing Script', cursive;
-  font-size: 30px;
-}
-
-.nav-menu {
-  list-style: none;
-  display: flex;
-  gap: 24px;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-menu a {
+/* LOGO */
+.nav-logo a {
+  font-family: 'Inspiration', cursive;
+  font-size: 40px;
   color: white;
   text-decoration: none;
-  transition: 0.3s;
 }
 
-.nav-menu a:hover {
+/* MENU CHÍNH */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 36px;
+  margin: 0 auto;
+  position: relative;
+  left: 40px;
+}
+
+.nav-menu li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-menu li a:hover {
+  color: #e0c9a6;
+}
+
+/* CỤM BÊN PHẢI */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* GIỎ HÀNG */
+.nav-cart {
+  position: relative;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #e0c9a6;
+  color: #395542;
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-weight: bold;
+}
+
+/* ĐĂNG NHẬP */
+.nav-login {
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-login:hover {
   color: #e0c9a6;
 }
 
@@ -66,8 +114,8 @@ body {
 }
 
 .product-image img {
-  width: 740px;
-  height: 740px;
+  width: 600px;
+  height: 600px;
   object-fit: cover;
   border-radius: 14px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
@@ -76,7 +124,7 @@ body {
 .product-info {
   flex: 1;
   max-width: 520px;
-  padding-top: 40px;
+  padding-top: 0px;
 }
 
 .product-info h2 {
@@ -84,22 +132,24 @@ body {
   font-size: 34px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #333;
+  color: #000000;
 }
 
 .price {
   font-family: 'Crimson Text', serif;
-  color: #395542;
-  font-size: 22px;
+  color: #000000;
+  font-size: 28px;
   font-weight: 600;
   margin-bottom: 20px;
 }
 
-/* --- Sửa lại: bỏ in nghiêng phần mô tả ngắn --- */
 .short-desc {
   margin: 10px 0 20px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 17px;
+  color: #000000;
 }
 
 /* --- ACTION SECTION --- */
@@ -108,7 +158,7 @@ body {
   flex-direction: column;
   gap: 12px;
   margin-top: 32px;
-  align-items: center; /* ✅ Căn giữa so với mô tả */
+  align-items: center;
   width: 100%;
 }
 
@@ -116,7 +166,7 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 }
 
 /* Ô chọn số lượng */
@@ -162,6 +212,7 @@ body {
   padding: 0 22px;
   border-radius: 8px;
   font-weight: 700;
+  font-size: 16px;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -173,71 +224,141 @@ body {
 }
 
 .add-cart:hover, .buy-now:hover {
-  background-color: #2f463d;
+  background-color: #1d251d;
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .buy-now {
-  width: 83%;
+  width: 383px;
 }
 
 /* --- PHẦN THÔNG TIN SẢN PHẨM DƯỚI CÙNG --- */
 .product-details {
-  max-width: 740px; /* ✅ khớp với chiều ngang hình bánh */
-  margin-left: 130px; /* ✅ căn thẳng hàng với hình phía trên */
+  max-width: 1000px;   /* cho rộng ra toàn màn hình hơn */
+  margin-top: 40px;
+  margin-left: 0;       /* SÁT LỀ TRÁI */
   margin-right: auto;
-  margin-top: 60px;
-  line-height: 1.8;
-  color: #2c2c2c;
+  line-height: 1.7;
+  color: #000;
+  padding-left: 10px;   /* thêm nhẹ padding cho chữ không dính mép */
 }
 
+/* Tiêu đề lớn: THÔNG TIN SẢN PHẨM */
 .product-details h3 {
-  font-size: 20px;              /* Cỡ chữ trung bình, dễ đọc */
-  font-weight: 600;             /* Đậm vừa */
-  font-family: 'Inter', sans-serif;  /* Font rõ ràng, hiện đại */
-  color: #395542;               /* Xanh lá đậm hài hòa */
-  border-bottom: 2px solid #b5c4a6; /* Gạch chân nhẹ tạo điểm nhấn */
-  display: inline-block;        /* Đường kẻ chỉ bằng độ dài chữ */
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  color: #000;
+  border-bottom: 2px solid #b5c4a6;
+  display: inline-block;
   padding-bottom: 4px;
   margin-bottom: 20px;
-  text-align: left;             /* Đảm bảo căn trái */
-  margin-left: -100px;           /* ✅ Dịch tiêu đề ra sát lề trái cho thẳng hàng với hình bánh */
+  text-align: left;
+  margin-left: 0;
 }
 
+/* Tiêu đề nhỏ: MÔ TẢ, CẤU TRÚC BÁNH... */
 .product-details h4 {
   font-family: 'Inter', sans-serif;
   font-size: 18px;
-  font-weight: 700;
-  color: #395542;
+  font-weight: 600;
+  color: #000;
   margin-top: 30px;
   margin-bottom: 10px;
-  margin-left: -100px;   
+  margin-left: 0;
 }
 
+/* Đoạn mô tả & danh sách */
 .product-details p,
 .product-details li {
   font-family: 'Inter', sans-serif;
   font-size: 17px;
-  line-height: 1.8;
+  line-height: 1.7;
   color: #333;
-  margin-left: -100px;   
+  margin-left: 0;
+  text-align: justify;
 }
 
+/* Danh sách các lớp bánh */
 .product-details ul {
-  margin-left: 20px;
-  list-style-type: disc;
-  margin-left: -100px;   
+  list-style-type: none; 
+  margin: 10px 0;
+  padding-left: 0;     
 }
-
-
 /* --- FOOTER --- */
 .footer {
   background-color: #395542;
-  color: white;
-  text-align: center;
-  padding: 20px;
-  margin-top: 80px;
+  color: #ffffff;
+  padding: 40px 100px;
+  font-family: 'Crimson Text', serif;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-logo {
+  font-family: 'Inspiration', cursive;
+  font-size: 52px;
+  color: #fff;
+  font-weight: 200;
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+}
+
+.social-links a {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #395542;
+  transition: all 0.3s ease;
+  margin-top: -40px;
+}
+
+.social-links a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+}
+
+.footer-right {
+  text-align: right;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.footer-right b {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .footer-right {
+    text-align: center;
+  }
 }
 
 /* --- RESPONSIVE --- */
