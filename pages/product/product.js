@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("product-short2").textContent = product.shortParagraph;
     document.getElementById("desc1").innerHTML = product.description;
     document.getElementById("structure").innerHTML = product.structure;
-    document.getElementById("usage").textContent = product.usage;
-    document.getElementById("bonus").textContent = product.bonus;
+document.getElementById("usage").innerHTML = product.usage;
+document.getElementById("bonus").innerHTML = product.bonus;
   } else {
     // Nếu id sai hoặc không có sản phẩm
     const main = document.querySelector(".product-page");
