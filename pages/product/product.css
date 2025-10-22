@@ -391,3 +391,13 @@ body {
     padding: 0 24px;
   }
 }
+ul.no-dot {
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+ul.no-dot li {
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
