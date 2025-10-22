@@ -55,6 +55,18 @@ body.order-page .toolbar .search-bar .fa-search {
     /* Icon màu xám */
 }
 
+body.order-page .toolbar {
+    /* Tạo khoảng trống từ thanh tìm kiếm đến đường kẻ */
+    padding-bottom: 25px;
+
+    /* Xóa margin-bottom cũ (nếu có từ file order.css) để kiểm soát khoảng cách */
+    margin-bottom: 0;
+
+    /* Đây chính là đường kẻ bạn muốn, 
+       tôi dùng style giống hệt đường kẻ của tiêu đề cho đồng bộ */
+    border-bottom: 1.5px solid #395542;
+}
+
 /* * 3. STYLE CHO CÁC PHẦN CÒN LẠI CỦA TRANG
  */
 

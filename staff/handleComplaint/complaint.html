@@ -11,29 +11,28 @@
         href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap"
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/animations.css">
-    
+
     <link rel="stylesheet" href="order.css">
-    
+
     <link rel="stylesheet" href="complaint.css">
 </head>
 
 <body class="order-page">
-    
+
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="#">La Cuisine Ngọt</a>
+                <a href="../../pages/home/home.html">La Cuisine Ngọt</a>
             </div>
             <ul class="nav-menu">
-                <li><a href="#">Sản phẩm</a></li>
-                <li><a href="#">Người dùng</a></li>
-                <li><a href="#">Thanh toán</a></li>
-                <li><a href="#">Báo cáo</a></li>
-                <li><a href="#">Khuyến mãi</a></li>
-                <li><a href="#">Khiếu nại</a></li>
+                <li><a href="../../staff/ViewOders/order.html">Danh sách đơn hàng</a></li>
+                <li><a href="../../staff/UpdateOders/update.html">Cập nhật đơn hàng</a></li>
+                <li><a href="../../staff/handleOrders/handleOrders.html">Xử lý đơn hàng</a></li>
+                <li><a href="../../staff/Delivery/transport.html">Vận chuyển</a></li>
+                <li><a href="../../staff/handleComplaint/complaint.html">Khiếu nại</a></li>
                 <li>
                     <div class="nav-icons">
                         <a href="#"><i class="fas fa-user"></i></a>
@@ -44,9 +43,9 @@
     </nav>
 
     <main class="staff-page-container">
-            
+
         <h2 class="complaint-title">TIẾP NHẬN & XỬ LÝ YÊU CẦU KHÁCH HÀNG</h2>
-        
+
         <div class="toolbar">
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Tìm kiếm...">
@@ -55,11 +54,11 @@
         </div>
 
         <h3 class="form-section-title">CHI TIẾT YÊU CẦU</h3>
-        
+
         <form id="complaint-form">
-            
+
             <div class="form-columns">
-                
+
                 <div class="form-column">
                     <div class="form-group">
                         <label for="customerName">Họ tên khách hàng:</label>
@@ -83,7 +82,7 @@
                         <textarea id="complaintDetails" placeholder="Nội dung chi tiết khiếu nại / yêu cầu"></textarea>
                     </div>
                 </div>
-                
+
                 <div class="form-column">
                     <div class="form-group">
                         <label for="internalNote">Ghi chú xử lý nội bộ:</label>
@@ -107,16 +106,17 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary">Cập nhật tiến độ</button>
                 <button type="button" class="btn btn-secondary">Trả lời khách hàng</button>
                 <button type="submit" class="btn btn-primary-green">Lưu và đóng</button>
             </div>
-            
+
         </form>
-            
+
     </main>
 
 </body>
+
 </html>
