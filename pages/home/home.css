@@ -1314,131 +1314,125 @@
           grid-template-columns: 1fr;
       }
   }
-  
-  /* Promotion Section */
-  .promotion-section {
-      padding: 0;
-      background: white;
-  }
-  
-  .promotion-hero {
-      height: 300px;
-      background: url('../../assets/images/placeholder-cake.jpg') center/cover no-repeat;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-  }
-  
-  .promotion-hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
-  }
-  
-  .promotion-hero h2 {
-      position: relative;
-      z-index: 1;
-      font-size: 3rem;
-      font-weight: 600;
-      color: #395542;
-      letter-spacing: 3px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  }
-  
-  .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 60px 20px;
-  }
-  
-  .promotion-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 30px;
-  }
-  
-  .promotion-item {
-      text-align: center;
-  }
-  
-  .promotion-image {
-      width: 100%;
-      aspect-ratio: 1;
-      background: #c4a57b;
-      border-radius: 15px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-  }
-  
-  .promotion-image:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  .promotion-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-  }
-  
-  .promotion-text {
-      font-size: 0.95rem;
-      color: #666;
-      line-height: 1.6;
-  }
-  
-  .promotion-text strong {
-      color: #395542;
-      font-weight: 600;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 1024px) {
-      .promotion-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 25px;
-      }
-  }
-  
-  @media (max-width: 768px) {
-      .promotion-hero {
-          height: 250px;
-      }
-      
-      .promotion-hero h2 {
-          font-size: 2.5rem;
-      }
-      
-      .promotion-grid {
-          gap: 20px;
-      }
-  }
-  
-  @media (max-width: 480px) {
-      .promotion-hero {
-          height: 200px;
-      }
-      
-      .promotion-hero h2 {
-          font-size: 2rem;
-          letter-spacing: 2px;
-      }
-      
-      .promotion-grid {
-          grid-template-columns: 1fr;
-      }
-      
-      .container {
-          padding: 40px 15px;
-      }
-  }
+  /* Khuyến mãi */
+.promotion-section {
+    padding: 150px 20px;
+    background: #ffffff;
+}
+
+.promotion-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.promotion-title {
+    text-align: center;
+    font-size: 2.2rem;
+    font-family: 'Inter', serif;
+    font-weight: 600;
+    color: #b8956a;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.promotion-desc {
+    text-align: center;
+    color: #fff;
+    font-size: 1.08rem;
+    margin-bottom: 50px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+}
+
+.promotion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.promotion-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-align: center;
+    padding-bottom: 25px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    border: 2px solid rgba(255,255,255,0.8);
+    cursor: pointer;
+}
+
+.promotion-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+    background: #fff;
+    border-color: #e6dac8;
+    z-index: 2;
+}
+
+.promotion-image-container {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: #b8956a;
+}
+
+.promotion-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    transition: transform 0.4s ease;
+}
+
+.promotion-card:hover .promotion-image {
+    transform: scale(1.1);
+}
+
+.promotion-info {
+    padding: 16px 20px 0;
+}
+
+.promotion-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #395542;
+    margin-bottom: 12px;
+}
+
+.promotion-date {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #395542;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .promotion-section {
+        padding: 60px 15px;
+    }
+    .promotion-title {
+        font-size: 1.7rem;
+    }
+    .promotion-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 22px;
+    }
+}
+@media (max-width: 480px) {
+    .promotion-title {
+        font-size: 1.3rem;
+    }
+    .promotion-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
   
   /* Contact Section */
   .contact {
