@@ -38,12 +38,3 @@ function bindCategoryTabs() {
         });
     });
 }
-
-function bindProductCardNavigation() {
-    //chisanpham
-    document.addEventListener('click', function(e) {
-        const card = e.target.closest('.product-card, .entremet-card, .mousse-card, .truyenthong-card, .phukien-card');
-        if (!card) return;
-        window.location.href = '//chisanpham';
-    });
-}
