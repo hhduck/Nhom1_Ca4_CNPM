@@ -1,3 +1,5 @@
+
+
 /* update.css - PHIÊN BẢN HOÀN CHỈNH */
 
 /* =========================================
@@ -8,6 +10,110 @@ body.update-page {
     font-family: 'Crimson Text', serif;
     color: #395542;
 }
+
+/* Home Page Specific Styles */
+/* ===== NAVBAR ===== */
+.navbar {
+    background-color: #395542; /* xanh rêu đậm */
+    padding: 10px 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+  }
+  
+  .nav-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  /* Logo */
+  .nav-logo a {
+  color: #fff;
+  font-family: 'Inspiration', cursive;
+  font-size: 52px;
+  font-weight: 200; 
+  text-decoration: none;
+  letter-spacing: 1px;
+  }
+  
+  /* Menu */
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    padding: 0;
+    margin-right: -70px;
+  }
+  
+  .nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase; /* Viết hoa toàn bộ */
+    transition: color 0.3s;
+  
+  }
+  
+  .nav-menu a:hover {
+    color: #e3c78d; /* vàng nhạt khi hover */
+  }
+  
+  /* Icons bên phải */
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+  }
+  
+  .nav-icons a {
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: 0.3s;
+    left: 270px;
+  }
+  
+  .nav-icons a:hover {
+    color: #e3c78d;
+  }
+  
+  /* Giỏ hàng */
+  .nav-cart {
+    position: relative;
+  }
+  
+  .nav-login {
+   margin-left: 285px;
+   margin-right: -25px;
+  }
+  
+  .nav-login:hover {
+    color: #e3c78d;
+  }
+  
+  /* Responsive (mobile) */
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .nav-menu {
+      gap: 20px;
+    }
+    .nav-icons {
+      gap: 15px;
+    }
+  }
+  
 
 .staff-page-container {
     max-width: 1400px;
