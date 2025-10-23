@@ -320,9 +320,11 @@ function setupTabButtons(selector) {
     });
 }
 
-  // Kích hoạt cho 2 nhóm
+  // Kích hoạt cho các nhóm
 setupTabButtons('.order-tab-btn');
 setupTabButtons('.user-tab-btn');
+setupTabButtons('.promo-tab-btn');
+setupTabButtons('.tab-btn');
 
 async function searchProducts() {
     const searchTerm = document.getElementById('product-search').value;
