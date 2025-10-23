@@ -3,7 +3,7 @@ const products = [
     id: 1,
     name: "Entremets Rose",
     price: "650,000 VND",
-    shortIntro: "Hoa hồng – Vải thiều – Mâm xôi – Phô mai trắng",
+    shortIntro: "<b>Hoa hồng – Vải thiều – Mâm xôi – Phô mai trắng</b>",
     shortParagraph: `Chiếc entremets nhẹ như một khúc nhạc Pháp, hòa quyện hương hoa hồng thanh thoát,
 vải thiều ngọt mát, mâm xôi chua nhẹ và mousse phô mai trắng béo mềm. Từng lớp bánh được sắp đặt tỉ mỉ để mang đến cảm giác trong trẻo, tinh khôi và đầy nữ tính — một “nụ hồng ngọt ngào” dành cho những tâm hồn yêu sự dịu dàng.`,
     description: `<p>Một chiếc entremets tựa như đoá hồng nở trong nắng sớm — nhẹ nhàng, tinh khôi và ngọt ngào theo cách riêng. Entremets Rose là sự hòa quyện giữa vải thiều mọng nước, mâm xôi chua thanh, phô mai trắng béo mịn và hương hoa hồng phảng phất, tạo nên cảm giác trong trẻo, nữ tính và đầy tinh tế.
@@ -27,7 +27,6 @@ usage: `
     <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
   </ul>
 `,
-
 bonus: `
   <ul class="no-dot">
     <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
@@ -59,8 +58,21 @@ bonus: `
       </ul>
       <p>Trang trí: lát chanh tươi và lá húng quế (hoặc bạc hà), điểm xuyết chút đường bột.</p>
     `,
-    usage: `Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C). Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu. Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận. Nên dùng muỗng lạnh để cảm nhận các tầng vị.`,
-    bonus: `Bộ dao, muỗng và dĩa gỗ phong cách thủ công. Hộp nến nhỏ. Thiệp cảm ơn La Cuisine Ngọt.`,
+usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Lime and Basil Entremets.jpg"
   },
 
@@ -80,8 +92,21 @@ bonus: `
         <li><b>Lớp 4 – Gương sô cô la trắng:</b> Phủ bề mặt bằng glaçage mịn như lụa.</li>
       </ul>
     `,
-    usage: `Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C). Tránh ánh nắng trực tiếp. Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận. Nên dùng muỗng lạnh.`,
-    bonus: `Bộ dao, muỗng gỗ; hộp nến nhỏ; thiệp cảm ơn La Cuisine Ngọt.`,
+    usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Blanche Figues & Framboises.jpg"
   },
 
@@ -100,8 +125,21 @@ bonus: `
         <li><b>Lớp 3 – Gelée chanh dây:</b> Lớp gelée tươi mát, hơi sánh nhẹ tăng độ sống động.</li>
       </ul>
     `,
-    usage: `Bảo quản ngăn mát 2–6°C. Tránh ánh nắng. Dùng trong vòng 24 giờ kể từ khi nhận. Dùng muỗng lạnh để cảm nhận các tầng vị.`,
-    bonus: `Bộ dao, muỗng gỗ; hộp nến nhỏ; thiệp La Cuisine Ngọt.`,
+    usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Mousse Chanh dây.jpg"
   },
 
@@ -120,8 +158,21 @@ bonus: `
         <li><b>Lớp 3 – Mousse dưa lưới:</b> Mousse mềm mượt, béo nhẹ.</li>
       </ul>
     `,
-    usage: `Bảo quản ngăn mát 2–6°C. Tránh ánh nắng. Dùng trong 24 giờ kể từ khi nhận. Dùng muỗng lạnh.`,
-    bonus: `Bộ dao, muỗng gỗ; hộp nến nhỏ; thiệp cảm ơn.`,
+usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Mousse Dưa lưới.jpg"
   },
 
@@ -132,15 +183,33 @@ bonus: `
     shortIntro: "Việt quất, whipping cream",
     shortParagraph: `Mousse Việt Quất chinh phục vị giác bằng sắc tím quyến rũ và hương vị trái cây thanh mát. Lớp mousse mềm mượt, hòa quyện cùng vị chua nhẹ, mang lại cảm giác thanh tao và dễ chịu. Mỗi miếng bánh là sự kết hợp tinh tế giữa vị ngọt dịu và hương thơm tự nhiên của việt quất.`,
     description: `<p>Bánh Mousse Việt Quất là sự kết hợp hoàn hảo giữa vị chua nhẹ thanh mát của quả việt quất và vị béo ngậy của kem tươi. Lớp mousse mịn màng, tan ngay trong miệng, mang lại cảm giác nhẹ nhàng, tươi mới nhưng vẫn đậm đà hương vị tự nhiên. Bánh được điểm xuyết những quả việt quất tươi trên mặt, tạo vẻ ngoài vừa tinh tế vừa sang trọng.</p>`,
-    structure: `
-      <ul>
-        <li><b>Lớp 1 – Đế bánh (Base Cookie / Biscuit):</b> Đế bánh giòn rụm, thơm bơ.</li>
-        <li><b>Lớp 2 – Mousse việt quất:</b> Mousse mịn mượt, hương việt quất tự nhiên.</li>
-        <li><b>Lớp 3 – Trang trí việt quất tươi:</b> Điểm xuyết trên mặt bánh.</li>
-      </ul>
-    `,
-    usage: `Bảo quản ngăn mát 2–6°C. Tránh ánh nắng. Dùng trong 24 giờ kể từ khi nhận. Dùng muỗng lạnh.`,
-    bonus: `Bộ dao, muỗng gỗ; hộp nến nhỏ; thiệp cảm ơn.`,
+structure: `
+  <ul>
+    <li><b>Lớp 1 – Đế bánh bơ giòn:</b> Lớp đế cookie được nướng thủ công đến độ vàng ươm, giòn tan, mang hương bơ thơm dịu và vị ngọt vừa phải. Đây là nền vững chắc giúp tôn lên độ mềm mịn và hương vị trái cây của phần mousse bên trên.</li>
+
+    <li><b>Lớp 2 – Mousse việt quất:</b> Lớp mousse tím nhạt mịn màng như nhung, hoà quyện giữa vị chua thanh của việt quất tươi và vị béo nhẹ của kem tươi. Khi thưởng thức, từng muỗng mousse tan ra nơi đầu lưỡi, để lại dư vị tươi mát và nhẹ nhàng, tựa làn gió đầu hạ chạm khẽ vào vị giác.</li>
+
+    <li><b>Lớp 3 – Phủ việt quất tươi:</b> Bề mặt bánh được phủ đầy những quả việt quất tươi mọng nước, điểm xuyết sắc tím quyến rũ. Sự kết hợp giữa phần mousse mịn và lớp trái cây tự nhiên mang đến cảm giác hài hòa, vừa tinh tế vừa sống động.</li>
+  </ul>
+
+  <p>Trang trí bằng lớp phủ ánh tím nhẹ, bụi đường bột trắng mịn và vài lá bạc hà xanh tươi – như một bức tranh mùa hạ dịu dàng, tràn đầy sức sống. Mỗi lát cắt của bánh là sự hòa quyện giữa giòn – mịn – chua – ngọt, tạo nên bản giao hưởng ngọt ngào mang đậm dấu ấn của La Cuisine Ngọt.</p>
+`,
+
+ usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Mousse Việt Quất.jpg"
   },
 
@@ -160,8 +229,21 @@ bonus: `
         <li><b>Lớp 4 – Earl Grey cream:</b> Lớp kem trà mịn mượt.</li>
       </ul>
     `,
-    usage: `Bảo quản ngăn mát 2–6°C. Tránh ánh nắng. Dùng trong 24 giờ kể từ khi nhận. Dùng muỗng lạnh.`,
-    bonus: `Bộ dao, muỗng gỗ; hộp nến nhỏ; thiệp cảm ơn.`,
+ usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Orange Serenade.jpg"
   },
 
@@ -179,8 +261,21 @@ bonus: `
         <li><b>Lớp 3 – Mặt bánh phủ dâu tây & việt quất tươi:</b> Trái cây tươi trang trí trên mặt.</li>
       </ul>
     `,
-    usage: `Bảo quản ngăn mát 2–6°C. Tránh ánh nắng. Dùng trong 24 giờ kể từ khi nhận. Dùng muỗng lạnh.`,
-    bonus: `Bộ dao, muỗng gỗ; hộp nến nhỏ; thiệp cảm ơn.`,
+usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Strawberry Cloud Cake.jpg"
   },
 
@@ -198,8 +293,21 @@ bonus: `
         <li><b>Lớp 3 – Kem Earl Grey:</b> Kem whipping pha chiết xuất trà bá tước.</li>
       </ul>
     `,
-    usage: `Bảo quản ngăn mát 2–6°C. Tránh ánh nắng. Dùng trong 24 giờ kể từ khi nhận. Dùng muỗng lạnh.`,
-    bonus: `Bộ dao, muỗng gỗ; hộp nến nhỏ; thiệp cảm ơn.`,
+usage: `
+  <ul class="no-dot">
+    <li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li>
+    <li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li>
+    <li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li>
+    <li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li>
+  </ul>
+`,
+bonus: `
+  <ul class="no-dot">
+    <li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li>
+    <li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li>
+    <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
+  </ul>
+`,
     image: "../../assets/images/Earl Grey Bloom.jpg"
   }
 ];
