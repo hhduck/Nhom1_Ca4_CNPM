@@ -1,4 +1,5 @@
 <?php
+/*
 // order.php - PHIÊN BẢN CẬP NHẬT ĐẦY ĐỦ
 
 $servername = "localhost";
@@ -79,4 +80,5 @@ elseif ($method === 'PUT') {
 }
 
 $conn->close();
+*/
 ?>

@@ -107,6 +107,7 @@ CREATE TABLE Orders (
     PaymentStatus ENUM('pending', 'paid', 'failed', 'refunded') DEFAULT 'pending',
     OrderStatus ENUM('pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled') DEFAULT 'pending',
     Note TEXT,
+    CancelReason TEXT NULL DEFAULT NULL,
     DeliveryDate DATE,
     DeliveryTime VARCHAR(20),
     PromotionCode VARCHAR(50),

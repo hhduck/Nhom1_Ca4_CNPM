@@ -9,7 +9,7 @@
 class Database {
     // Thông tin kết nối database
     private $host = "localhost";
-    private $database_name = "lacuisinengot";
+    private $database_name = "lacuisinengot"; // <-- XÁC NHẬN TÊN NÀY LÀ ĐÚNG
     private $username = "root"; // Thay đổi nếu cần
     private $password = ""; // Thay đổi nếu cần
     private $charset = "utf8mb4";
@@ -160,4 +160,7 @@ function enableCORS() {
         http_response_code(200);
         exit();
     }
-}
+};
+
+// DẤU } THỪA ĐÃ BỊ XÓA Ở ĐÂY
+?>

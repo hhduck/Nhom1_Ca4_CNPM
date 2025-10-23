@@ -1,4 +1,5 @@
-// order.js - PHIÊN BẢN HOÀN CHỈNH, CHỈ CÓ CHỨC NĂNG XEM
+// order.js - ĐÃ CẬP NHẬT ĐỂ CHẠY VỚI API MỚI (api/orders.php)
+// ĐÃ SỬA ĐƯỜNG DẪN VÀ THÊM TOKEN XÁC THỰC
 
 let allOrders = [];
 let reasonModal, confirmCancelBtn, cancelModalBtn, reasonTextarea;
@@ -37,8 +38,9 @@ function setupEventListeners() {
 function handleTableButtonClick(e) {
     const target = e.target;
     const row = target.closest('tr');
-    if (!row) return; // Nếu click vào khoảng trống trong tbody thì thoát
-
+    if (!row) return;
+    
+    // Lấy orderId từ data-id (thêm cái này)
     const orderId = target.dataset.id;
     const orderData = JSON.parse(row.dataset.orderInfo);
 
@@ -56,7 +58,7 @@ function handleTableButtonClick(e) {
     }
     // Xử lý nút Xem lý do
     else if (target.classList.contains('btn-view-reason')) {
-        viewReasonContent.textContent = orderData.cancelReason || 'Không có lý do hủy.';
+        viewReasonContent.textContent = orderData.cancel_reason || 'Không có lý do hủy.';
         viewReasonModal.style.display = 'flex';
     }
     // Xử lý icon Xem đơn hàng (con mắt)
@@ -78,22 +80,33 @@ function handleConfirmCancel() {
         alert('Vui lòng nhập lý do hủy đơn hàng.');
         return;
     }
-    updateOrderStatus(orderId, 'failed', reason);
+    updateOrderStatus(orderId, 'cancelled', reason);
     reasonModal.style.display = 'none';
 }
 
 async function updateOrderStatus(orderId, newStatus, reason = null) {
     try {
-        const response = await fetch('order.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: orderId, status: newStatus, reason: reason })
+        const response = await fetch(`/dm_git/Nhom1_Ca4_CNPM/api/orders.php/${orderId}/status`, {
+            method: 'PUT', 
+            headers: { 
+                'Content-Type': 'application/json',
+                // ==========================================================
+                // THÊM DÒNG NÀY ĐỂ GỬI TOKEN
+                // ==========================================================
+                'Authorization': 'Bearer demo' 
+            },
+            body: JSON.stringify({
+                status: newStatus,
+                note: reason 
+            })
         });
         const result = await response.json();
+
         if (result.success) {
             alert('Cập nhật trạng thái thành công!');
-            fetchOrders();
+            fetchOrders(); // Tải lại danh sách
         } else {
+            // Lỗi 401 hoặc 403 sẽ hiển thị ở đây
             alert('Cập nhật thất bại: ' + result.message);
         }
     } catch (error) {
@@ -103,9 +116,24 @@ async function updateOrderStatus(orderId, newStatus, reason = null) {
 
 async function fetchOrders() {
     try {
-        const response = await fetch('order.php');
-        if (!response.ok) throw new Error(`Lỗi HTTP: ${response.status}`);
-        allOrders = await response.json();
+        // Hàm GET không gọi checkAdminPermission() nên không cần token
+        const response = await fetch('/dm_git/Nhom1_Ca4_CNPM/api/orders.php');
+
+        if (!response.ok) {
+            // Hiển thị chi tiết lỗi nếu có
+            const errorText = await response.text();
+            throw new Error(`Lỗi HTTP: ${response.status}. Chi tiết: ${errorText}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success && result.data.orders) {
+            allOrders = result.data.orders;
+        } else {
+            allOrders = [];
+            console.error('Lỗi khi lấy dữ liệu: ', result.message);
+        }
+
         renderOrderList(allOrders);
     } catch (error) {
         console.error('Đã xảy ra lỗi khi lấy dữ liệu đơn hàng:', error);
@@ -115,14 +143,26 @@ async function fetchOrders() {
 function applyFilters() {
     const selectedStatuses = Array.from(document.querySelectorAll('.filters input:checked'))
         .map(cb => cb.id.replace('filter-', ''));
-    const filteredOrders = selectedStatuses.length === 0 ? allOrders : allOrders.filter(order => selectedStatuses.includes(order.status));
+
+    const filteredOrders = selectedStatuses.length === 0
+        ? allOrders
+        : allOrders.filter(order => selectedStatuses.includes(order.order_status));
+
     renderOrderList(filteredOrders);
 }
 
 function renderOrderList(orders) {
     const tableBody = document.getElementById('orders-table-body');
     tableBody.innerHTML = '';
-    const statusMap = { pending: 'Chờ xác nhận', completed: 'Hoàn tất', failed: 'Giao thất bại', shipping: 'Đang giao' };
+
+    const statusMap = {
+        pending: 'Chờ xác nhận',
+        confirmed: 'Đã xác nhận',
+        preparing: 'Đang chuẩn bị',
+        shipping: 'Đang giao',
+        completed: 'Hoàn tất',
+        cancelled: 'Đã hủy'
+    };
 
     if (orders.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Không có đơn hàng nào phù hợp.</td></tr>`;
@@ -132,30 +172,41 @@ function renderOrderList(orders) {
     orders.forEach(order => {
         const row = document.createElement('tr');
         row.dataset.orderInfo = JSON.stringify(order);
+        
+        const orderId = order.order_id;
+        const currentStatus = order.order_status;
+
         let actionButtonsHTML = '';
-        if (order.status === 'pending') {
-            actionButtonsHTML = `<button class="btn-confirm" data-id="${order.id}">Xác nhận</button> <button class="btn-cancel-reason" data-id="${order.id}">Hủy (Lý do)</button>`;
-        } else if (order.status === 'completed') {
-            actionButtonsHTML = `<button class="btn-disabled" disabled>Đã xác nhận</button>`;
+        // THÊM data-id VÀO TẤT CẢ CÁC NÚT
+        if (currentStatus === 'pending') {
+            actionButtonsHTML = `<button class="btn-confirm" data-id="${orderId}">Xác nhận</button> <button class="btn-cancel-reason" data-id="${orderId}">Hủy (Lý do)</button>`;
+        } else if (currentStatus === 'completed') {
+            actionButtonsHTML = `<button class="btn-disabled" data-id="${orderId}" disabled>Đã hoàn tất</button>`;
+        } else if (currentStatus === 'cancelled') {
+            actionButtonsHTML = `<button class="btn-archived" data-id="${orderId}" disabled>Đã hủy</button> <button class="btn-view-reason" data-id="${orderId}">Xem lý do</button>`;
         } else {
-            actionButtonsHTML = `<button class="btn-archived" disabled>Đã hủy</button> <button class="btn-view-reason" data-id="${order.id}">Xem lý do</button>`;
+            actionButtonsHTML = `<button class="btn-disabled" data-id="${orderId}" disabled>${statusMap[currentStatus] || currentStatus}</button>`;
         }
+
         row.innerHTML = `
-            <td>${order.id}</td> <td>${order.customerName}</td> <td>${order.date}</td>
-            <td>${new Intl.NumberFormat('vi-VN').format(order.total)} VND</td>
-            <td>${statusMap[order.status] || order.status}</td> <td class="action-buttons">${actionButtonsHTML}</td>
-            <td><a href="#" class="view-icon"><i class="fas fa-eye"></i></a></td>
+            <td>${order.order_code || orderId}</td> 
+            <td>${order.customer_name}</td> 
+            <td>${new Date(order.created_at).toLocaleDateString('vi-VN')}</td>
+            <td>${new Intl.NumberFormat('vi-VN').format(order.final_amount)} VND</td>
+            <td>${statusMap[currentStatus] || currentStatus}</td> 
+            <td class="action-buttons">${actionButtonsHTML}</td>
+            <td><a href="#" class="view-icon" data-id="${orderId}"><i class="fas fa-eye"></i></a></td>
         `;
         tableBody.appendChild(row);
     });
 }
 
 function displayOrderDetails(order) {
-    document.getElementById('detail-order-id').textContent = order.id;
-    document.getElementById('detail-customer-name').textContent = order.customerName;
-    document.getElementById('detail-phone').textContent = order.phone || 'Chưa có';
-    document.getElementById('detail-address').textContent = order.address || 'Chưa có';
-    document.getElementById('detail-date').textContent = order.date;
-    document.getElementById('detail-total').textContent = `${new Intl.NumberFormat('vi-VN').format(order.total)} VND`;
-    document.getElementById('detail-payment-method').textContent = order.paymentMethod || 'Chưa rõ';
+    document.getElementById('detail-order-id').textContent = order.order_code || order.order_id;
+    document.getElementById('detail-customer-name').textContent = order.customer_name;
+    document.getElementById('detail-phone').textContent = order.customer_phone || 'Chưa có';
+    document.getElementById('detail-address').textContent = order.shipping_address || 'Chưa có';
+    document.getElementById('detail-date').textContent = new Date(order.created_at).toLocaleString('vi-VN');
+    document.getElementById('detail-total').textContent = `${new Intl.NumberFormat('vi-VN').format(order.final_amount)} VND`;
+    document.getElementById('detail-payment-method').textContent = order.payment_method || 'Chưa rõ';
 }
