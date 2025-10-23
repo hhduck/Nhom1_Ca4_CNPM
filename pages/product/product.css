@@ -1,97 +1,101 @@
-/* --- TOÀN TRANG --- */
-body {
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  background-color: #fffdf8;
-  color: #000000;
-}
-
-/* ===== NAVBAR (La Cuisine Ngọt style) ===== */
-.header {
-  background-color: #395542;
-  padding: 12px 0;
-  color: white;
-  font-family: 'Inter', sans-serif;
-}
-
-.header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-}
-
-/* LOGO */
+/* ===== NAVBAR ===== */
+.navbar {
+    background-color: #395542; /* xanh rêu đậm */
+    padding: 10px 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+  }
+  
+  .nav-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+/* Logo */
 .nav-logo a {
+  color: #fff;
   font-family: 'Inspiration', cursive;
-  font-size: 40px;
-  color: white;
+  font-size: 52px;
+  font-weight: 200; 
   text-decoration: none;
+  letter-spacing: 1px;
 }
 
-/* MENU CHÍNH */
-.nav-menu {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  gap: 36px;
-  margin: 0 auto;
-  position: relative;
-  left: 40px;
-}
+  /* Menu */
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    padding: 0;
+    margin-right: -70px;
+  }
+  
+  .nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase; /* Viết hoa toàn bộ */
+    transition: color 0.3s;
 
-.nav-menu li a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.nav-menu li a:hover {
-  color: #e0c9a6;
-}
-
-/* CỤM BÊN PHẢI */
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-/* GIỎ HÀNG */
-.nav-cart {
-  position: relative;
-  color: white;
-  text-decoration: none;
-  font-size: 18px;
-}
-
-.cart-count {
-  position: absolute;
-  top: -6px;
-  right: -10px;
-  background: #e0c9a6;
-  color: #395542;
-  font-size: 12px;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-weight: bold;
-}
-
-/* ĐĂNG NHẬP */
-.nav-login {
-  color: white;
-  text-decoration: none;
-  text-transform: uppercase;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.nav-login:hover {
-  color: #e0c9a6;
-}
+  }
+  
+  .nav-menu a:hover {
+    color: #e3c78d; /* vàng nhạt khi hover */
+  }
+  
+  /* Icons bên phải */
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+  }
+  
+  .nav-icons a {
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: 0.3s;
+    left: 150px;
+  }
+  
+  .nav-icons a:hover {
+    color: #e3c78d;
+  }
+  
+  /* Giỏ hàng */
+  .nav-cart {
+    position: relative;
+  }
+  
+  .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #e3c78d;
+    color: #364D3C;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 50%;
+  }
+  
+  .nav-login {
+   margin-left: 130px;
+   margin-right: 50px;
+  }
+  
+  .nav-login:hover {
+    color: #e3c78d;
+  }
 
 /* --- PRODUCT PAGE --- */
 .product-page {
@@ -310,32 +314,33 @@ body {
   font-family: 'Inspiration', cursive;
   font-size: 52px;
   color: #fff;
-  font-weight: 200;
+  font-weight: 200; 
   text-decoration: none;
   letter-spacing: 1px;
+
 }
 
 .social-links {
-  display: flex;
-  gap: 15px;
+    display: flex;
+    gap: 15px;
 }
 
 .social-links a {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #395542;
-  transition: all 0.3s ease;
-  margin-top: -40px;
+ width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2d5016;
+    transition: all 0.3s ease;
+    margin-top: -40px;
 }
 
 .social-links a:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
 }
 
 .footer-right {
@@ -360,6 +365,7 @@ body {
     text-align: center;
   }
 }
+
 
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
