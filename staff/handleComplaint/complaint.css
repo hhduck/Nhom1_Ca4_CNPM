@@ -1,4 +1,4 @@
-/* complaint.css - PHIÊN BẢN SỬA LỖI LAYOUT VÀ THANH TÌM KIẾM */
+/* complaint.css - PHIÊN BẢN HOÀN CHỈNH */
 
 /* * 1. SỬA LỖI LAYOUT (THU HẸP NỘI DUNG & CÁCH LỀ) 
  * Ghi đè max-width: 1400px của order.css
@@ -207,16 +207,10 @@ body.order-page {
     border-color: #395542;
 }
 
-/* Container cho nút "Phản hồi" (để đẩy nó xuống dưới) */
-.form-group-button {
-    margin-top: auto;
-    /* Đẩy nút này xuống cuối cột */
-}
-
-.form-group-button .btn-secondary {
-    width: 100%;
-    /* Làm cho nút rộng hết cỡ cột */
-}
+/*
+ * Xóa bỏ .form-group-button
+ * vì textarea "Nội dung phản hồi" đã thay thế nó
+ */
 
 /* * ============================================
  * PHẦN SỬA LỖI 3 NÚT BẤM (ĐÂY LÀ THAY ĐỔI)
@@ -286,4 +280,46 @@ body.order-page {
     .form-actions .btn-primary-green {
         margin-left: 0;
     }
+}
+
+/* ======================================== */
+/* --- STYLES CHO NAVBAR ĐÃ CẤU TRÚC LẠI --- */
+/* ======================================== */
+
+/* Áp dụng cho "Danh sách" và "Khiếu nại" */
+.nav-menu-link {
+    color: white;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+.nav-menu-link:hover {
+    color: #e3c78d;
+    /* vàng nhạt khi hover */
+}
+
+/* Áp dụng cho icon người dùng */
+.nav-icon-link {
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.nav-icon-link:hover {
+    color: #e3c78d;
+}
+
+/* Logo */
+.nav-logo a {
+    color: #fff;
+    font-family: 'Inspiration', cursive;
+    font-size: 52px;
+    font-weight: 200;
+    text-decoration: none;
+    letter-spacing: 1px;
 }
