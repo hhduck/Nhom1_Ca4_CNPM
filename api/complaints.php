@@ -113,7 +113,7 @@ function getAllComplaints($db) {
         }
     }
     
-    $query .= " ORDER BY c.CreatedAt DESC";
+    $query .= " ORDER BY c.CreatedAt ASC";
     
     $stmt = $db->prepare($query);
     $stmt->execute($params);
