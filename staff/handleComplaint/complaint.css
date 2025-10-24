@@ -323,3 +323,11 @@ body.order-page {
     text-decoration: none;
     letter-spacing: 1px;
 }
+
+.nav-container {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
