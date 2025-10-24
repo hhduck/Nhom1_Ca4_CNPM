@@ -20,12 +20,12 @@ function getSafeImageUrl(imageUrl) {
     if (!imageUrl || imageUrl.trim() === '') {
         return PLACEHOLDER_IMAGE;
     }
-    
+
     // Nếu đã là data URL hoặc HTTP URL
     if (imageUrl.startsWith('data:') || imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
         return imageUrl;
     }
-    
+
     // Trả về URL gốc (đã có xử lý onerror bên dưới)
     return imageUrl;
 }
@@ -45,6 +45,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Setup event listeners
     setupEventListeners();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userMenuBtn = document.getElementById("userMenuBtn");
+    const userDropdown = document.getElementById("userDropdown");
+
+    // Toggle hiển thị menu khi bấm nút user
+    userMenuBtn.addEventListener("click", function (e) {
+        e.stopPropagation(); // không cho lan sự kiện ra ngoài
+        const isVisible = userDropdown.style.display === "block";
+        userDropdown.style.display = isVisible ? "none" : "block";
+    });
+
+    // Ẩn menu nếu bấm ra ngoài
+    document.addEventListener("click", function (e) {
+        if (!userDropdown.contains(e.target) && e.target !== userMenuBtn) {
+            userDropdown.style.display = "none";
+        }
+    });
 });
 
 function checkAuthentication() {
@@ -1519,9 +1538,9 @@ function editPromotion() {
 }
 
 // Xử lý tất cả lỗi ảnh khi trang load xong
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Thêm xử lý lỗi cho TẤT CẢ ảnh trên trang
-    const handleImageError = function() {
+    const handleImageError = function () {
         if (this.src !== PLACEHOLDER_IMAGE) {
             console.warn('❌ Không tìm thấy ảnh:', this.src);
             this.src = PLACEHOLDER_IMAGE;
@@ -1535,9 +1554,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Theo dõi ảnh mới được thêm vào (dùng MutationObserver)
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            mutation.addedNodes.forEach(function(node) {
+    const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            mutation.addedNodes.forEach(function (node) {
                 if (node.tagName === 'IMG') {
                     node.addEventListener('error', handleImageError);
                 } else if (node.querySelectorAll) {
@@ -1556,10 +1575,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 // Thêm global error handler
-window.addEventListener('unhandledrejection', function(event) {
+window.addEventListener('unhandledrejection', function (event) {
     console.error('❌ Promise bị reject:', event.reason);
     event.preventDefault(); // Ngăn lỗi hiển thị trong console
-    
+
     // Hiển thị thông báo lỗi cho user
     showError('Có lỗi xảy ra. Vui lòng thử lại sau.');
 });
