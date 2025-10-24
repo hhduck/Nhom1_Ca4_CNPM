@@ -11,6 +11,25 @@ let currentPromoId = null;
 let revenueChart = null;
 let categoryChart = null;
 
+// Tạo placeholder SVG - không cần file thực
+const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22 viewBox=%220 0 300 300%22%3E%3Crect fill=%22%23f8f9fa%22 width=%22300%22 height=%22300%22/%3E%3Cg%3E%3Cpath fill=%22%23dee2e6%22 d=%22M150 100 L150 200 M100 150 L200 150%22 stroke=%22%23dee2e6%22 stroke-width=%2215%22 stroke-linecap=%22round%22/%3E%3C/g%3E%3Ctext x=%2250%25%22 y=%2270%25%22 text-anchor=%22middle%22 fill=%22%23adb5bd%22 font-family=%22-apple-system, BlinkMacSystemFont, %27Segoe UI%27, Roboto, sans-serif%22 font-size=%2218%22 font-weight=%22500%22%3EKhông có ảnh%3C/text%3E%3C/svg%3E';
+
+// Function xử lý URL ảnh an toàn
+function getSafeImageUrl(imageUrl) {
+    // Nếu không có URL hoặc rỗng
+    if (!imageUrl || imageUrl.trim() === '') {
+        return PLACEHOLDER_IMAGE;
+    }
+    
+    // Nếu đã là data URL hoặc HTTP URL
+    if (imageUrl.startsWith('data:') || imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+    }
+    
+    // Trả về URL gốc (đã có xử lý onerror bên dưới)
+    return imageUrl;
+}
+
 // ============================================
 // INITIALIZATION
 // ============================================
@@ -231,19 +250,29 @@ async function loadProducts(filters = {}) {
         showLoading('products-tbody');
 
         const queryParams = new URLSearchParams(filters).toString();
-        // Lấy token JWT từ localStorage thay vì sử dụng token cứng
         const jwtToken = localStorage.getItem('jwtToken') || 'demo';
         const response = await fetch(`${API_BASE_URL}/products.php?${queryParams}`, {
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
             }
         });
+
+        // ✅ FIX: Kiểm tra response trước khi parse JSON
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error('Server trả về HTML thay vì JSON:', text.substring(0, 300));
+            throw new Error("Server không trả về JSON");
+        }
+
         const data = await response.json();
 
         const tbody = document.getElementById('products-tbody');
 
-        // Cải thiện xử lý dữ liệu trả về từ API
-        // Kiểm tra nhiều cấu trúc dữ liệu có thể có
         let products = [];
 
         if (data.success && data.data && data.data.products && data.data.products.length > 0) {
@@ -259,10 +288,10 @@ async function loadProducts(filters = {}) {
                 <tr>
                     <td>${product.product_id}</td>
                     <td>
-                        <img src="${product.image_url || '../assets/images/placeholder.jpg'}" 
+                        <img src="${getSafeImageUrl(product.image_url)}" 
                              alt="${product.product_name}" 
                              class="product-image"
-                             onerror="if (this.src !== '../assets/images/placeholder.jpg') this.src='../assets/images/placeholder.jpg'">
+                             onerror="this.onerror=null; this.src='${PLACEHOLDER_IMAGE}';">
                     </td>
                     <td>${product.product_name}</td>
                     <td>${product.category_name || 'N/A'}</td>
@@ -290,7 +319,6 @@ async function loadProducts(filters = {}) {
         }
     } catch (error) {
         console.error('Error loading products:', error);
-        // Hiển thị thông báo lỗi chi tiết hơn trên giao diện
         const tbody = document.getElementById('products-tbody');
         tbody.innerHTML = `
             <tr>
@@ -298,7 +326,7 @@ async function loadProducts(filters = {}) {
                     <div class="error-message">
                         <i class="fas fa-exclamation-triangle"></i>
                         <p>Không thể tải danh sách sản phẩm</p>
-                        <p class="error-details">Chi tiết lỗi: ${error.message || 'Không có kết nối đến máy chủ'}</p>
+                        <p class="error-details">${error.message || 'Không có kết nối đến máy chủ'}</p>
                         <button onclick="loadProducts()" class="retry-btn">Thử lại</button>
                     </div>
                 </td>
@@ -815,6 +843,20 @@ async function loadReports(period) {
                 'Authorization': 'Bearer demo'
             }
         });
+
+        // ✅ THÊM KIỂM TRA NÀY
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // ✅ KIỂM TRA CONTENT-TYPE
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error('Server trả về:', text.substring(0, 500));
+            throw new Error("Server không trả về JSON (có thể là trang lỗi HTML)");
+        }
+
         const data = await response.json();
 
         if (data.success) {
@@ -830,11 +872,49 @@ async function loadReports(period) {
             // Update top products table
             loadTopProducts(data.data.top_products);
         } else {
-            throw new Error(data.message || 'Failed to load reports');
+            throw new Error(data.message || 'Không thể tải báo cáo');
         }
     } catch (error) {
         console.error('Error loading reports:', error);
-        showError('Không thể tải báo cáo');
+        // ✅ HIỂN THỊ LỖI RÕ RÀNG HƠN
+        showError(`Không thể tải báo cáo: ${error.message}`);
+    }
+}
+
+async function loadReports(period) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/reports.php?period=${period}`, {
+            headers: {
+                'Authorization': 'Bearer demo'
+            }
+        });
+
+        // ✅ FIX: Kiểm tra response
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Server không trả về JSON");
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('revenue-stat').textContent = formatCurrency(data.data.revenue);
+            document.getElementById('orders-stat').textContent = data.data.total_orders;
+            document.getElementById('delivered-stat').textContent = data.data.delivered_orders;
+            document.getElementById('customers-stat').textContent = data.data.new_customers;
+
+            initCharts(data.data.chart_data);
+            loadTopProducts(data.data.top_products);
+        } else {
+            throw new Error(data.message || 'Không thể tải báo cáo');
+        }
+    } catch (error) {
+        console.error('Error loading reports:', error);
+        showError(`Không thể tải báo cáo: ${error.message}`);
     }
 }
 
@@ -1151,6 +1231,17 @@ async function viewComplaintDetail(complaintId) {
     try {
         currentComplaintId = complaintId;
         const response = await fetch(`${API_BASE_URL}/complaints/${complaintId}`);
+
+        // ✅ FIX: Kiểm tra response
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Server không trả về JSON");
+        }
+
         const complaint = await response.json();
 
         const modalBody = document.getElementById('complaint-modal-body');
@@ -1197,7 +1288,7 @@ async function viewComplaintDetail(complaintId) {
         document.getElementById('complaintModal').classList.add('active');
     } catch (error) {
         console.error('Error loading complaint detail:', error);
-        showError('Không thể tải chi tiết khiếu nại');
+        showError(`Không thể tải chi tiết khiếu nại: ${error.message}`);
     }
 }
 
@@ -1426,3 +1517,49 @@ function editPromotion() {
     alert('Chức năng chỉnh sửa khuyến mãi sẽ được triển khai.');
     closeModal('promoDetailModal');
 }
+
+// Xử lý tất cả lỗi ảnh khi trang load xong
+document.addEventListener('DOMContentLoaded', function() {
+    // Thêm xử lý lỗi cho TẤT CẢ ảnh trên trang
+    const handleImageError = function() {
+        if (this.src !== PLACEHOLDER_IMAGE) {
+            console.warn('❌ Không tìm thấy ảnh:', this.src);
+            this.src = PLACEHOLDER_IMAGE;
+            this.alt = 'Không có ảnh';
+        }
+    };
+
+    // Áp dụng cho tất cả ảnh hiện tại
+    document.querySelectorAll('img').forEach(img => {
+        img.addEventListener('error', handleImageError);
+    });
+
+    // Theo dõi ảnh mới được thêm vào (dùng MutationObserver)
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.tagName === 'IMG') {
+                    node.addEventListener('error', handleImageError);
+                } else if (node.querySelectorAll) {
+                    node.querySelectorAll('img').forEach(img => {
+                        img.addEventListener('error', handleImageError);
+                    });
+                }
+            });
+        });
+    });
+
+    // Bắt đầu theo dõi
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+// Thêm global error handler
+window.addEventListener('unhandledrejection', function(event) {
+    console.error('❌ Promise bị reject:', event.reason);
+    event.preventDefault(); // Ngăn lỗi hiển thị trong console
+    
+    // Hiển thị thông báo lỗi cho user
+    showError('Có lỗi xảy ra. Vui lòng thử lại sau.');
+});
