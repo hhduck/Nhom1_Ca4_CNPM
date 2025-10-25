@@ -149,11 +149,24 @@ function sanitizeInput($data) {
     return htmlspecialchars(strip_tags(trim($data)));
 }
 
-// Enable CORS
+// Enable CORS - Cải thiện bảo mật
 function enableCORS() {
-    header("Access-Control-Allow-Origin: *");
+    // Chỉ cho phép domains cụ thể thay vì tất cả (*)
+    $allowedOrigins = [
+        'http://localhost',
+        'http://127.0.0.1',
+        'http://localhost:8080',
+        'http://localhost:3000'
+    ];
+    
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (in_array($origin, $allowedOrigins)) {
+        header("Access-Control-Allow-Origin: $origin");
+    }
+    
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Credentials: true");
     
     // Handle preflight requests
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -162,5 +175,4 @@ function enableCORS() {
     }
 };
 
-// DẤU } THỪA ĐÃ BỊ XÓA Ở ĐÂY
 ?>

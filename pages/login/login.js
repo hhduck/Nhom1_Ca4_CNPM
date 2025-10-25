@@ -4,17 +4,41 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser.id) {
-        showMessage('Bạn đã đăng nhập!', 'info');
-        setTimeout(() => {
-            window.location.href = '../home/home.html';
-        }, 1500);
-        return;
+    // Check if user is already logged in - Cải thiện logic
+    const userData = localStorage.getItem('currentUser');
+    const jwtToken = localStorage.getItem('jwtToken');
+    
+    if (userData && jwtToken) {
+        try {
+            const currentUser = JSON.parse(userData);
+            if (currentUser && currentUser.id) {
+                // Kiểm tra xem có parameter ?force_login trong URL không
+                const urlParams = new URLSearchParams(window.location.search);
+                const forceLogin = urlParams.get('force_login');
+                
+                if (forceLogin === 'true') {
+                    // Nếu có force_login=true, cho phép đăng nhập lại
+                    console.log('Force login được yêu cầu, cho phép đăng nhập lại');
+                    setupLoginForm();
+                    return;
+                }
+                
+                // Nếu không có force_login, redirect về home
+                showMessage('Bạn đã đăng nhập! Đang chuyển hướng...', 'info');
+                setTimeout(() => {
+                    window.location.href = '../home/home.html';
+                }, 1500);
+                return;
+            }
+        } catch (error) {
+            console.error('Lỗi parse user data:', error);
+            // Xóa data lỗi
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('jwtToken');
+        }
     }
 
-    // Setup form handling
+    // Setup form login nếu chưa đăng nhập
     setupLoginForm();
 });
 

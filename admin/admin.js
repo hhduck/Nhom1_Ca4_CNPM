@@ -270,11 +270,19 @@ async function loadProducts(filters = {}) {
 
         const queryParams = new URLSearchParams(filters).toString();
         const jwtToken = localStorage.getItem('jwtToken') || 'demo';
+        
+        // Thêm timeout cho request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 giây timeout
+        
         const response = await fetch(`${API_BASE_URL}/products.php?${queryParams}`, {
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
-            }
+            },
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         // ✅ FIX: Kiểm tra response trước khi parse JSON
         if (!response.ok) {
@@ -339,13 +347,22 @@ async function loadProducts(filters = {}) {
     } catch (error) {
         console.error('Error loading products:', error);
         const tbody = document.getElementById('products-tbody');
+        
+        // Cải thiện error handling
+        let errorMessage = 'Không có kết nối đến máy chủ';
+        if (error.name === 'AbortError') {
+            errorMessage = 'Request timeout - Vui lòng thử lại';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
         tbody.innerHTML = `
             <tr>
                 <td colspan="8" class="error-state">
                     <div class="error-message">
                         <i class="fas fa-exclamation-triangle"></i>
                         <p>Không thể tải danh sách sản phẩm</p>
-                        <p class="error-details">${error.message || 'Không có kết nối đến máy chủ'}</p>
+                        <p class="error-details">${errorMessage}</p>
                         <button onclick="loadProducts()" class="retry-btn">Thử lại</button>
                     </div>
                 </td>
@@ -1582,3 +1599,18 @@ window.addEventListener('unhandledrejection', function (event) {
     // Hiển thị thông báo lỗi cho user
     showError('Có lỗi xảy ra. Vui lòng thử lại sau.');
 });
+
+// ✅ FIX: Thêm function logout cho admin
+function logout() {
+    // Xóa tất cả dữ liệu đăng nhập
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('jwtToken');
+    
+    // Hiển thị thông báo đăng xuất thành công
+    showNotification('Đã đăng xuất thành công!', 'success');
+    
+    // Chuyển về trang home sau 1 giây
+    setTimeout(() => {
+        window.location.href = '../pages/home/home.html';
+    }, 1000);
+}

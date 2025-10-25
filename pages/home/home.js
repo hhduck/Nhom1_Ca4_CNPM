@@ -38,3 +38,16 @@ function bindCategoryTabs() {
         });
     });
 }
+
+function bindProductCardNavigation() {
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const id = card.dataset.id;
+            if (id) {
+                window.location.href = `../product/product.html?id=${id}`;
+            }
+        });
+    });
+}
+
