@@ -129,6 +129,10 @@ letter-spacing: 1px;
 
 /* Sidebar */
 .sidebar {
+  position: relative;
+  z-index: 10;
+}
+.sidebar {
   background-color: #fff;
   border-radius: 20px;
   flex: 0 0 250px;
@@ -157,6 +161,7 @@ letter-spacing: 1px;
 
 
 /* Account Info */
+
 .account-info {
   flex: 1;
   border-radius: 15px;
@@ -169,6 +174,15 @@ letter-spacing: 1px;
   margin-bottom: 25px;
   font-weight: 700;
   color: #000;
+}
+.sidebar-menu li {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.sidebar-menu li:hover {
+  background-color: #f4f4f4;
 }
 
 .info-content h3 {
