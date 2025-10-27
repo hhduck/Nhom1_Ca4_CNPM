@@ -1639,3 +1639,24 @@
     padding: 0 24px;
   }
 }
+.user-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: none;
+  right: 0;
+  top: 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.user-menu button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #333;
+}
+.nav-user {
+  position: relative;
+}
+.hidden { display: none; }
