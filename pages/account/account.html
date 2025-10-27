@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tài khoản khách hàng - La Cuisine Ngọt</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="../../assets/css/style.css">
   <link rel="stylesheet" href="../../assets/css/animations.css">
   <link rel="stylesheet" href="account.css">
@@ -15,26 +17,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-      <div class="nav-container">
-          <div class="nav-logo">
-          <a href="../home/home.html">La Cuisine Ngọt</a>
-          </div>
-
-          <ul class="nav-menu">
-            <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
-            <li><a href="../home/home.html#lienhe">KHUYẾN MÃI</a></li>
-            <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
-              <div class="nav-icons">
-                  <a href="../cart/cart.html" class="nav-cart">
-                      <i class="fas fa-shopping-cart"></i>
-                  </a>
-                  <li><a href="../login/login.html"class="nav-login"><i class="fas fa-user"></i></a></li>
-                  </div>
-          </ul>
-
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="../home/home.html">La Cuisine Ngọt</a>
       </div>
+
+      <ul class="nav-menu">
+        <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
+        <li><a href="../home/home.html#lienhe">KHUYẾN MÃI</a></li>
+        <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
+        <div class="nav-icons">
+          <a href="../cart/cart.html" class="nav-cart"><i class="fas fa-shopping-cart"></i></a>
+          <li><a href="../login/login.html" class="nav-login"><i class="fas fa-user"></i></a></li>
+        </div>
+      </ul>
+    </div>
   </nav>
 
   <!-- Account Section -->
@@ -44,9 +43,9 @@
       <div class="sidebar">
         <p class="customer-name">(Tên khách hàng)</p>
         <ul class="sidebar-menu">
-          <li>Thông tin</li>
-          <li>Đơn hàng</li>
-          <li>Đăng xuất</li>
+          <li id="infoBtn">Thông tin</li>
+          <li id="ordersBtn">Đơn hàng</li>
+          <li id="logoutBtn">Đăng xuất</li>
         </ul>
       </div>
 
@@ -55,18 +54,18 @@
         <h2 class="account-title">TÀI KHOẢN</h2>
         <div class="info-content">
           <h3>Thông tin</h3>
-          <form>
+          <form id="accountForm">
             <label>Họ và Tên</label>
-            <input type="text" placeholder="">
+            <input type="text" id="nameInput" placeholder="">
 
             <label>Email</label>
-            <input type="email" placeholder="">
+            <input type="email" id="emailInput" placeholder="">
 
             <label>Số điện thoại</label>
-            <input type="tel" placeholder="">
+            <input type="tel" id="phoneInput" placeholder="">
 
             <label>Địa chỉ</label>
-            <input type="text" placeholder="">
+            <input type="text" id="addressInput" placeholder="">
 
             <h3>Thay đổi mật khẩu</h3>
 
@@ -94,33 +93,27 @@
       </div>
     </div>
   </section>
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-left">
-      <h2 class="footer-logo">La Cuisine Ngọt</h2>
-      <div class="social-links">
-  <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
-    <i class="fab fa-facebook"></i>
-  </a>
-  <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
-    <i class="fab fa-instagram"></i>
-  </a>
-</div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <h2 class="footer-logo">La Cuisine Ngọt</h2>
+        <div class="social-links">
+          <a href="https://www.facebook.com/LaCuisineNgot" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.instagram.com/LaCuisineNgot" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <p><b>Ngọt GO TO (TP.HCM)</b><br>123 An Dương Vương, phường Chợ Quán, TP.HCM</p><br>
+        <p><b>Ngọt INSIDE (Phan Rang)</b><br>85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p><br>
+        <p><b>Ngọt AROUND (Phan Thiết)</b><br>86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
+      </div>
     </div>
-
-    <div class="footer-right">
-      <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
-</br>
-      <p><b>Ngọt INSIDE (Phan Rang)</b><br />85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p>
-    </br>
-      <p><b>Ngọt AROUND (Phan Thiết)</b><br />86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
-    </div>
-  </div>
-</footer>
-
-
-
+  </footer>
   <script src="account.js"></script>
+
+
 </body>
 </html>
