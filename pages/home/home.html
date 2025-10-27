@@ -12,6 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts - gộp tất cả vào 1 link -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inspiration&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
 </head>
@@ -32,8 +33,13 @@
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                     </div>
-                    <li><a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a></li>
-            </ul>
+<li class="nav-user">
+  <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
+  <div class="user-menu hidden">
+    <button id="logoutBtn">Đăng xuất</button>
+  </div>
+</li>
+        </ul>
 
         </div>
     </nav>
