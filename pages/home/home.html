@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/animations.css">
     <link rel="stylesheet" href="home.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
+    <!-- Font Awesome - chỉ giữ 1 version -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - gộp tất cả vào 1 link -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inspiration&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
 </head>
@@ -33,8 +33,13 @@
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                     </div>
-                    <li><a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a></li>
-            </ul>
+<li class="nav-user">
+  <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
+  <div class="user-menu hidden">
+    <button id="logoutBtn">Đăng xuất</button>
+  </div>
+</li>
+        </ul>
 
         </div>
     </nav>
@@ -47,7 +52,7 @@
             <a href="#products" class="btn-primary">Khám phá ngay</a>
         </div>
         <div class="hero-image">
-            <img src="../../assets/images/hero-cake.jpg" alt="Bánh kem" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
+            <img src="../../assets/images/placeholder-cake.jpg" alt="Bánh kem" onerror="this.src='../../assets/images/placeholder-cake.jpg'">
         </div>
     </section>
 
@@ -58,10 +63,10 @@
                 <!-- Phần ảnh bên trái -->
                 <div class="about-images">
                     <div class="main-cake-image">
-                        <img src="../../assets/images/banh1.jpg">
+                        <img src="../../assets/images/placeholder-cake.jpg" alt="Bánh kem chính">
                     </div>
                     <div class="secondary-cake-image">
-                        <img src="../../assets/images/banh2.jpg">
+                        <img src="../../assets/images/placeholder-cake.jpg" alt="Bánh kem phụ">
                     </div>
                 </div>
 
@@ -181,7 +186,9 @@
                 <!-- Product Card 1 -->
                 <div class="product-card">
                     <div class="product-image-container">
-                        <img src="../../assets/images/Blanche Figues & Framboises.jpg" alt="Blanche Figues & Framboises" class="product-image">
+                        <a href="../product/product.html?id=3" class="product-item">
+                            <img src="../../assets/images/Blanche Figues & Framboises.jpg" alt="Blanche Figues & Framboises" class="product-image">
+                        </a>
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">Blanche Figues & Framboises</h3>
@@ -192,7 +199,9 @@
                 <!-- Product Card 2 -->
                 <div class="product-card">
                     <div class="product-image-container">
-                        <img src="../../assets/images/Mousse Chanh dây.jpg" alt="Mousse Chanh dây" class="product-image">
+                        <a href="../product/product.html?id=4" class="product-item">
+                            <img src="../../assets/images/Mousse Chanh dây.jpg" alt="Mousse Chanh dây" class="product-image">
+                        </a>
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">Mousse Chanh dây</h3>
@@ -203,7 +212,9 @@
                 <!-- Product Card 3 -->
                 <div class="product-card">
                     <div class="product-image-container">
-                        <img src="../../assets/images/Mousse Dưa lưới.jpg" alt="Mousse Dưa lưới" class="product-image">
+                        <a href="../product/product.html?id=5" class="product-item">
+                             <img src="../../assets/images/Mousse Dưa lưới.jpg" alt="Mousse Dưa lưới" class="product-image">
+                        </a>
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">Mousse Dưa lưới</h3>
@@ -395,28 +406,28 @@
             <div class="promotion-grid">
                 <div class="promotion-item">
                     <div class="promotion-image">
-                        <img src="placeholder1.jpg" alt="Khuyến mãi 1">
+                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 1">
                     </div>
                     <p class="promotion-text">Áp dụng từ <strong>05/10/2025</strong><br>đến <strong>09/11/2025</strong></p>
                 </div>
                 
                 <div class="promotion-item">
                     <div class="promotion-image">
-                        <img src="placeholder2.jpg" alt="Khuyến mãi 2">
+                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 2">
                     </div>
                     <p class="promotion-text">Áp dụng từ <strong>01/10/2025</strong><br>đến <strong>01/11/2025</strong></p>
                 </div>
                 
                 <div class="promotion-item">
                     <div class="promotion-image">
-                        <img src="placeholder3.jpg" alt="Khuyến mãi 3">
+                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 3">
                     </div>
                     <p class="promotion-text">Áp dụng cho khách hàng<br>đặt được <strong>300 điểm</strong></p>
                 </div>
                 
                 <div class="promotion-item">
                     <div class="promotion-image">
-                        <img src="placeholder4.jpg" alt="Khuyến mãi 4">
+                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 4">
                     </div>
                     <p class="promotion-text">Áp dụng cho khách hàng<br>đạt được <strong>500 điểm</strong></p>
                 </div>

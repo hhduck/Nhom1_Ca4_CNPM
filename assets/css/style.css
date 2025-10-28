@@ -14,6 +14,73 @@ body {
     /* Prevent horizontal scroll */
 }
 
+/* Responsive Design - Thêm media queries */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .navbar {
+        padding: 10px 20px;
+    }
+    
+    .nav-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav-menu {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .nav-logo a {
+        font-size: 35px;
+    }
+    
+    .hero {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .about-images {
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-logo a {
+        font-size: 28px;
+    }
+    
+    .hero-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .hero-content p {
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

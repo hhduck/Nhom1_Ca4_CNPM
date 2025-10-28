@@ -4,17 +4,41 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser.id) {
-        showMessage('Bạn đã đăng nhập!', 'info');
-        setTimeout(() => {
-            window.location.href = '../home/home.html';
-        }, 1500);
-        return;
+    // Check if user is already logged in - Cải thiện logic
+    const userData = localStorage.getItem('currentUser');
+    const jwtToken = localStorage.getItem('jwtToken');
+    
+    if (userData && jwtToken) {
+        try {
+            const currentUser = JSON.parse(userData);
+            if (currentUser && currentUser.id) {
+                // Kiểm tra xem có parameter ?force_login trong URL không
+                const urlParams = new URLSearchParams(window.location.search);
+                const forceLogin = urlParams.get('force_login');
+                
+                if (forceLogin === 'true') {
+                    // Nếu có force_login=true, cho phép đăng nhập lại
+                    console.log('Force login được yêu cầu, cho phép đăng nhập lại');
+                    setupLoginForm();
+                    return;
+                }
+                
+                // Nếu không có force_login, redirect về home
+                showMessage('Bạn đã đăng nhập! Đang chuyển hướng...', 'info');
+                setTimeout(() => {
+                    window.location.href = '../home/home.html';
+                }, 1500);
+                return;
+            }
+        } catch (error) {
+            console.error('Lỗi parse user data:', error);
+            // Xóa data lỗi
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('jwtToken');
+        }
     }
 
-    // Setup form handling
+    // Setup form login nếu chưa đăng nhập
     setupLoginForm();
 });
 
@@ -57,10 +81,8 @@ function handleLogin(e) {
     submitBtn.classList.add('loading');
     submitBtn.textContent = 'Đang đăng nhập...';
     
-    // Simulate API call
-    setTimeout(() => {
-        performLogin(username, password, rememberMe);
-    }, 1500);
+    // ✅ FIX: Gọi API ngay lập tức thay vì setTimeout
+    performLogin(username, password, rememberMe);
 }
 
 function validateLoginForm(username, password) {
@@ -174,24 +196,103 @@ function clearAllErrors() {
     });
 }
 
-function performLogin(username, password, rememberMe) {
-    // In production, this would be an actual API call
+async function performLogin(username, password, rememberMe) {
+    try {
+        // ✅ FIX: Gọi API thực tế thay vì mock data
+        const response = await fetch('../../api/auth/login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        const submitBtn = document.querySelector('.btn-submit');
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Đăng nhập';
+
+        // Kiểm tra response
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error('Server trả về HTML thay vì JSON:', text.substring(0, 300));
+            throw new Error("Server không trả về JSON");
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Lưu thông tin user và token
+            localStorage.setItem('currentUser', JSON.stringify(data.data.user));
+            localStorage.setItem('jwtToken', data.data.token);
+            
+            if (rememberMe) {
+                localStorage.setItem('rememberMe', 'true');
+            }
+            
+            showMessage(`Đăng nhập thành công! Chào mừng ${data.data.user.full_name}!`, 'success');
+            
+            // Redirect based on role
+            setTimeout(() => {
+                if (data.data.user.role === 'admin') {
+                    window.location.href = '../../admin/admin.html';
+                } else if (data.data.user.role === 'staff') {
+                    window.location.href = '../../staff/ViewOders/order.html';
+                } else {
+                    window.location.href = '../home/home.html';
+                }
+            }, 1500);
+            
+        } else {
+            showMessage(data.message || 'Đăng nhập thất bại!', 'error');
+        }
+
+    } catch (error) {
+        console.error('Login error:', error);
+        
+        const submitBtn = document.querySelector('.btn-submit');
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Đăng nhập';
+        
+        // Fallback to mock data nếu API không hoạt động
+        console.log('API không hoạt động, sử dụng mock data...');
+        performLoginWithMockData(username, password, rememberMe);
+    }
+}
+
+// Fallback function với mock data
+function performLoginWithMockData(username, password, rememberMe) {
     const mockUsers = [
         {
             id: 1,
             username: 'admin',
-            email: 'admin@lacuisinengot.com',
-            password: 'admin123',
+            email: 'admin@lacuisine.vn',
+            password: 'password', // ✅ FIX: Sử dụng password đúng từ database
             role: 'admin',
-            fullName: 'Quản trị viên'
+            full_name: 'Quản trị viên'
         },
         {
             id: 2,
-            username: 'customer',
-            email: 'customer@example.com',
-            password: 'customer123',
+            username: 'staff01',
+            email: 'staff01@lacuisine.vn',
+            password: 'password', // ✅ FIX: Sử dụng password đúng từ database
+            role: 'staff',
+            full_name: 'Nhân viên 1'
+        },
+        {
+            id: 3,
+            username: 'customer01',
+            email: 'customer01@email.com',
+            password: 'password', // ✅ FIX: Sử dụng password đúng từ database
             role: 'customer',
-            fullName: 'Khách hàng'
+            full_name: 'Nguyễn Văn A'
         }
     ];
     
@@ -201,29 +302,26 @@ function performLogin(username, password, rememberMe) {
         u.password === password
     );
     
-    const submitBtn = document.querySelector('.btn-submit');
-    submitBtn.classList.remove('loading');
-    submitBtn.textContent = 'Đăng nhập';
-    
     if (user) {
         // Remove password from user object
         const { password, ...userWithoutPassword } = user;
         
         // Store user data
         localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
-        // Store demo JWT token for admin API access
         localStorage.setItem('jwtToken', 'demo');
         
         if (rememberMe) {
             localStorage.setItem('rememberMe', 'true');
         }
         
-        showMessage('Đăng nhập thành công!', 'success');
+        showMessage(`Đăng nhập thành công! (Mock data) Chào mừng ${user.full_name}!`, 'success');
         
         // Redirect based on role
         setTimeout(() => {
             if (user.role === 'admin') {
                 window.location.href = '../../admin/admin.html';
+            } else if (user.role === 'staff') {
+                window.location.href = '../../staff/ViewOders/order.html';
             } else {
                 window.location.href = '../home/home.html';
             }

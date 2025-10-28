@@ -164,6 +164,27 @@
     color: #1e3a0f;
 }
 
+/* ✅ FIX: Style cho link "Đăng nhập với tài khoản khác" */
+.force-login-link {
+    color: #c92a2a !important;
+    font-weight: 600 !important;
+    border: 1px solid #c92a2a;
+    padding: 8px 16px !important;
+    border-radius: 6px;
+    margin: 10px 0 !important;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.force-login-link:hover {
+    background-color: #c92a2a;
+    color: white !important;
+}
+
+.force-login-link::after {
+    display: none !important;
+}
+
 /* Loading state */
 .btn-submit.loading {
     pointer-events: none;

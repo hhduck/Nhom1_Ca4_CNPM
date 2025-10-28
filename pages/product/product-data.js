@@ -40,7 +40,7 @@ bonus: `
   {
     id: 2,
     name: "Lime and Basil Entremets",
-    price: "450,000 VND",
+    price: "600,000 VND", // Đã sửa: đồng bộ giá với main.js
     shortIntro: "Chanh, Húng Quế và Kem Tươi",
     shortParagraph: `Chiếc entremets mang sắc xanh ngọc thạch quyến rũ, là bản hòa tấu bất ngờ giữa vị chua sáng rỡ của những trái chanh xanh căng mọng và hương thơm ấm áp, nồng nàn của húng quế. 
     Từng lớp mousse được chăm chút tỉ mỉ, tạo nên sự đối lập hoàn hảo: mềm tan của kem mousse - giòn xốp của đế bánh, tinh khôi mà đầy mê hoặc. 

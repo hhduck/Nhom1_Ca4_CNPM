@@ -55,6 +55,7 @@ function getAllProducts($db) {
     $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
     $category = isset($_GET['category']) ? sanitizeInput($_GET['category']) : null;
     $status = isset($_GET['status']) ? sanitizeInput($_GET['status']) : null;
+    $featured = isset($_GET['featured']) ? sanitizeInput($_GET['featured']) : null;
     
     $query = "SELECT 
                 p.ProductID as product_id,
@@ -91,6 +92,11 @@ function getAllProducts($db) {
     if ($status) {
         $query .= " AND p.Status = :status";
         $params[':status'] = $status;
+    }
+    
+    // ✅ FIX: Thêm filter cho featured products
+    if ($featured === '1') {
+        $query .= " AND p.IsFeatured = 1";
     }
     
     $query .= " ORDER BY p.CreatedAt DESC";

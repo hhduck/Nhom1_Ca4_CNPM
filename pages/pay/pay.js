@@ -38,49 +38,83 @@ document.addEventListener('DOMContentLoaded', function () {
   checkoutForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const name = (this.fullname && this.fullname.value.trim()) || "Khách hàng";
+    // Ẩn lỗi cũ
+    document.querySelectorAll(".error-msg").forEach(el => el.style.display = "none");
+    document.querySelectorAll("input").forEach(el => el.classList.remove("error"));
+
+    let isValid = true;
+
+    const name = (this.fullname && this.fullname.value.trim()) || "";
     const phone = this.phone ? this.phone.value.replace(/\s+/g, '') : "";
     const deliveryTimeInput = this.deliveryTime ? this.deliveryTime.value : "";
 
-    // Số điện thoại phải đủ 10 số
+    // Kiểm tra họ tên
+    if (name === "") {
+      const err = document.getElementById("nameError");
+      err.textContent = "⚠️ Vui lòng nhập họ và tên.";
+      err.style.display = "block";
+      this.fullname.classList.add("error");
+      isValid = false;
+    }
+
+    // Kiểm tra số điện thoại
     if (!/^\d{10}$/.test(phone)) {
-      alert("⚠️ Vui lòng nhập số điện thoại hợp lệ (10 chữ số).");
-      this.phone.focus();
-      return;
+      const err = document.getElementById("phoneError");
+      err.textContent = "⚠️ Số điện thoại phải có đúng 10 chữ số.";
+      err.style.display = "block";
+      this.phone.classList.add("error");
+      isValid = false;
     }
 
-    // Phải chọn thời gian nhận bánh
+    // Kiểm tra email
+    const email = this.email ? this.email.value.trim() : "";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      const err = document.getElementById("emailError");
+      err.textContent = "⚠️ Vui lòng nhập địa chỉ email hợp lệ.";
+      err.style.display = "block";
+      this.email.classList.add("error");
+      isValid = false;
+    }
+
+    // Kiểm tra thời gian nhận bánh
     if (!deliveryTimeInput) {
-      alert("⚠️ Vui lòng chọn thời gian nhận bánh.");
-      this.deliveryTime.focus();
-      return;
+      const err = document.getElementById("timeError");
+      err.textContent = "⚠️ Vui lòng chọn thời gian nhận bánh.";
+      err.style.display = "block";
+      this.deliveryTime.classList.add("error");
+      isValid = false;
+    } else {
+      const [datePart, timePart] = deliveryTimeInput.split("T");
+      const [year, month, day] = datePart.split("-").map(Number);
+      const [hour, minute] = timePart.split(":").map(Number);
+      const deliveryTime = new Date(year, month - 1, day, hour, minute);
+      const now = new Date();
+      const diffHours = (deliveryTime - now) / (1000 * 60 * 60);
+
+      if (diffHours < 2) {
+        const err = document.getElementById("timeError");
+        err.textContent = "⚠️ Thời gian nhận bánh phải sau thời điểm đặt ít nhất 2 tiếng.";
+        err.style.display = "block";
+        this.deliveryTime.classList.add("error");
+        isValid = false;
+      } else if (hour < 8 || hour >= 20) {
+        const err = document.getElementById("timeError");
+        err.textContent = "⚠️ Thời gian nhận bánh phải trong khoảng từ 8:00 đến 20:00.";
+        err.style.display = "block";
+        this.deliveryTime.classList.add("error");
+        isValid = false;
+      }
     }
 
-    // Chuyển datetime-local sang Date local
-    const [datePart, timePart] = deliveryTimeInput.split("T");
-    const [year, month, day] = datePart.split("-").map(Number);
-    const [hour, minute] = timePart.split(":").map(Number);
-    const deliveryTime = new Date(year, month - 1, day, hour, minute);
+    // Nếu có lỗi thì ngừng lại
+    if (!isValid) return;
 
-    const now = new Date();
-    const diffHours = (deliveryTime - now) / (1000 * 60 * 60);
-
-    if (diffHours < 2) {
-      alert("⚠️ Thời gian nhận bánh phải sau thời điểm đặt ít nhất 2 tiếng.");
-      this.deliveryTime.focus();
-      return;
-    }
-
-    const deliveryHour = deliveryTime.getHours();
-    if (deliveryHour < 8 || deliveryHour >= 20) {
-      alert("⚠️ Thời gian nhận bánh phải trong khoảng từ 8:00 đến 20:00.");
-      this.deliveryTime.focus();
-      return;
-    }
-
-    // OK → thông báo thành công
-    alert(`🎉 Cảm ơn ${name}!\nĐơn hàng của bạn đã được ghi nhận.\nTổng: ${toVND(grand)} VND`);
+    // Thành công
+    const nameDisplay = name || "Khách hàng";
+    alert(`🎉 Cảm ơn ${nameDisplay}!\nĐơn hàng của bạn đã được ghi nhận.\nTổng: ${toVND(grand)} VND`);
   });
+
 
   // ==========================
   // 3️⃣ CHỌN TỈNH / PHƯỜNG
@@ -96,7 +130,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const deliveryOptions = document.querySelectorAll('input[name="delivery"]');
   const deliveryInfo = document.querySelector('.delivery-info');
 
-  // Ẩn/hiện phần nhập địa chỉ
+  // Ẩn phần địa chỉ mặc định
+  deliveryInfo.style.display = "none";
+
+  // Lắng nghe khi người dùng chọn phương thức nhận hàng
   deliveryOptions.forEach(option => {
     option.addEventListener('change', function () {
       deliveryInfo.style.display = this.value === 'delivery' ? 'block' : 'none';

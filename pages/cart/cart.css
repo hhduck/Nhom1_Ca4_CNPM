@@ -5,44 +5,121 @@ body {
     color: #2f3e34;
 }
 
-/* NAVIGATION */
+/* Home Page Specific Styles */
+/* ===== NAVBAR ===== */
 .navbar {
-    background-color: #2f3e34;
-    padding: 10px 40px;
+    background-color: #395542; /* xanh rêu đậm */
+    padding: 10px 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+  }
+  
+  .nav-container {
+    width: 100%;
+    max-width: 1200px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
+  }
+/* Logo */
 .nav-logo a {
-    font-family: 'Dancing Script', cursive;
-    font-size: 26px;
-    color: #fff;
-    text-decoration: none;
+  color: #fff;
+  font-family: 'Inspiration', cursive;
+  font-size: 52px;
+  font-weight: 200; 
+  text-decoration: none;
+  letter-spacing: 1px;
 }
 
-.nav-menu {
+  /* Menu */
+  .nav-menu {
     list-style: none;
     display: flex;
-    gap: 20px;
-}
-
-.nav-menu a {
-    color: #fff;
+    gap: 40px;
+    padding: 0;
+    margin-right: -70px;
+  }
+  
+  .nav-menu a {
+    color: white;
     text-decoration: none;
-    font-weight: 500;
-}
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase; /* Viết hoa toàn bộ */
+    transition: color 0.3s;
 
-.nav-icons {
+  }
+  
+  .nav-menu a:hover {
+    color: #e3c78d; /* vàng nhạt khi hover */
+  }
+  
+  /* Icons bên phải */
+  .nav-icons {
     display: flex;
     align-items: center;
-    gap: 15px;
-}
-
-.nav-icons a {
+    gap: 25px;
+  }
+  
+  .nav-icons a {
     color: #fff;
+    font-size: 20px;
     text-decoration: none;
-}
+    transition: 0.3s;
+    left: 150px;
+  }
+  
+  .nav-icons a:hover {
+    color: #e3c78d;
+  }
+  
+  /* Giỏ hàng */
+  .nav-cart {
+    position: relative;
+  }
+  
+  .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #e3c78d;
+    color: #395542;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 50%;
+  }
+  
+  .nav-login {
+   margin-left: 130px;
+   margin-right: 50px;
+  }
+  
+  .nav-login:hover {
+    color: #e3c78d;
+  }
+  
+  /* Responsive (mobile) */
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .nav-menu {
+      gap: 20px;
+    }
+    .nav-icons {
+      gap: 15px;
+    }
+  }
+  
 
 /* CART SECTION */
 .cart-container {
@@ -81,39 +158,78 @@ body {
     background-color: #445c4b;
 }
 
-/* FOOTER */
+/* --- FOOTER --- */
 .footer {
-    background-color: #2f3e34;
-    color: #fff;
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.footer-content {
+    background-color: #395542;
+    color: #ffffff;
+    padding: 40px 100px;
+    font-family: 'Crimson Text', serif;
+  }
+  
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .footer-left {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    align-items: center;
-}
-
-.footer-logo h3 {
-    font-family: 'Dancing Script', cursive;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.social-links a {
+  }
+  
+  .footer-logo {
+    font-family: 'Inspiration', cursive;
+    font-size: 52px;
     color: #fff;
-    margin: 0 8px;
-    font-size: 18px;
-    transition: 0.3s;
-}
-
-.social-links a:hover {
-    color: #d4b083;
-}
-
-.footer-address p {
-    font-size: 14px;
-    line-height: 1.6;
-}
+    font-weight: 200; 
+    text-decoration: none;
+    letter-spacing: 1px;
+  
+  }
+  
+  .social-links {
+      display: flex;
+      gap: 15px;
+  }
+  
+  .social-links a {
+   width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2d5016;
+      transition: all 0.3s ease;
+      margin-top: -40px;
+  }
+  
+  .social-links a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+  }
+  
+  .footer-right {
+    text-align: right;
+    line-height: 1.8;
+    font-size: 15px;
+  }
+  
+  .footer-right b {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      text-align: center;
+      gap: 30px;
+    }
+  
+    .footer-right {
+      text-align: center;
+    }
+  }
