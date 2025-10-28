@@ -33,7 +33,15 @@
             </div>
             <a class="nav-menu-link" href="../../staff/ViewOders/order.html">Danh sách</a>
             <a class="nav-menu-link" href="../../staff/handleComplaint/complaint.html">Khiếu nại</a>
-            <a class="nav-icon-link" href="../login/login.html"><i class="fas fa-user"></i></a>
+            <div class="nav-user-icon">
+                <i class="fas fa-user"></i>
+                <div class="user-menu hidden">
+                    <ul>
+                        <li><a href="../../pages/home/home.html">Trang chủ</a></li>
+                        <li><button id="logoutButton">Đăng xuất</button></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -111,12 +119,11 @@
                         <div class="form-group">
                             <label for="assignedStaffIdInput">Nhân viên phụ trách (Nhập ID)</label>
 
-                            <input type="text" id="assignedStaffIdInput" placeholder="ID nhân viên (ví dụ: 2)"
-                                disabled style="margin-bottom: 10px;">
+                            <input type="text" id="assignedStaffIdInput" placeholder="ID nhân viên (ví dụ: 2)" disabled
+                                style="margin-bottom: 10px;">
 
-                            <input type="text" id="assignedStaffNameDisplay"
-                                placeholder="Hiển thị tên nhân viên" readonly disabled
-                                style="font-weight: 600; color: #555; font-style: normal;">
+                            <input type="text" id="assignedStaffNameDisplay" placeholder="Hiển thị tên nhân viên"
+                                readonly disabled style="font-weight: 600; color: #555; font-style: normal;">
                         </div>
                         <div class="form-group">
                             <label for="responseText">Nội dung phản hồi</label>

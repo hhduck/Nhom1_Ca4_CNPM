@@ -669,6 +669,7 @@ body.order-page {
         text-align: left;
     }
 }
+
 /* ======================================== */
 /* --- STYLES CHO NAVBAR ĐÃ CẤU TRÚC LẠI --- */
 /* ======================================== */
@@ -685,7 +686,8 @@ body.order-page {
 }
 
 .nav-menu-link:hover {
-    color: #e3c78d; /* vàng nhạt khi hover */
+    color: #e3c78d;
+    /* vàng nhạt khi hover */
 }
 
 /* Áp dụng cho icon người dùng */
@@ -698,4 +700,182 @@ body.order-page {
 
 .nav-icon-link:hover {
     color: #e3c78d;
+}
+
+/* Thêm vào cuối file order.css VÀ complaint.css */
+
+/* --- User Icon Dropdown Menu --- */
+.nav-user-icon {
+    position: relative;
+    /* Để menu con định vị theo icon */
+    cursor: pointer;
+    color: #fff;
+    /* Màu icon */
+    font-size: 20px;
+    /* Kích thước icon */
+    transition: color 0.3s;
+}
+
+.nav-user-icon:hover {
+    color: #e3c78d;
+    /* Màu icon khi hover */
+}
+
+.user-menu {
+    position: absolute;
+    top: 150%;
+    /* Vị trí dưới icon, cách 1 chút */
+    right: 0;
+    /* Canh lề phải */
+    background-color: #ffffff;
+    /* Nền trắng */
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 10px 0;
+    min-width: 150px;
+    /* Độ rộng tối thiểu */
+    z-index: 1010;
+    /* Nằm trên navbar */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.user-menu.visible {
+    /* Class để hiện menu */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-menu li a,
+.user-menu li button {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    /* Màu chữ menu */
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    white-space: nowrap;
+    background: none;
+    /* Reset style cho button */
+    border: none;
+    /* Reset style cho button */
+    cursor: pointer;
+    /* Reset style cho button */
+    width: 100%;
+    /* Reset style cho button */
+    text-align: left;
+    /* Reset style cho button */
+}
+
+.user-menu li a:hover,
+.user-menu li button:hover {
+    background-color: #f4f1ec;
+    /* Màu nền khi hover */
+    color: #395542;
+    /* Màu chữ khi hover */
+}
+
+.user-menu.hidden {
+    /* Class mặc định để ẩn menu */
+    display: none;
+    /* Dùng display none ban đầu để tránh lỗi layout */
+}
+
+/* Thêm vào cuối file order.css VÀ complaint.css */
+
+/* --- User Icon Dropdown Menu --- */
+.nav-user-icon {
+    position: relative;
+    /* Để menu con định vị theo icon */
+    cursor: pointer;
+    color: #fff;
+    /* Màu icon */
+    font-size: 20px;
+    /* Kích thước icon */
+    transition: color 0.3s;
+}
+
+.nav-user-icon:hover {
+    color: #e3c78d;
+    /* Màu icon khi hover */
+}
+
+.user-menu {
+    position: absolute;
+    top: 150%;
+    /* Vị trí dưới icon, cách 1 chút */
+    right: 0;
+    /* Canh lề phải */
+    background-color: #ffffff;
+    /* Nền trắng */
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 10px 0;
+    min-width: 150px;
+    /* Độ rộng tối thiểu */
+    z-index: 1010;
+    /* Nằm trên navbar */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.user-menu.visible {
+    /* Class để hiện menu */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-menu li a,
+.user-menu li button {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    /* Màu chữ menu */
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    white-space: nowrap;
+    background: none;
+    /* Reset style cho button */
+    border: none;
+    /* Reset style cho button */
+    cursor: pointer;
+    /* Reset style cho button */
+    width: 100%;
+    /* Reset style cho button */
+    text-align: left;
+    /* Reset style cho button */
+}
+
+.user-menu li a:hover,
+.user-menu li button:hover {
+    background-color: #f4f1ec;
+    /* Màu nền khi hover */
+    color: #395542;
+    /* Màu chữ khi hover */
+}
+
+.user-menu.hidden {
+    /* Class mặc định để ẩn menu */
+    display: none;
+    /* Dùng display none ban đầu để tránh lỗi layout */
 }

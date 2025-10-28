@@ -463,3 +463,48 @@ function showSuccessToast(message) {
         }, 500);
     }, 3000);
 }
+
+// Thêm vào cuối file order.js VÀ complaint.js
+
+// --- Logic cho User Icon Dropdown ---
+document.addEventListener('DOMContentLoaded', () => {
+    const userIconDiv = document.querySelector('.nav-user-icon');
+    const userMenu = document.querySelector('.user-menu');
+    const logoutButton = document.getElementById('logoutButton');
+
+    if (userIconDiv && userMenu) {
+        // Hiện/ẩn menu khi bấm vào icon
+        userIconDiv.addEventListener('click', (event) => {
+            event.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+            userMenu.classList.remove('hidden'); // Gỡ class hidden ban đầu
+            setTimeout(() => { // Cần timeout nhỏ để transition hoạt động
+                userMenu.classList.toggle('visible');
+            }, 0);
+        });
+
+        // Ẩn menu khi bấm ra ngoài
+        document.addEventListener('click', (event) => {
+            if (!userIconDiv.contains(event.target) && userMenu.classList.contains('visible')) {
+                userMenu.classList.remove('visible');
+            }
+        });
+    }
+
+    // Xử lý nút Đăng xuất
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+                console.log("Đang đăng xuất...");
+                // Xóa dữ liệu đăng nhập khỏi localStorage (giống login.js)
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('rememberMe'); // Có thể có hoặc không
+
+                alert("Bạn đã đăng xuất thành công.");
+                // Chuyển hướng về trang đăng nhập
+                window.location.href = '../../pages/login/login.html'; // Chỉnh lại đường dẫn nếu cần
+            }
+        });
+    }
+});
+// --- Kết thúc Logic User Icon ---
