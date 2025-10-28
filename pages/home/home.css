@@ -39,7 +39,7 @@
   }
   
   .nav-menu a {
-    color: white;
+    color: #fff;
     text-decoration: none;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
@@ -49,7 +49,7 @@
   }
   
   .nav-menu a:hover {
-    color: #e3c78d; /* vàng nhạt khi hover */
+    color: #EDDECD; /* vàng nhạt khi hover */
   }
   
   /* Icons bên phải */
@@ -68,7 +68,7 @@
   }
   
   .nav-icons a:hover {
-    color: #e3c78d;
+    color: #EDDECD;
   }
   
   /* Giỏ hàng */
@@ -80,8 +80,8 @@
     position: absolute;
     top: -8px;
     right: -10px;
-    background-color: #e3c78d;
-    color: #364D3C;
+    background-color:#EDDECD;
+    color: #395542;
     font-size: 20px;
     font-weight: bold;
     padding: 2px 5px;
@@ -94,7 +94,7 @@
   }
   
   .nav-login:hover {
-    color: #e3c78d;
+    color: #EDDECD;
   }
   
   /* Responsive (mobile) */
@@ -184,7 +184,7 @@
   .hero-content h1 {
       font-size: 3.5rem;
       font-weight: 700;
-      color: #ffffff;
+      color: #fff;
       margin-bottom: 20px;
       line-height: 1.2;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -192,29 +192,29 @@
   
   .hero-content p {
       font-size: 1.3rem;
-      color: #f8f9fa;
+      color: #fff;
       margin-bottom: 30px;
       line-height: 1.6;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      text-shadow: 1px 1px 2px #000000;
   }
   
   .btn-primary {
       display: inline-block;
       padding: 15px 40px;
-      background: #364D3C;
-      color: white;
+      background: #395542;
+      color: #fff;
       text-decoration: none;
       border-radius: 30px;
       font-size: 1.1rem;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      box-shadow: 0 4px 15px #fff;
   }
   
   .btn-primary:hover {
-      background: #e3c78d;
+      background: #EDDECD;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+      box-shadow: 0 6px 20px #fff;
       color: #395542 ;
   }
   
@@ -238,7 +238,7 @@
       }
   
       .hero-content h1 {
-          font-size: 2.5rem;
+          font-size: 2.5rem; 
       }
   
       .hero-content p {
@@ -263,7 +263,7 @@
   /* About Section */
   .about {
       padding: 80px 0;
-      background: #fafafa;
+      background: #fff;
   }
   
   .about-content {
@@ -337,6 +337,7 @@
   color: #395542;
   font-weight: 400; 
   margin-bottom: 5px;
+  text-align: center;
 }
 
 /* --- Dòng chữ "La Cuisine Ngọt!" --- */
@@ -347,6 +348,7 @@
   font-weight: 400; 
   margin-top: 0;
   margin-bottom: 20px;
+  text-align: center;
 }
   
 .about-text .intro-paragraph {
@@ -409,7 +411,7 @@
   
   /* --- Tiêu đề --- */
   .why-choose-us h2 {
-    color: white;
+    color: #fff;
     font-size: 2rem;
     font-weight: 500;
     margin: 0;
@@ -468,7 +470,7 @@
     border-radius: 18px;              /* Bo góc ảnh */
     object-fit: cover;                /* Ảnh che phủ đều khung */
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);  /* Đổ bóng nhẹ */
-    background: #eee;                 /* Màu nền khi chưa có ảnh */
+    background: #fff;                 /* Màu nền khi chưa có ảnh */
   }
   
   /* Cột chứa nội dung mô tả */
@@ -536,7 +538,7 @@
   
   /* Nền khối lớn màu nâu */
   .core-values-bg {
-    background: #ad875f;             /* Màu nâu */
+    background: #AC845C;             /* Màu nâu */
     border-radius: 20px;             /* Bo góc lớn */
     padding: 48px 36px 44px 36px;    /* Padding trong khối */
     width: 95%;                      /* Rộng gần hết màn hình */
@@ -550,7 +552,7 @@
     text-align: center;              /* Căn giữa chữ */
     font-size: 2rem;                 /* Cỡ chữ lớn */
     font-weight: 700;                /* Đậm */
-    color: #eddfcd;                  /* Màu đen nhạt */
+    color: #EDDECD;                  /* Màu đen nhạt */
     margin-bottom: 38px;             /* Cách dưới */
     letter-spacing: 0.5px;
   }
@@ -564,7 +566,7 @@
   
   /* Mỗi khối giá trị cốt lõi */
   .core-value-item {
-    background: #eddfcd;             /* Nền kem nhạt */
+    background: #EDDECD;             /* Nền kem nhạt */
     border-radius: 18px;             /* Bo góc */
     width: 250px;                    /* Rộng cố định */
     height: 280px;                   /* Cao cố định */
@@ -635,6 +637,7 @@
       line-height: 1.4;
       letter-spacing: 0.8px;
       text-transform: uppercase;
+      text-align: center;
   }
   
   .strategy-content p {
@@ -834,7 +837,7 @@
   .product-name {
       font-size: 1.1rem;
       font-weight: 500;
-      color: #5a4a3a;
+      color: #395542;
       margin-bottom: 15px;
       min-height: 50px;
       display: flex;
@@ -845,7 +848,7 @@
   .product-price {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #5a4a3a;
+      color: #395542;
   }
   
   /* Responsive */
@@ -906,7 +909,7 @@
   }
   .entremet-desc {
       text-align: center;
-      color: #3c5d3a;
+      color: #395542;
       font-size: 1.08rem;
       margin-bottom: 50px;
       max-width: 900px;
@@ -977,7 +980,7 @@
   .entremet-price {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #274c2c;
+      color: #395542;
   }
   
   /* Responsive */
@@ -1005,7 +1008,7 @@
   /*Mousse*/
   .mousse-section {
       padding: 150px 20px;
-      background: #b8956a;
+      background: #AC845C;
   }
   .mousse-container {
       max-width: 1200px;
@@ -1124,7 +1127,7 @@
       font-size: 2.2rem;
       font-family: 'Inter', serif;
       font-weight: 600;
-      color: #274c2c;
+      color: #395542;
       margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -1183,7 +1186,7 @@
   .truyenthong-name {
       font-size: 1.1rem;
       font-weight: 500;
-      color: #274c2c;
+      color: #395542;
       margin-bottom: 15px;
       min-height: 50px;
       display: flex;
@@ -1193,7 +1196,7 @@
   .truyenthong-price {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #274c2c;
+      color: #395542;
   }
   
   /* Responsive */
@@ -1221,7 +1224,7 @@
   /*Phụ kiện*/
   .phukien-section {
       padding: 150px 20px;
-      background: #b8956a;
+      background: #AC845C;
   }
   .phukien-container {
       max-width: 1200px;
@@ -1329,7 +1332,7 @@
   /* Khuyến mãi */
 .promotion-section {
     padding: 150px 20px;
-    background: #ffffff;
+    background: #fff;
 }
 
 .promotion-container {
@@ -1382,7 +1385,7 @@
     transform: translateY(-8px);
     box-shadow: 0 15px 35px rgba(0,0,0,0.18);
     background: #fff;
-    border-color: #e6dac8;
+    border-color: #EDDECD;
     z-index: 2;
 }
 
@@ -1390,7 +1393,7 @@
     width: 100%;
     height: 220px;
     overflow: hidden;
-    background: #b8956a;
+    background: #AC845C;
 }
 
 .promotion-image {
@@ -1484,13 +1487,13 @@
       font-size: 2.5rem;
       font-weight: 400;
       margin-bottom: 20px;
-      color: #2d5016;
+      color: #395542;
       letter-spacing: 2px;
   }
   
   .contact-subtitle {
       font-size: 1rem;
-      color: #666;
+      color: #444;
       margin-bottom: 40px;
       line-height: 1.6;
   }
@@ -1508,7 +1511,7 @@
       border-radius: 8px;
       font-size: 1rem;
       font-family: inherit;
-      background: white;
+      background: #fff;
       transition: all 0.3s ease;
   }
   
@@ -1527,7 +1530,7 @@
   .btn-submit {
       padding: 15px 40px;
       background: #395542;
-      color: white;
+      color: #fff;
       border: none;
       border-radius: 25px;
       font-size: 1rem;
@@ -1546,7 +1549,7 @@
 /* --- FOOTER --- */
 .footer {
   background-color: #395542;
-  color: #ffffff;
+  color: #fff;
   padding: 40px 100px;
   font-family: 'Crimson Text', serif;
 }
@@ -1582,11 +1585,11 @@
  width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: white;
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #2d5016;
+    color: #395542;
     transition: all 0.3s ease;
     margin-top: -40px;
 }
@@ -1652,7 +1655,7 @@
 }
 .user-menu {
   position: absolute;
-  background: white;
+  background: #fff;
   border: 1px solid #ddd;
   padding: 8px 12px;
   border-radius: 8px;
@@ -1665,7 +1668,7 @@
   border: none;
   background: none;
   cursor: pointer;
-  color: #333;
+  color: #444;
 }
 .nav-user {
   position: relative;
@@ -1675,7 +1678,7 @@
 /* CSS cho icon user */
 .fa-user {
     font-size: 20px;     /* Kích thước icon */
-    color: #ffffff;         /* Màu xám đậm */
+    color: #fff;         /* Màu xám đậm */
     transition: color 0.3s ease;
     margin-top: 6px;
     margin-left: 20px;
@@ -1683,7 +1686,7 @@
   
   /* Khi rê chuột */
   .fa-user:hover {
-    color: #e3c78d;      /* Đổi sang xanh khi hover */
+    color: #EDDECD;      /* Đổi sang xanh khi hover */
     cursor: pointer;
   }
   
