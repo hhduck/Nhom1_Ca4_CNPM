@@ -113,15 +113,7 @@
     overflow: hidden;
 }
 
-.form-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #2d5016, #4a7c59, #2d5016);
-}
+
 
 .form-title {
     text-align: center;
@@ -132,17 +124,7 @@
     position: relative;
 }
 
-.form-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: #2d5016;
-    border-radius: 2px;
-}
+
 
 .form-group {
     margin-bottom: 20px;
@@ -575,3 +557,21 @@
       cursor: pointer;
     }
     
+    .password-wrapper {
+        position: relative;
+      }
+      
+      .password-wrapper .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #999;
+        transition: color 0.2s;
+      }
+      
+      .password-wrapper .toggle-password:hover {
+        color: #333;
+      }
+      
