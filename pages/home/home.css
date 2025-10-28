@@ -510,6 +510,7 @@
     margin: 0;                        /* Không có margin */
     line-height: 1.7;                 /* Giãn dòng 1.7 */
     font-weight: 400;                 /* Chữ thường */
+    text-align: justify;
   }
   
   /* Responsive: Khi màn hình nhỏ hơn 1000px */
@@ -586,7 +587,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;  
+    justify-content: center;
+    text-align: justify;
 }
   
   /* Responsive: khi màn hình nhỏ, xếp dọc */
