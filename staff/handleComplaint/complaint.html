@@ -95,33 +95,39 @@
                         <div class="form-group">
                             <label for="complaintDetails">Nội dung chi tiết (từ khách hàng)</label>
                             <textarea id="complaintDetails" placeholder="Nội dung chi tiết khiếu nại / yêu cầu" readonly
-                                style="background-color: #f0f0f0; min-height: 250px;"></textarea>
+                                style="min-height: 250px;"></textarea>
                         </div>
                     </div>
 
                     <div class="form-column">
                         <div class="form-group">
                             <label for="status">Trạng thái</label>
-                            <select id="status">
+                            <select id="status" disabled>
                                 <option value="pending">Chờ giải quyết</option>
                                 <option value="processing">Đang giải quyết</option>
                                 <option value="resolved">Đã giải quyết</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="assignedStaff">Nhân viên phụ trách</label>
-                            <input type="text" id="assignedStaff" placeholder="Nhập tên nhân viên...">
+                            <label for="assignedStaffIdInput">Nhân viên phụ trách (Nhập ID)</label>
+
+                            <input type="text" id="assignedStaffIdInput" placeholder="ID nhân viên (ví dụ: 2)"
+                                disabled style="margin-bottom: 10px;">
+
+                            <input type="text" id="assignedStaffNameDisplay"
+                                placeholder="Hiển thị tên nhân viên" readonly disabled
+                                style="font-weight: 600; color: #555; font-style: normal;">
                         </div>
                         <div class="form-group">
                             <label for="responseText">Nội dung phản hồi</label>
-                            <textarea id="responseText" placeholder="Phản hồi gửi lại khách..."></textarea>
+                            <textarea id="responseText" placeholder="Phản hồi gửi lại khách..." disabled></textarea>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary">Trả lời khách hàng</button>
-                    <button type="submit" class="btn btn-primary-green">Lưu và đóng</button>
+                    <button type="button" class="btn btn-secondary" disabled>Trả lời khách hàng</button>
+                    <button type="submit" class="btn btn-primary-green" disabled>Lưu và đóng</button>
                 </div>
             </form>
         </div>

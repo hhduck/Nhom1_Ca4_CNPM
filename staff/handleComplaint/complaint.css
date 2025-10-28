@@ -1,4 +1,4 @@
-/* complaint.css - PHIÊN BẢN HOÀN CHỈNH */
+/* complaint.css - PHIÊN BẢN HOÀN CHỈNH (Đã sửa lỗi font) */
 
 /* * 1. SỬA LỖI LAYOUT (THU HẸP NỘI DUNG & CÁCH LỀ)
  * Ghi đè max-width: 1400px của order.css
@@ -151,9 +151,9 @@ body.order-page {
 /* Input readonly */
 .form-group input[readonly],
 .form-group textarea[readonly] {
-    background-color: #f0f0f0;
+    background-color: #f0f5f1;
     font-weight: 600;
-    color: #555;
+    color: #395542;
     font-style: normal;
 }
 
@@ -306,4 +306,25 @@ body.order-page {
 .complaints-table td:nth-child(7) {
     /* Xử lý */
     text-align: center;
+}
+
+.status-badge {
+    text-transform: none;
+}
+
+/* Thêm vào cuối file complaint.css */
+
+/* Style cho ô tên nhân viên khi báo lỗi */
+input#assignedStaffNameDisplay.error-placeholder::placeholder {
+    color: #D9534F;
+    /* Màu đỏ */
+    font-style: italic;
+    font-weight: 500;
+    font-family: 'Crimson Text', serif;
+    /* <-- ĐÂY LÀ DÒNG ĐÃ THÊM VÀO */
+}
+
+input#assignedStaffNameDisplay.error-placeholder {
+    border-color: #D9534F;
+    /* (Tùy chọn) Thêm viền đỏ cho ô */
 }

@@ -1,8 +1,10 @@
 <?php
 /**
  * File: api/staff_search.php
- * API CHUYÊN DỤNG: Chỉ dùng để tìm kiếm Nhân viên (staff)
- * PHIÊN BẢN 2: Báo cáo lỗi PDO chi tiết
+ * PHIÊN BẢN SỬA ĐỔI (28/10/2025)
+ * - Thay đổi logic: Tìm nhân viên (staff) bằng UserID (tham số 'id')
+ * - Bỏ tìm kiếm bằng 'search' (FullName)
+ * - Trả về một object 'data' duy nhất, không phải mảng 'users'
  */
 
 ini_set('display_errors', 1);
@@ -27,58 +29,51 @@ try {
         throw new Exception("Method không được hỗ trợ", 405);
     }
 
-    $role = isset($_GET['role']) ? sanitizeInput($_GET['role']) : null;
-    $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
+    // (SỬA) Lấy 'id' thay vì 'search'
+    $staffId = isset($_GET['id']) ? sanitizeInput($_GET['id']) : null;
 
-    if ($role !== 'staff') {
-         throw new Exception("API này chỉ hỗ trợ tìm kiếm 'staff'", 400);
-    }
-    
-    if (empty($search)) {
-        throw new Exception("Thiếu tham số 'search'", 400);
+    if (empty($staffId) || !is_numeric($staffId)) {
+        throw new Exception("Thiếu hoặc sai tham số 'id' (phải là một con số)", 400);
     }
 
-    // Câu lệnh SQL chính xác (từ schema.sql)
+    // (SỬA) Câu lệnh SQL tìm chính xác bằng UserID và Role
     $query = "SELECT 
                 UserID as id, 
                 FullName as full_name
               FROM Users
               WHERE 
-                Role = :role 
+                Role = 'staff' 
                 AND Status = 'active'
-                AND FullName LIKE :search";
+                AND UserID = :id";
     
     $params = [
-        ':role' => $role,
-        ':search' => "%" . $search . "%"
+        ':id' => $staffId
     ];
     
     $stmt = $db->prepare($query);
     
-    // Thực thi câu lệnh
     if (!$stmt->execute($params)) {
-        // Nếu execute thất bại, ném ra lỗi chi tiết
         throw new Exception("Lỗi thực thi SQL: " + implode(", ", $stmt->errorInfo()));
     }
     
-    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // (SỬA) Lấy một kết quả (fetch) thay vì (fetchAll)
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Trả về định dạng mà JS mong đợi
-    $data = [
-        'users' => $users
-    ];
-    
-    sendJsonResponse(true, $data, "Tìm thấy " . count($users) . " nhân viên.");
+    if ($user) {
+        // Trả về định dạng mà JS mới mong đợi
+        sendJsonResponse(true, $user, "Tìm thấy nhân viên.");
+    } else {
+        // Vẫn trả về success=true nhưng data=null (hoặc false) để JS biết là "không tìm thấy"
+        sendJsonResponse(false, null, "Không tìm thấy nhân viên với ID này.");
+    }
 
 } catch (PDOException $e) {
-    // Bắt lỗi CỤ THỂ từ PDO (Database)
     error_log("staff_search.php PDOException: " . $e->getMessage());
     sendJsonResponse(false, null, "Lỗi Database (PDO): " . $e->getMessage(), 500);
 
 } catch (Exception $e) {
-    // Bắt các lỗi chung khác (ví dụ: 400, 405, hoặc lỗi execute)
     error_log("staff_search.php Exception: " . $e->getMessage());
     $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
     sendJsonResponse(false, null, "Lỗi máy chủ chung: " . $e->getMessage(), $statusCode);
 }
-?> 
+?>

@@ -1,14 +1,17 @@
-// complaint.js - PHIÊN BẢN SỬA LỖI ĐẦY ĐỦ (28/10/2025)
-// Cập nhật: Thêm danh sách khiếu nại, xóa tính năng "Chuyển tiếp Admin"
-// Cập nhật 2: Xóa bộ lọc "Đã đóng/Từ chối"
-// Cập nhật 3: Gỡ bỏ toàn bộ logic validation màu (xanh/đỏ)
-// Cập nhật 4: Thêm bộ lọc "Tất cả" và logic đi kèm
+// complaint.js - PHIÊN BẢN SỬA ĐỔI (28/10/2025)
+// Cập nhật 5: Thay đổi logic "Nhân viên phụ trách"
+// - Chuyển từ nhập Tên (FullName) sang nhập Mã (UserID)
+// - Cập nhật logic API call sang staff_search.php?id=...
 
 let currentComplaintId = null;
 let btnReplyCustomer = null;
 let statusSelect = null;
-let assignedStaffInput = null;
+let responseText = null;
 let validatedStaffId = null;
+
+// (SỬA) Thay đổi biến input
+let assignedStaffIdInput = null;
+let assignedStaffNameDisplay = null;
 
 let allComplaints = [];
 
@@ -28,17 +31,17 @@ function getAuthHeaders() {
 document.addEventListener('DOMContentLoaded', () => {
     btnReplyCustomer = document.querySelector('.form-actions .btn-secondary:nth-child(1)');
     statusSelect = document.getElementById('status');
-    assignedStaffInput = document.getElementById('assignedStaff');
+    responseText = document.getElementById('responseText');
+
+    // (SỬA) Lấy 2 input mới
+    assignedStaffIdInput = document.getElementById('assignedStaffIdInput');
+    assignedStaffNameDisplay = document.getElementById('assignedStaffNameDisplay');
 
     fetchComplaints();
 
     document.getElementById('complaints-table-body').addEventListener('click', handleComplaintListClick);
-
-    // (SỬA) Cập nhật listener cho bộ lọc
     setupFilterListeners();
-
     document.getElementById('complaint-search-input').addEventListener('input', debounce(applyFilters, 500));
-
     setupEventListeners();
 });
 
@@ -49,7 +52,6 @@ function setupFilterListeners() {
 
     allCheckbox.addEventListener('change', () => {
         if (allCheckbox.checked) {
-            // Nếu check "Tất cả", bỏ check các mục khác
             otherCheckboxes.forEach(cb => cb.checked = false);
         }
         applyFilters();
@@ -58,11 +60,8 @@ function setupFilterListeners() {
     otherCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             if (checkbox.checked) {
-                // Nếu check mục khác, bỏ check "Tất cả"
                 allCheckbox.checked = false;
             }
-
-            // Nếu không còn mục nào khác được check, tự động check "Tất cả"
             const anyOtherChecked = Array.from(otherCheckboxes).some(cb => cb.checked);
             if (!anyOtherChecked) {
                 allCheckbox.checked = true;
@@ -80,11 +79,7 @@ async function fetchComplaints() {
             method: 'GET',
             headers: getAuthHeaders()
         });
-
-        if (!response.ok) {
-            throw new Error(`Lỗi API: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
             allComplaints = result.data;
@@ -99,60 +94,44 @@ async function fetchComplaints() {
     }
 }
 
-// (SỬA) Cập nhật hàm applyFilters
 function applyFilters() {
     const isAllChecked = document.getElementById('filter-all').checked;
-
     const filterStatusMap = {
         'filter-pending': 'pending',
         'filter-processing': 'processing',
         'filter-resolved': 'resolved'
     };
-
     let selectedStatuses = [];
-    // Chỉ lấy status nếu "Tất cả" KHÔNG được check
     if (!isAllChecked) {
         document.querySelectorAll('.filters input.complaint-filter:checked:not(#filter-all)').forEach(cb => {
             const status = filterStatusMap[cb.id];
-            if (status) {
-                selectedStatuses.push(status);
-            }
+            if (status) selectedStatuses.push(status);
         });
     }
-
     const searchTerm = document.getElementById('complaint-search-input').value.toLowerCase();
-
     const filteredComplaints = allComplaints.filter(complaint => {
-        // (SỬA) Logic so khớp trạng thái
         const statusMatch = isAllChecked || selectedStatuses.includes(complaint.Status);
-
         const searchMatch = !searchTerm ||
             (complaint.ComplaintCode && complaint.ComplaintCode.toLowerCase().includes(searchTerm)) ||
             (complaint.OrderCode && complaint.OrderCode.toLowerCase().includes(searchTerm)) ||
             (complaint.CustomerName && complaint.CustomerName.toLowerCase().includes(searchTerm));
-
         return statusMatch && searchMatch;
     });
-
     renderComplaintList(filteredComplaints);
 }
 
 function renderComplaintList(complaints) {
     const tableBody = document.getElementById('complaints-table-body');
     tableBody.innerHTML = '';
-
     if (complaints.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Không có khiếu nại nào phù hợp.</td></tr>`;
         return;
     }
-
     complaints.forEach(complaint => {
         const row = document.createElement('tr');
         row.dataset.complaintId = complaint.ComplaintID;
-
         const statusText = STATUS_MAP_VI[complaint.Status] || complaint.Status;
-        const statusClass = `status-${complaint.Status}`.replace('processing', 'shipping').replace('resolved', 'success').replace('closed', 'failed').replace('rejected', 'failed');
-
+        const statusClass = `status-${complaint.Status}`.replace('processing', 'shipping').replace('resolved', 'success');
         row.innerHTML = `
             <td>${complaint.ComplaintCode}</td>
             <td>${complaint.OrderCode}</td>
@@ -175,14 +154,12 @@ function handleComplaintListClick(e) {
         e.preventDefault();
         const row = e.target.closest('tr');
         const complaintId = row.dataset.complaintId;
-
         if (complaintId) {
             loadComplaintDetails(complaintId);
             document.getElementById('complaint-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
 }
-
 
 async function loadComplaintDetails(complaintId) {
     console.log(`Đang tải chi tiết khiếu nại ID: ${complaintId}`);
@@ -192,11 +169,7 @@ async function loadComplaintDetails(complaintId) {
             method: 'GET',
             headers: getAuthHeaders()
         });
-
-        if (!response.ok) {
-            throw new Error(`Lỗi API: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
         const result = await response.json();
         if (result.success && result.data) {
             fillFormWithData(result.data);
@@ -214,13 +187,17 @@ function fillFormWithData(data) {
     document.getElementById('customerName').value = data.customer_name || '';
     document.getElementById('phoneNumber').value = data.customer_phone || '';
     document.getElementById('complaintDetails').value = data.Content || '';
-
     statusSelect.value = data.Status || 'pending';
+    document.getElementById('responseText').value = data.Resolution || '';
 
-    assignedStaffInput.value = data.assigned_staff_name || '';
+    // (SỬA) Điền dữ liệu vào 2 ô nhân viên
+    assignedStaffIdInput.value = data.AssignedTo || '';
+    assignedStaffNameDisplay.value = data.assigned_staff_name || '';
     validatedStaffId = data.AssignedTo || null;
 
-    document.getElementById('responseText').value = data.Resolution || '';
+    // (MỚI) Xóa báo lỗi (nếu có) khi tải dữ liệu
+    assignedStaffNameDisplay.classList.remove('error-placeholder');
+    assignedStaffNameDisplay.placeholder = 'Tên nhân viên sẽ hiển thị ở đây';
 
     updateButtonStates(data.Status || 'pending');
 }
@@ -228,33 +205,45 @@ function fillFormWithData(data) {
 function clearForm() {
     console.log("Xóa trống form...");
     currentComplaintId = null;
-
     document.getElementById('customerName').value = '(Chọn một khiếu nại từ danh sách)';
     document.getElementById('phoneNumber').value = '';
     document.getElementById('complaintDetails').value = '';
-
     statusSelect.value = 'pending';
+    document.getElementById('responseText').value = '';
 
-    assignedStaffInput.value = '';
+    // (SỬA) Xóa 2 ô nhân viên
+    assignedStaffIdInput.value = '';
+    assignedStaffNameDisplay.value = '';
     validatedStaffId = null;
 
-    document.getElementById('responseText').value = '';
+    // (MỚI) Xóa báo lỗi (nếu có)
+    assignedStaffNameDisplay.classList.remove('error-placeholder');
+    assignedStaffNameDisplay.placeholder = 'Tên nhân viên sẽ hiển thị ở đây';
 
     updateButtonStates(null);
 }
 
 function updateButtonStates(currentStatus) {
     const hasComplaint = currentComplaintId !== null;
-    const isStaffValidOrEmpty = validatedStaffId !== null || assignedStaffInput.value.trim() === '';
 
+    // === PHẦN MỞ KHÓA QUAN TRỌNG ===
+    if (statusSelect) statusSelect.disabled = !hasComplaint;
+    if (responseText) responseText.disabled = !hasComplaint;
+
+    // (SỬA) Mở khóa 2 ô nhân viên
+    if (assignedStaffIdInput) assignedStaffIdInput.disabled = !hasComplaint;
+    // Ô tên thì luôn disabled (readonly), nhưng ta cũng có thể kiểm soát nó
+    if (assignedStaffNameDisplay) assignedStaffNameDisplay.disabled = !hasComplaint;
+
+    // =================================
     const btnSave = document.querySelector('.form-actions .btn-primary-green');
     if (btnSave) {
-        btnSave.disabled = !hasComplaint || !isStaffValidOrEmpty;
-        btnSave.title = !hasComplaint ? "Không có khiếu nại để lưu" : (!isStaffValidOrEmpty ? "Tên nhân viên phụ trách không hợp lệ" : "Lưu thay đổi");
+        btnSave.disabled = !hasComplaint;
+        btnSave.title = !hasComplaint ? "Vui lòng chọn khiếu nại để xử lý" : "Lưu thay đổi";
     }
     if (btnReplyCustomer) {
         btnReplyCustomer.disabled = !hasComplaint;
-        btnReplyCustomer.title = !hasComplaint ? "Không có khiếu nại" : "Gửi email trả lời khách hàng (và lưu)";
+        btnReplyCustomer.title = !hasComplaint ? "Vui lòng chọn khiếu nại" : "Gửi email trả lời khách hàng (và lưu)";
     }
 }
 
@@ -267,21 +256,32 @@ function setupEventListeners() {
         });
     }
 
-    if (assignedStaffInput) {
-        assignedStaffInput.addEventListener('input', () => {
+    // (SỬA) Thay thế toàn bộ logic 'assignedStaffInput'
+    if (assignedStaffIdInput) {
+        // 1. Xóa tên và ID đã xác thực ngay khi gõ phím
+        assignedStaffIdInput.addEventListener('input', () => {
             validatedStaffId = null;
-            updateButtonStates(statusSelect.value);
+            assignedStaffNameDisplay.value = '';
+            assignedStaffNameDisplay.classList.remove('error-placeholder');
+            // Đặt placeholder thành "đang tìm"
+            assignedStaffNameDisplay.placeholder = '...';
         });
-        assignedStaffInput.addEventListener('blur', async () => {
-            const name = assignedStaffInput.value.trim();
-            if (name === '') {
+
+        // 2. Sự kiện 'blur' (khi nhấp ra ngoài) -> Bắt đầu tìm kiếm
+        assignedStaffIdInput.addEventListener('blur', async () => {
+            const staffId = assignedStaffIdInput.value.trim();
+
+            if (staffId === '') {
                 validatedStaffId = null;
+                assignedStaffNameDisplay.value = '';
+                assignedStaffNameDisplay.placeholder = 'Tên nhân viên sẽ hiển thị ở đây';
             } else {
-                await validateStaffNameWithExistingAPI(name);
+                // Gọi hàm validation MỚI (đã xóa hàm cũ)
+                await validateStaffById(staffId);
             }
-            updateButtonStates(statusSelect.value);
         });
     }
+    // (KẾT THÚC SỬA ĐỔI)
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -307,59 +307,60 @@ function debounce(func, wait) {
     };
 }
 
-async function validateStaffNameWithExistingAPI(name) {
-    console.log("Đang kiểm tra tên nhân viên qua staff_search.php:", name);
-    validatedStaffId = null;
+// (SỬA) XÓA BỎ HÀM validateStaffNameWithExistingAPI
+// THAY THẾ BẰNG HÀM validateStaffById
+
+async function validateStaffById(staffId) {
+    console.log("Đang kiểm tra ID nhân viên qua staff_search.php:", staffId);
+    validatedStaffId = null; // Đặt lại ID
+    assignedStaffNameDisplay.classList.remove('error-placeholder');
 
     try {
-        const response = await fetch(`../../api/staff_search.php?role=staff&search=${encodeURIComponent(name)}`, {
+        // (SỬA) Gọi API staff_search.php với tham số 'id'
+        const response = await fetch(`../../api/staff_search.php?id=${encodeURIComponent(staffId)}`, {
             method: 'GET',
             headers: getAuthHeaders()
         });
 
-        if (response.status === 403) {
-            console.error("Lỗi quyền truy cập: Nhân viên không thể tìm kiếm.");
-            alert("Lỗi: Bạn không có quyền tìm kiếm nhân viên.");
-            return;
-        }
-        if (!response.ok) {
-            const errorResult = await response.json();
-            throw new Error(`Lỗi API ${response.status}: ${errorResult.message || 'Lỗi không xác định'}`);
-        }
-
         const result = await response.json();
 
-        if (result.success && result.data && result.data.users) {
-            const matchingUsers = result.data.users;
-            console.log("API staff_search.php tìm thấy:", matchingUsers);
+        if (response.ok && result.success && result.data) {
+            // ---- TÌM THẤY ----
+            console.log("Tìm thấy nhân viên:", result.data);
+            validatedStaffId = result.data.id; // LƯU ID HỢP LỆ
+            assignedStaffIdInput.value = result.data.id; // Chuẩn hóa ID (nếu cần)
+            assignedStaffNameDisplay.value = result.data.full_name; // HIỂN THỊ TÊN
 
-            if (matchingUsers.length === 1) {
-                validatedStaffId = matchingUsers[0].id;
-                assignedStaffInput.value = matchingUsers[0].full_name;
-                console.log("ID nhân viên hợp lệ:", validatedStaffId);
-            } else if (matchingUsers.length > 1) {
-                console.warn("Tên nhân viên không eindeutig, tìm thấy nhiều kết quả.");
-            } else {
-                console.log("Không tìm thấy nhân viên.");
-            }
         } else {
-            console.log("Không tìm thấy nhân viên hoặc lỗi API:", result.message);
+            // ---- KHÔNG TÌM THẤY (API trả về success: false hoặc lỗi) ----
+            console.log("Không tìm thấy nhân viên với ID:", staffId);
+            assignedStaffNameDisplay.value = ''; // Xóa tên
+            // (SỬA) Đặt câu báo lỗi bạn yêu cầu
+            assignedStaffNameDisplay.placeholder = 'Không có nhân viên tương ứng trong dữ liệu';
+            assignedStaffNameDisplay.classList.add('error-placeholder');
         }
     } catch (error) {
-        console.error('Lỗi khi kiểm tra tên nhân viên với staff_search.php:', error.message);
+        // ---- LỖI KẾT NỐI / API ----
+        console.error('Lỗi khi kiểm tra ID nhân viên:', error.message);
+        assignedStaffNameDisplay.value = ''; // Xóa tên
+        assignedStaffNameDisplay.placeholder = 'Lỗi kết nối API, không thể tìm';
+        assignedStaffNameDisplay.classList.add('error-placeholder');
     }
 }
+
 
 async function handleSaveAndClose() {
     const dataToSave = {
         status: statusSelect.value,
-        assignedStaffId: validatedStaffId,
+        assignedStaffId: validatedStaffId, // Gửi ID đã xác thực
         resolutionText: document.getElementById('responseText').value
     };
 
-    if (assignedStaffInput.value.trim() !== '' && validatedStaffId === null) {
-        alert('Tên nhân viên phụ trách không hợp lệ. Vui lòng kiểm tra lại.');
-        assignedStaffInput.focus();
+    // (SỬA) Kiểm tra logic lỗi
+    // Nếu ô ID có chữ, nhưng ID chưa được xác thực (validatedStaffId là null) -> Báo lỗi
+    if (assignedStaffIdInput.value.trim() !== '' && validatedStaffId === null) {
+        alert('Mã nhân viên phụ trách không hợp lệ. Vui lòng kiểm tra lại.');
+        assignedStaffIdInput.focus(); // Focus vào ô ID
         return;
     }
 
@@ -462,5 +463,3 @@ function showSuccessToast(message) {
         }, 500);
     }, 3000);
 }
-
-// (ĐÃ XÓA) Hàm addValidationStyles()
