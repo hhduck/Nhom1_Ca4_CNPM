@@ -335,4 +335,27 @@ function deleteOrder($db, $orderId)
         throw new Exception("Lỗi khi xóa đơn hàng: " . $e->getMessage(), 500); 
     }
 }
+
+// Trong orders.php
+$validStatuses = ['pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled'];
+
+if (isset($_GET['status']) && in_array($_GET['status'], $validStatuses)) {
+    $status = $_GET['status'];
+    $sql .= " AND o.order_status = :status";
+    $params[':status'] = $status;
+}
+// ✅ Kiểm tra xem backend nhận tham số gì
+if (isset($_GET['order_status'])) {
+    $status = $_GET['order_status'];
+    $sql .= " AND o.order_status = :order_status";
+    $params[':order_status'] = $status;
+}
+
+// HOẶC nếu backend dùng 'status'
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
+    $sql .= " AND o.order_status = :status";
+    $params[':status'] = $status;
+}
+
 ?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Users API - ĐÃ TÍCH HỢP TÌM KIẾM NHÂN VIÊN (KHÔNG CẦN ADMIN)
  * LA CUISINE NGỌT
@@ -33,7 +34,7 @@ if ($apiIndex !== false && isset($pathParts[$apiIndex + 2]) && is_numeric($pathP
 
 
 try {
-    switch($method) {
+    switch ($method) {
         case 'GET':
             // *** TÍCH HỢP LOGIC TÌM KIẾM NHÂN VIÊN VÀO ĐÂY ***
             // Kiểm tra xem có phải yêu cầu tìm kiếm nhân viên không?
@@ -46,7 +47,7 @@ try {
                 getAllUsers($db);
             }
             break;
-            // *** KẾT THÚC TÍCH HỢP ***
+        // *** KẾT THÚC TÍCH HỢP ***
 
         case 'POST':
             checkAdminPermission();
@@ -68,7 +69,7 @@ try {
         default:
             sendJsonResponse(false, null, "Method không được hỗ trợ", 405);
     }
-} catch(Exception $e) {
+} catch (Exception $e) {
     // Ghi log lỗi chi tiết hơn
     error_log("Users API Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
     $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
@@ -83,7 +84,8 @@ try {
 /**
  * Lấy danh sách tất cả người dùng (yêu cầu Admin)
  */
-function getAllUsers($db) {
+function getAllUsers($db)
+{
     $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
     $role = isset($_GET['role']) ? sanitizeInput($_GET['role']) : null;
 
@@ -123,7 +125,8 @@ function getAllUsers($db) {
  * Tìm nhân viên theo tên (KHÔNG yêu cầu Admin)
  * (Không phân biệt hoa/thường, dấu, khoảng trắng)
  */
-function findStaffByName($db, $name) {
+function findStaffByName($db, $name)
+{
     // Hàm sanitizeInput giả định có trong middleware.php hoặc database.php
     $name = sanitizeInput($name);
 
@@ -166,7 +169,8 @@ function findStaffByName($db, $name) {
 /**
  * Tạo người dùng mới (yêu cầu Admin)
  */
-function createUser($db) {
+function createUser($db)
+{
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Validate dữ liệu đầu vào
@@ -174,12 +178,12 @@ function createUser($db) {
         sendJsonResponse(false, null, "Thiếu thông tin bắt buộc (Họ tên, Email, Vai trò)", 400);
         return;
     }
-     // Kiểm tra role hợp lệ
+    // Kiểm tra role hợp lệ
     if (!in_array($data['role'], ['customer', 'staff', 'admin'])) {
         sendJsonResponse(false, null, "Vai trò không hợp lệ", 400);
         return;
     }
-     // Kiểm tra email hợp lệ
+    // Kiểm tra email hợp lệ
     if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         sendJsonResponse(false, null, "Email không hợp lệ", 400);
         return;
@@ -237,15 +241,16 @@ function createUser($db) {
 /**
  * Cập nhật người dùng (yêu cầu Admin)
  */
-function updateUser($db, $id) { // Nhận $id làm tham số
+function updateUser($db, $id)
+{ // Nhận $id làm tham số
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Validate dữ liệu tối thiểu
-     if (empty($data['full_name']) || empty($data['role'])) {
+    if (empty($data['full_name']) || empty($data['role'])) {
         sendJsonResponse(false, null, "Thiếu thông tin bắt buộc (Họ tên, Vai trò)", 400);
         return;
     }
-     if (!in_array($data['role'], ['customer', 'staff', 'admin'])) {
+    if (!in_array($data['role'], ['customer', 'staff', 'admin'])) {
         sendJsonResponse(false, null, "Vai trò không hợp lệ", 400);
         return;
     }
@@ -268,7 +273,9 @@ function updateUser($db, $id) { // Nhận $id làm tham số
     $address = sanitizeInput($data['address'] ?? '');
     $role = sanitizeInput($data['role']);
     $status = sanitizeInput($data['status'] ?? 'active'); // Thêm status, mặc định là active
-    if (!in_array($status, ['active', 'inactive', 'banned'])) { $status = 'active'; } // Validate status
+    if (!in_array($status, ['active', 'inactive', 'banned'])) {
+        $status = 'active';
+    } // Validate status
 
     $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Chỉ định kiểu INT
     $stmt->bindParam(':fullname', $fullName);
@@ -294,7 +301,8 @@ function updateUser($db, $id) { // Nhận $id làm tham số
 /**
  * Xóa người dùng (yêu cầu Admin)
  */
-function deleteUser($db, $id) { // Nhận $id làm tham số
+function deleteUser($db, $id)
+{ // Nhận $id làm tham số
     // Ngăn xóa admin chính (giả sử UserID=1 là admin gốc)
     if ($id == 1) {
         sendJsonResponse(false, null, "Không thể xóa tài khoản quản trị viên chính", 403);
@@ -329,5 +337,3 @@ function deleteUser($db, $id) { // Nhận $id làm tham số
         sendJsonResponse(false, null, "Không thể xóa người dùng do lỗi máy chủ", 500);
     }
 }
-
-?>

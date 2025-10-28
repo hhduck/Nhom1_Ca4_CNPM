@@ -37,33 +37,34 @@ function getSafeImageUrl(imageUrl) {
 document.addEventListener('DOMContentLoaded', function () {
     // Check authentication first
     checkAuthentication();
-
     showPage('products');
-
-    // Setup navigation
     setupNavigation();
-
-    // Setup event listeners
     setupEventListeners();
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+    // Kích hoạt cho các nhóm
+    setupTabButtons('.order-tab-btn');
+    setupTabButtons('.user-tab-btn');
+    setupTabButtons('.promo-tab-btn');
+    setupTabButtons('.tab-btn');
+
+
+    // Setup user dropdown menu
     const userMenuBtn = document.getElementById("userMenuBtn");
     const userDropdown = document.getElementById("userDropdown");
 
-    // Toggle hiển thị menu khi bấm nút user
-    userMenuBtn.addEventListener("click", function (e) {
-        e.stopPropagation(); // không cho lan sự kiện ra ngoài
-        const isVisible = userDropdown.style.display === "block";
-        userDropdown.style.display = isVisible ? "none" : "block";
-    });
+    if (userMenuBtn && userDropdown) {
+        userMenuBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const isVisible = userDropdown.style.display === "block";
+            userDropdown.style.display = isVisible ? "none" : "block";
+        });
 
-    // Ẩn menu nếu bấm ra ngoài
-    document.addEventListener("click", function (e) {
-        if (!userDropdown.contains(e.target) && e.target !== userMenuBtn) {
-            userDropdown.style.display = "none";
-        }
-    });
+        document.addEventListener("click", function (e) {
+            if (!userDropdown.contains(e.target) && e.target !== userMenuBtn) {
+                userDropdown.style.display = "none";
+            }
+        });
+    }
 });
 
 function checkAuthentication() {
@@ -270,11 +271,11 @@ async function loadProducts(filters = {}) {
 
         const queryParams = new URLSearchParams(filters).toString();
         const jwtToken = localStorage.getItem('jwtToken') || 'demo';
-        
+
         // Thêm timeout cho request
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 giây timeout
-        
+
         const response = await fetch(`${API_BASE_URL}/products.php?${queryParams}`, {
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
@@ -347,7 +348,7 @@ async function loadProducts(filters = {}) {
     } catch (error) {
         console.error('Error loading products:', error);
         const tbody = document.getElementById('products-tbody');
-        
+
         // Cải thiện error handling
         let errorMessage = 'Không có kết nối đến máy chủ';
         if (error.name === 'AbortError') {
@@ -355,7 +356,7 @@ async function loadProducts(filters = {}) {
         } else if (error.message) {
             errorMessage = error.message;
         }
-        
+
         tbody.innerHTML = `
             <tr>
                 <td colspan="8" class="error-state">
@@ -384,11 +385,6 @@ function setupTabButtons(selector) {
     });
 }
 
-// Kích hoạt cho các nhóm
-setupTabButtons('.order-tab-btn');
-setupTabButtons('.user-tab-btn');
-setupTabButtons('.promo-tab-btn');
-setupTabButtons('.tab-btn');
 
 async function searchProducts() {
     const searchTerm = document.getElementById('product-search').value;
@@ -420,7 +416,7 @@ async function editProduct(productId) {
     try {
         const response = await fetch(`${API_BASE_URL}/products.php/${productId}`, {
             headers: {
-                'Authorization': 'Bearer demo'
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             }
         });
         const data = await response.json();
@@ -470,7 +466,7 @@ async function saveProduct() {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer demo'
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             },
             body: JSON.stringify(productData)
         });
@@ -497,7 +493,7 @@ async function deleteProduct(productId) {
         const response = await fetch(`${API_BASE_URL}/products.php/${productId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': 'Bearer demo'
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             }
         });
 
@@ -599,6 +595,13 @@ async function searchOrders() {
 }
 
 async function filterOrders(status) {
+    // Cập nhật trạng thái active cho button
+    document.querySelectorAll('.order-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Lọc đơn hàng theo trạng thái
     if (status === 'all') {
         await loadOrders();
     } else {
@@ -609,7 +612,7 @@ async function filterOrders(status) {
 async function viewOrderDetail(orderId) {
     try {
         currentOrderId = orderId;
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}`);
+        const response = await fetch(`${API_BASE_URL}/orders.php/${orderId}`);
         const order = await response.json();
 
         const modalBody = document.getElementById('order-modal-body');
@@ -689,7 +692,7 @@ async function updateOrderStatus() {
     const newStatus = document.getElementById('order-status-select').value;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/orders/${currentOrderId}/status`, {
+        const response = await fetch(`${API_BASE_URL}/orders.php/${currentOrderId}/status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus })
@@ -717,7 +720,7 @@ async function loadUsers(filters = {}) {
         const queryParams = new URLSearchParams(filters).toString();
         const response = await fetch(`${API_BASE_URL}/users.php?${queryParams}`, {
             headers: {
-                'Authorization': 'Bearer demo'
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             }
         });
         const data = await response.json();
@@ -790,7 +793,7 @@ function showAddUserModal() {
 async function editUser(userId) {
     try {
         currentUserId = userId;
-        const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/users.php/${userId}`);
         const user = await response.json();
 
         document.getElementById('user-modal-title').textContent = 'Chỉnh sửa người dùng';
@@ -852,7 +855,7 @@ async function deleteUser(userId) {
     if (!confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/users.php/${userId}`, {
             method: 'DELETE'
         });
 
@@ -876,7 +879,7 @@ async function loadReports(period) {
     try {
         const response = await fetch(`${API_BASE_URL}/reports.php?period=${period}`, {
             headers: {
-                'Authorization': 'Bearer demo'
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             }
         });
 
@@ -913,43 +916,6 @@ async function loadReports(period) {
     } catch (error) {
         console.error('Error loading reports:', error);
         // ✅ HIỂN THỊ LỖI RÕ RÀNG HƠN
-        showError(`Không thể tải báo cáo: ${error.message}`);
-    }
-}
-
-async function loadReports(period) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/reports.php?period=${period}`, {
-            headers: {
-                'Authorization': 'Bearer demo'
-            }
-        });
-
-        // ✅ FIX: Kiểm tra response
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            throw new Error("Server không trả về JSON");
-        }
-
-        const data = await response.json();
-
-        if (data.success) {
-            document.getElementById('revenue-stat').textContent = formatCurrency(data.data.revenue);
-            document.getElementById('orders-stat').textContent = data.data.total_orders;
-            document.getElementById('delivered-stat').textContent = data.data.delivered_orders;
-            document.getElementById('customers-stat').textContent = data.data.new_customers;
-
-            initCharts(data.data.chart_data);
-            loadTopProducts(data.data.top_products);
-        } else {
-            throw new Error(data.message || 'Không thể tải báo cáo');
-        }
-    } catch (error) {
-        console.error('Error loading reports:', error);
         showError(`Không thể tải báo cáo: ${error.message}`);
     }
 }
@@ -1046,7 +1012,7 @@ async function loadPromotions(filters = {}) {
         const queryParams = new URLSearchParams(filters).toString();
         const response = await fetch(`${API_BASE_URL}/promotions.php?${queryParams}`, {
             headers: {
-                'Authorization': 'Bearer demo'
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             }
         });
         const data = await response.json();
@@ -1113,7 +1079,7 @@ async function createPromotion() {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/promotions`, {
+        const response = await fetch(`${API_BASE_URL}/promotions.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(promoData)
@@ -1143,7 +1109,7 @@ async function createPromotion() {
 async function viewPromoDetail(promoId) {
     try {
         currentPromoId = promoId;
-        const response = await fetch(`${API_BASE_URL}/promotions/${promoId}`);
+        const response = await fetch(`${API_BASE_URL}/promotions.php/${promoId}`);
         const promo = await response.json();
 
         const modalBody = document.getElementById('promo-detail-body');
@@ -1214,7 +1180,7 @@ async function loadComplaints(filters = {}) {
         const queryParams = new URLSearchParams(filters).toString();
         const response = await fetch(`${API_BASE_URL}/complaints.php?${queryParams}`, {
             headers: {
-                'Authorization': 'Bearer demo'
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             }
         });
         const data = await response.json();
@@ -1266,7 +1232,7 @@ async function filterComplaints(status) {
 async function viewComplaintDetail(complaintId) {
     try {
         currentComplaintId = complaintId;
-        const response = await fetch(`${API_BASE_URL}/complaints/${complaintId}`);
+        const response = await fetch(`${API_BASE_URL}/complaints.php/${complaintId}`);
 
         // ✅ FIX: Kiểm tra response
         if (!response.ok) {
@@ -1332,7 +1298,7 @@ async function updateComplaintStatus() {
     const newStatus = document.getElementById('complaint-status-select').value;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/complaints/${currentComplaintId}/status`, {
+        const response = await fetch(`${API_BASE_URL}/complaints.php/${currentComplaintId}/status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus })
@@ -1402,11 +1368,11 @@ function getStatusText(status) {
 
 function getOrderStatusText(status) {
     const statusMap = {
-        'pending': 'Chờ xử lý',
+        'pending': 'Chờ xử lý',          
         'confirmed': 'Đã xác nhận',
         'preparing': 'Đang chuẩn bị',
-        'shipping': 'Đang giao',
-        'completed': 'Hoàn thành',
+        'shipping': 'Đang giao',          
+        'completed': 'Hoàn thành',       
         'cancelled': 'Đã hủy'
     };
     return statusMap[status] || status;
@@ -1605,10 +1571,10 @@ function logout() {
     // Xóa tất cả dữ liệu đăng nhập
     localStorage.removeItem('currentUser');
     localStorage.removeItem('jwtToken');
-    
+
     // Hiển thị thông báo đăng xuất thành công
-    showNotification('Đã đăng xuất thành công!', 'success');
-    
+    showSuccess('Đã đăng xuất thành công!');
+
     // Chuyển về trang home sau 1 giây
     setTimeout(() => {
         window.location.href = '../pages/home/home.html';

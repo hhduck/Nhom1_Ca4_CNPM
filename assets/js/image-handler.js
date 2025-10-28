@@ -4,11 +4,6 @@
  */
 
 class ImageHandler {
-    constructor() {
-        this.placeholderCake = 'assets/images/placeholder-cake.jpg';
-        this.placeholderPerson = 'assets/images/placeholder-person.jpg';
-        this.init();
-    }
 
     init() {
         this.setupImageFallbacks();
@@ -85,10 +80,6 @@ class ImageHandler {
      */
     preloadCriticalImages() {
         const criticalImages = [
-            'assets/images/hero-cake.jpg',
-            'assets/images/category-birthday.jpg',
-            'assets/images/category-wedding.jpg',
-            'assets/images/category-dessert.jpg'
         ];
 
         criticalImages.forEach(src => {

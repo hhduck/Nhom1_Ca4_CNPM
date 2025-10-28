@@ -106,11 +106,11 @@
                     </button>
                 </div>
                 <div class="order-filter-tabs">
-                    <button class="order-tab-btn active" onclick="filterOrders('all')">Tất cả</button>
-                    <button class="order-tab-btn" onclick="filterOrders('preparing')">Đang chuẩn bị</button>
-                    <button class="order-tab-btn" onclick="filterOrders('shipping')">Đang giao</button>
-                    <button class="order-tab-btn" onclick="filterOrders('completed')">Hoàn thành</button>
-                </div>
+                    <button class="order-tab-btn active" onclick="filterOrders('all', this)">Tất cả</button>
+                    <button class="order-tab-btn" onclick="filterOrders('pending', this)">Chờ xử lý</button>
+                    <button class="order-tab-btn" onclick="filterOrders('shipping', this)">Đang giao</button>
+                    <button class="order-tab-btn" onclick="filterOrders('completed', this)">Hoàn thành</button>
+                 </div>
             </div>
 
             <div class="table-container">
