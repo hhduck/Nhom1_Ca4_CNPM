@@ -305,6 +305,19 @@ INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role,
 (3, 'customer01', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nguyễn Văn A', 'customer01@email.com', '0903456789', 'customer', 'active'),
 (4, 'customer02', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Thị B', 'customer02@email.com', '0904567890', 'customer', 'active');
 
+-- === THÊM 5 NHÂN VIÊN MỚI (TỪ ĐÂY) ===
+INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role, Status) VALUES
+(5, 'staff02', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Lê Thị Cẩm', 'cam.le@lacuisine.vn', '0902111222', 'staff', 'active');
+INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role, Status) VALUES
+(6, 'staff03', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Phạm Văn Dũng', 'dung.pham@lacuisine.vn', '0903222333', 'staff', 'active');
+INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role, Status) VALUES
+(7, 'staff04', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Bùi Minh Tuấn', 'tuan.bui@lacuisine.vn', '0904333444', 'staff', 'active');
+INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role, Status) VALUES
+(8, 'staff05', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Vũ Hoàng Oanh', 'oanh.vu@lacuisine.vn', '0905444555', 'staff', 'active');
+INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role, Status) VALUES
+(9, 'staff06', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Đặng Gia Hân', 'han.dang@lacuisine.vn', '0906555666', 'staff', 'active');
+-- === KẾT THÚC THÊM 5 NHÂN VIÊN ===
+
 -- 3. Products
 INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, OriginalPrice, Quantity, Status, ImageURL, Weight, ShelfLife, IsFeatured) VALUES
 (1, 'Entremets Rose', 1, 'Bánh kem kiểu Pháp cao cấp với mousse hương hồng', 650000, 750000, 15, 'available', '../../assets/images/Entremets Rose.jpg', 500, 3, TRUE),
