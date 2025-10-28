@@ -161,6 +161,21 @@ function validateRegisterForm(userData) {
     return isValid;
 }
 
+// 👁️ Toggle show/hide password
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordField = document.getElementById('password');
+    
+    if (togglePassword && passwordField) {
+        togglePassword.addEventListener('click', function() {
+            const isHidden = passwordField.type === 'password';
+            passwordField.type = isHidden ? 'text' : 'password';
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
+});
+
 function validateField(field) {
     const value = field.value.trim();
     const fieldName = field.name;
