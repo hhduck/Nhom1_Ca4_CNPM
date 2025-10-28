@@ -5,38 +5,47 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Thanh toán và giao hàng | La Cuisine Ngọt</title>
 
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
 
   <!-- CSS -->
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/animations.css">
+  <link rel="stylesheet" href="home.css">
   <link rel="stylesheet" href="pay.css">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="header">
-    <div class="container header-inner">
-      <div class="header-logo">La Cuisine Ngọt</div>
 
-      <nav class="header-nav">
-        <a href="#">Sản phẩm</a>
-        <a href="#">Khuyến mãi</a>
-        <a href="#">Liên hệ</a>
-      </nav>
-
-      <div class="header-actions">
-        <button class="icon-btn">🔍</button>
-        <button class="icon-btn">🛒 <span class="cart-count">0</span></button>
-        <a class="login-link" href="#">Đăng nhập / Đăng ký</a>
+  <!-- NAVIGATION -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="../home/home.html">La Cuisine Ngọt</a>
       </div>
+
+      <ul class="nav-menu">
+        <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
+        <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
+        <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
+        <div class="nav-icons">
+          <a href="../cart/cart.html" class="nav-cart" aria-label="Giỏ hàng">
+            <i class="fas fa-shopping-cart"></i>
+          </a>
+        </div>
+        <li><a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a></li>
+      </ul>
     </div>
-  </header>
+  </nav>
 
   <!-- MAIN CONTENT -->
   <main class="container page">
     <section class="box checkout">
       <h1 class="page-title">Thanh toán và giao hàng</h1>
-
-      <form id="checkoutForm" class="checkout-form" autocomplete="off">
+      
+      <form id="checkoutForm" class="checkout-form" autocomplete="off" novalidate>
         <div class="form-grid">
           
           <!-- CỘT 1 - THÔNG TIN NGƯỜI DÙNG -->
@@ -46,16 +55,19 @@
             <div class="form-group">
               <label>Họ và tên <span class="required">*</span></label>
               <input name="fullname" required type="text" placeholder="Nguyễn Văn A">
+              <span class="error-msg" id="nameError"></span>
             </div>
 
             <div class="form-group">
               <label>Số điện thoại <span class="required">*</span></label>
               <input name="phone" required type="tel" placeholder="09x xxx xxxx">
+              <span class="error-msg" id="phoneError"></span>
             </div>
 
             <div class="form-group">
               <label>Địa chỉ mail <span class="required">*</span></label>
-              <input name="email" required type="email" placeholder="email@domain.com">
+              <input name="email" required type="text" placeholder="email@domain.com">
+              <span class="error-msg" id="emailError"></span>
             </div>
           </div>
 
@@ -63,11 +75,11 @@
           <div class="form-col">
             <h3 class="form-title">Thông tin giao hàng</h3>
 
-            <div class="form-group">
-              <label>Phương thức nhận hàng</label>
+            <div class="form-group delivery-method">
+              <label for="delivery">Phương thức nhận hàng <span class="required">*</span></label>
               <div class="delivery-options">
-                <label><input type="radio" name="delivery" value="delivery" checked> Giao hàng tận nơi</label>
-                <label><input type="radio" name="delivery" value="pickup"> Nhận trực tiếp tại cửa hàng</label>
+                <label><input type="radio" name="delivery" value="store"> Nhận trực tiếp tại cửa hàng</label>
+                <label><input type="radio" name="delivery" value="delivery"> Giao hàng tận nơi</label>
               </div>
             </div>
 
@@ -102,17 +114,18 @@
               <h3 class="form-title">Thời gian nhận bánh</h3>
               <label for="deliveryTime">Ngày - giờ nhận bánh <span class="required">*</span></label>
               <input name="deliveryTime" id="deliveryTime" required type="datetime-local">
+              <span class="error-msg" id="timeError"></span>
             </div>
 
             <div class="form-group">
               <h3 class="form-title">Ghi chú cho Ngọt</h3>
-              <textarea id="note" name="note" placeholder="Ví dụ: Ghi 'Happy Birthday Mẹ Yêu' màu vàng"></textarea>
+              <textarea id="note" name="note" placeholder="Ví dụ: Ghi 'Happy Birthday Mẹ' màu vàng"></textarea>
             </div>
           </div>
         </div>
 
         <!-- ĐƠN HÀNG -->
-        <h3 class="section-title">Đơn hàng của bạn</h3>
+        <h3 class="form-title">Đơn hàng của bạn</h3>
         <div class="order-table-wrap">
           <table class="order-table" id="orderTable">
             <thead>
@@ -126,7 +139,7 @@
               <tr data-price="500000">
                 <td>
                   <div class="prod-title">Mousse Chanh dây</div>
-                  <div class="prod-note">(Ghi chú: “Happy Birthday Mẹ Yêu” màu vàng)</div>
+                  <div class="prod-note">(Ghi chú: “Happy Birthday Mẹ” màu vàng)</div>
                 </td>
                 <td class="td-qty">1</td>
                 <td class="td-price">500.000</td>
@@ -164,8 +177,8 @@
       <div class="footer-left">
         <h2 class="footer-logo">La Cuisine Ngọt</h2>
         <div class="social-links">
-          <a href="https://www.facebook.com/LaCuisineNgot" target="_blank"><i class="fab fa-facebook"></i></a>
-          <a href="https://www.instagram.com/LaCuisineNgot" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com/LaCuisineNgot" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.instagram.com/LaCuisineNgot" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         </div>
       </div>
 
@@ -177,8 +190,6 @@
     </div>
   </footer>
 
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <script src="pay.js"></script>
 </body>
 </html>
