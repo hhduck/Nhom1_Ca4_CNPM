@@ -34,8 +34,10 @@
                     </a>
                     </div>
 <li class="nav-user">
-  <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
-  <div class="user-menu hidden">
+<a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
+<div class="user-menu hidden">
+    <a href="../account/account.html"><button id="tt">Thông tin tài khoản</button></a>
+    <br>
     <button id="logoutBtn">Đăng xuất</button>
   </div>
 </li>
@@ -396,44 +398,48 @@
         </div>
     </section>
 
-    <!-- Promotion Section -->
-    <section id="lienhe" class="promotion-section">
-        <div class="promotion-hero">
-            <h2>KHUYẾN MÃI</h2>
+<!-- Promotion Section -->
+<section id="khuyenmai" class="promotion-section">
+    <div class="promotion-container">
+      <h2 class="promotion-title">KHUYẾN MÃI</h2>
+      <p class="favorite-text">Những ưu đãi hấp dẫn dành riêng cho bạn</p>
+  
+      <div class="promotion-grid">
+        <!-- Khuyến mãi 1 -->
+        <div class="promotion-card">
+          <div class="promotion-image-container">
+            <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 1" class="promotion-image">
+          </div>
+          <div class="promotion-info">
+            <div class="promotion-name">Giảm 15% cho đơn trên 500.000đ</div>
+            <div class="promotion-date">Áp dụng từ 01/11/2025 đến 15/11/2025</div>
+          </div>
         </div>
-        
-        <div class="container">
-            <div class="promotion-grid">
-                <div class="promotion-item">
-                    <div class="promotion-image">
-                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 1">
-                    </div>
-                    <p class="promotion-text">Áp dụng từ <strong>05/10/2025</strong><br>đến <strong>09/11/2025</strong></p>
-                </div>
-                
-                <div class="promotion-item">
-                    <div class="promotion-image">
-                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 2">
-                    </div>
-                    <p class="promotion-text">Áp dụng từ <strong>01/10/2025</strong><br>đến <strong>01/11/2025</strong></p>
-                </div>
-                
-                <div class="promotion-item">
-                    <div class="promotion-image">
-                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 3">
-                    </div>
-                    <p class="promotion-text">Áp dụng cho khách hàng<br>đặt được <strong>300 điểm</strong></p>
-                </div>
-                
-                <div class="promotion-item">
-                    <div class="promotion-image">
-                        <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 4">
-                    </div>
-                    <p class="promotion-text">Áp dụng cho khách hàng<br>đạt được <strong>500 điểm</strong></p>
-                </div>
-            </div>
+  
+        <!-- Khuyến mãi 2 -->
+        <div class="promotion-card">
+          <div class="promotion-image-container">
+            <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 2" class="promotion-image">
+          </div>
+          <div class="promotion-info">
+            <div class="promotion-name">Tặng kèm topper và nến xinh</div>
+            <div class="promotion-date">Áp dụng từ 05/11/2025 đến 30/11/2025</div>
+          </div>
         </div>
-    </section>
+  
+        <!-- Khuyến mãi 3 -->
+        <div class="promotion-card">
+          <div class="promotion-image-container">
+            <img src="../../assets/images/placeholder-cake.jpg" alt="Khuyến mãi 3" class="promotion-image">
+          </div>
+          <div class="promotion-info">
+            <div class="promotion-name">Miễn phí giao hàng nội thành</div>
+            <div class="promotion-date">Áp dụng cho khách hàng thân thiết</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
     
     <!-- Contact Section -->
     <section id="contact" class="contact">
