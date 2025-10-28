@@ -455,46 +455,63 @@ function showSuccessToast(message) {
     }, 3000);
 }
 
+// Thay thế TOÀN BỘ đoạn code "Logic cho User Icon Dropdown" cũ bằng đoạn này
 // Thêm vào cuối file order.js VÀ complaint.js
 
-// --- Logic cho User Icon Dropdown ---
+// --- Logic cho User Icon Dropdown (Cập nhật: Trang chủ cũng đăng xuất) ---
 document.addEventListener('DOMContentLoaded', () => {
     const userIconDiv = document.querySelector('.nav-user-icon');
     const userMenu = document.querySelector('.user-menu');
     const logoutButton = document.getElementById('logoutButton');
+    const homeLink = userMenu ? userMenu.querySelector('a[href*="home.html"]') : null; // Tìm link Trang chủ
 
     if (userIconDiv && userMenu) {
         // Hiện/ẩn menu khi bấm vào icon
         userIconDiv.addEventListener('click', (event) => {
-            event.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
-            userMenu.classList.remove('hidden'); // Gỡ class hidden ban đầu
-            setTimeout(() => { // Cần timeout nhỏ để transition hoạt động
+            event.stopPropagation();
+            userMenu.classList.remove('hidden');
+            setTimeout(() => {
                 userMenu.classList.toggle('visible');
             }, 0);
         });
 
         // Ẩn menu khi bấm ra ngoài
         document.addEventListener('click', (event) => {
-            if (!userIconDiv.contains(event.target) && userMenu.classList.contains('visible')) {
+            if (userIconDiv && !userIconDiv.contains(event.target) && userMenu.classList.contains('visible')) {
                 userMenu.classList.remove('visible');
             }
         });
     }
 
-    // Xử lý nút Đăng xuất
+    // --- HÀM ĐĂNG XUẤT (Tách ra để dùng chung) ---
+    function performLogout(redirectUrl) {
+         if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+            console.log("Đang đăng xuất...");
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('rememberMe');
+
+            alert("Bạn đã đăng xuất thành công.");
+            // Chuyển hướng đến URL được cung cấp
+            window.location.href = redirectUrl;
+        }
+    }
+    // --- KẾT THÚC HÀM ĐĂNG XUẤT ---
+
+    // Xử lý nút Đăng xuất (nhấn nút)
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
-            if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
-                console.log("Đang đăng xuất...");
-                // Xóa dữ liệu đăng nhập khỏi localStorage (giống login.js)
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('jwtToken');
-                localStorage.removeItem('rememberMe'); // Có thể có hoặc không
+            // Gọi hàm đăng xuất và chuyển về trang login
+            performLogout('../../pages/login/login.html'); // Chuyển về trang đăng nhập
+        });
+    }
 
-                alert("Bạn đã đăng xuất thành công.");
-                // Chuyển hướng về trang đăng nhập
-                window.location.href = '../../pages/login/login.html'; // Chỉnh lại đường dẫn nếu cần
-            }
+    // (SỬA) Xử lý link Trang chủ (nhấn link)
+    if (homeLink) {
+        homeLink.addEventListener('click', (event) => {
+            event.preventDefault(); // Ngăn chuyển trang ngay lập tức
+            // Gọi hàm đăng xuất và chuyển về trang home
+            performLogout(homeLink.href); // Chuyển về trang chủ (href của link)
         });
     }
 });
