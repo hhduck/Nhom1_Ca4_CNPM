@@ -1,4 +1,105 @@
 /* Register Page Styles */
+.navbar {
+    background-color: #395542; /* xanh rêu đậm */
+    padding: 10px 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+  }
+  
+  .nav-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  /* Logo */
+  .nav-logo a {
+  color: #fff;
+  font-family: 'Inspiration', cursive;
+  font-size: 52px;
+  font-weight: 200; 
+  text-decoration: none;
+  letter-spacing: 1px;
+  }
+  
+  /* Menu */
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    padding: 0;
+    margin-right: -70px;
+  }
+  
+  .nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase; /* Viết hoa toàn bộ */
+    transition: color 0.3s;
+  
+  }
+  
+  .nav-menu a:hover {
+    color: #e3c78d; /* vàng nhạt khi hover */
+  }
+  
+  /* Icons bên phải */
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-left: -155px;
+  }
+  
+  .nav-icons a {
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: 0.3s;
+    left: 305px;
+  }
+  
+  .nav-icons a:hover {
+    color: #e3c78d;
+  }
+  
+  /* Giỏ hàng */
+  .nav-cart {
+    position: relative;
+  }
+  
+  .nav-login {
+   margin-left: 285px;
+   margin-right: 50px;
+  }
+  
+  .nav-login:hover {
+    color: #e3c78d;
+  }
+  
+  /* Responsive (mobile) */
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .nav-menu {
+      gap: 20px;
+    }
+    .nav-icons {
+      gap: 15px;
+    }
+  }
 .form-container {
     max-width: 600px;
     margin: 120px auto 80px;
@@ -362,3 +463,78 @@
     }
 }
 
+/* --- FOOTER --- */
+.footer {
+    background-color: #395542;
+    color: #ffffff;
+    padding: 40px 100px;
+    font-family: 'Crimson Text', serif;
+  }
+  
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .footer-logo {
+    font-family: 'Inspiration', cursive;
+    font-size: 52px;
+    color: #fff;
+    font-weight: 200; 
+    text-decoration: none;
+    letter-spacing: 1px;
+  
+  }
+  
+  .social-links {
+      display: flex;
+      gap: 15px;
+  }
+  
+  .social-links a {
+   width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2d5016;
+      transition: all 0.3s ease;
+      margin-top: -40px;
+  }
+  
+  .social-links a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+  }
+  
+  .footer-right {
+    text-align: right;
+    line-height: 1.8;
+    font-size: 15px;
+  }
+  
+  .footer-right b {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      text-align: center;
+      gap: 30px;
+    }
+  
+    .footer-right {
+      text-align: center;
+    }
+  }
