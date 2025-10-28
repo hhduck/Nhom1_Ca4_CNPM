@@ -160,7 +160,7 @@ function enableCORS() {
         http_response_code(200);
         exit();
     }
-};
+}
 
 // DẤU } THỪA ĐÃ BỊ XÓA Ở ĐÂY
 ?>
