@@ -1,6 +1,6 @@
 /* complaint.css - PHIÊN BẢN HOÀN CHỈNH */
 
-/* * 1. SỬA LỖI LAYOUT (THU HẸP NỘI DUNG & CÁCH LỀ) 
+/* * 1. SỬA LỖI LAYOUT (THU HẸP NỘI DUNG & CÁCH LỀ)
  * Ghi đè max-width: 1400px của order.css
  */
 body.order-page .staff-page-container {
@@ -20,65 +20,59 @@ body.order-page .staff-page-container {
 body.order-page .toolbar .search-bar {
     position: relative;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 45px;
 }
 
 /* Style lại ô input cho CAO HƠN và có padding TRÁI */
 body.order-page .toolbar .search-bar input {
     width: 100%;
     padding: 22px 25px 22px 70px;
-    /* Tăng padding trên/dưới cho cao, tăng padding trái cho icon */
     border: 1px solid #D4CFC3;
     border-radius: 10px;
-    /* Bo góc nhiều hơn (giống ảnh) */
     background-color: #FFFFFF;
     font-style: italic;
     font-size: 16px;
-    /* Cỡ chữ to hơn */
     font-family: 'Inter', sans-serif;
     color: #333;
     line-height: 1.5;
-    /* Căn chữ giữa (phòng trường hợp) */
 }
 
 /* Định vị lại icon TUYỆT ĐỐI bên trong .search-bar */
 body.order-page .toolbar .search-bar .fa-search {
     position: absolute;
     right: auto;
-    /* Xóa 'right' từ order.css */
     left: 25px;
-    /* Đặt icon bên trái */
     top: 50%;
     transform: translateY(-50%);
     font-size: 22px;
-    /* Icon to hơn (giống ảnh) */
     color: #777;
-    /* Icon màu xám */
 }
 
 body.order-page .toolbar {
-    /* Tạo khoảng trống từ thanh tìm kiếm đến đường kẻ */
-    padding-bottom: 15px;
-
-    /* Xóa margin-bottom cũ (nếu có từ file order.css) để kiểm soát khoảng cách */
-    margin-bottom: 0;
-
-    /* Đây chính là đường kẻ bạn muốn, 
-       tôi dùng style giống hệt đường kẻ của tiêu đề cho đồng bộ */
+    padding-bottom: 5px;
+    /* (SỬA) Thêm margin-bottom để cách form dưới */
+    margin-bottom: 30px;
+    /* Tạo khoảng cách giữa đường kẻ và form chi tiết */
     border-bottom: 1.5px solid #395542;
 }
+
+/* Tăng khoảng cách dưới các bộ lọc */
+body.order-page .toolbar .filters {
+    margin-bottom: 40px;
+}
+
 
 /* * 3. STYLE CHO CÁC PHẦN CÒN LẠI CỦA TRANG
  */
 
-/* Nền (chỉ để dự phòng) */
+/* Nền */
 body.order-page {
     background-color: #EDDECD;
     color: #395542;
     font-family: 'Crimson Text', serif;
 }
 
-/* Tiêu đề chính: "TIẾP NHẬN & XỬ LÝ..." */
+/* Tiêu đề chính */
 .complaint-title {
     font-family: 'Crimson Text', serif;
     font-weight: 700;
@@ -91,7 +85,7 @@ body.order-page {
     color: #395542;
 }
 
-/* Tiêu đề phụ "CHI TIẾT YÊU CẦU" */
+/* Tiêu đề phụ */
 .form-section-title {
     font-family: 'Crimson Text', serif;
     font-weight: 600;
@@ -103,21 +97,18 @@ body.order-page {
     letter-spacing: 0.5px;
 }
 
-/* Bố cục 2 cột của form */
+/* Bố cục 2 cột form */
 .form-columns {
     display: flex;
     gap: 40px;
-    /* Khoảng cách giữa 2 cột */
 }
 
 /* Từng cột */
 .form-column {
     flex: 1;
-    /* Mỗi cột chiếm 50% không gian */
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* Khoảng cách giữa các mục trong 1 cột */
 }
 
 /* Từng mục (label + input) */
@@ -134,13 +125,12 @@ body.order-page {
     margin-bottom: 8px;
 }
 
-/* Style cho các ô input THƯỜNG (không phải ô tìm kiếm) */
+/* Style input thường */
 .form-group input[type="text"],
 .form-group select,
 .form-group textarea {
     width: 100%;
     padding: 18px 20px;
-    /* Padding thấp hơn ô tìm kiếm */
     border: 1px solid #D4CFC3;
     border-radius: 6px;
     font-size: 15px;
@@ -150,7 +140,7 @@ body.order-page {
     box-sizing: border-box;
 }
 
-/* Style cho placeholder (chữ mờ) */
+/* Placeholder */
 .form-group ::placeholder {
     color: #999;
     font-style: italic;
@@ -158,8 +148,9 @@ body.order-page {
     font-size: 16px;
 }
 
-/* Input ở chế độ chỉ đọc (readonly) */
-.form-group input[readonly] {
+/* Input readonly */
+.form-group input[readonly],
+.form-group textarea[readonly] {
     background-color: #f0f0f0;
     font-weight: 600;
     color: #555;
@@ -171,10 +162,9 @@ body.order-page {
     resize: vertical;
 }
 
-/* Style cho các nút bấm */
+/* Nút bấm */
 .btn {
     padding: 18px 30px;
-    /* Nút cao, đồng bộ với input */
     border: none;
     border-radius: 6px;
     font-size: 14px;
@@ -186,7 +176,7 @@ body.order-page {
     text-align: center;
 }
 
-/* Nút màu xanh lá (Lưu và đóng) */
+/* Nút xanh lá */
 .btn-primary-green {
     background-color: #364D3C;
     color: white;
@@ -196,7 +186,7 @@ body.order-page {
     background-color: #2d5016;
 }
 
-/* Nút màu trắng (Cập nhật, Trả lời, Phản hồi) */
+/* Nút trắng */
 .btn-secondary {
     background-color: #FFFFFF;
     color: #395542;
@@ -208,74 +198,48 @@ body.order-page {
     border-color: #395542;
 }
 
-/*
- * Xóa bỏ .form-group-button
- * vì textarea "Nội dung phản hồi" đã thay thế nó
- */
-
-/* * ============================================
- * PHẦN SỬA LỖI 3 NÚT BẤM (ĐÂY LÀ THAY ĐỔI)
- * ============================================
- */
-
-/* Container cho các nút cuối form - CĂN NGANG VÀ GIỮA (Giống hình ảnh) */
+/* Container nút cuối form */
 .form-actions {
     display: flex;
     flex-direction: row;
-    /* <<< Xếp theo chiều ngang */
     justify-content: center;
-    /* <<< Căn 3 nút ra giữa */
-
     gap: 20px;
-    /* Khoảng cách giữa các nút */
     margin-top: 30px;
     padding-top: 30px;
     border-top: 1.5px solid #E0D9CE;
-    /* Đường kẻ ngang */
 }
 
-/* Set chiều rộng 'auto' cho các nút, không giới hạn max-width */
+/* Nút cuối form */
 .form-actions .btn {
     width: auto;
-    /* Chiều rộng tự động theo nội dung */
     max-width: none;
-    /* Xóa max-width cũ (nếu có) */
 }
 
-/* Xóa bỏ margin-left (nếu còn) */
 .form-actions .btn-primary-green {
     margin-left: 0;
 }
 
 
-/* Responsive cho di động */
+/* Responsive di động */
 @media (max-width: 768px) {
     .form-columns {
         flex-direction: column;
-        /* Xếp 2 cột chồng lên nhau */
         gap: 20px;
     }
 
     .form-group textarea {
         min-height: 120px;
-        /* Giảm chiều cao textarea trên di động */
     }
 
-    /* * Sửa 3 nút bấm trên di động:
-     * Vẫn giữ XẾP DỌC và CĂN GIỮA
-     */
     .form-actions {
         flex-direction: column;
-        /* Xếp dọc trên di động */
         align-items: center;
-        /* Căn giữa trên di động */
         gap: 15px;
     }
 
     .form-actions .btn {
         width: 100%;
         max-width: 350px;
-        /* Giới hạn chiều rộng nút trên di động */
     }
 
     .form-actions .btn-primary-green {
@@ -283,11 +247,7 @@ body.order-page {
     }
 }
 
-/* ======================================== */
-/* --- STYLES CHO NAVBAR ĐÃ CẤU TRÚC LẠI --- */
-/* ======================================== */
-
-/* Áp dụng cho "Danh sách" và "Khiếu nại" */
+/* --- NAVBAR --- */
 .nav-menu-link {
     color: white;
     text-decoration: none;
@@ -300,10 +260,8 @@ body.order-page {
 
 .nav-menu-link:hover {
     color: #e3c78d;
-    /* vàng nhạt khi hover */
 }
 
-/* Áp dụng cho icon người dùng */
 .nav-icon-link {
     color: #fff;
     font-size: 20px;
@@ -315,7 +273,6 @@ body.order-page {
     color: #e3c78d;
 }
 
-/* Logo */
 .nav-logo a {
     color: #fff;
     font-family: 'Inspiration', cursive;
@@ -331,4 +288,22 @@ body.order-page {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+}
+
+/* --- CĂN GIỮA TIÊU ĐỀ BẢNG --- */
+.complaints-table th {
+    text-align: center;
+}
+
+.complaints-table td:nth-child(1),
+/* Mã KN */
+.complaints-table td:nth-child(2),
+/* Mã ĐH */
+.complaints-table td:nth-child(5),
+/* Ngày phản ánh */
+.complaints-table td:nth-child(6),
+/* TRẠNG THÁI */
+.complaints-table td:nth-child(7) {
+    /* Xử lý */
+    text-align: center;
 }
