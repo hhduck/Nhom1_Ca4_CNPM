@@ -59,6 +59,7 @@ function setupLoginForm() {
         
         input.addEventListener('input', function() {
             clearFieldError(this);
+            
         });
     });
 }
@@ -84,6 +85,8 @@ function handleLogin(e) {
     // ✅ FIX: Gọi API ngay lập tức thay vì setTimeout
     performLogin(username, password, rememberMe);
 }
+
+
 
 function validateLoginForm(username, password) {
     let isValid = true;
@@ -343,6 +346,21 @@ function forgotPassword() {
         }
     }
 }
+// 👁️ Toggle show/hide password
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordField = document.getElementById('password');
+    
+    if (togglePassword && passwordField) {
+        togglePassword.addEventListener('click', function() {
+            const isHidden = passwordField.type === 'password';
+            passwordField.type = isHidden ? 'text' : 'password';
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
+});
+
 
 function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
