@@ -24,7 +24,7 @@
   color: #fff;
   font-family: 'Inspiration', cursive;
   font-size: 52px;
-  font-weight: 200; 
+  font-weight: 200;
   text-decoration: none;
   letter-spacing: 1px;
 }
@@ -46,7 +46,6 @@
     font-size: 15px;
     text-transform: uppercase; /* Viết hoa toàn bộ */
     transition: color 0.3s;
-
   }
   
   .nav-menu a:hover {
@@ -1660,3 +1659,19 @@
   position: relative;
 }
 .hidden { display: none; }
+
+/* CSS cho icon user */
+.fa-user {
+    font-size: 20px;     /* Kích thước icon */
+    color: #ffffff;         /* Màu xám đậm */
+    transition: color 0.3s ease;
+    margin-top: 6px;
+    margin-left: 20px;
+  }
+  
+  /* Khi rê chuột */
+  .fa-user:hover {
+    color: #e3c78d;      /* Đổi sang xanh khi hover */
+    cursor: pointer;
+  }
+  
