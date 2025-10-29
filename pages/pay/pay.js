@@ -1,156 +1,112 @@
-// ==========================
-// pay.js - xử lý tính toán & giao hàng
-// ==========================
-document.addEventListener('DOMContentLoaded', function () {
-  const toVND = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-  const rows = Array.from(document.querySelectorAll("#orderTable tbody tr"));
-  const subtotalEl = document.getElementById("subtotal");
-  const vatEl = document.getElementById("vat");
-  const shippingEl = document.getElementById("shipping");
-  const grandEl = document.getElementById("grandtotal");
-  const checkoutForm = document.getElementById("checkoutForm");
-
-  // ==========================
-  // 1️⃣ TÍNH TOÁN ĐƠN HÀNG
-  // ==========================
-  let subtotal = 0;
-  rows.forEach(r => {
-    const price = Number(r.getAttribute("data-price") || 0);
-    const qty = Number((r.querySelector(".td-qty") || { textContent: "1" }).textContent.trim()) || 1;
-    subtotal += price * qty;
-    const priceCell = r.querySelector(".td-price");
-    if (priceCell) priceCell.textContent = toVND(price * qty);
-  });
-
-  const shipping = 0;
-  const vat = Math.round(subtotal * 0.08);
-  const grand = subtotal + shipping + vat;
-
-  subtotalEl.textContent = toVND(subtotal);
-  vatEl.textContent = toVND(vat);
-  shippingEl.textContent = shipping === 0 ? "Miễn phí" : toVND(shipping);
-  grandEl.textContent = toVND(grand);
-
-  // ==========================
-  // 2️⃣ VALIDATION FORM
-  // ==========================
-  checkoutForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    // Ẩn lỗi cũ
-    document.querySelectorAll(".error-msg").forEach(el => el.style.display = "none");
-    document.querySelectorAll("input").forEach(el => el.classList.remove("error"));
-
-    let isValid = true;
-
-    const name = (this.fullname && this.fullname.value.trim()) || "";
-    const phone = this.phone ? this.phone.value.replace(/\s+/g, '') : "";
-    const deliveryTimeInput = this.deliveryTime ? this.deliveryTime.value : "";
-
-    // Kiểm tra họ tên
-    if (name === "") {
-      const err = document.getElementById("nameError");
-      err.textContent = "⚠️ Vui lòng nhập họ và tên.";
-      err.style.display = "block";
-      this.fullname.classList.add("error");
-      isValid = false;
-    }
-
-    // Kiểm tra số điện thoại
-    if (!/^\d{10}$/.test(phone)) {
-      const err = document.getElementById("phoneError");
-      err.textContent = "⚠️ Số điện thoại phải có đúng 10 chữ số.";
-      err.style.display = "block";
-      this.phone.classList.add("error");
-      isValid = false;
-    }
-
-    // Kiểm tra email
-    const email = this.email ? this.email.value.trim() : "";
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      const err = document.getElementById("emailError");
-      err.textContent = "⚠️ Vui lòng nhập địa chỉ email hợp lệ.";
-      err.style.display = "block";
-      this.email.classList.add("error");
-      isValid = false;
-    }
-
-    // Kiểm tra thời gian nhận bánh
-    if (!deliveryTimeInput) {
-      const err = document.getElementById("timeError");
-      err.textContent = "⚠️ Vui lòng chọn thời gian nhận bánh.";
-      err.style.display = "block";
-      this.deliveryTime.classList.add("error");
-      isValid = false;
-    } else {
-      const [datePart, timePart] = deliveryTimeInput.split("T");
-      const [year, month, day] = datePart.split("-").map(Number);
-      const [hour, minute] = timePart.split(":").map(Number);
-      const deliveryTime = new Date(year, month - 1, day, hour, minute);
-      const now = new Date();
-      const diffHours = (deliveryTime - now) / (1000 * 60 * 60);
-
-      if (diffHours < 2) {
-        const err = document.getElementById("timeError");
-        err.textContent = "⚠️ Thời gian nhận bánh phải sau thời điểm đặt ít nhất 2 tiếng.";
-        err.style.display = "block";
-        this.deliveryTime.classList.add("error");
-        isValid = false;
-      } else if (hour < 8 || hour >= 20) {
-        const err = document.getElementById("timeError");
-        err.textContent = "⚠️ Thời gian nhận bánh phải trong khoảng từ 8:00 đến 20:00.";
-        err.style.display = "block";
-        this.deliveryTime.classList.add("error");
-        isValid = false;
-      }
-    }
-
-    // Nếu có lỗi thì ngừng lại
-    if (!isValid) return;
-
-    // Thành công
-    const nameDisplay = name || "Khách hàng";
-    alert(`🎉 Cảm ơn ${nameDisplay}!\nĐơn hàng của bạn đã được ghi nhận.\nTổng: ${toVND(grand)} VND`);
-  });
-
-
-  // ==========================
-  // 3️⃣ CHỌN TỈNH / PHƯỜNG
-  // ==========================
-  const locationData = {
-    hcm: ["Sài Gòn", "Tân Định", "Bến Thành", "Cầu Ông Lãnh", "Bàn Cờ", "Xuân Hòa", "Nhiêu Lộc", "Xóm Chiếu", "Khánh Hội", "Vĩnh Hội"],
-    ld: ["Vĩnh Hảo", "Liên Hương", "Tuy Phong", "Phan Rí Cửa", "Bắc Bình", "Hồng Thái", "Hải Ninh", "Phan Sơn", "Sông Lũy", "Lương Sơn"],
-    kh: ["Phan Rang", "Bảo An", "Đô Vinh", "Ninh Chử", "Đông Hải", "Phước Dinh", "Mỹ Sơn", "Vĩnh Hảo", "Ninh Sơn", "Thuận Nam"]
-  };
-
-  const citySelect = document.getElementById('city');
-  const wardSelect = document.getElementById('ward');
-  const deliveryOptions = document.querySelectorAll('input[name="delivery"]');
-  const deliveryInfo = document.querySelector('.delivery-info');
-
-  // Ẩn phần địa chỉ mặc định
-  deliveryInfo.style.display = "none";
-
-  // Lắng nghe khi người dùng chọn phương thức nhận hàng
-  deliveryOptions.forEach(option => {
-    option.addEventListener('change', function () {
-      deliveryInfo.style.display = this.value === 'delivery' ? 'block' : 'none';
-    });
-  });
-
-  // Cập nhật phường / xã khi chọn tỉnh
-  citySelect.addEventListener('change', function () {
-    const selectedCity = this.value;
-    wardSelect.innerHTML = '<option value="">-- Chọn phường / xã --</option>';
-    if (locationData[selectedCity]) {
-      locationData[selectedCity].forEach(ward => {
-        const opt = document.createElement('option');
-        opt.value = ward.trim();
-        opt.textContent = ward.trim();
-        wardSelect.appendChild(opt);
-      });
-    }
-  });
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadPromotions();
+  calculateTotals();
 });
+
+async function loadPromotions() {
+  try {
+    const response = await fetch("../../api/promotions.php", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      console.error("⚠️ API trả về không phải JSON:", text);
+      document.getElementById("promoMessage").textContent = "Không tải được danh sách khuyến mãi.";
+      return;
+    }
+
+    if (!data.success || !data.data?.promotions?.length) {
+      console.warn("Không có khuyến mãi:", data);
+      document.getElementById("promoMessage").textContent = "Hiện chưa có khuyến mãi khả dụng.";
+      return;
+    }
+
+    const promotions = data.data.promotions;
+    console.log("✅ Danh sách khuyến mãi:", promotions);
+    populatePromotionSelect(promotions);
+  } catch (error) {
+    console.error("🚨 Không thể tải khuyến mãi:", error);
+    document.getElementById("promoMessage").textContent = "Lỗi kết nối API.";
+  }
+}
+
+function populatePromotionSelect(promotions) {
+  const select = document.getElementById("promotionSelect");
+  if (!select) {
+    console.error("Không tìm thấy #promotionSelect trong HTML!");
+    return;
+  }
+
+  select.innerHTML = '<option value="">-- Chọn mã khuyến mãi --</option>';
+
+  promotions.forEach(promo => {
+    const opt = document.createElement("option");
+    opt.value = promo.promotion_code;
+    opt.textContent = `${promo.promotion_name} (${promo.promotion_code})`;
+    select.appendChild(opt);
+  });
+
+  select.addEventListener("change", () => {
+    const code = select.value;
+    const promo = promotions.find(p => p.promotion_code === code);
+    if (promo) applyPromotion(promo);
+  });
+}
+
+function applyPromotion(promo) {
+  const msg = document.getElementById("promoMessage");
+  const subtotal = parseInt(document.getElementById("subtotal").textContent.replace(/\D/g, "")) || 0;
+
+  const now = new Date();
+  const start = new Date(promo.start_date);
+  const end = new Date(promo.end_date);
+
+  if (now < start || now > end || promo.status !== "active") {
+    msg.textContent = "⚠️ Mã này chưa hoặc đã hết hạn!";
+    msg.style.color = "orange";
+    return;
+  }
+
+  if (subtotal < promo.min_order_value) {
+    msg.textContent = `Đơn hàng tối thiểu ${Number(promo.min_order_value).toLocaleString()}đ mới áp dụng được.`;
+    msg.style.color = "orange";
+    return;
+  }
+
+  let discount = 0;
+  if (promo.promotion_type === "percent") {
+    discount = (promo.discount_value / 100) * subtotal;
+    if (promo.max_discount && discount > promo.max_discount) discount = promo.max_discount;
+  } else if (promo.promotion_type === "fixed_amount") {
+    discount = promo.discount_value;
+  } else if (promo.promotion_type === "free_shipping") {
+    document.getElementById("shipping").textContent = "Miễn phí";
+  }
+
+  const grandtotalEl = document.getElementById("grandtotal");
+  const newTotal = subtotal - discount;
+  grandtotalEl.textContent = newTotal.toLocaleString("vi-VN");
+
+  msg.textContent = `✅ Áp dụng mã ${promo.promotion_code}, giảm ${Number(discount).toLocaleString()}đ`;
+  msg.style.color = "green";
+}
+
+function calculateTotals() {
+  const rows = document.querySelectorAll("#orderTable tbody tr");
+  let subtotal = 0;
+  rows.forEach(row => {
+    subtotal += parseInt(row.dataset.price) || 0;
+  });
+
+  const vat = Math.round(subtotal * 0.08);
+  const grandTotal = subtotal + vat;
+
+  document.getElementById("subtotal").textContent = subtotal.toLocaleString("vi-VN");
+  document.getElementById("vat").textContent = vat.toLocaleString("vi-VN");
+  document.getElementById("grandtotal").textContent = grandTotal.toLocaleString("vi-VN");
+}
