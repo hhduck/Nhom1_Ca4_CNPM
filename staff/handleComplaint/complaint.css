@@ -346,3 +346,67 @@ input#assignedStaffNameDisplay.error-placeholder {
 .user-menu.hidden {
     display: none;
 }
+
+/* ======== THÊM CÁC QUY TẮC NÀY VÀO CUỐI complaint.css ======== */
+
+/* ----- Màu sắc cho Status Badge trong bảng và form ----- */
+
+/* Kế thừa style cơ bản từ order.css nếu có */
+/* @import url('../ViewOders/order.css'); */ /* Đảm bảo bạn đã import */
+
+/* Định nghĩa màu cụ thể cho các trạng thái khiếu nại */
+
+.status-badge.status-pending { /* Chờ giải quyết */
+    background-color: #FFF3CD; /* Vàng nhạt */
+    color: #856404;
+    border-color: #FFEEBA;
+}
+
+.status-badge.status-processing { /* Đang giải quyết */
+    background-color: #D1ECF1; /* Xanh dương nhạt */
+    color: #0C5460;
+    border-color: #BEE5EB;
+}
+
+.status-badge.status-resolved { /* Đã giải quyết */
+    background-color: #D4EDDA; /* Xanh lá nhạt */
+    color: #155724;
+    border-color: #C3E6CB;
+}
+
+.status-badge.status-closed { /* Đã đóng */
+    background-color: #E2E3E5; /* Xám nhạt */
+    color: #383d41;
+    border-color: #D6D8DB;
+}
+
+.status-badge.status-rejected { /* Từ chối */
+    background-color: #F8D7DA; /* Hồng nhạt */
+    color: #721C24;
+    border-color: #F5C6CB;
+}
+
+.status-badge.status-unknown { /* Trạng thái không xác định */
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border-color: #dee2e6;
+}
+
+/* Style cho class empty-state và error-state (Nếu chưa có) */
+.empty-state, .error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+    font-style: italic;
+}
+.error-state {
+    color: #dc3545; /* Màu đỏ */
+    font-style: normal;
+    font-weight: 500;
+}
+.loading-state {
+     text-align: center;
+     padding: 40px 20px;
+     color: #888;
+     font-style: italic;
+}

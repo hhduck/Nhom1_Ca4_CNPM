@@ -1,4 +1,4 @@
-// contact.js - Xử lý trang Quản lý Liên hệ (Phiên bản tương thích layout mới)
+// contact.js - Xử lý trang Quản lý Liên hệ (Đã thêm logout khi click logo)
 
 let allContacts = [];
 let currentContactId = null;
@@ -8,6 +8,17 @@ const CONTACT_STATUS_MAP = {
     pending: 'Chưa xử lý',
     responded: 'Đã phản hồi'
 };
+
+// ===== HÀM ĐĂNG XUẤT (TÁCH RA NGOÀI) =====
+function performLogout(redirectUrl) {
+    console.log("Đang đăng xuất...");
+    localStorage.removeItem('currentStaff');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('rememberMe');
+    // BỎ ALERT - Đăng xuất trực tiếp
+    window.location.href = redirectUrl;
+}
+// ===== KẾT THÚC HÀM ĐĂNG XUẤT =====
 
 document.addEventListener('DOMContentLoaded', () => {
     // Kiểm tra đăng nhập trước
@@ -21,8 +32,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchContacts();
     setupEventListeners();
-    setupUserIconMenu(); // Gọi hàm setup menu
+    setupUserIconMenu();
+    setupLogoLogout(); // ← THÊM MỚI: Xử lý click logo
 });
+
+// ===== HÀM MỚI: XỬ LÝ CLICK LOGO ĐỂ ĐĂNG XUẤT =====
+function setupLogoLogout() {
+    const logoLink = document.querySelector('.nav-logo a');
+    if (!logoLink) return;
+
+    logoLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        console.log("Logo clicked on contact page, logging out...");
+        performLogout('../../pages/home/home.html');
+    });
+}
 
 function setupEventListeners() {
     // Bộ lọc trạng thái
@@ -33,7 +57,7 @@ function setupEventListeners() {
     // Ô tìm kiếm
     const searchInput = document.getElementById('contact-search-input');
     if (searchInput) {
-        searchInput.addEventListener('input', debounce(applyFilters, 300)); // Thời gian debounce ngắn hơn
+        searchInput.addEventListener('input', debounce(applyFilters, 300));
     }
 
     // Click vào bảng (icon xem)
@@ -56,13 +80,12 @@ function setupEventListeners() {
     }
 }
 
-
 // Hàm lấy Auth Headers
 function getAuthHeaders() {
     const token = localStorage.getItem('jwtToken');
     if (!token) {
         console.error("Không tìm thấy JWT Token!");
-        logoutAndRedirect(); // Nên có hàm này để redirect nếu mất token
+        performLogout('../../pages/login/login.html');
         return null;
     }
     return {
@@ -90,7 +113,7 @@ async function fetchContacts() {
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
             allContacts = result.data;
-            applyFilters(); // Hiển thị dữ liệu
+            applyFilters();
         } else {
             allContacts = [];
             showError(result.message || "Lỗi không xác định từ API");
@@ -119,20 +142,19 @@ function applyFilters() {
     renderContactList(filteredContacts);
 }
 
-
 // Hiển thị danh sách liên hệ ra bảng
 function renderContactList(contacts) {
     const tableBody = document.getElementById('contacts-table-body');
     tableBody.innerHTML = '';
 
     if (contacts.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="empty-state">Không có liên hệ nào phù hợp.</td></tr>`; // Sử dụng class empty-state
+        tableBody.innerHTML = `<tr><td colspan="7" class="empty-state">Không có liên hệ nào phù hợp.</td></tr>`;
         return;
     }
 
     contacts.forEach(contact => {
         const row = document.createElement('tr');
-        row.dataset.contactInfo = JSON.stringify(contact); // Lưu data
+        row.dataset.contactInfo = JSON.stringify(contact);
 
         const statusText = CONTACT_STATUS_MAP[contact.Status] || contact.Status;
         const statusClass = `status-badge status-contact-${contact.Status || 'unknown'}`;
@@ -182,7 +204,7 @@ function openContactModal(contact) {
     document.getElementById('modalCustomerName').textContent = contact.CustomerName || 'N/A';
     document.getElementById('modalCustomerEmail').textContent = contact.CustomerEmail || 'N/A';
     document.getElementById('modalCustomerPhone').textContent = contact.CustomerPhone || 'N/A';
-    document.getElementById('modalCustomerAddress').textContent = contact.CustomerAddress || 'N/A'; // Thêm địa chỉ
+    document.getElementById('modalCustomerAddress').textContent = contact.CustomerAddress || 'N/A';
     document.getElementById('modalCreatedAt').textContent = formatDateTime(contact.CreatedAt);
     document.getElementById('modalSubject').textContent = contact.Subject || 'N/A';
     document.getElementById('modalMessageContent').textContent = contact.Message || '(Không có nội dung)';
@@ -191,16 +213,16 @@ function openContactModal(contact) {
     const statusSpan = document.getElementById('modalStatus');
     statusSpan.textContent = CONTACT_STATUS_MAP[contact.Status] || contact.Status;
     statusSpan.className = `status-badge status-contact-${contact.Status || 'unknown'}`;
-    modalContent.dataset.status = contact.Status; // Cập nhật data attribute
+    modalContent.dataset.status = contact.Status;
 
     // Thông tin người phản hồi
     const responderInfoRows = modal.querySelectorAll('.responder-info');
     if (contact.Status === 'responded') {
         document.getElementById('modalResponderName').textContent = contact.ResponderName || '(Không rõ)';
         document.getElementById('modalRespondedAt').textContent = formatDateTime(contact.RespondedAt);
-        responderInfoRows.forEach(row => row.style.display = 'flex'); // Hiện
+        responderInfoRows.forEach(row => row.style.display = 'flex');
     } else {
-        responderInfoRows.forEach(row => row.style.display = 'none'); // Ẩn
+        responderInfoRows.forEach(row => row.style.display = 'none');
     }
 
     modal.classList.add('visible');
@@ -211,7 +233,6 @@ function closeModal() {
     currentContactId = null;
     const modal = document.getElementById('contactDetailModal');
     modal.classList.remove('visible');
-    // Reset lại trạng thái nút (nếu cần)
     const markButton = document.getElementById('markRespondedBtn');
     markButton.disabled = false;
     markButton.textContent = "Đánh dấu Đã phản hồi";
@@ -221,16 +242,12 @@ function closeModal() {
 async function markAsResponded() {
     if (!currentContactId) return;
 
-    // Bỏ confirm nếu muốn đánh dấu ngay
-    // const confirmMark = confirm("Bạn chắc chắn muốn đánh dấu liên hệ này là ĐÃ PHẢN HỒI?");
-    // if (!confirmMark) return;
-
     const markButton = document.getElementById('markRespondedBtn');
     markButton.disabled = true;
     markButton.textContent = "Đang xử lý...";
 
     const headers = getAuthHeaders();
-    if (!headers) { /* ... xử lý lỗi ... */ return; }
+    if (!headers) return;
 
     try {
         const response = await fetch(`../../api/contacts.php/${currentContactId}`, {
@@ -242,33 +259,27 @@ async function markAsResponded() {
 
         alert("✅ Đã đánh dấu phản hồi thành công!");
         closeModal();
-        fetchContacts(); // Tải lại danh sách
+        fetchContacts();
     } catch (error) {
         console.error("Lỗi khi đánh dấu đã phản hồi:", error);
         alert(`❌ Lỗi: ${error.message}`);
-        // Không reset nút ở đây nếu lỗi, để người dùng biết
-        markButton.disabled = false; // Có thể bật lại nút nếu muốn cho thử lại
+        markButton.disabled = false;
         markButton.textContent = "Đánh dấu Đã phản hồi";
     }
-    // finally không cần reset nút nếu muốn giữ trạng thái loading khi lỗi
 }
-
 
 // --- Các hàm tiện ích ---
 
 function showLoading() {
     const tableBody = document.getElementById('contacts-table-body');
-    // Sử dụng class empty-state để nhất quán
     tableBody.innerHTML = `<tr><td colspan="7" class="empty-state" style="padding: 40px 0;">Đang tải dữ liệu...</td></tr>`;
 }
 
 function showError(message) {
     const tableBody = document.getElementById('contacts-table-body');
-    // Sử dụng class error-state
     tableBody.innerHTML = `<tr><td colspan="7" class="error-state" style="padding: 40px 0; color: red;">${message}</td></tr>`;
 }
 
-// Format ngày giờ (giữ nguyên)
 function formatDateTime(dateString) {
     if (!dateString) return 'N/A';
     try {
@@ -278,26 +289,36 @@ function formatDateTime(dateString) {
     } catch (e) { return dateString; }
 }
 
-// Debounce (giữ nguyên)
-function debounce(func, wait) { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func(...args), wait); }; }
+function debounce(func, wait) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), wait);
+    };
+}
 
-
-// --- HÀM MENU NGƯỜI DÙNG VÀ ĐĂNG XUẤT (Giữ nguyên) ---
+// --- HÀM MENU NGƯỜI DÙNG VÀ ĐĂNG XUẤT ---
 function setupUserIconMenu() {
     const userIconDiv = document.querySelector('.nav-user-icon');
     const userMenu = document.querySelector('.user-menu');
     const logoutButton = document.getElementById('logoutButton');
-    if (!userIconDiv || !userMenu || !logoutButton) return; // Thoát nếu thiếu
-    userIconDiv.addEventListener('click', (e) => { e.stopPropagation(); userMenu.classList.remove('hidden'); setTimeout(() => userMenu.classList.toggle('visible'), 0); });
-    document.addEventListener('click', (e) => { if (!userIconDiv.contains(e.target) && userMenu.classList.contains('visible')) userMenu.classList.remove('visible'); });
+
+    if (!userIconDiv || !userMenu || !logoutButton) return;
+
+    userIconDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userMenu.classList.remove('hidden');
+        setTimeout(() => userMenu.classList.toggle('visible'), 0);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!userIconDiv.contains(e.target) && userMenu.classList.contains('visible')) {
+            userMenu.classList.remove('visible');
+        }
+    });
+
+    // Nút đăng xuất - BỎ ALERT
     logoutButton.addEventListener('click', () => performLogout('../../pages/login/login.html'));
-}
-function performLogout(redirectUrl) {
-    console.log("Đang đăng xuất...");
-    localStorage.removeItem('currentStaff');
-    localStorage.removeItem('jwtToken');
-    localStorage.removeItem('rememberMe');
-    window.location.href = redirectUrl;
 }
 
 // Thêm class empty-state và error-state vào CSS nếu chưa có
@@ -310,7 +331,7 @@ style.textContent = `
         font-style: italic;
     }
     .error-state {
-        color: #dc3545; /* Màu đỏ Bootstrap */
+        color: #dc3545;
         font-style: normal;
         font-weight: 500;
     }

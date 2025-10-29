@@ -1,3 +1,5 @@
+// complaint.js - PHIÊN BẢN HOÀN CHỈNH (CÓ LOGOUT TRÊN LOGO, BỎ CONFIRM)
+
 let currentComplaintId = null;
 let btnReplyCustomer = null;
 let statusSelect = null;
@@ -7,42 +9,72 @@ let assignedStaffIdInput = null;
 let assignedStaffNameDisplay = null;
 let allComplaints = [];
 
+// Map trạng thái API sang text Tiếng Việt
 const STATUS_MAP_VI = {
     'pending': 'Chờ giải quyết',
     'processing': 'Đang giải quyết',
     'resolved': 'Đã giải quyết',
+    'closed': 'Đã đóng',
+    'rejected': 'Từ chối'
 };
 
+// Hàm lấy Headers xác thực
 function getAuthHeaders() {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+        console.error("Token không hợp lệ hoặc đã hết hạn. Đang đăng xuất...");
+        performLogout('../../pages/login/login.html'); // Chuyển về login nếu mất token
+        return null;
+    }
     return {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+        'Authorization': `Bearer ${token}`
     };
 }
 
+// Chạy khi trang tải xong
 document.addEventListener('DOMContentLoaded', () => {
-    btnReplyCustomer = document.querySelector('.form-actions .btn-secondary:nth-child(1)');
+    // Kiểm tra đăng nhập
+    const staffDataString = localStorage.getItem("currentStaff");
+    const jwtToken = localStorage.getItem("jwtToken");
+    if (!staffDataString || !jwtToken) {
+        alert("Vui lòng đăng nhập với tài khoản nhân viên/admin.");
+        window.location.href = "../../pages/login/login.html";
+        return;
+    }
+
+    // Lấy các element quan trọng (thêm kiểm tra null)
+    btnReplyCustomer = document.querySelector('.form-actions .btn-secondary');
     statusSelect = document.getElementById('status');
     responseText = document.getElementById('responseText');
     assignedStaffIdInput = document.getElementById('assignedStaffIdInput');
     assignedStaffNameDisplay = document.getElementById('assignedStaffNameDisplay');
 
-    fetchComplaints();
+    fetchComplaints(); // Tải dữ liệu
 
-    document.getElementById('complaints-table-body').addEventListener('click', handleComplaintListClick);
+    // Gắn các listener (thêm kiểm tra null)
+    const tableBody = document.getElementById('complaints-table-body');
+    if (tableBody) tableBody.addEventListener('click', handleComplaintListClick);
     setupFilterListeners();
-    document.getElementById('complaint-search-input').addEventListener('input', debounce(applyFilters, 500));
-    setupEventListeners();
-    setupUserIconMenu(); // Gọi hàm setup menu
+    const searchInput = document.getElementById('complaint-search-input');
+    if (searchInput) searchInput.addEventListener('input', debounce(applyFilters, 300));
+    setupFormEventListeners();
+    setupUserIconMenu(); // Setup menu user
+    setupLogoLogout();   // <<< GỌI HÀM LOGOUT CHO LOGO >>>
 });
 
+// Setup bộ lọc checkboxes
 function setupFilterListeners() {
     const allCheckbox = document.getElementById('filter-all');
     const otherCheckboxes = document.querySelectorAll('.complaint-filter:not(#filter-all)');
+    if (!allCheckbox) return;
 
     allCheckbox.addEventListener('change', () => {
         if (allCheckbox.checked) {
             otherCheckboxes.forEach(cb => cb.checked = false);
+        } else if (!Array.from(otherCheckboxes).some(cb => cb.checked)) {
+             // Nếu bỏ check 'Tất cả' và không có cái nào khác được check -> check lại 'Tất cả'
+            allCheckbox.checked = true;
         }
         applyFilters();
     });
@@ -52,8 +84,9 @@ function setupFilterListeners() {
             if (checkbox.checked) {
                 allCheckbox.checked = false;
             }
+            // Tự động check 'Tất cả' nếu không còn filter nào được chọn
             const anyOtherChecked = Array.from(otherCheckboxes).some(cb => cb.checked);
-            if (!anyOtherChecked) {
+            if (!anyOtherChecked && !allCheckbox.checked) {
                 allCheckbox.checked = true;
             }
             applyFilters();
@@ -61,396 +94,290 @@ function setupFilterListeners() {
     });
 }
 
-
+// Tải danh sách khiếu nại từ API
 async function fetchComplaints() {
     console.log("Đang tải danh sách khiếu nại...");
+    showLoadingState();
+    const headers = getAuthHeaders();
+    if (!headers) { showErrorState("Lỗi xác thực."); return; }
+
     try {
-        const response = await fetch(`../../api/complaints.php`, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
-        if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+        const antiCache = `_=${new Date().getTime()}`;
+        const response = await fetch(`../../api/complaints.php?${antiCache}`, { method: 'GET', headers: headers, cache: 'no-store' });
+        if (!response.ok) { const err = await response.json().catch(()=>({message:`HTTP ${response.status}`})); throw new Error(err.message); }
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
             allComplaints = result.data;
             applyFilters();
         } else {
             allComplaints = [];
-            console.error("API trả về không phải mảng:", result.message);
+            console.warn("API không trả về mảng:", result.message);
+            renderComplaintList([]);
         }
     } catch (error) {
-        console.error('Lỗi khi tải danh sách khiếu nại:', error);
-        document.getElementById('complaints-table-body').innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Không thể tải danh sách khiếu nại.</td></tr>`;
+        console.error('Lỗi tải khiếu nại:', error);
+        showErrorState('Lỗi tải danh sách: ' + error.message);
     }
 }
 
+// Lọc và tìm kiếm danh sách
 function applyFilters() {
-    const isAllChecked = document.getElementById('filter-all').checked;
-    const filterStatusMap = {
-        'filter-pending': 'pending',
-        'filter-processing': 'processing',
-        'filter-resolved': 'resolved'
-    };
+    const allCheckbox = document.getElementById('filter-all');
+    const isAllChecked = allCheckbox ? allCheckbox.checked : true;
+    const filterStatusMap = { 'filter-pending': 'pending', 'filter-processing': 'processing', 'filter-resolved': 'resolved', 'filter-closed': 'closed', 'filter-rejected': 'rejected' };
     let selectedStatuses = [];
     if (!isAllChecked) {
         document.querySelectorAll('.filters input.complaint-filter:checked:not(#filter-all)').forEach(cb => {
-            const status = filterStatusMap[cb.id];
-            if (status) selectedStatuses.push(status);
+            const status = filterStatusMap[cb.id]; if (status) selectedStatuses.push(status);
         });
     }
-    const searchTerm = document.getElementById('complaint-search-input').value.toLowerCase();
-    const filteredComplaints = allComplaints.filter(complaint => {
-        const statusMatch = isAllChecked || selectedStatuses.includes(complaint.Status);
-        const searchMatch = !searchTerm ||
-            (complaint.ComplaintCode && complaint.ComplaintCode.toLowerCase().includes(searchTerm)) ||
-            (complaint.OrderCode && complaint.OrderCode.toLowerCase().includes(searchTerm)) ||
-            (complaint.CustomerName && complaint.CustomerName.toLowerCase().includes(searchTerm));
+    const searchInput = document.getElementById('complaint-search-input');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    const filteredComplaints = allComplaints.filter(c => {
+        const statusMatch = isAllChecked || selectedStatuses.length === 0 || selectedStatuses.includes(c.Status);
+        const searchMatch = !searchTerm || ['ComplaintCode', 'OrderCode', 'CustomerName', 'Title'].some(field => c[field] && c[field].toLowerCase().includes(searchTerm));
         return statusMatch && searchMatch;
     });
     renderComplaintList(filteredComplaints);
 }
 
+// Hiển thị danh sách ra bảng
 function renderComplaintList(complaints) {
     const tableBody = document.getElementById('complaints-table-body');
+    if (!tableBody) return;
     tableBody.innerHTML = '';
-    if (complaints.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Không có khiếu nại nào phù hợp.</td></tr>`;
-        return;
-    }
-    complaints.forEach(complaint => {
+    if (complaints.length === 0) { tableBody.innerHTML = `<tr><td colspan="7" class="empty-state">Không có khiếu nại nào phù hợp.</td></tr>`; return; }
+
+    complaints.forEach(c => {
         const row = document.createElement('tr');
-        row.dataset.complaintId = complaint.ComplaintID;
-        const statusText = STATUS_MAP_VI[complaint.Status] || complaint.Status;
-        const statusClass = `status-${complaint.Status}`.replace('processing', 'shipping').replace('resolved', 'success');
+        row.dataset.complaintId = c.ComplaintID;
+        const statusText = STATUS_MAP_VI[c.Status] || c.Status;
+        // ✅ QUAN TRỌNG CHO MÀU SẮC: Tạo class CSS dựa trên status gốc từ API
+        const statusClass = `status-badge status-${c.Status || 'unknown'}`; // Ví dụ: status-pending, status-processing
+
         row.innerHTML = `
-            <td>${complaint.ComplaintCode}</td>
-            <td>${complaint.OrderCode}</td>
-            <td>${complaint.CustomerName}</td>
-            <td>${complaint.Title}</td> <td>${new Date(complaint.CreatedAt).toLocaleDateString('vi-VN')}</td>
-            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-            <td>
-                <a href="#" class="view-icon" title="Xử lý khiếu nại">
-                    <i class="fas fa-pen-to-square"></i>
-                </a>
-            </td>
+            <td>${c.ComplaintCode || 'N/A'}</td>
+            <td>${c.OrderCode || 'N/A'}</td>
+            <td>${c.CustomerName || 'N/A'}</td>
+            <td>${c.Title || 'N/A'}</td>
+            <td>${formatDateTime(c.CreatedAt)}</td>
+            <td><span class="${statusClass}">${statusText}</span></td>
+            <td><a href="#" class="view-icon" title="Xử lý"><i class="fas fa-pen-to-square"></i></a></td>
         `;
         tableBody.appendChild(row);
     });
 }
 
+// Xử lý click icon xem/sửa
 function handleComplaintListClick(e) {
     const icon = e.target.closest('.view-icon');
     if (icon) {
         e.preventDefault();
         const row = e.target.closest('tr');
-        const complaintId = row.dataset.complaintId;
-        if (complaintId) {
-            loadComplaintDetails(complaintId);
-            document.getElementById('complaint-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const id = row?.dataset.complaintId;
+        if (id) {
+            loadComplaintDetails(id);
+            document.getElementById('complaint-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
 }
 
-async function loadComplaintDetails(complaintId) {
-    console.log(`Đang tải chi tiết khiếu nại ID: ${complaintId}`);
-    currentComplaintId = complaintId;
+// Tải chi tiết khiếu nại
+async function loadComplaintDetails(id) {
+    console.log(`Tải chi tiết ID: ${id}`);
+    currentComplaintId = id;
+    clearForm();
+    const formActions = document.querySelector('.form-actions');
+    let loadingDiv = document.querySelector('.form-loading');
+    if (!loadingDiv && formActions) { /* ... chèn loading ... */ loadingDiv = document.createElement('div'); loadingDiv.className = 'form-loading'; loadingDiv.style.textAlign = 'center'; loadingDiv.style.padding = '20px'; loadingDiv.style.color = '#888'; loadingDiv.textContent = 'Đang tải...'; formActions.insertAdjacentElement('beforebegin', loadingDiv); }
+
     try {
-        const response = await fetch(`../../api/complaints.php/${complaintId}`, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
-        if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+        const headers = getAuthHeaders(); if (!headers) throw new Error("Lỗi xác thực.");
+        const response = await fetch(`../../api/complaints.php/${id}`, { method: 'GET', headers: headers });
+        if (!response.ok) { const err = await response.json().catch(()=>({message:`HTTP ${response.status}`})); throw new Error(err.message); }
         const result = await response.json();
-        if (result.success && result.data) {
-            fillFormWithData(result.data);
-        } else {
-            throw new Error(result.message || 'Không tìm thấy dữ liệu');
-        }
-    } catch (error) {
-        console.error('Lỗi khi tải chi tiết khiếu nại:', error);
-        alert(`Lỗi: ${error.message}. Không thể tải chi tiết khiếu nại.`);
-        clearForm();
-    }
+        if (result.success && result.data) fillFormWithData(result.data);
+        else throw new Error(result.message || 'Không có dữ liệu');
+    } catch (error) { console.error('Lỗi tải chi tiết:', error); alert(`Lỗi: ${error.message}`); clearForm(); }
+    finally { document.querySelector('.form-loading')?.remove(); }
 }
 
+// Điền dữ liệu vào form
 function fillFormWithData(data) {
-    document.getElementById('customerName').value = data.customer_name || '';
-    document.getElementById('phoneNumber').value = data.customer_phone || '';
-    document.getElementById('complaintDetails').value = data.Content || '';
-    statusSelect.value = data.Status || 'pending';
-    document.getElementById('responseText').value = data.Resolution || '';
-    assignedStaffIdInput.value = data.AssignedTo || '';
-    assignedStaffNameDisplay.value = data.assigned_staff_name || '';
+    console.log("Điền form:", data);
+    const getEl = (id) => document.getElementById(id); // Helper
+    if (getEl('customerName')) getEl('customerName').value = data.customer_name || '';
+    if (getEl('phoneNumber')) getEl('phoneNumber').value = data.customer_phone || '';
+    if (getEl('complaintDetails')) getEl('complaintDetails').value = data.Content || data.content || '';
+    if (statusSelect) statusSelect.value = data.Status || 'pending';
+    if (responseText) responseText.value = data.Resolution || data.resolutionText || '';
+    if (assignedStaffIdInput) assignedStaffIdInput.value = data.AssignedTo || '';
+    if (assignedStaffNameDisplay) {
+        assignedStaffNameDisplay.value = data.assigned_staff_name || '';
+        assignedStaffNameDisplay.classList.remove('error-placeholder');
+        assignedStaffNameDisplay.placeholder = 'Tên NV';
+    }
     validatedStaffId = data.AssignedTo || null;
-    assignedStaffNameDisplay.classList.remove('error-placeholder');
-    assignedStaffNameDisplay.placeholder = 'Tên nhân viên sẽ hiển thị ở đây';
     updateButtonStates(data.Status || 'pending');
 }
 
+// Xóa trắng form
 function clearForm() {
-    console.log("Xóa trống form...");
-    currentComplaintId = null;
-    document.getElementById('customerName').value = '(Chọn một khiếu nại từ danh sách)';
-    document.getElementById('phoneNumber').value = '';
-    document.getElementById('complaintDetails').value = '';
-    statusSelect.value = 'pending';
-    document.getElementById('responseText').value = '';
-    assignedStaffIdInput.value = '';
-    assignedStaffNameDisplay.value = '';
+    console.log("Xóa form"); currentComplaintId = null;
+    const form = document.getElementById('complaint-form'); if(form) form.reset(); // Dùng reset tiện hơn
+    const customerNameInput = document.getElementById('customerName');
+    if (customerNameInput) customerNameInput.value = '(Chọn khiếu nại)'; // Đặt lại placeholder
+    // Reset assigned staff display
     validatedStaffId = null;
-    assignedStaffNameDisplay.classList.remove('error-placeholder');
-    assignedStaffNameDisplay.placeholder = 'Tên nhân viên sẽ hiển thị ở đây';
+    if (assignedStaffNameDisplay) {
+        assignedStaffNameDisplay.value = '';
+        assignedStaffNameDisplay.classList.remove('error-placeholder');
+        assignedStaffNameDisplay.placeholder = 'Tên NV';
+    }
+    if (statusSelect) statusSelect.value = 'pending'; // Đặt lại status về pending
     updateButtonStates(null);
 }
 
+
+// Cập nhật trạng thái các nút bấm
 function updateButtonStates(currentStatus) {
     const hasComplaint = currentComplaintId !== null;
     if (statusSelect) statusSelect.disabled = !hasComplaint;
     if (responseText) responseText.disabled = !hasComplaint;
     if (assignedStaffIdInput) assignedStaffIdInput.disabled = !hasComplaint;
-    if (assignedStaffNameDisplay) assignedStaffNameDisplay.disabled = !hasComplaint;
 
     const btnSave = document.querySelector('.form-actions .btn-primary-green');
-    if (btnSave) {
-        btnSave.disabled = !hasComplaint;
-        btnSave.title = !hasComplaint ? "Vui lòng chọn khiếu nại để xử lý" : "Lưu thay đổi";
-    }
-    if (btnReplyCustomer) {
-        btnReplyCustomer.disabled = !hasComplaint;
-        btnReplyCustomer.title = !hasComplaint ? "Vui lòng chọn khiếu nại" : "Gửi email trả lời khách hàng (và lưu)";
+    const btnReply = document.querySelector('.form-actions .btn-secondary');
+
+    if (btnSave) { btnSave.disabled = !hasComplaint; btnSave.title = hasComplaint ? "Lưu" : "Chọn khiếu nại"; }
+    if (btnReply) {
+        const canReply = hasComplaint && currentStatus !== 'resolved' && currentStatus !== 'closed';
+        btnReply.disabled = !canReply;
+        btnReply.title = canReply ? "Gửi email (tự lưu & chuyển status)" : (hasComplaint ? "Đã xử lý/đóng" : "Chọn khiếu nại");
     }
 }
 
-function setupEventListeners() {
-    const form = document.getElementById('complaint-form');
-
-    if (statusSelect) {
-        statusSelect.addEventListener('change', (e) => {
-            updateButtonStates(e.target.value);
-        });
-    }
-
+// Gắn các listener cho form
+function setupFormEventListeners() {
+    const form = document.getElementById('complaint-form'); if (!form) return;
+    if (statusSelect) statusSelect.addEventListener('change', (e) => updateButtonStates(e.target.value));
     if (assignedStaffIdInput) {
-        assignedStaffIdInput.addEventListener('input', () => {
-            validatedStaffId = null;
-            assignedStaffNameDisplay.value = '';
-            assignedStaffNameDisplay.classList.remove('error-placeholder');
-            assignedStaffNameDisplay.placeholder = '...';
-        });
-
-        assignedStaffIdInput.addEventListener('blur', async () => {
-            const staffId = assignedStaffIdInput.value.trim();
-            if (staffId === '') {
-                validatedStaffId = null;
-                assignedStaffNameDisplay.value = '';
-                assignedStaffNameDisplay.placeholder = 'Tên nhân viên sẽ hiển thị ở đây';
-            } else {
-                await validateStaffById(staffId);
-            }
-        });
+        assignedStaffIdInput.addEventListener('input', () => { validatedStaffId = null; if (assignedStaffNameDisplay) { assignedStaffNameDisplay.value = ''; assignedStaffNameDisplay.placeholder = 'Kiểm tra ID...'; } });
+        assignedStaffIdInput.addEventListener('blur', async () => { const id = assignedStaffIdInput.value.trim(); if (id === '') { validatedStaffId = null; if (assignedStaffNameDisplay) assignedStaffNameDisplay.placeholder = 'Tên NV'; } else await validateStaffById(id); });
     }
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handleSaveAndClose();
-    });
-
-    if (btnReplyCustomer) {
-        btnReplyCustomer.addEventListener('click', () => {
-            handleReplyToCustomer();
-        });
-    }
+    form.addEventListener('submit', (e) => { e.preventDefault(); handleSaveAndClose(); });
+    if (btnReplyCustomer) btnReplyCustomer.addEventListener('click', handleReplyToCustomer);
 }
 
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
+// Debounce
+function debounce(func, wait) { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func(...args), wait); }; }
 
+// Validate Staff ID
 async function validateStaffById(staffId) {
-    console.log("Đang kiểm tra ID nhân viên qua staff_search.php:", staffId);
-    validatedStaffId = null;
-    assignedStaffNameDisplay.classList.remove('error-placeholder');
-
+    console.log("Kiểm tra ID:", staffId); validatedStaffId = null;
+    if (assignedStaffNameDisplay) { assignedStaffNameDisplay.value = 'Đang kiểm tra...'; assignedStaffNameDisplay.classList.remove('error-placeholder'); }
+    const headers = getAuthHeaders(); if (!headers) return;
     try {
-        const response = await fetch(`../../api/staff_search.php?id=${encodeURIComponent(staffId)}`, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
+        // *** Đảm bảo API này tồn tại và hoạt động ***
+        const response = await fetch(`../../api/users.php?id=${encodeURIComponent(staffId)}&roleCheck=staff_admin`, { method: 'GET', headers: headers });
         const result = await response.json();
-
-        if (response.ok && result.success && result.data) {
-            console.log("Tìm thấy nhân viên:", result.data);
-            validatedStaffId = result.data.id;
-            assignedStaffIdInput.value = result.data.id;
-            assignedStaffNameDisplay.value = result.data.full_name;
+        if (response.ok && result.success && result.data && ['staff', 'admin'].includes(result.data.role)) {
+            validatedStaffId = result.data.id; assignedStaffIdInput.value = result.data.id;
+            if (assignedStaffNameDisplay) assignedStaffNameDisplay.value = result.data.full_name;
         } else {
-            console.log("Không tìm thấy nhân viên với ID:", staffId);
-            assignedStaffNameDisplay.value = '';
-            assignedStaffNameDisplay.placeholder = 'Không có nhân viên tương ứng trong dữ liệu';
-            assignedStaffNameDisplay.classList.add('error-placeholder');
+            if (assignedStaffNameDisplay) { assignedStaffNameDisplay.value = ''; assignedStaffNameDisplay.placeholder = 'ID không hợp lệ/không phải NV'; assignedStaffNameDisplay.classList.add('error-placeholder'); }
         }
-    } catch (error) {
-        console.error('Lỗi khi kiểm tra ID nhân viên:', error.message);
-        assignedStaffNameDisplay.value = '';
-        assignedStaffNameDisplay.placeholder = 'Lỗi kết nối API, không thể tìm';
-        assignedStaffNameDisplay.classList.add('error-placeholder');
-    }
+    } catch (error) { console.error('Lỗi API validate:', error); if (assignedStaffNameDisplay) { assignedStaffNameDisplay.value = ''; assignedStaffNameDisplay.placeholder = 'Lỗi API'; assignedStaffNameDisplay.classList.add('error-placeholder'); } }
 }
 
+
+// Xử lý nút "Lưu và đóng"
 async function handleSaveAndClose() {
-    const dataToSave = {
-        status: statusSelect.value,
-        assignedStaffId: validatedStaffId,
-        resolutionText: document.getElementById('responseText').value
-    };
-
-    if (assignedStaffIdInput.value.trim() !== '' && validatedStaffId === null) {
-        alert('Mã nhân viên phụ trách không hợp lệ. Vui lòng kiểm tra lại.');
-        assignedStaffIdInput.focus();
-        return;
-    }
-    if (!currentComplaintId) {
-        alert('Chưa chọn khiếu nại. Vui lòng chọn một khiếu nại từ danh sách.');
-        return;
-    }
-
-    console.log("Đang lưu dữ liệu:", dataToSave);
+    if (!currentComplaintId) { alert('Chọn khiếu nại.'); return; }
+    if (assignedStaffIdInput && assignedStaffIdInput.value.trim() !== '' && validatedStaffId === null) { alert('ID nhân viên không hợp lệ.'); return; }
+    const dataToSave = { status: statusSelect?.value, assignedStaffId: (assignedStaffIdInput && assignedStaffIdInput.value.trim() === '') ? null : validatedStaffId, resolutionText: responseText?.value.trim() };
+    console.log("Lưu dữ liệu:", dataToSave);
+    const btnSave = document.querySelector('.form-actions .btn-primary-green');
+    if (btnSave) { btnSave.disabled = true; btnSave.textContent = 'Đang lưu...'; }
+    const headers = getAuthHeaders(); if (!headers) { if(btnSave){btnSave.disabled=false; btnSave.textContent='Lưu và đóng';} return; }
     try {
-        const response = await fetch(`../../api/complaints.php/${currentComplaintId}`, {
-            method: 'PUT',
-            headers: getAuthHeaders(),
-            body: JSON.stringify(dataToSave)
-        });
-        const result = await response.json();
-        if (result.success) {
-            showSuccessToast('Đã lưu tiến độ thành công!');
-            fetchComplaints();
-            clearForm();
-        } else {
-            throw new Error(result.message || 'Lỗi không xác định');
-        }
-    } catch (error) {
-        console.error('Lỗi khi lưu và đóng:', error);
-        alert('Lỗi: ' + error.message);
-    }
+        const response = await fetch(`../../api/complaints.php/${currentComplaintId}`, { method: 'PUT', headers: headers, body: JSON.stringify(dataToSave) });
+        const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.message || `Lỗi ${response.status}`);
+        showSuccessToast('Đã lưu thành công!'); fetchComplaints();
+    } catch (error) { console.error('Lỗi lưu:', error); alert('Lỗi: ' + error.message); }
+    finally { if (btnSave) { btnSave.disabled = false; btnSave.textContent = 'Lưu và đóng'; } }
 }
 
+
+// Xử lý nút "Trả lời khách hàng"
 async function handleReplyToCustomer() {
-    const responseTextValue = document.getElementById('responseText').value;
-    if (responseTextValue.trim() === '') {
-        alert("Nội dung phản hồi không được rỗng.");
-        document.getElementById('responseText').focus();
-        return;
-    }
-    if (!currentComplaintId) {
-        alert('Chưa chọn khiếu nại. Vui lòng chọn một khiếu nại từ danh sách.');
-        return;
-    }
-    if (!confirm("Bạn có chắc chắn muốn GỬI EMAIL phản hồi này cho khách hàng không? Hành động này sẽ tự động chuyển trạng thái sang 'Đã giải quyết' và lưu lại.")) {
-        return;
-    }
-
-    console.log("Đang gửi trả lời cho khách...");
+    if (!currentComplaintId) { alert('Chọn khiếu nại.'); return; }
+    const content = responseText?.value.trim(); if (!content) { alert("Nhập nội dung phản hồi."); return; }
+    if (!confirm("Gửi email, lưu phản hồi và chuyển status thành 'Đã giải quyết'?")) return;
+    if (btnReplyCustomer) { btnReplyCustomer.disabled = true; btnReplyCustomer.textContent = 'Đang gửi...'; }
+    const headers = getAuthHeaders(); if (!headers) { if(btnReplyCustomer){btnReplyCustomer.disabled=false; btnReplyCustomer.textContent='Trả lời';} return; }
     try {
-        const response = await fetch(`../../api/complaints.php/${currentComplaintId}?action=reply`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify({ responseText: responseTextValue })
-        });
-        const result = await response.json();
-        if (result.success) {
-            showSuccessToast('Đã gửi phản hồi cho khách hàng thành công!');
-            fetchComplaints();
-            clearForm();
-        } else {
-            throw new Error(result.message || 'Lỗi không xác định');
-        }
-    } catch (error) {
-        console.error('Lỗi khi trả lời khách hàng:', error);
-        alert('Lỗi: ' + error.message);
-    }
+        const response = await fetch(`../../api/complaints.php/${currentComplaintId}?action=reply`, { method: 'POST', headers: headers, body: JSON.stringify({ responseText: content }) });
+        const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.message || `Lỗi ${response.status}`);
+        showSuccessToast('Đã gửi phản hồi!'); fetchComplaints(); clearForm();
+    } catch (error) { console.error('Lỗi gửi:', error); alert('Lỗi: ' + error.message); }
+    finally { if (btnReplyCustomer) { btnReplyCustomer.disabled = false; btnReplyCustomer.textContent = 'Trả lời khách hàng'; } }
 }
 
-function showSuccessToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'success-toast';
-    toast.textContent = message;
+// --- Các hàm tiện ích ---
+function showSuccessToast(message) { const toast = document.createElement('div'); toast.textContent = message; toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px;border-radius:5px;z-index:1000;opacity:0;transition:all 0.5s'; document.body.appendChild(toast); setTimeout(()=>{toast.style.opacity='1';toast.style.top='30px'},100); setTimeout(()=>{toast.style.opacity='0';toast.style.top='20px';setTimeout(()=>toast.remove(),500)},3000); }
+function showLoadingState() { const el = document.getElementById('complaints-table-body'); if (el) el.innerHTML = `<tr><td colspan="7" class="loading-state">Đang tải...</td></tr>`; }
+function showErrorState(message) { const el = document.getElementById('complaints-table-body'); if (el) el.innerHTML = `<tr><td colspan="7" class="error-state">${message}</td></tr>`; }
+function formatDateTime(d) { try { return d ? new Date(d).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' }) : 'N/A'; } catch (e) { return 'Invalid Date'; } }
 
-    Object.assign(toast.style, {
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        backgroundColor: '#28a745',
-        color: 'white',
-        padding: '15px 20px',
-        borderRadius: '5px',
-        zIndex: '1000',
-        fontSize: '16px',
-        opacity: '0',
-        transition: 'opacity 0.5s, top 0.5s'
-    });
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-        toast.style.opacity = '1';
-        toast.style.top = '30px';
-    }, 100);
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.top = '20px';
-        setTimeout(() => {
-            if (toast.parentNode) { // Kiểm tra trước khi xóa
-                document.body.removeChild(toast);
-            }
-        }, 500);
-    }, 3000);
-}
-
+// --- HÀM MENU NGƯỜI DÙNG VÀ ĐĂNG XUẤT (ĐÃ BỎ CONFIRM + THÊM LOGOUT TRÊN LOGO) ---
 function setupUserIconMenu() {
     const userIconDiv = document.querySelector('.nav-user-icon');
     const userMenu = document.querySelector('.user-menu');
     const logoutButton = document.getElementById('logoutButton');
-    // Link "Thông tin tài khoản" không cần xử lý đặc biệt, chỉ cần href đúng
 
-    if (userIconDiv && userMenu) {
-        userIconDiv.addEventListener('click', (event) => {
-            event.stopPropagation();
-            userMenu.classList.remove('hidden');
-            setTimeout(() => {
-                userMenu.classList.toggle('visible');
-            }, 0);
-        });
-
-        document.addEventListener('click', (event) => {
-            if (userIconDiv && !userIconDiv.contains(event.target) && userMenu.classList.contains('visible')) {
-                userMenu.classList.remove('visible');
-            }
-        });
+    // Thêm kiểm tra null chặt chẽ hơn
+    if (!userIconDiv || !userMenu || !logoutButton) {
+        console.error("Thiếu phần tử cần thiết cho menu người dùng trong complaint.js.");
+        return;
     }
 
-    function performLogout(redirectUrl) {
-        if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
-            console.log("Đang đăng xuất...");
-            // ĐÃ SỬA
-            localStorage.removeItem('currentStaff');
-            localStorage.removeItem('jwtToken');
-            //...
-        }
-    }
+    userIconDiv.addEventListener('click', (e) => { e.stopPropagation(); userMenu.classList.remove('hidden'); setTimeout(() => userMenu.classList.toggle('visible'), 0); });
+    document.addEventListener('click', (e) => { if (userIconDiv && !userIconDiv.contains(e.target) && userMenu.classList.contains('visible')) userMenu.classList.remove('visible'); });
+    logoutButton.addEventListener('click', () => {
+        console.log("Nút logout trong menu được nhấn.");
+        performLogout('../../pages/login/login.html'); // Nút logout về trang login
+    });
+}
 
-    if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-            performLogout('../../pages/login/login.html');
+// <<< HÀM XỬ LÝ LOGOUT KHI CLICK LOGO >>>
+function setupLogoLogout() {
+    const logoLink = document.querySelector('.nav-logo a');
+    if (logoLink) {
+        logoLink.addEventListener('click', (event) => {
+            event.preventDefault(); // Ngăn chuyển trang ngay
+            console.log("Logo clicked, logging out...");
+            performLogout('../../pages/home/home.html'); // Gọi hàm logout và chuyển về trang chủ
         });
+    } else {
+        console.error("Không tìm thấy link logo (.nav-logo a) trong complaint.js");
     }
 }
+
+// Hàm logout dùng chung (đã bỏ confirm)
+function performLogout(redirectUrl) {
+    console.log(`Đang đăng xuất và chuyển đến: ${redirectUrl}...`);
+    localStorage.removeItem('currentStaff'); // Xóa đúng key
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('rememberMe'); // Nếu có
+    window.location.href = redirectUrl; // Chuyển hướng
+}
+
+// Thêm CSS cho trạng thái loading/error/empty
+const style = document.createElement('style');
+style.textContent = `
+    .loading-state, .empty-state, .error-state { text-align: center; padding: 40px 20px; color: #888; font-style: italic; }
+    .error-state { color: #dc3545; font-style: normal; font-weight: 500; }
+`;
+document.head.appendChild(style);

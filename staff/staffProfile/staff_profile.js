@@ -1,7 +1,18 @@
 // ==========================
-// staff_profile.js - PHIÊN BẢN HOÀN CHỈNH (BỎ CONFIRM LOGOUT)
+// staff_profile.js - PHIÊN BẢN HOÀN CHỈNH (Đã thêm logout khi click logo)
 // Vị trí: staff/staffProfile/
 // ==========================
+
+// ===== HÀM ĐĂNG XUẤT (TÁCH RA NGOÀI ĐỂ DÙNG CHUNG) =====
+function performLogout(redirectUrl) {
+    console.log("Đang đăng xuất...");
+    localStorage.removeItem('currentStaff');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('rememberMe');
+    // BỎ ALERT - Đăng xuất trực tiếp
+    window.location.href = redirectUrl;
+}
+// ===== KẾT THÚC HÀM ĐĂNG XUẤT =====
 
 document.addEventListener("DOMContentLoaded", () => {
     // === Lấy các phần tử ===
@@ -19,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const token = localStorage.getItem('jwtToken');
         if (!token) {
             console.error("Không tìm thấy JWT Token!");
-            logoutAndRedirect(); // Chuyển hướng nếu không có token
+            performLogout('../../pages/login/login.html');
             return null;
         }
         return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
@@ -37,7 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             console.error("Lỗi parse dữ liệu currentStaff:", error);
-            logoutAndRedirect(); return; // Chuyển hướng nếu dữ liệu lỗi
+            performLogout('../../pages/login/login.html');
+            return;
         }
     } else {
         console.log("Nhân viên chưa đăng nhập, chuyển về trang login.");
@@ -72,22 +84,40 @@ document.addEventListener("DOMContentLoaded", () => {
         saveInfoBtn.disabled = true;
         saveInfoBtn.textContent = "Đang lưu...";
         const headers = getAuthHeaders();
-        if (!headers) { /* ... xử lý lỗi ... */ return; }
+        if (!headers) {
+            saveInfoBtn.disabled = false;
+            saveInfoBtn.textContent = "Lưu thay đổi";
+            return;
+        }
 
         const newName = document.getElementById("nameInput").value.trim();
         const newPhone = document.getElementById("phoneInput").value.trim();
         const newAddress = document.getElementById("addressInput").value.trim();
 
-        const infoChanged = newName !== (userData.full_name || '') || newPhone !== (userData.phone || '') || newAddress !== (userData.address || '');
-        if (!infoChanged) { /* ... xử lý không đổi ... */ saveInfoBtn.disabled = false; saveInfoBtn.textContent = "Lưu thay đổi"; return; }
+        const infoChanged = newName !== (userData.full_name || '') ||
+            newPhone !== (userData.phone || '') ||
+            newAddress !== (userData.address || '');
+
+        if (!infoChanged) {
+            alert("ℹ️ Không có thông tin nào thay đổi.");
+            saveInfoBtn.disabled = false;
+            saveInfoBtn.textContent = "Lưu thay đổi";
+            return;
+        }
 
         const dataToUpdate = { full_name: newName, phone: newPhone, address: newAddress };
 
         try {
             const apiUrl = `../../api/staff_profile.php/${userData.id}`;
-            const response = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(dataToUpdate) });
+            const response = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: headers,
+                body: JSON.stringify(dataToUpdate)
+            });
             const result = await response.json();
-            if (!response.ok || !result.success) throw new Error(result.message || `Lỗi ${response.status}`);
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || `Lỗi ${response.status}`);
+            }
 
             const updatedUserFromServer = result.data.user;
             localStorage.setItem("currentStaff", JSON.stringify(updatedUserFromServer));
@@ -109,7 +139,11 @@ document.addEventListener("DOMContentLoaded", () => {
         changePasswordBtn.disabled = true;
         changePasswordBtn.textContent = "Đang đổi...";
         const headers = getAuthHeaders();
-        if (!headers) { /* ... xử lý lỗi ... */ return; }
+        if (!headers) {
+            changePasswordBtn.disabled = false;
+            changePasswordBtn.textContent = "Đổi mật khẩu";
+            return;
+        }
 
         const oldPassword = document.getElementById("oldPassword").value;
         const newPassword = document.getElementById("newPassword").value;
@@ -123,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (validationError) {
             alert(validationError);
-            // Focus vào trường lỗi tương ứng (ví dụ)
             if (validationError.includes("hiện tại")) document.getElementById("oldPassword").focus();
             else if (validationError.includes("mới")) document.getElementById("newPassword").focus();
             else document.getElementById("confirmPassword").focus();
@@ -141,7 +174,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ oldPassword: oldPassword, newPassword: newPassword })
             });
             const result = await response.json();
-            if (!response.ok || !result.success) throw new Error(result.message || `Lỗi ${response.status}`);
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || `Lỗi ${response.status}`);
+            }
 
             alert("✅ Đổi mật khẩu thành công!");
             document.getElementById("oldPassword").value = "";
@@ -156,18 +191,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // === 6. HÀM ĐĂNG XUẤT (ĐÃ BỎ CONFIRM) ===
-    function logoutAndRedirect() {
-        console.log("Đang đăng xuất (không xác nhận)...");
-        localStorage.removeItem('currentStaff');
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('rememberMe');
-        // Không cần alert ở đây
-        window.location.href = "../../pages/login/login.html";
-    }
+    // === 6. KÍCH HOẠT MENU DROPDOWN ===
+    setupUserIconMenu();
 
-    // === 7. KÍCH HOẠT MENU DROPDOWN ===
-    setupUserIconMenu(logoutAndRedirect); // Truyền hàm logout vào
+    // === 7. XỬ LÝ CLICK LOGO ĐỂ ĐĂNG XUẤT ===
+    setupLogoLogout();
 
     // === 8. XỬ LÝ TAB ===
     const tabLinks = document.querySelectorAll(".tab-link");
@@ -182,9 +210,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 }); // Kết thúc DOMContentLoaded
 
+// ===== HÀM MỚI: XỬ LÝ CLICK LOGO ĐỂ ĐĂNG XUẤT =====
+function setupLogoLogout() {
+    const logoLink = document.querySelector('.nav-logo a');
+    if (!logoLink) return;
+
+    logoLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        console.log("Logo clicked on staff profile page, logging out...");
+        performLogout('../../pages/home/home.html');
+    });
+}
+
 // === HÀM MENU NGƯỜI DÙNG (ĐÃ CẬP NHẬT) ===
-// Hàm này nhận vào hàm logout thực tế để gọi
-function setupUserIconMenu(logoutFunction) {
+function setupUserIconMenu() {
     const userIconDiv = document.querySelector('.nav-user-icon');
     const userMenu = document.querySelector('.user-menu');
     const logoutButton = document.getElementById('logoutButton');
@@ -206,13 +245,9 @@ function setupUserIconMenu(logoutFunction) {
         }
     });
 
-    // Nút đăng xuất sẽ gọi hàm logoutFunction được truyền vào
+    // Nút đăng xuất - BỎ ALERT
     logoutButton.addEventListener('click', () => {
         console.log("Nút đăng xuất được nhấn.");
-        if (typeof logoutFunction === 'function') {
-            logoutFunction(); // Gọi hàm logout thực tế (đã bỏ confirm)
-        } else {
-            console.error("Hàm logout không hợp lệ!");
-        }
+        performLogout('../../pages/login/login.html');
     });
 }

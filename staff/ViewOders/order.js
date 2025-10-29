@@ -2,7 +2,7 @@
 
 let allOrders = [];
 let pendingUpdate = null;
-let currentDisplayedOrderId = null; // Lưu ID đơn hàng đang hiển thị
+let currentDisplayedOrderId = null;
 
 // Map trạng thái sang tiếng Việt
 const STATUS_MAP = {
@@ -22,12 +22,32 @@ const PAYMENT_METHOD_MAP = {
     vnpay: 'VNPay'
 };
 
+// ===== HÀM ĐĂNG XUẤT (TÁCH RA NGOÀI) =====
+function performLogout(redirectUrl) {
+    console.log("Đang đăng xuất...");
+    localStorage.removeItem('currentStaff');
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('rememberMe');
+    // BỎ ALERT - Đăng xuất trực tiếp
+    window.location.href = redirectUrl;
+}
+// ===== KẾT THÚC HÀM ĐĂNG XUẤT =====
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchOrders();
     setupEventListeners();
     setupModalListeners();
-    // Gọi hàm setup menu người dùng MỚI
     setupUserIconMenu();
+
+    // Xử lý click vào logo để đăng xuất
+    const logoLinkOrder = document.querySelector('.nav-logo a');
+    if (logoLinkOrder) {
+        logoLinkOrder.addEventListener('click', (event) => {
+            event.preventDefault();
+            console.log("Logo clicked on order page, logging out...");
+            performLogout('../../pages/home/home.html');
+        });
+    }
 });
 
 function setupEventListeners() {
@@ -39,7 +59,7 @@ function setupEventListeners() {
 
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
-        searchInput.addEventListener('input', applyFilters); // Sử dụng applyFilters thay vì debounce
+        searchInput.addEventListener('input', applyFilters);
     }
 }
 
@@ -98,16 +118,14 @@ function handleTableViewClick(e) {
     const row = target.closest('tr');
     if (!row || !row.dataset.orderInfo) return;
 
-    // Bỏ qua nếu click vào select hoặc input
     if (target.tagName === 'SELECT' || target.tagName === 'INPUT') {
         return;
     }
 
     const orderData = JSON.parse(row.dataset.orderInfo);
-    currentDisplayedOrderId = orderData.order_id; // Lưu ID đơn hàng đang xem
+    currentDisplayedOrderId = orderData.order_id;
     displayOrderDetails(orderData);
 
-    // Xử lý scroll khi click vào icon xem
     if (target.classList.contains('view-icon') || target.closest('.view-icon')) {
         e.preventDefault();
         const detailSection = document.querySelector('.order-info-display');
@@ -120,17 +138,16 @@ function handleTableViewClick(e) {
 async function fetchOrders() {
     console.log("Đang gọi API để lấy danh sách đơn hàng...");
     try {
-        const token = localStorage.getItem('jwtToken') || 'demo'; // Lấy token
+        const token = localStorage.getItem('jwtToken') || 'demo';
 
-        const response = await fetch('../../api/orders.php', { // Gọi API orders.php
+        const response = await fetch('../../api/orders.php', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Gửi token
+                'Authorization': `Bearer ${token}`
             }
         });
 
-        // Xử lý lỗi HTTP
         if (!response.ok) {
             let errorData;
             const contentType = response.headers.get("content-type");
@@ -139,7 +156,7 @@ async function fetchOrders() {
                 throw new Error(`Lỗi HTTP: ${response.status}. Chi tiết: ${errorData.message || JSON.stringify(errorData)}`);
             } else {
                 errorData = await response.text();
-                throw new Error(`Lỗi HTTP: ${response.status}. Server response: ${errorData.substring(0, 200)}...`); // Hiển thị một phần lỗi nếu là HTML
+                throw new Error(`Lỗi HTTP: ${response.status}. Server response: ${errorData.substring(0, 200)}...`);
             }
         }
 
@@ -147,14 +164,14 @@ async function fetchOrders() {
         console.log("Dữ liệu nhận được từ API:", result);
 
         if (result.success && result.data && Array.isArray(result.data.orders)) {
-            allOrders = result.data.orders; // Lưu dữ liệu vào biến toàn cục
+            allOrders = result.data.orders;
             console.log(`Tải thành công ${allOrders.length} đơn hàng.`);
         } else {
             allOrders = [];
             console.error('Lỗi khi lấy dữ liệu: ', result.message || 'API trả về cấu trúc không mong đợi', result);
         }
 
-        applyFilters(); // Áp dụng bộ lọc ban đầu
+        applyFilters();
 
     } catch (error) {
         console.error('Đã xảy ra lỗi nghiêm trọng khi lấy dữ liệu đơn hàng:', error);
@@ -162,7 +179,6 @@ async function fetchOrders() {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Không thể tải dữ liệu đơn hàng. Lỗi: ${error.message}</td></tr>`;
     }
 }
-
 
 function applyFilters() {
     const filterStatusMap = {
@@ -173,20 +189,15 @@ function applyFilters() {
         'filter-failed': 'failed'
     };
 
-    // Lấy các trạng thái được chọn
     const selectedStatuses = Array.from(document.querySelectorAll('.filters input[type="checkbox"]:checked'))
         .map(cb => filterStatusMap[cb.id])
-        .filter(Boolean); // Lọc bỏ giá trị null/undefined nếu có ID không khớp
+        .filter(Boolean);
 
-    // Lấy giá trị tìm kiếm
     const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
 
-    // Lọc dữ liệu
     const filteredOrders = allOrders.filter(order => {
-        const orderStatus = order.order_status || 'pending'; // Trạng thái mặc định nếu null
-        // Kiểm tra trạng thái: Hoặc không có trạng thái nào được chọn, hoặc trạng thái của đơn hàng nằm trong danh sách được chọn
+        const orderStatus = order.order_status || 'pending';
         const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(orderStatus);
-        // Kiểm tra tìm kiếm: Hoặc không có từ khóa, hoặc mã đơn/tên khách khớp
         const searchMatch = !searchTerm ||
             (order.order_code && order.order_code.toLowerCase().includes(searchTerm)) ||
             (order.customer_name && order.customer_name.toLowerCase().includes(searchTerm));
@@ -195,28 +206,25 @@ function applyFilters() {
     });
 
     console.log(`Đang lọc: Trạng thái [${selectedStatuses.join(', ')}], Tìm kiếm "${searchTerm}". Kết quả: ${filteredOrders.length} đơn hàng.`);
-    renderOrderList(filteredOrders); // Hiển thị kết quả đã lọc
+    renderOrderList(filteredOrders);
 }
-
 
 function renderOrderList(orders) {
     const tableBody = document.getElementById('orders-table-body');
-    tableBody.innerHTML = ''; // Xóa nội dung cũ
+    tableBody.innerHTML = '';
 
     if (orders.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Không có đơn hàng nào phù hợp.</td></tr>`;
         return;
     }
 
-    // Tạo từng hàng cho mỗi đơn hàng
     orders.forEach(order => {
         const row = document.createElement('tr');
-        row.dataset.orderInfo = JSON.stringify(order); // Lưu trữ dữ liệu đơn hàng vào thuộc tính data
+        row.dataset.orderInfo = JSON.stringify(order);
         const orderId = order.order_id;
         const currentStatus = order.order_status || 'pending';
         const currentNote = order.note || '';
 
-        // Tạo HTML cho thẻ select trạng thái
         let statusOptionsHTML = '';
         for (const key in STATUS_MAP) {
             statusOptionsHTML += `<option value="${key}" ${key === currentStatus ? 'selected' : ''}>${STATUS_MAP[key]}</option>`;
@@ -227,12 +235,10 @@ function renderOrderList(orders) {
             </select>
         `;
 
-        // Tạo HTML cho ô input ghi chú
         const noteInputHTML = `
             <input type="text" class="table-note-input" data-order-id="${orderId}" value="${currentNote.replace(/"/g, '&quot;')}" placeholder="Thêm ghi chú..." onblur="handleNoteChange(this)">
         `;
 
-        // Gắn HTML vào hàng
         row.innerHTML = `
             <td>${order.order_code || orderId}</td>
             <td>${order.customer_name}</td>
@@ -242,11 +248,10 @@ function renderOrderList(orders) {
             <td>${noteInputHTML}</td>
             <td><a href="#" class="view-icon"><i class="fas fa-eye"></i></a></td>
         `;
-        tableBody.appendChild(row); // Thêm hàng vào bảng
+        tableBody.appendChild(row);
     });
 }
 
-// Hàm hiển thị chi tiết đơn hàng (Giữ nguyên)
 function displayOrderDetails(order) {
     console.log("Hiển thị chi tiết cho đơn hàng:", order);
 
@@ -290,15 +295,13 @@ function handleStatusChange(selectElement) {
 
     console.log(`Đã chọn trạng thái mới: ${newStatus} (${statusText}) cho đơn hàng ID: ${orderId}`);
 
-    // Lưu thông tin cập nhật chờ xử lý
     pendingUpdate = {
         orderId: orderId,
         field: 'status',
         value: newStatus,
-        type: 'status' // Loại cập nhật
+        type: 'status'
     };
 
-    // Hiển thị modal xác nhận
     showModal(
         'Xác nhận cập nhật trạng thái',
         `Bạn có chắc chắn muốn chuyển trạng thái đơn hàng sang "${statusText}"?`
@@ -308,10 +311,9 @@ function handleStatusChange(selectElement) {
 function handleNoteChange(inputElement) {
     const orderId = inputElement.dataset.orderId;
     const newNote = inputElement.value.trim();
-    const order = allOrders.find(o => o.order_id == orderId); // Tìm đơn hàng trong dữ liệu đã tải
-    const oldNote = order ? (order.note || '') : ''; // Lấy ghi chú cũ
+    const order = allOrders.find(o => o.order_id == orderId);
+    const oldNote = order ? (order.note || '') : '';
 
-    // Chỉ hiển thị modal nếu ghi chú thực sự thay đổi
     if (newNote !== oldNote) {
         console.log(`Thay đổi ghi chú đơn ${orderId} thành: "${newNote}" (Ghi chú cũ: "${oldNote}")`);
 
@@ -331,8 +333,6 @@ function handleNoteChange(inputElement) {
     }
 }
 
-
-// Hàm gọi API để cập nhật (Giữ nguyên)
 async function updateOrderData(orderId, field, value) {
     const endpoint = `../../api/orders.php/${orderId}`;
     const method = 'PUT';
@@ -354,7 +354,6 @@ async function updateOrderData(orderId, field, value) {
             body: JSON.stringify(dataToUpdate)
         });
 
-        // Xử lý lỗi HTTP và JSON
         const contentType = response.headers.get("content-type");
         if (!response.ok) {
             let errorText;
@@ -374,7 +373,6 @@ async function updateOrderData(orderId, field, value) {
             if (result.success) {
                 console.log(`Cập nhật ${field} thành công cho đơn hàng ${orderId}`);
 
-                // Cập nhật dữ liệu cục bộ
                 const index = allOrders.findIndex(o => o.order_id == orderId);
                 let updatedOrderData = null;
                 if (index !== -1) {
@@ -383,9 +381,8 @@ async function updateOrderData(orderId, field, value) {
                     updatedOrderData = allOrders[index];
                 }
 
-                applyFilters(); // Render lại bảng
+                applyFilters();
 
-                // Cập nhật phần chi tiết nếu đang hiển thị đơn hàng này
                 const displayedOrderIdElement = document.getElementById('detail-order-id');
                 const displayedOrderIdText = displayedOrderIdElement ? displayedOrderIdElement.textContent : null;
                 const updatedOrderCodeOrId = updatedOrderData ? (updatedOrderData.order_code || updatedOrderData.order_id.toString()) : null;
@@ -397,7 +394,7 @@ async function updateOrderData(orderId, field, value) {
                 showSuccessToast(`Cập nhật ${field === 'status' ? 'trạng thái' : 'ghi chú'} thành công!`);
             } else {
                 alert('Cập nhật thất bại: ' + result.message);
-                fetchOrders(); // Tải lại nếu API báo lỗi logic
+                fetchOrders();
             }
         } else {
             const textResult = await response.text();
@@ -407,11 +404,10 @@ async function updateOrderData(orderId, field, value) {
     } catch (error) {
         console.error(`Lỗi nghiêm trọng khi cập nhật ${field} cho đơn ${orderId}:`, error);
         alert(`Đã xảy ra lỗi khi cập nhật. ${error.message}. Vui lòng thử lại.`);
-        fetchOrders(); // Tải lại nếu có lỗi mạng hoặc parse JSON
+        fetchOrders();
     }
 }
 
-// Hàm hiển thị thông báo thành công (Giữ nguyên)
 function showSuccessToast(message) {
     const toast = document.createElement('div');
     toast.textContent = message;
@@ -424,8 +420,8 @@ function showSuccessToast(message) {
     `;
     document.body.appendChild(toast);
     setTimeout(() => {
-        toast.style.animation = 'slideOutDown 0.3s ease forwards'; // Thêm forwards
-        toast.addEventListener('animationend', () => { // Chờ animation kết thúc mới xóa
+        toast.style.animation = 'slideOutDown 0.3s ease forwards';
+        toast.addEventListener('animationend', () => {
             if (toast.parentNode) {
                 toast.parentNode.removeChild(toast);
             }
@@ -433,15 +429,13 @@ function showSuccessToast(message) {
     }, 3000);
 }
 
-// --- Logic cho User Icon Dropdown (ĐÃ DỌN DẸP VÀ SỬA LỖI) ---
-function setupUserIconMenu() { // Đổi tên hàm để tránh trùng
+// --- Logic cho User Icon Dropdown ---
+function setupUserIconMenu() {
     const userIconDiv = document.querySelector('.nav-user-icon');
     const userMenu = document.querySelector('.user-menu');
     const logoutButton = document.getElementById('logoutButton');
-    // const homeLink = ... (ĐÃ XÓA)
 
     if (userIconDiv && userMenu) {
-        // Hiện/ẩn menu khi bấm vào icon
         userIconDiv.addEventListener('click', (event) => {
             event.stopPropagation();
             userMenu.classList.remove('hidden');
@@ -450,7 +444,6 @@ function setupUserIconMenu() { // Đổi tên hàm để tránh trùng
             }, 0);
         });
 
-        // Ẩn menu khi bấm ra ngoài
         document.addEventListener('click', (event) => {
             if (userIconDiv && !userIconDiv.contains(event.target) && userMenu.classList.contains('visible')) {
                 userMenu.classList.remove('visible');
@@ -458,36 +451,15 @@ function setupUserIconMenu() { // Đổi tên hàm để tránh trùng
         });
     }
 
-    // --- HÀM ĐĂNG XUẤT (ĐÃ SỬA LỖI KEY) ---
-    function performLogout(redirectUrl) {
-        if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
-            console.log("Đang đăng xuất...");
-            // SỬA LỖI LOGIC: Phải xóa 'currentStaff' chứ không phải 'currentUser'
-            localStorage.removeItem('currentStaff');
-            localStorage.removeItem('jwtToken');
-            localStorage.removeItem('rememberMe');
-
-            alert("Bạn đã đăng xuất thành công.");
-            // Chuyển hướng đến URL được cung cấp
-            window.location.href = redirectUrl;
-        }
-    }
-    // --- KẾT THÚC HÀM ĐĂNG XUẤT ---
-
-    // Xử lý nút Đăng xuất (nhấn nút)
+    // Xử lý nút Đăng xuất
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
-            // Gọi hàm đăng xuất và chuyển về trang login
-            performLogout('../../pages/login/login.html'); // Chuyển về trang đăng nhập
+            performLogout('../../pages/login/login.html');
         });
     }
+}
 
-    // if (homeLink) { ... } (ĐÃ XÓA)
-
-}; // Thêm dấu ; kết thúc hàm
-// --- Kết thúc Logic User Icon ---
-
-// Thêm keyframes cho animation (nếu chưa có trong CSS)
+// Thêm keyframes cho animation
 const styleSheet = document.styleSheets[0];
 try {
     styleSheet.insertRule(`
