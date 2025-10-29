@@ -3,11 +3,11 @@
  * Handles login functionality for LA CUISINE NGỌT
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Check if user is already logged in - Cải thiện logic
     const userData = localStorage.getItem('currentUser');
     const jwtToken = localStorage.getItem('jwtToken');
-    
+
     if (userData && jwtToken) {
         try {
             const currentUser = JSON.parse(userData);
@@ -15,14 +15,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Kiểm tra xem có parameter ?force_login trong URL không
                 const urlParams = new URLSearchParams(window.location.search);
                 const forceLogin = urlParams.get('force_login');
-                
+
                 if (forceLogin === 'true') {
                     // Nếu có force_login=true, cho phép đăng nhập lại
                     console.log('Force login được yêu cầu, cho phép đăng nhập lại');
                     setupLoginForm();
                     return;
                 }
-                
+
                 // Nếu không có force_login, redirect về home
                 showMessage('Bạn đã đăng nhập! Đang chuyển hướng...', 'info');
                 setTimeout(() => {
@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setupLoginForm() {
     const loginForm = document.getElementById('loginForm');
-    
-    loginForm.addEventListener('submit', function(e) {
+
+    loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
         handleLogin(e);
     });
@@ -53,13 +53,13 @@ function setupLoginForm() {
     // Add real-time validation
     const inputs = loginForm.querySelectorAll('input[required]');
     inputs.forEach(input => {
-        input.addEventListener('blur', function() {
+        input.addEventListener('blur', function () {
             validateField(this);
         });
-        
-        input.addEventListener('input', function() {
+
+        input.addEventListener('input', function () {
             clearFieldError(this);
-            
+
         });
     });
 }
@@ -67,21 +67,21 @@ function setupLoginForm() {
 function handleLogin(e) {
     const form = e.target;
     const formData = new FormData(form);
-    
+
     const username = formData.get('username').trim();
     const password = formData.get('password');
     const rememberMe = formData.get('rememberMe');
-    
+
     // Validate form
     if (!validateLoginForm(username, password)) {
         return;
     }
-    
+
     // Show loading state
     const submitBtn = form.querySelector('.btn-submit');
     submitBtn.classList.add('loading');
     submitBtn.textContent = 'Đang đăng nhập...';
-    
+
     // ✅ FIX: Gọi API ngay lập tức thay vì setTimeout
     performLogin(username, password, rememberMe);
 }
@@ -90,10 +90,10 @@ function handleLogin(e) {
 
 function validateLoginForm(username, password) {
     let isValid = true;
-    
+
     // Clear previous errors
     clearAllErrors();
-    
+
     // Validate username
     if (!username) {
         showFieldError('username', 'Vui lòng nhập tên đăng nhập hoặc email');
@@ -102,7 +102,7 @@ function validateLoginForm(username, password) {
         showFieldError('username', 'Tên đăng nhập phải có ít nhất 3 ký tự');
         isValid = false;
     }
-    
+
     // Validate password
     if (!password) {
         showFieldError('password', 'Vui lòng nhập mật khẩu');
@@ -111,17 +111,17 @@ function validateLoginForm(username, password) {
         showFieldError('password', 'Mật khẩu phải có ít nhất 6 ký tự');
         isValid = false;
     }
-    
+
     return isValid;
 }
 
 function validateField(field) {
     const value = field.value.trim();
     const fieldName = field.name;
-    
+
     clearFieldError(field);
-    
-    switch(fieldName) {
+
+    switch (fieldName) {
         case 'username':
             if (!value) {
                 showFieldError(fieldName, 'Vui lòng nhập tên đăng nhập hoặc email');
@@ -131,7 +131,7 @@ function validateField(field) {
                 showFieldSuccess(fieldName);
             }
             break;
-            
+
         case 'password':
             if (!value) {
                 showFieldError(fieldName, 'Vui lòng nhập mật khẩu');
@@ -147,16 +147,16 @@ function validateField(field) {
 function showFieldError(fieldName, message) {
     const field = document.querySelector(`[name="${fieldName}"]`);
     const formGroup = field.closest('.form-group');
-    
+
     formGroup.classList.add('error');
     formGroup.classList.remove('success');
-    
+
     // Remove existing error message
     const existingError = formGroup.querySelector('.error-message');
     if (existingError) {
         existingError.remove();
     }
-    
+
     // Add new error message
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
@@ -167,10 +167,10 @@ function showFieldError(fieldName, message) {
 function showFieldSuccess(fieldName) {
     const field = document.querySelector(`[name="${fieldName}"]`);
     const formGroup = field.closest('.form-group');
-    
+
     formGroup.classList.add('success');
     formGroup.classList.remove('error');
-    
+
     // Remove error message if exists
     const existingError = formGroup.querySelector('.error-message');
     if (existingError) {
@@ -181,7 +181,7 @@ function showFieldSuccess(fieldName) {
 function clearFieldError(field) {
     const formGroup = field.closest('.form-group');
     formGroup.classList.remove('error', 'success');
-    
+
     const errorMessage = formGroup.querySelector('.error-message');
     if (errorMessage) {
         errorMessage.remove();
@@ -232,16 +232,24 @@ async function performLogin(username, password, rememberMe) {
         const data = await response.json();
 
         if (data.success) {
-            // Lưu thông tin user và token
-            localStorage.setItem('currentUser', JSON.stringify(data.data.user));
-            localStorage.setItem('jwtToken', data.data.token);
-            
+            const user = data.data.user;
+            const token = data.data.token;
+
+            // ✅ SỬA LỖI: KIỂM TRA VAI TRÒ TRƯỚC KHI LƯU
+            if (user.role === 'staff' || user.role === 'admin') {
+                localStorage.setItem('currentStaff', JSON.stringify(user)); // Lưu nhân viên
+            } else {
+                localStorage.setItem('currentUser', JSON.stringify(user)); // Lưu khách hàng
+            }
+
+            localStorage.setItem('jwtToken', token); // Token thì dùng chung
+
             if (rememberMe) {
                 localStorage.setItem('rememberMe', 'true');
             }
-            
+
             showMessage(`Đăng nhập thành công! Chào mừng ${data.data.user.full_name}!`, 'success');
-            
+
             // Redirect based on role
             setTimeout(() => {
                 if (data.data.user.role === 'admin') {
@@ -252,18 +260,18 @@ async function performLogin(username, password, rememberMe) {
                     window.location.href = '../home/home.html';
                 }
             }, 1500);
-            
+
         } else {
             showMessage(data.message || 'Đăng nhập thất bại!', 'error');
         }
 
     } catch (error) {
         console.error('Login error:', error);
-        
+
         const submitBtn = document.querySelector('.btn-submit');
         submitBtn.classList.remove('loading');
         submitBtn.textContent = 'Đăng nhập';
-        
+
         // Fallback to mock data nếu API không hoạt động
         console.log('API không hoạt động, sử dụng mock data...');
         performLoginWithMockData(username, password, rememberMe);
@@ -298,27 +306,32 @@ function performLoginWithMockData(username, password, rememberMe) {
             full_name: 'Nguyễn Văn A'
         }
     ];
-    
+
     // Find user
-    const user = mockUsers.find(u => 
-        (u.username === username || u.email === username) && 
+    const user = mockUsers.find(u =>
+        (u.username === username || u.email === username) &&
         u.password === password
     );
-    
+
     if (user) {
         // Remove password from user object
         const { password, ...userWithoutPassword } = user;
-        
-        // Store user data
-        localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+
+        // ✅ SỬA LỖI: KIỂM TRA VAI TRÒ MOCK
+        if (user.role === 'staff' || user.role === 'admin') {
+            localStorage.setItem('currentStaff', JSON.stringify(userWithoutPassword));
+        } else {
+            localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+        }
+
         localStorage.setItem('jwtToken', 'demo');
-        
+
         if (rememberMe) {
             localStorage.setItem('rememberMe', 'true');
         }
-        
+
         showMessage(`Đăng nhập thành công! (Mock data) Chào mừng ${user.full_name}!`, 'success');
-        
+
         // Redirect based on role
         setTimeout(() => {
             if (user.role === 'admin') {
@@ -329,7 +342,7 @@ function performLoginWithMockData(username, password, rememberMe) {
                 window.location.href = '../home/home.html';
             }
         }, 1500);
-        
+
     } else {
         showMessage('Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
     }
@@ -347,12 +360,12 @@ function forgotPassword() {
     }
 }
 // 👁️ Toggle show/hide password
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const togglePassword = document.querySelector('.toggle-password');
     const passwordField = document.getElementById('password');
-    
+
     if (togglePassword && passwordField) {
-        togglePassword.addEventListener('click', function() {
+        togglePassword.addEventListener('click', function () {
             const isHidden = passwordField.type === 'password';
             passwordField.type = isHidden ? 'text' : 'password';
             this.classList.toggle('fa-eye');
@@ -372,16 +385,16 @@ function showMessage(message, type = 'info') {
     // Remove existing messages
     const existingMessages = document.querySelectorAll('.message');
     existingMessages.forEach(msg => msg.remove());
-    
+
     // Create new message
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}`;
     messageDiv.textContent = message;
-    
+
     // Insert at top of form container
     const formContainer = document.querySelector('.form-container');
     formContainer.insertBefore(messageDiv, formContainer.firstChild);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (messageDiv.parentNode) {
@@ -391,7 +404,7 @@ function showMessage(message, type = 'info') {
 }
 
 // Handle Enter key in form
-document.addEventListener('keypress', function(e) {
+document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         const form = document.getElementById('loginForm');
         if (form) {
@@ -401,7 +414,7 @@ document.addEventListener('keypress', function(e) {
 });
 
 // Auto-focus on username field
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     const usernameField = document.getElementById('username');
     if (usernameField) {
         usernameField.focus();
