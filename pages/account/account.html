@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +15,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
   <!-- Navigation -->
   <nav class="navbar">
@@ -26,12 +29,24 @@
 
       <ul class="nav-menu">
         <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
-        <li><a href="../home/home.html#lienhe">KHUYẾN MÃI</a></li>
+        <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
         <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
-        <div class="nav-icons">
-          <a href="../cart/cart.html" class="nav-cart"><i class="fas fa-shopping-cart"></i></a>
-          <li><a href="../login/login.html" class="nav-login"><i class="fas fa-user"></i></a></li>
-        </div>
+
+        <li>
+          <a href="../cart/cart.html" class="nav-cart" style="padding: 0 10px;">
+            <i class="fas fa-shopping-cart"></i>
+          </a>
+        </li>
+
+        <li class="nav-user">
+          <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
+
+          <div class="user-menu hidden">
+            <a href="../account/account.html"><button id="tt">Thông tin tài khoản</button></a>
+            <br>
+            <button id="logoutBtnNav">Đăng xuất</button>
+          </div>
+        </li>
       </ul>
     </div>
   </nav>
@@ -116,4 +131,5 @@
 
 
 </body>
+
 </html>

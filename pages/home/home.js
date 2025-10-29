@@ -108,7 +108,7 @@ function handleUserDisplay() {
     });
 
     // ✅ Xử lý nút ĐĂNG XUẤT
-    const logoutBtn = document.getElementById("logoutBtn");
+    const logoutBtn = document.getElementById("logoutBtnNav");
     if (logoutBtn) {
       // XÓA listener cũ bằng cách clone
       const newLogoutBtn = logoutBtn.cloneNode(true);

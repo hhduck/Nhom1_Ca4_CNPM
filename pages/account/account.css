@@ -8,7 +8,8 @@
 /* Home Page Specific Styles */
 /* ===== NAVBAR ===== */
 .navbar {
-  background-color: #395542; /* xanh rêu đậm */
+  background-color: #395542;
+  /* xanh rêu đậm */
   padding: 10px 60px;
   display: flex;
   justify-content: center;
@@ -26,14 +27,15 @@
   justify-content: space-between;
   align-items: center;
 }
+
 /* Logo */
 .nav-logo a {
-color: #fff;
-font-family: 'Inspiration', cursive;
-font-size: 52px;
-font-weight: 200; 
-text-decoration: none;
-letter-spacing: 1px;
+  color: #fff;
+  font-family: 'Inspiration', cursive;
+  font-size: 52px;
+  font-weight: 200;
+  text-decoration: none;
+  letter-spacing: 1px;
 }
 
 /* Menu */
@@ -51,13 +53,15 @@ letter-spacing: 1px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 15px;
-  text-transform: uppercase; /* Viết hoa toàn bộ */
+  text-transform: uppercase;
+  /* Viết hoa toàn bộ */
   transition: color 0.3s;
 
 }
 
 .nav-menu a:hover {
-  color: #e3c78d; /* vàng nhạt khi hover */
+  color: #e3c78d;
+  /* vàng nhạt khi hover */
 }
 
 /* Icons bên phải */
@@ -85,8 +89,8 @@ letter-spacing: 1px;
 }
 
 .nav-login {
- margin-left: 285px;
- margin-right: 50px;
+  margin-left: 285px;
+  margin-right: 50px;
 }
 
 .nav-login:hover {
@@ -100,9 +104,11 @@ letter-spacing: 1px;
     justify-content: center;
     gap: 15px;
   }
+
   .nav-menu {
     gap: 20px;
   }
+
   .nav-icons {
     gap: 15px;
   }
@@ -132,6 +138,7 @@ letter-spacing: 1px;
   position: relative;
   z-index: 10;
 }
+
 .sidebar {
   background-color: #fff;
   border-radius: 20px;
@@ -175,6 +182,7 @@ letter-spacing: 1px;
   font-weight: 700;
   color: #000;
 }
+
 .sidebar-menu li {
   cursor: pointer;
   user-select: none;
@@ -261,33 +269,33 @@ input {
   font-family: 'Inspiration', cursive;
   font-size: 52px;
   color: #fff;
-  font-weight: 200; 
+  font-weight: 200;
   text-decoration: none;
   letter-spacing: 1px;
 
 }
 
 .social-links {
-    display: flex;
-    gap: 15px;
+  display: flex;
+  gap: 15px;
 }
 
 .social-links a {
- width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #2d5016;
-    transition: all 0.3s ease;
-    margin-top: -40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2d5016;
+  transition: all 0.3s ease;
+  margin-top: -40px;
 }
 
 .social-links a:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
 }
 
 .footer-right {
@@ -335,7 +343,8 @@ input {
     width: 100%;
   }
 
-  .add-cart, .buy-now {
+  .add-cart,
+  .buy-now {
     width: 100%;
   }
 
@@ -343,4 +352,83 @@ input {
     margin-left: 0;
     padding: 0 24px;
   }
+}
+
+/* === THÊM VÀO CUỐI FILE account.css === */
+
+/* Tái định nghĩa .nav-menu cho đúng (nếu cần) */
+.nav-menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  /* Căn giữa các mục menu */
+  gap: 40px;
+  padding: 0;
+  margin: 0;
+  /* Bỏ margin-right cũ */
+}
+
+.nav-icons {
+  /* Xóa style cũ của nav-icons đi */
+  margin-left: 0;
+  gap: 25px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-login {
+  /* Xóa style cũ của nav-login đi */
+  margin-left: 0;
+  margin-right: 0;
+}
+
+
+/* --- CSS CHO MENU THẢ XUỐNG (GIỐNG HOME.CSS) --- */
+.nav-user {
+  position: relative;
+  /* Quan trọng: Để menu con định vị theo */
+  list-style: none;
+  /* Đảm bảo li không có chấm */
+}
+
+.user-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: none;
+  /* JS sẽ kiểm soát cái này */
+  right: 0;
+  top: 40px;
+  /* Cách icon 40px */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  /* Đủ rộng cho các nút */
+  z-index: 1001;
+  /* Nằm trên */
+}
+
+.user-menu button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #333;
+  padding: 8px 10px;
+  width: 100%;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+.user-menu button:hover {
+  background-color: #f4f4f4;
+}
+
+.user-menu a {
+  text-decoration: none;
+}
+
+.user-menu.hidden {
+  display: none;
 }
