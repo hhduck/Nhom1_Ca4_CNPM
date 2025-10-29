@@ -34,7 +34,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Entremets Rose.jpg"
+    image: "../../assets/images/entremets-rose.jpg"
   },
 
   {
@@ -73,7 +73,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Lime and Basil Entremets.jpg"
+    image: "../../assets/images/lime-and-basil-entremets.jpg"
   },
 
   {
@@ -107,7 +107,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Blanche Figues & Framboises.jpg"
+    image: "../../assets/images/blanche-figues&framboises.jpg"
   },
 
   {
@@ -140,7 +140,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Mousse Chanh dây.jpg"
+    image: "../../assets/images/mousse-chanh-day.jpg"
   },
 
   {
@@ -173,7 +173,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Mousse Dưa lưới.jpg"
+    image: "../../assets/images/mousse-dua-luoi.jpg"
   },
 
   {
@@ -210,7 +210,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Mousse Việt Quất.jpg"
+    image: "../../assets/images/mousse-viet-quat.jpg"
   },
 
   {
@@ -244,7 +244,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Orange Serenade.jpg"
+    image: "../../assets/images/orange-serenade.jpg"
   },
 
   {
@@ -276,7 +276,7 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Strawberry Cloud Cake.jpg"
+    image: "../../assets/images/strawberry-cloud-cake.jpg"
   },
 
   {
@@ -308,6 +308,6 @@ bonus: `
     <li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li>
   </ul>
 `,
-    image: "../../assets/images/Earl Grey Bloom.jpg"
+    image: "../../assets/images/earl-grey-bloom.jpg"
   }
 ];

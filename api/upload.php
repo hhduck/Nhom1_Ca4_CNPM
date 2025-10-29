@@ -72,3 +72,4 @@ function uploadFile() {
         sendJsonResponse(false, null, "Không thể lưu file", 500);
     }
 }
+?>

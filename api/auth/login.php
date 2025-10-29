@@ -106,3 +106,4 @@ function login($db) {
         sendJsonResponse(false, null, "Có lỗi xảy ra khi đăng nhập", 500);
     }
 }
+?>

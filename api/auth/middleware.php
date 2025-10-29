@@ -169,3 +169,4 @@ function requireOwnerOrAdmin($resourceUserId) {
     $middleware = new AuthMiddleware();
     return $middleware->requireOwnerOrAdmin($resourceUserId);
 }
+?>

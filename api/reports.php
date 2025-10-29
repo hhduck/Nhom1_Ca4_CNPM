@@ -123,3 +123,4 @@ function getReports($db) {
         'chart_data' => $chartData
     ], "Lấy báo cáo thành công");
 }
+?>

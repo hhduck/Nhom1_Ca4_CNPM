@@ -126,3 +126,5 @@ function createPromotion($db) {
         sendJsonResponse(false, null, "Không thể tạo khuyến mãi", 500);
     }
 }
+
+?>

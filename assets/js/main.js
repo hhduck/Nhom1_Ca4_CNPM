@@ -188,7 +188,7 @@ function loadStaticProducts() {
             Bánh được hoàn thiện với những nguyên liệu tuyển chọn kỹ lưỡng: trái cây tươi nhập khẩu, kem phô mai mềm mượt, cốt bánh nướng thủ công và lớp mousse mịn nhẹ như mây. Mỗi muỗng bánh là một lát cắt của sự thanh thoát — dịu dàng mà vẫn đọng lại dư vị khó quên. 
             Một món bánh không chỉ để thưởng thức, mà còn để cảm nhận — như một bông hồng ngọt ngào mang hồn vị của La Cuisine Ngọt.</p>`,
             price: 650000,
-            image: "../../assets/images/Entremets Rose.jpg"
+            image: "../../assets/images/entremets-rose.jpg"
         },
         {
             id: 2,
@@ -197,7 +197,7 @@ function loadStaticProducts() {
             Đế bánh giòn rụm cân bằng vị chua, mang đến sự cân bằng giữa ngon miệng và tinh tế, khiến mỗi miếng bánh là một trải nghiệm vị giác độc đáo và khó quên.</p>
             <p>Bánh kết hợp khéo léo giữa các kết cấu: giòn – mịn – tươi, và hương vị: chua – thơm – nhẹ, mang đến cảm giác thanh lịch, tinh tế, vừa sang trọng vừa tươi mát.</p>`,
             price: 450000,
-            image: "../../assets/images/Lime and Basil Entremets.jpg"
+            image: "../../assets/images/lime-and-basil-entremets.jpg"
         },
         {
             id: 3,
@@ -205,7 +205,7 @@ function loadStaticProducts() {
             description: `<p>Có những ngày, chỉ cần một miếng bánh thôi cũng đủ khiến lòng nhẹ đi đôi chút. Entremets Sung – Mâm Xôi – Sô Cô La Trắng là bản giao hưởng giữa vị chua thanh của mâm xôi, độ ngọt dịu của sung chín và sự béo mịn, thanh tao của sô cô la trắng. Từng lớp bánh đan xen mượt mà, tan chảy như sương đầu sáng — dịu dàng mà sâu lắng. Bánh được tạo nên từ những nguyên liệu thượng hạng: sô cô la trắng Ivoire Valrhona, trái sung và mâm xôi tươi nhập khẩu, cốt bánh nướng thủ công, cùng lớp compoté nấu chậm giữ trọn hương vị tự nhiên. Mỗi thành phần đều được cân chỉnh tỉ mỉ để mang đến trải nghiệm vị giác tinh tế, trọn vẹn và đầy cảm xúc.</p>
             <p>Một chiếc bánh nhẹ như hơi thở, sang như bản nhạc Pháp, và ngọt ngào theo cách riêng của "La Cuisine Ngọt".</p>`,
             price: 600000,
-            image: "../../assets/images/Blanche Figues & Framboises.jpg"
+            image: "../../assets/images/blanche-figues&framboises.jpg"
         },
         {
             id: 4,
@@ -213,7 +213,7 @@ function loadStaticProducts() {
             description: `<p>Bánh Mousse Chanh Dây là món tráng miệng tinh tế, mang đến cảm giác tươi mát và sảng khoái ngay từ muỗng đầu tiên. Bánh hòa quyện hoàn hảo vị chua thanh của chanh dây với lớp mousse whipping mềm mịn, béo nhẹ, tan chảy trên đầu lưỡi mà vẫn giữ sự nhẹ nhàng, không ngấy.</p>
             <p>Về kết cấu, bánh mousse nổi bật với lớp bọt khí nhẹ nhàng, xốp mượt và tươi mới, kết hợp cùng lớp đế cookie giòn rụm hoặc custard chua thanh, tạo trải nghiệm vị giác cân bằng giữa mềm – giòn – chua – béo.</p>`,
             price: 550000,
-            image: "../../assets/images/Mousse Chanh dây.jpg"
+            image: "../../assets/images/mousse-chanh-day.jpg"
         },
         {
             id: 5,
@@ -221,14 +221,14 @@ function loadStaticProducts() {
             description: `<p>Ra đời giữa những ngày oi ả của Sài Gòn, chiếc Bánh Dưa Lưới như mang đến một khoảng trời mát lành và thanh khiết. Lớp mousse mềm mại từ phô mai tươi và kem sữa hòa quyện hoàn hảo với dưa lưới mật Fuji nấu chậm, bên trong là những miếng dưa tươi mọng cùng cốt bánh gato vani ẩm mềm và một chút rượu dưa lưới nồng nàn, tạo nên hương vị tinh tế, dịu dàng nhưng đầy ấn tượng.</p>
             <p>Màu xanh mát lành của bánh kết hợp với những cụm dưa tươi trang trí trên bề mặt vừa đủ để thu hút ánh nhìn, vừa gợi lên sự tò mò khi chạm dao vào từng miếng bánh mong manh. Khi thưởng thức, vị mềm mượt, mát lành và thanh thoát của dưa lưới tan dần trên đầu lưỡi, nhấn nhá bởi chút ngọt dịu và hương thơm tinh tế của kem phô mai.</p>`,
             price: 550000,
-            image: "../../assets/images/Mousse Dưa lưới.jpg"
+            image: "../../assets/images/mousse-dua-luoi.jpg"
         },
         {
             id: 6,
             name: "Mousse Việt quất",
             description: `<p>Bánh Mousse Việt Quất là sự kết hợp hoàn hảo giữa vị chua nhẹ thanh mát của quả việt quất và vị béo ngậy của kem tươi. Lớp mousse mịn màng, tan ngay trong miệng, mang lại cảm giác nhẹ nhàng, tươi mới nhưng vẫn đậm đà hương vị tự nhiên. Bánh được điểm xuyết những quả việt quất tươi trên mặt, tạo vẻ ngoài vừa tinh tế vừa sang trọng.</p>`,
             price: 550000,
-            image: "../../assets/images/Mousse Việt Quất.jpg"
+            image: "../../assets/images/mousse-viet-quat.jpg"
         },
         {
             id: 7,
@@ -236,21 +236,21 @@ function loadStaticProducts() {
             description: `<p>Orange Serenade được lấy cảm hứng từ tách trà Earl Grey ấm áp và lát cam tươi mát của mùa hè. Cốt bánh được ủ cùng trà bá tước, mang lại hương trà dịu nhẹ, thanh thoát. Xen giữa các lớp bánh là phần xốt cam chua ngọt và kem phô mai béo mịn — hòa quyện vừa đủ để tạo nên vị ngọt thanh, tròn đầy.</p>
             <p>Ẩn trong nhân là lớp thạch cam trong veo, dẻo nhẹ, mang hương vị cam tự nhiên giúp cân bằng vị béo, tạo điểm nhấn tươi mát cho tổng thể chiếc bánh.</p>`,
             price: 550000,
-            image: "../../assets/images/Orange Serenade.jpg"
+            image: "../../assets/images/orange-serenade.jpg"
         },
         {
             id: 8,
             name: "Strawberry Cloud Cake",
             description: `<p>Strawberry Cloud Cake là chiếc bánh mang phong vị tươi sáng của những trái dâu mọng và việt quất ngọt thanh, kết hợp cùng lớp kem tươi mềm nhẹ và cốt bánh vani thơm dịu. Mỗi lát bánh là sự giao hòa giữa vị trái cây tươi mát, vị ngọt dịu của kem và cốt bánh ẩm mịn, tạo nên cảm giác trong trẻo và đầy sức sống. Không chỉ là món tráng miệng, đây là chiếc bánh mang đến cảm giác thư giãn và ngọt ngào — hoàn hảo cho tiệc sinh nhật, trà chiều hay những dịp tặng quà.</p>`,
             price: 500000,
-            image: "../../assets/images/Strawberry Cloud Cake.jpg"
+            image: "../../assets/images/strawberry-cloud-cake.jpg"
         },
         {
             id: 9,
             name: "Earl Grey Bloom",
             description: `<p>Earl Grey Bloom là bản hòa ca của trà, trái cây và hương hoa — chiếc bánh dành riêng cho những ai yêu nét đẹp nhẹ nhàng, thanh lịch. Cốt bánh mềm mịn được ủ với lá trà bá tước hảo hạng, tỏa hương thơm thanh mát đặc trưng của cam bergamot. Lớp nhân giữa là sự kết hợp của xoài vàng mọng nước và dâu tây tươi ngọt thanh, giúp làm nổi bật vị trà nhẹ nhàng nhưng sâu lắng. Bên ngoài là lớp kem whipping mịn nhẹ, được đánh bông nhẹ, phủ đều và trang trí tinh tế bằng trái cây khô, rosemary xanh và hoa nhỏ.</p>`,
             price: 500000,
-            image: "../../assets/images/Earl Grey Bloom.jpg"
+            image: "../../assets/images/earl-grey-bloom.jpg"
         },
         {
             id: 10,
