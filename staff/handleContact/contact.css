@@ -1,0 +1,241 @@
+/* contact.css - Kế thừa từ order.css / complaint.css */
+
+/* Import các style chung (navbar, card, table, modal backdrop, buttons...) */
+@import url('../ViewOders/order.css');
+/* Hoặc complaint.css đều được */
+
+/* --- Style riêng cho Trang Liên Hệ --- */
+
+/* Đảm bảo navbar link 'Liên hệ' active đúng */
+.navbar a.nav-menu-link.active[href*="contact.html"] {
+    color: #e3c78d;
+    /* Màu vàng khi active */
+}
+
+/* Bảng contacts có thể cần điều chỉnh nhẹ */
+.contacts-table th,
+.contacts-table td {
+    padding: 14px 10px;
+    vertical-align: middle;
+}
+
+.contacts-table th:last-child,
+/* Cột Xem */
+.contacts-table td:last-child {
+    width: 60px;
+    text-align: center;
+}
+
+/* Icon xem chi tiết */
+.view-contact-icon {
+    color: #395542;
+    font-size: 18px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.view-contact-icon:hover {
+    color: #AC845C;
+}
+
+/* Status Badges mới cho Liên hệ */
+/* Kế thừa .status-badge từ order.css */
+.status-badge.status-contact-pending {
+    background-color: #FFF3CD;
+    /* Vàng nhạt */
+    color: #856404;
+    border-color: #FFEEBA;
+}
+
+.status-badge.status-contact-responded {
+    background-color: #D4EDDA;
+    /* Xanh lá nhạt */
+    color: #155724;
+    border-color: #C3E6CB;
+}
+
+/* --- Style cho Modal Chi tiết Liên hệ --- */
+
+.contact-modal-content {
+    /* Tùy chỉnh modal này */
+    max-width: 650px;
+    padding: 0;
+    /* Bỏ padding mặc định để header chiếm full width */
+    background-color: #FDFBF8;
+    border-radius: 10px;
+    /* Bo góc */
+}
+
+.contact-modal-content h3#modalContactTitle {
+    /* Style cho header modal */
+    background-color: #395542;
+    color: white;
+    padding: 15px 25px;
+    margin: 0;
+    border-radius: 10px 10px 0 0;
+    /* Bo góc trên */
+    font-size: 1.3rem;
+    font-family: 'Crimson Text', serif;
+}
+
+.contact-detail-body {
+    padding: 25px;
+    max-height: 65vh;
+    /* Giới hạn chiều cao */
+    overflow-y: auto;
+    /* Thêm thanh cuộn nếu nội dung dài */
+}
+
+/* Style cho các dòng thông tin trong modal */
+.contact-detail-body .info-row {
+    display: flex;
+    /* Dùng flexbox */
+    align-items: flex-start;
+    /* Căn lề trên */
+    padding: 10px 0;
+    border-bottom: 1px solid #E0D9CE;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
+
+.contact-detail-body .info-row:last-of-type {
+    border-bottom: none;
+}
+
+.contact-detail-body .info-row label {
+    flex-basis: 150px;
+    /* Chiều rộng cố định label */
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #395542;
+    padding-right: 10px;
+}
+
+.contact-detail-body .info-row span {
+    flex-grow: 1;
+    /* Phần value chiếm phần còn lại */
+    color: #333;
+    line-height: 1.5;
+    text-align: left;
+    /* Căn trái */
+}
+
+/* Style cho phần nội dung tin nhắn */
+.message-section {
+    margin-top: 15px;
+    /* padding-top: 15px; */
+    /* border-top: 1px solid #E0D9CE; */
+}
+
+.message-section label {
+    display: block;
+    font-weight: 600;
+    color: #395542;
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
+
+p#modalMessageContent {
+    background-color: #fff;
+    border: 1px solid #E0D9CE;
+    border-radius: 6px;
+    padding: 15px;
+    min-height: 100px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    /* Giữ định dạng xuống dòng */
+    color: #444;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    margin: 0;
+    /* Bỏ margin mặc định của <p> */
+}
+
+/* Style cho phần thông tin người phản hồi (ẩn mặc định) */
+.responder-info {
+    display: none;
+    /* Ẩn đi */
+    background-color: #f0f0f0;
+    /* margin: 10px -25px 0 -25px; */
+    /* Bỏ margin âm nếu padding đã đúng */
+    padding-top: 10px;
+    /* Thêm padding top nếu cần tách biệt */
+    border-top: 1px dashed #ccc;
+    /* Thêm đường kẻ phân biệt */
+    margin-top: 10px;
+}
+
+/* Hiện khi trạng thái là 'responded' */
+.contact-modal-content[data-status="responded"] .responder-info {
+    display: flex !important;
+    /* Dùng !important để ghi đè display: none */
+}
+
+
+/* Nút trong Modal */
+.contact-modal-content .modal-actions {
+    border-top: 1px solid #E0D9CE;
+    padding: 15px 25px;
+    background-color: #f8f9fa;
+    /* Nền footer modal */
+    border-radius: 0 0 10px 10px;
+    /* Bo góc dưới */
+    display: flex;
+    /* Dùng flex để dễ căn chỉnh */
+    justify-content: flex-end;
+    /* Đẩy nút sang phải */
+    gap: 10px;
+}
+
+/* Kế thừa style nút từ order.css (.btn-modal-cancel, .btn-modal-confirm) */
+
+/* Ẩn nút "Đã phản hồi" nếu trạng thái đã là responded */
+.contact-modal-content[data-status="responded"] #markRespondedBtn {
+    display: none;
+}
+
+/* Responsive cho Modal */
+@media (max-width: 768px) {
+    .contact-modal-content {
+        max-width: 90%;
+    }
+
+    .contact-detail-body .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .contact-detail-body .info-row label {
+        flex-basis: auto;
+        margin-bottom: 3px;
+    }
+
+    .contact-detail-body .info-row span {
+        text-align: left;
+    }
+
+    .contact-modal-content h3#modalContactTitle {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+    }
+
+    .contact-detail-body {
+        padding: 20px;
+    }
+
+    .message-section {
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    p#modalMessageContent {
+        padding: 12px;
+    }
+
+    .contact-modal-content .modal-actions {
+        padding: 12px 20px;
+    }
+}

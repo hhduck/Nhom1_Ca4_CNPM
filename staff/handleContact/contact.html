@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cuisine Ngọt - Quản lý Liên hệ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/animations.css">
+    <link rel="stylesheet" href="../ViewOders/order.css">
+    <link rel="stylesheet" href="../handleComplaint/complaint.css">
+    <link rel="stylesheet" href="contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
+</head>
+
+<body class="update-page order-page">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../../pages/home/home.html">La Cuisine Ngọt</a>
+            </div>
+            <a class="nav-menu-link" href="../ViewOders/order.html">Danh sách</a>
+            <a class="nav-menu-link" href="../handleComplaint/complaint.html">Khiếu nại</a>
+            <a class="nav-menu-link active" href="contact.html">Liên hệ</a>
+            <div class="nav-user-icon">
+                <i class="fas fa-user"></i>
+                <div class="user-menu hidden">
+                    <ul>
+                        <li><a href="../staffProfile/staff_profile.html">Thông tin tài khoản</a></li>
+                        <li><button id="logoutButton">Đăng xuất</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="staff-page-container">
+        <div class="card-container">
+            <h2>DANH SÁCH LIÊN HỆ</h2>
+            <div class="toolbar">
+                <div class="search-bar">
+                    <input type="text" id="contact-search-input" placeholder="Tìm Tên KH, Email, SĐT, Tiêu đề...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="filters">
+                    <label><input type="radio" name="contactFilter" class="contact-filter" value="all" checked> Tất
+                        cả</label>
+                    <label><input type="radio" name="contactFilter" class="contact-filter" value="pending"> Chưa xử
+                        lý</label>
+                    <label><input type="radio" name="contactFilter" class="contact-filter" value="responded"> Đã phản
+                        hồi</label>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="orders-table contacts-table">
+                    <thead>
+                        <tr>
+                            <th>Tên Khách Hàng</th>
+                            <th>Email</th>
+                            <th>Số Điện Thoại</th>
+                            <th>Tiêu Đề</th>
+                            <th>Ngày Gửi</th>
+                            <th>Trạng Thái</th>
+                            <th>Xem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contacts-table-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center;">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="contactDetailModal" class="modal-backdrop">
+        <div class="modal-content contact-modal-content">
+            <h3 id="modalContactTitle">Chi tiết Liên hệ</h3>
+            <div class="contact-detail-body">
+                <div class="info-row"><label>Khách hàng:</label><span id="modalCustomerName">-</span></div>
+                <div class="info-row"><label>Email:</label><span id="modalCustomerEmail">-</span></div>
+                <div class="info-row"><label>Số điện thoại:</label><span id="modalCustomerPhone">-</span></div>
+                <div class="info-row"><label>Địa chỉ KH:</label><span id="modalCustomerAddress">-</span></div>
+                <div class="info-row"><label>Ngày gửi:</label><span id="modalCreatedAt">-</span></div>
+                <div class="info-row"><label>Tiêu đề:</label><span id="modalSubject">-</span></div>
+                <div class="message-section">
+                    <label>Nội dung:</label>
+                    <p id="modalMessageContent">-</p>
+                </div>
+                <hr style="border: none; border-top: 1px solid #E0D9CE; margin: 15px 0;">
+                <div class="info-row"><label>Trạng thái:</label><span id="modalStatus" class="status-badge">-</span>
+                </div>
+                <div class="info-row responder-info"><label>Người phản hồi:</label><span
+                        id="modalResponderName">-</span></div>
+                <div class="info-row responder-info"><label>Ngày phản hồi:</label><span id="modalRespondedAt">-</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="closeContactModalBtn" class="btn-modal-cancel">Đóng</button>
+                <button id="markRespondedBtn" class="btn-modal-confirm">Đánh dấu Đã phản hồi</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="contact.js"></script>
+</body>
+
+</html>

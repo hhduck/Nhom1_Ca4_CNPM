@@ -444,6 +444,45 @@ UPDATE Products SET SoldCount = 2 WHERE ProductID = 9;
 UPDATE Products SET SoldCount = 5 WHERE ProductID = 10;
 UPDATE Products SET SoldCount = 1 WHERE ProductID = 11;
 
+-- Thêm vào cuối file schema.sql trước phần INSERT dữ liệu mẫu
+
+-- 15. CONTACTS (Bảng mới)
+CREATE TABLE Contacts (
+    ContactID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerID INT NOT NULL,              -- ID của khách hàng gửi (từ bảng Users)
+    Subject VARCHAR(255) NOT NULL,        -- Tiêu đề liên hệ
+    Message TEXT NOT NULL,                -- Nội dung liên hệ
+    Status ENUM('pending', 'responded') DEFAULT 'pending', -- Trạng thái
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- Ngày gửi
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Ngày cập nhật trạng thái
+    RespondedBy INT NULL,                 -- ID nhân viên đã phản hồi (từ bảng Users)
+    RespondedAt TIMESTAMP NULL,           -- Thời điểm phản hồi
+
+    FOREIGN KEY (CustomerID) REFERENCES Users(UserID),
+    FOREIGN KEY (RespondedBy) REFERENCES Users(UserID)
+);
+
+-- Thêm Index
+CREATE INDEX IX_Contacts_Status ON Contacts(Status);
+CREATE INDEX IX_Contacts_CustomerID ON Contacts(CustomerID);
+
+-- (Optional) Thêm dữ liệu mẫu nếu muốn
+-- INSERT INTO Contacts (CustomerID, Subject, Message) VALUES
+-- (3, 'Hỏi về bánh Entremet', 'Cho mình hỏi bánh Entremet Rose còn hàng không?'),
+-- (4, 'Góp ý về giao hàng', 'Shipper giao hàng hơi chậm, mong shop cải thiện.');
+
+-- (Optional) Thêm dữ liệu mẫu cho bảng Contacts
+INSERT INTO Contacts (CustomerID, Subject, Message, Status, CreatedAt) VALUES
+(3, 'Hỏi về bánh Entremet', 'Cho mình hỏi bánh Entremets Rose còn hàng không?', 'pending', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(4, 'Góp ý về giao hàng', 'Shipper giao hàng hôm qua hơi chậm, mong shop có thể cải thiện dịch vụ.', 'pending', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(3, 'Yêu cầu tư vấn bánh Mousse', 'Mình muốn đặt bánh Mousse Chanh Dây cho tiệc sinh nhật 10 người, shop tư vấn giúp mình kích thước nhé.', 'responded', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(4, 'Phản hồi về chất lượng Strawberry Cloud Cake', 'Bánh Strawberry Cloud Cake lần trước mình đặt rất ngon, cảm ơn shop!', 'responded', DATE_SUB(NOW(), INTERVAL 3 DAY));
+
+-- Cập nhật trạng thái và người phản hồi cho các liên hệ mẫu đã phản hồi
+-- Giả sử nhân viên staff01 (UserID=2) đã phản hồi
+UPDATE Contacts SET RespondedBy = 2, RespondedAt = DATE_SUB(NOW(), INTERVAL 4 DAY) WHERE ContactID = 3; -- Mousse Chanh Dây
+UPDATE Contacts SET RespondedBy = 2, RespondedAt = DATE_SUB(NOW(), INTERVAL 2 DAY) WHERE ContactID = 4; -- Strawberry Cloud Cake
+
 -- ============================================
 -- THÔNG BÁO HOÀN TẤT
 -- ============================================
