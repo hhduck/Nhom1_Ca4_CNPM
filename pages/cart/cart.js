@@ -1,5 +1,7 @@
 const API_URL = "../../api/cart.php"; 
-const userId = 1; // giả định user_id = 1 (bạn có thể lấy từ session sau này)
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('user_id') || 1; // nếu không có thì dùng 1
+
 const cartContainer = document.getElementById("cartContainer");
 // ==========================
 // ==========================
