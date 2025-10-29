@@ -126,6 +126,46 @@
 
         <!-- ĐƠN HÀNG -->
         <h3 class="form-title">Đơn hàng của bạn</h3>
+        <?php
+        require_once '../../api/config/database.php';
+        
+        // Tạo kết nối và lấy PDO
+        $database = new Database();
+        $conn = $database->getConnection();
+
+        $sql = "
+            SELECT PromotionID, PromotionCode, PromotionName, Description, PromotionType, DiscountValue
+            FROM Promotions
+            WHERE Status = 'active'
+              AND StartDate <= NOW()
+              AND EndDate >= NOW()
+              AND (Quantity = -1 OR Quantity > UsedCount)
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        ?>
+
+        <div class="promotion-section">
+        <h3>🎁 Chọn khuyến mãi</h3>
+
+        <select id="promotionSelect" name="promotion">
+          <option value="">-- Không áp dụng --</option>
+
+          <?php foreach ($promotions as $promo): ?>
+            <option 
+              value="<?= htmlspecialchars($promo['PromotionCode']) ?>"
+              data-type="<?= htmlspecialchars($promo['PromotionType']) ?>"
+              data-value="<?= htmlspecialchars($promo['DiscountValue']) ?>"
+            >
+              <?= htmlspecialchars($promo['PromotionName']) ?> — <?= htmlspecialchars($promo['Description']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+
+
         <div class="order-table-wrap">
           <table class="order-table" id="orderTable">
             <thead>
@@ -139,7 +179,6 @@
               <tr data-price="500000">
                 <td>
                   <div class="prod-title">Mousse Chanh dây</div>
-                  <div class="prod-note">(Ghi chú: “Happy Birthday Mẹ” màu vàng)</div>
                 </td>
                 <td class="td-qty">1</td>
                 <td class="td-price">500.000</td>
@@ -147,7 +186,6 @@
               <tr data-price="650000">
                 <td>
                   <div class="prod-title">Entremets Rose</div>
-                  <div class="prod-note">(Ghi chú: “Mừng sinh nhật Vy” màu đỏ)</div>
                 </td>
                 <td class="td-qty">1</td>
                 <td class="td-price">650.000</td>
