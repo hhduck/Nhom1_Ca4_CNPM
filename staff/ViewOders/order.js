@@ -4,7 +4,7 @@ let allOrders = [];
 let pendingUpdate = null;
 let currentDisplayedOrderId = null; // Lưu ID đơn hàng đang hiển thị
 
-// Map trạng thái sang tiếng Việt (dùng chung cho toàn bộ app)
+// Map trạng thái sang tiếng Việt
 const STATUS_MAP = {
     pending: 'Chờ xử lý',
     received: 'Đã nhận đơn',
@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchOrders();
     setupEventListeners();
     setupModalListeners();
+    // Gọi hàm setup menu người dùng MỚI
+    setupUserIconMenu();
 });
 
 function setupEventListeners() {
@@ -37,7 +39,7 @@ function setupEventListeners() {
 
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
-        searchInput.addEventListener('input', applyFilters);
+        searchInput.addEventListener('input', applyFilters); // Sử dụng applyFilters thay vì debounce
     }
 }
 
@@ -96,6 +98,7 @@ function handleTableViewClick(e) {
     const row = target.closest('tr');
     if (!row || !row.dataset.orderInfo) return;
 
+    // Bỏ qua nếu click vào select hoặc input
     if (target.tagName === 'SELECT' || target.tagName === 'INPUT') {
         return;
     }
@@ -104,34 +107,39 @@ function handleTableViewClick(e) {
     currentDisplayedOrderId = orderData.order_id; // Lưu ID đơn hàng đang xem
     displayOrderDetails(orderData);
 
+    // Xử lý scroll khi click vào icon xem
     if (target.classList.contains('view-icon') || target.closest('.view-icon')) {
         e.preventDefault();
-        document.querySelector('.order-info-display').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const detailSection = document.querySelector('.order-info-display');
+        if (detailSection) {
+            detailSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 }
 
 async function fetchOrders() {
     console.log("Đang gọi API để lấy danh sách đơn hàng...");
     try {
-        const token = localStorage.getItem('jwtToken') || 'demo';
+        const token = localStorage.getItem('jwtToken') || 'demo'; // Lấy token
 
-        const response = await fetch('../../api/orders.php', {
+        const response = await fetch('../../api/orders.php', { // Gọi API orders.php
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}` // Gửi token
             }
         });
 
+        // Xử lý lỗi HTTP
         if (!response.ok) {
             let errorData;
             const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
+            if (contentType && contentType.includes("application/json")) {
                 errorData = await response.json();
                 throw new Error(`Lỗi HTTP: ${response.status}. Chi tiết: ${errorData.message || JSON.stringify(errorData)}`);
             } else {
                 errorData = await response.text();
-                throw new Error(`Lỗi HTTP: ${response.status}. Chi tiết: ${errorData}`);
+                throw new Error(`Lỗi HTTP: ${response.status}. Server response: ${errorData.substring(0, 200)}...`); // Hiển thị một phần lỗi nếu là HTML
             }
         }
 
@@ -139,21 +147,22 @@ async function fetchOrders() {
         console.log("Dữ liệu nhận được từ API:", result);
 
         if (result.success && result.data && Array.isArray(result.data.orders)) {
-            allOrders = result.data.orders;
+            allOrders = result.data.orders; // Lưu dữ liệu vào biến toàn cục
             console.log(`Tải thành công ${allOrders.length} đơn hàng.`);
         } else {
             allOrders = [];
             console.error('Lỗi khi lấy dữ liệu: ', result.message || 'API trả về cấu trúc không mong đợi', result);
         }
 
-        applyFilters();
+        applyFilters(); // Áp dụng bộ lọc ban đầu
 
     } catch (error) {
         console.error('Đã xảy ra lỗi nghiêm trọng khi lấy dữ liệu đơn hàng:', error);
         const tableBody = document.getElementById('orders-table-body');
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Không thể tải dữ liệu đơn hàng. Vui lòng kiểm tra lại kết nối hoặc liên hệ quản trị viên. Lỗi: ${error.message}</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Không thể tải dữ liệu đơn hàng. Lỗi: ${error.message}</td></tr>`;
     }
 }
+
 
 function applyFilters() {
     const filterStatusMap = {
@@ -164,15 +173,20 @@ function applyFilters() {
         'filter-failed': 'failed'
     };
 
-    const selectedStatuses = Array.from(document.querySelectorAll('.filters input:checked'))
+    // Lấy các trạng thái được chọn
+    const selectedStatuses = Array.from(document.querySelectorAll('.filters input[type="checkbox"]:checked'))
         .map(cb => filterStatusMap[cb.id])
-        .filter(Boolean);
+        .filter(Boolean); // Lọc bỏ giá trị null/undefined nếu có ID không khớp
 
-    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    // Lấy giá trị tìm kiếm
+    const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
 
+    // Lọc dữ liệu
     const filteredOrders = allOrders.filter(order => {
-        const orderStatus = order.order_status || 'pending';
+        const orderStatus = order.order_status || 'pending'; // Trạng thái mặc định nếu null
+        // Kiểm tra trạng thái: Hoặc không có trạng thái nào được chọn, hoặc trạng thái của đơn hàng nằm trong danh sách được chọn
         const statusMatch = selectedStatuses.length === 0 || selectedStatuses.includes(orderStatus);
+        // Kiểm tra tìm kiếm: Hoặc không có từ khóa, hoặc mã đơn/tên khách khớp
         const searchMatch = !searchTerm ||
             (order.order_code && order.order_code.toLowerCase().includes(searchTerm)) ||
             (order.customer_name && order.customer_name.toLowerCase().includes(searchTerm));
@@ -181,40 +195,44 @@ function applyFilters() {
     });
 
     console.log(`Đang lọc: Trạng thái [${selectedStatuses.join(', ')}], Tìm kiếm "${searchTerm}". Kết quả: ${filteredOrders.length} đơn hàng.`);
-    renderOrderList(filteredOrders);
+    renderOrderList(filteredOrders); // Hiển thị kết quả đã lọc
 }
+
 
 function renderOrderList(orders) {
     const tableBody = document.getElementById('orders-table-body');
-    tableBody.innerHTML = '';
+    tableBody.innerHTML = ''; // Xóa nội dung cũ
 
     if (orders.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Không có đơn hàng nào phù hợp.</td></tr>`;
         return;
     }
 
+    // Tạo từng hàng cho mỗi đơn hàng
     orders.forEach(order => {
         const row = document.createElement('tr');
-        row.dataset.orderInfo = JSON.stringify(order);
+        row.dataset.orderInfo = JSON.stringify(order); // Lưu trữ dữ liệu đơn hàng vào thuộc tính data
         const orderId = order.order_id;
         const currentStatus = order.order_status || 'pending';
         const currentNote = order.note || '';
 
+        // Tạo HTML cho thẻ select trạng thái
         let statusOptionsHTML = '';
         for (const key in STATUS_MAP) {
             statusOptionsHTML += `<option value="${key}" ${key === currentStatus ? 'selected' : ''}>${STATUS_MAP[key]}</option>`;
         }
-
         const statusSelectHTML = `
             <select class="table-status-select" data-order-id="${orderId}" onchange="handleStatusChange(this)">
                 ${statusOptionsHTML}
             </select>
         `;
 
+        // Tạo HTML cho ô input ghi chú
         const noteInputHTML = `
             <input type="text" class="table-note-input" data-order-id="${orderId}" value="${currentNote.replace(/"/g, '&quot;')}" placeholder="Thêm ghi chú..." onblur="handleNoteChange(this)">
         `;
 
+        // Gắn HTML vào hàng
         row.innerHTML = `
             <td>${order.order_code || orderId}</td>
             <td>${order.customer_name}</td>
@@ -224,51 +242,36 @@ function renderOrderList(orders) {
             <td>${noteInputHTML}</td>
             <td><a href="#" class="view-icon"><i class="fas fa-eye"></i></a></td>
         `;
-        tableBody.appendChild(row);
+        tableBody.appendChild(row); // Thêm hàng vào bảng
     });
 }
 
-// Hàm hiển thị chi tiết đơn hàng (PHIÊN BẢN SỬA LỖI HIỂN THỊ TRẠNG THÁI)
+// Hàm hiển thị chi tiết đơn hàng (Giữ nguyên)
 function displayOrderDetails(order) {
-    console.log("Hiển thị chi tiết cho đơn hàng:", order); // Log để kiểm tra dữ liệu đầu vào
+    console.log("Hiển thị chi tiết cho đơn hàng:", order);
 
-    // Cập nhật các trường thông tin cơ bản (giữ nguyên)
     document.getElementById('detail-order-id').textContent = order.order_code || order.order_id;
     document.getElementById('detail-customer-name').textContent = order.customer_name || 'Chưa có';
     document.getElementById('detail-phone').textContent = order.customer_phone || 'Chưa có';
 
-    // Ghép địa chỉ đầy đủ (giữ nguyên)
-    let fullAddress = [];
-    if (order.shipping_address) fullAddress.push(order.shipping_address);
-    if (order.ward) fullAddress.push(order.ward);
-    if (order.district) fullAddress.push(order.district);
-    if (order.city) fullAddress.push(order.city);
-    document.getElementById('detail-address').textContent = fullAddress.join(', ') || 'Chưa có';
+    let fullAddress = [order.shipping_address, order.ward, order.district, order.city].filter(Boolean).join(', ');
+    document.getElementById('detail-address').textContent = fullAddress || 'Chưa có';
 
     document.getElementById('detail-date').textContent = new Date(order.created_at).toLocaleString('vi-VN');
     document.getElementById('detail-total').textContent = `${new Intl.NumberFormat('vi-VN').format(order.final_amount)} VND`;
 
-    // Chuyển phương thức thanh toán sang tiếng Việt (giữ nguyên)
     const paymentMethod = PAYMENT_METHOD_MAP[order.payment_method] || order.payment_method || 'Chưa rõ';
     document.getElementById('detail-payment-method').textContent = paymentMethod;
 
-    // === PHẦN CẬP NHẬT TRẠNG THÁI VÀ GHI CHÚ (SỬA LỖI) ===
     const statusSpan = document.getElementById('detail-current-status');
     const noteSpan = document.getElementById('detail-current-note');
-
-    // 1. Lấy key trạng thái từ đơn hàng (ví dụ: 'pending', 'received'...)
     const statusKey = order.order_status || 'pending';
-
-    // 2. Tra cứu text tiếng Việt từ STATUS_MAP
-    // Nếu không tìm thấy key trong map, sẽ hiển thị key gốc (ví dụ: 'Preparing') hoặc 'Không xác định'
     const statusTextVietnamese = STATUS_MAP[statusKey] || statusKey || 'Không xác định';
 
-    // 3. Cập nhật text và class cho statusSpan
-    statusSpan.textContent = statusTextVietnamese; // Luôn hiển thị tiếng Việt (hoặc key gốc nếu không có dịch)
-    statusSpan.className = `status-badge status-${statusKey || 'unknown'}`; // Đặt class CSS dựa trên key gốc
-    console.log(`Trạng thái đơn hàng: Key='${statusKey}', Text='${statusTextVietnamese}', Class='${statusSpan.className}'`); // Log để kiểm tra
+    statusSpan.textContent = statusTextVietnamese;
+    statusSpan.className = `status-badge status-${statusKey || 'unknown'}`;
+    console.log(`Trạng thái đơn hàng: Key='${statusKey}', Text='${statusTextVietnamese}', Class='${statusSpan.className}'`);
 
-    // Cập nhật ghi chú (giữ nguyên)
     if (order.note && order.note.trim() !== '') {
         noteSpan.textContent = order.note;
         noteSpan.style.fontStyle = 'normal';
@@ -278,7 +281,6 @@ function displayOrderDetails(order) {
         noteSpan.style.fontStyle = 'italic';
         noteSpan.style.color = '#999';
     }
-    // === KẾT THÚC SỬA LỖI ===
 }
 
 function handleStatusChange(selectElement) {
@@ -288,13 +290,15 @@ function handleStatusChange(selectElement) {
 
     console.log(`Đã chọn trạng thái mới: ${newStatus} (${statusText}) cho đơn hàng ID: ${orderId}`);
 
+    // Lưu thông tin cập nhật chờ xử lý
     pendingUpdate = {
         orderId: orderId,
         field: 'status',
         value: newStatus,
-        type: 'status'
+        type: 'status' // Loại cập nhật
     };
 
+    // Hiển thị modal xác nhận
     showModal(
         'Xác nhận cập nhật trạng thái',
         `Bạn có chắc chắn muốn chuyển trạng thái đơn hàng sang "${statusText}"?`
@@ -304,9 +308,10 @@ function handleStatusChange(selectElement) {
 function handleNoteChange(inputElement) {
     const orderId = inputElement.dataset.orderId;
     const newNote = inputElement.value.trim();
-    const order = allOrders.find(o => o.order_id == orderId);
-    const oldNote = order ? (order.note || '') : '';
+    const order = allOrders.find(o => o.order_id == orderId); // Tìm đơn hàng trong dữ liệu đã tải
+    const oldNote = order ? (order.note || '') : ''; // Lấy ghi chú cũ
 
+    // Chỉ hiển thị modal nếu ghi chú thực sự thay đổi
     if (newNote !== oldNote) {
         console.log(`Thay đổi ghi chú đơn ${orderId} thành: "${newNote}" (Ghi chú cũ: "${oldNote}")`);
 
@@ -326,7 +331,8 @@ function handleNoteChange(inputElement) {
     }
 }
 
-// Hàm gọi API để cập nhật trạng thái hoặc ghi chú (PHIÊN BẢN SỬA LỖI CẬP NHẬT CHI TIẾT)
+
+// Hàm gọi API để cập nhật (Giữ nguyên)
 async function updateOrderData(orderId, field, value) {
     const endpoint = `../../api/orders.php/${orderId}`;
     const method = 'PUT';
@@ -348,10 +354,11 @@ async function updateOrderData(orderId, field, value) {
             body: JSON.stringify(dataToUpdate)
         });
 
+        // Xử lý lỗi HTTP và JSON
         const contentType = response.headers.get("content-type");
         if (!response.ok) {
             let errorText;
-            if (contentType && contentType.indexOf("application/json") !== -1) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorJson = await response.json();
                 errorText = errorJson.message || JSON.stringify(errorJson);
             } else {
@@ -360,110 +367,78 @@ async function updateOrderData(orderId, field, value) {
             throw new Error(`Lỗi HTTP ${response.status}: ${errorText}`);
         }
 
-        if (contentType && contentType.indexOf("application/json") !== -1) {
+        if (contentType && contentType.includes("application/json")) {
             const result = await response.json();
             console.log("Kết quả API:", result);
 
             if (result.success) {
                 console.log(`Cập nhật ${field} thành công cho đơn hàng ${orderId}`);
 
-                // 1. Cập nhật dữ liệu trong mảng allOrders ở client
-                const index = allOrders.findIndex(o => o.order_id == orderId); // Dùng == vì ID từ dataset có thể là string
-                let updatedOrderData = null; // Biến để lưu trữ dữ liệu mới nhất
+                // Cập nhật dữ liệu cục bộ
+                const index = allOrders.findIndex(o => o.order_id == orderId);
+                let updatedOrderData = null;
                 if (index !== -1) {
-                    if (field === 'status') {
-                        allOrders[index].order_status = value;
-                    } else if (field === 'note') {
-                        allOrders[index].note = value;
-                    }
-                    updatedOrderData = allOrders[index]; // Lấy dữ liệu đã cập nhật
-                } else {
-                    console.warn("Không tìm thấy đơn hàng trong allOrders để cập nhật dữ liệu cục bộ.");
-                    // Cân nhắc gọi fetchOrders() nếu muốn đảm bảo đồng bộ tuyệt đối
+                    if (field === 'status') allOrders[index].order_status = value;
+                    else if (field === 'note') allOrders[index].note = value;
+                    updatedOrderData = allOrders[index];
                 }
 
-                // 2. Render lại bảng (dùng applyFilters để giữ bộ lọc/tìm kiếm)
-                applyFilters();
+                applyFilters(); // Render lại bảng
 
-                // 3. *** KIỂM TRA VÀ CẬP NHẬT LẠI PHẦN CHI TIẾT ***
+                // Cập nhật phần chi tiết nếu đang hiển thị đơn hàng này
                 const displayedOrderIdElement = document.getElementById('detail-order-id');
-                const displayedOrderIdText = displayedOrderIdElement ? displayedOrderIdElement.textContent : null; // Lấy ID/Code đang hiển thị
-
-                // Lấy code (hoặc ID nếu không có code) của đơn hàng vừa cập nhật
+                const displayedOrderIdText = displayedOrderIdElement ? displayedOrderIdElement.textContent : null;
                 const updatedOrderCodeOrId = updatedOrderData ? (updatedOrderData.order_code || updatedOrderData.order_id.toString()) : null;
 
-                console.log("Kiểm tra cập nhật chi tiết: Đang hiển thị:", displayedOrderIdText, "|| Vừa cập nhật:", updatedOrderCodeOrId);
-
-                // So sánh ID hoặc Code đang hiển thị với ID/Code của đơn vừa cập nhật
                 if (updatedOrderData && displayedOrderIdText && (displayedOrderIdText == orderId || displayedOrderIdText == updatedOrderCodeOrId)) {
-                    console.log("-> Cần cập nhật chi tiết đơn hàng đang hiển thị...");
-                    displayOrderDetails(updatedOrderData); // Gọi lại displayOrderDetails với dữ liệu MỚI NHẤT
-                } else {
-                    console.log("-> Không cần cập nhật chi tiết (đơn khác đang hiển thị).");
+                    displayOrderDetails(updatedOrderData);
                 }
-                // *** KẾT THÚC KIỂM TRA VÀ CẬP NHẬT CHI TIẾT ***
-
 
                 showSuccessToast(`Cập nhật ${field === 'status' ? 'trạng thái' : 'ghi chú'} thành công!`);
             } else {
                 alert('Cập nhật thất bại: ' + result.message);
-                fetchOrders(); // Tải lại nếu API báo lỗi
+                fetchOrders(); // Tải lại nếu API báo lỗi logic
             }
         } else {
             const textResult = await response.text();
-            throw new Error("Phản hồi từ server không phải JSON: " + textResult);
+            throw new Error("Phản hồi từ server không phải JSON: " + textResult.substring(0, 200));
         }
 
-    } catch (error) { // Bắt các lỗi
+    } catch (error) {
         console.error(`Lỗi nghiêm trọng khi cập nhật ${field} cho đơn ${orderId}:`, error);
-        alert(`Đã xảy ra lỗi khi cập nhật ${field === 'status' ? 'trạng thái' : 'ghi chú'}. ${error.message}. Vui lòng thử lại.`);
-        fetchOrders(); // Tải lại nếu có lỗi mạng hoặc parse
+        alert(`Đã xảy ra lỗi khi cập nhật. ${error.message}. Vui lòng thử lại.`);
+        fetchOrders(); // Tải lại nếu có lỗi mạng hoặc parse JSON
     }
 }
 
-// Hàm hiển thị thông báo thành công (tùy chọn)
+// Hàm hiển thị thông báo thành công (Giữ nguyên)
 function showSuccessToast(message) {
-    // Tạo element thông báo
     const toast = document.createElement('div');
     toast.textContent = message;
     toast.style.cssText = `
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background-color: #155724;
-        color: white;
-        padding: 15px 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        z-index: 9999;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        animation: slideInUp 0.3s ease;
+        position: fixed; bottom: 30px; right: 30px;
+        background-color: #155724; color: white; padding: 15px 25px;
+        border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 9999; font-family: 'Inter', sans-serif; font-size: 14px;
+        font-weight: 500; animation: slideInUp 0.3s ease;
     `;
-
     document.body.appendChild(toast);
-
-    // Tự động xóa sau 3 giây
     setTimeout(() => {
-        toast.style.animation = 'slideOutDown 0.3s ease';
-        setTimeout(() => {
+        toast.style.animation = 'slideOutDown 0.3s ease forwards'; // Thêm forwards
+        toast.addEventListener('animationend', () => { // Chờ animation kết thúc mới xóa
             if (toast.parentNode) {
                 toast.parentNode.removeChild(toast);
             }
-        }, 300);
+        });
     }, 3000);
 }
 
-// Thay thế TOÀN BỘ đoạn code "Logic cho User Icon Dropdown" cũ bằng đoạn này
-// Thêm vào cuối file order.js VÀ complaint.js
-
-// --- Logic cho User Icon Dropdown (Cập nhật: Trang chủ cũng đăng xuất) ---
-document.addEventListener('DOMContentLoaded', () => {
+// --- Logic cho User Icon Dropdown (ĐÃ DỌN DẸP VÀ SỬA LỖI) ---
+function setupUserIconMenu() { // Đổi tên hàm để tránh trùng
     const userIconDiv = document.querySelector('.nav-user-icon');
     const userMenu = document.querySelector('.user-menu');
     const logoutButton = document.getElementById('logoutButton');
-    const homeLink = userMenu ? userMenu.querySelector('a[href*="home.html"]') : null; // Tìm link Trang chủ
+    // const homeLink = ... (ĐÃ XÓA)
 
     if (userIconDiv && userMenu) {
         // Hiện/ẩn menu khi bấm vào icon
@@ -483,11 +458,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- HÀM ĐĂNG XUẤT (Tách ra để dùng chung) ---
+    // --- HÀM ĐĂNG XUẤT (ĐÃ SỬA LỖI KEY) ---
     function performLogout(redirectUrl) {
-         if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+        if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
             console.log("Đang đăng xuất...");
-            localStorage.removeItem('currentUser');
+            // SỬA LỖI LOGIC: Phải xóa 'currentStaff' chứ không phải 'currentUser'
+            localStorage.removeItem('currentStaff');
             localStorage.removeItem('jwtToken');
             localStorage.removeItem('rememberMe');
 
@@ -506,13 +482,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // (SỬA) Xử lý link Trang chủ (nhấn link)
-    if (homeLink) {
-        homeLink.addEventListener('click', (event) => {
-            event.preventDefault(); // Ngăn chuyển trang ngay lập tức
-            // Gọi hàm đăng xuất và chuyển về trang home
-            performLogout(homeLink.href); // Chuyển về trang chủ (href của link)
-        });
-    }
-});
+    // if (homeLink) { ... } (ĐÃ XÓA)
+
+}; // Thêm dấu ; kết thúc hàm
 // --- Kết thúc Logic User Icon ---
+
+// Thêm keyframes cho animation (nếu chưa có trong CSS)
+const styleSheet = document.styleSheets[0];
+try {
+    styleSheet.insertRule(`
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    `, styleSheet.cssRules.length);
+    styleSheet.insertRule(`
+        @keyframes slideOutDown {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(100%); opacity: 0; }
+        }
+    `, styleSheet.cssRules.length);
+} catch (e) {
+    console.warn("Không thể thêm keyframes, có thể đã tồn tại hoặc trình duyệt không hỗ trợ.", e);
+}
