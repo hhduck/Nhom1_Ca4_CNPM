@@ -5,7 +5,7 @@
  * FILE: api/cart.php
  */
 
-require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '../../api/config/database.php';
 
 enableCORS();
 
@@ -230,3 +230,4 @@ function removeFromCart($db) {
         sendJsonResponse(false, null, "Không thể xóa sản phẩm", 500);
     }
 }
+?>

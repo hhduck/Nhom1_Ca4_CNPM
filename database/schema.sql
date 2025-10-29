@@ -320,24 +320,24 @@ INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role,
 
 -- 3. Products
 INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, OriginalPrice, Quantity, Status, ImageURL, Weight, ShelfLife, IsFeatured) VALUES
-(1, 'Entremets Rose', 1, 'Bánh kem kiểu Pháp cao cấp với mousse hương hồng', 650000, 750000, 15, 'available', '../../assets/images/Entremets Rose.jpg', 500, 3, TRUE),
-(2, 'Lime and Basil Entremets', 1, 'Entremet chanh và húng quế', 600000, 680000, 12, 'available', '../../assets/images/Lime and Basil Entremets.jpg', 500, 3, TRUE),
-(3, 'Blanche Figues & Framboises', 1, 'Entremet sang trọng với sung trắng và phúc bồn tử', 650000, 750000, 10, 'available', '../../assets/images/Blanche Figues & Framboises.jpg', 550, 3, TRUE),
-(4, 'Mousse Chanh Dây', 2, 'Bánh mousse chanh dây tươi mát', 550000, 600000, 25, 'available', '../../assets/images/Mousse Chanh dây.jpg', 450, 2, TRUE),
-(5, 'Mousse Dưa Lưới', 2, 'Mousse dưa lưới ngọt thanh', 550000, 600000, 20, 'available', '../../assets/images/Mousse Dưa lưới.jpg', 450, 2, TRUE),
-(6, 'Mousse Việt Quất', 2, 'Mousse việt quất chua ngọt', 550000, 600000, 18, 'available', '../../assets/images/Mousse Việt quất.jpg', 450, 2, FALSE),
-(7, 'Rustic Coffee Cake', 3, 'Bánh kem cà phê phong cách rustic', 450000, 500000, 15, 'available', '../../assets/images/Earl Grey Bloom.jpg', 600, 3, FALSE),
-(8, 'Serenity Cake', 3, 'Bánh kem truyền thống thanh lịch', 500000, 550000, 12, 'available', '../../assets/images/Rectangle 298.png', 650, 3, FALSE),
-(9, 'Strawberry Cloud Cake', 3, 'Bánh kem dâu tây mây', 500000, 550000, 10, 'available', '../../assets/images/Strawberry Cloud Cake.jpg', 650, 3, TRUE),
-(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', '../../assets/images/Rectangle 312.png', 20, 365, FALSE),
-(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', '../../assets/images/Rectangle 309.png', 50, 365, FALSE),
-(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', '../../assets/images/Rectangle 306.png', 100, 365, FALSE);
+(1, 'Entremets Rose', 1, 'Bánh kem kiểu Pháp cao cấp với mousse hương hồng', 650000, 750000, 15, 'available', '../../assets/images/entremets-rose.jpg', 500, 3, TRUE),
+(2, 'Lime and Basil Entremets', 1, 'Entremet chanh và húng quế', 600000, 680000, 12, 'available', '../../assets/images/lime-and-basil-entremets.jpg', 500, 3, TRUE),
+(3, 'Blanche Figues & Framboises', 1, 'Entremet sang trọng với sung trắng và phúc bồn tử', 650000, 750000, 10, 'available', '../../assets/images/blanche-figues&framboises.jpg', 550, 3, TRUE),
+(4, 'Mousse Chanh Dây', 2, 'Bánh mousse chanh dây tươi mát', 550000, 600000, 25, 'available', '../../assets/images/mousse-chanh-day.jpg', 450, 2, TRUE),
+(5, 'Mousse Dưa Lưới', 2, 'Mousse dưa lưới ngọt thanh', 550000, 600000, 20, 'available', '../../assets/images/mousse-dua-luoi.jpg', 450, 2, TRUE),
+(6, 'Mousse Việt Quất', 2, 'Mousse việt quất chua ngọt', 550000, 600000, 18, 'available', '../../assets/images/mousse-viet-quat.jpg', 450, 2, FALSE),
+(7, 'Orange Seranade', 3, 'Bánh kem cam phong cách rustic', 450000, 500000, 15, 'available', '../../assets/images/orange-seranade.jpg', 600, 3, FALSE),
+(8, 'Strawberry Cloud Cake', 3, 'Bánh kem dâu tây mây', 500000, 550000, 12, 'available', '../../assets/images/strawberry-cloud-cake.jpg', 650, 3, FALSE),
+(9, 'Earl Grey Bloom', 3, 'Bánh kem earl grey', 500000, 550000, 10, 'available', '../../assets/images/earl-grey-bloom.jpg', 650, 3, TRUE),
+(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', '../../assets/images/non.jpg', 20, 365, FALSE),
+(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', '../../assets/images/phaohoa.jpg', 50, 365, FALSE),
+(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', '../../assets/images/trang-tri.jpg', 100, 365, FALSE);
 
 -- 4. Promotions
-INSERT INTO Promotions (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, Status, StartDate, EndDate)
-VALUES 
-('GIAM10TRON15', 'Giảm 10% cho đơn từ 150.000đ', 'percent', 10, 150000, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY)),
-('FREESHIPLOYAL', 'Miễn phí giao hàng khách hàng thân thiết', 'free_shipping', 0, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY));
+INSERT INTO Promotions (PromotionID, PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy) VALUES
+(1, 'FREESHIP2025', 'Miễn phí vận chuyển', 'Miễn phí ship cho đơn hàng từ 500k', 'free_shipping', 0, 500000, -1, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'active', 'all', 1),
+(2, 'NEWUSER10', 'Giảm 10% cho khách mới', 'Giảm 10% cho đơn hàng đầu tiên', 'percent', 10, 300000, 100, '2025-01-01 00:00:00', '2025-06-30 23:59:59', 'active', 'new', 1),
+(3, 'GIAM50K', 'Giảm 50K', 'Giảm 50,000đ cho đơn từ 500k', 'fixed_amount', 50000, 500000, 50, '2025-01-15 00:00:00', '2025-02-15 23:59:59', 'active', 'all', 1);
 
 -- 5. Orders (Đơn hàng mẫu)
 INSERT INTO Orders (OrderID, OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, Note, CreatedAt, CompletedAt) VALUES
@@ -418,51 +418,20 @@ INSERT INTO Wishlist (UserID, ProductID) VALUES
 
 -- 13. Product Images (Hình ảnh sản phẩm)
 INSERT INTO ProductImages (ProductID, ImageURL, AltText, IsPrimary, DisplayOrder) VALUES
-(1, '../../assets/images/Entremets Rose.jpg', 'Entremets Rose - View 1', TRUE, 1),
-(2, '../../assets/images/Lime and Basil Entremets.jpg', 'Lime and Basil - View 1', TRUE, 1),
-(3, '../../assets/images/Blanche Figues & Framboises.jpg', 'Blanche Figues - View 1', TRUE, 1);
+(1, '../../assets/images/entremets-rose.jpg', 'Entremets Rose - View 1', TRUE, 1),
+(2, '../../assets/images/lime-and-basil-entremets.jpg', 'Lime and Basil - View 1', TRUE, 1),
+(3, '../../assets/images/blanche-figues&framboises.jpg', 'Blanche Figues - View 1', TRUE, 1);
 
--- 14. Promotion Usage & New Promotions (FIXED no duplicate)
-
-INSERT INTO Promotions 
-(PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy)
-VALUES
-('GIAM10TRON15', 'Giảm 10% cho đơn trên 1.500.000đ', 
- 'Giảm 10% giá trị đơn hàng từ 1.500.000đ.', 
- 'percent', 10, 1500000, 200, '2025-11-01 00:00:00', '2025-11-15 23:59:59', 
- 'active', 'all', 1)
-ON DUPLICATE KEY UPDATE
-    PromotionName = VALUES(PromotionName),
-    Description   = VALUES(Description),
-    DiscountValue = VALUES(DiscountValue),
-    Status        = VALUES(Status);
-
-INSERT INTO Promotions 
-(PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy)
-VALUES
-('FREESHIPLOYAL', 'Miễn phí giao hàng', 
- 'Áp dụng cho khách hàng thân thiết.', 
- 'free_shipping', 0, 0, -1, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 
- 'active', 'loyal', 1)
-ON DUPLICATE KEY UPDATE
-    PromotionName = VALUES(PromotionName),
-    Description   = VALUES(Description),
-    Status        = VALUES(Status);
-
-
--- Ghi nhận lịch sử sử dụng khuyến mãi
-INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt)
-SELECT PromotionID, 4, 2, 50000, DATE_SUB(NOW(), INTERVAL 2 DAY)
-FROM Promotions WHERE PromotionCode = 'FREESHIPLOYAL';
-
-INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt)
-SELECT PromotionID, 3, 5, 100000, DATE_SUB(NOW(), INTERVAL 25 DAY)
-FROM Promotions WHERE PromotionCode = 'GIAM10TRON15';
+-- 14. Promotion Usage
+INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt) VALUES
+(2, 4, 2, 50000, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(3, 3, 5, 100000, DATE_SUB(NOW(), INTERVAL 25 DAY));
 
 -- Cập nhật số lần sử dụng khuyến mãi
-UPDATE Promotions SET UsedCount = 1 WHERE PromotionID IN (2,3);
+UPDATE Promotions SET UsedCount = 1 WHERE PromotionID = 2;
+UPDATE Promotions SET UsedCount = 1 WHERE PromotionID = 3;
 
--- Cập nhật số lượng sản phẩm đã bán
+-- Cập nhật số lượng đã bán cho sản phẩm
 UPDATE Products SET SoldCount = 3 WHERE ProductID = 1;
 UPDATE Products SET SoldCount = 2 WHERE ProductID = 4;
 UPDATE Products SET SoldCount = 1 WHERE ProductID = 2;
@@ -517,7 +486,7 @@ UPDATE Contacts SET RespondedBy = 2, RespondedAt = DATE_SUB(NOW(), INTERVAL 2 DA
 -- ============================================
 -- THÔNG BÁO HOÀN TẤT
 -- ============================================
-SELECT 'Database created successfully with new promotions!' AS Status,
-       'lacuisinengot' AS DatabaseName,
-       'Promotions updated for Nov 2025' AS PromotionUpdate,
-       '2 new promotions added: GIAM10TRON15, FREESHIPLOYAL' AS NewPromotions;
+SELECT 'Database created successfully!' as Status,
+       'lacuisinengot' as DatabaseName,
+       '14 tables' as TablesCreated,
+       'FULL DATA: 4 users, 12 products, 5 orders, 5 reviews, 3 complaints' as SampleData;

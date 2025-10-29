@@ -205,3 +205,4 @@ function deleteReview($db) {
         sendJsonResponse(false, null, "Không thể xóa đánh giá", 500);
     }
 }
+?>

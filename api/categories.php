@@ -190,3 +190,4 @@ function createSlug($str) {
     
     return $str;
 }
+?>

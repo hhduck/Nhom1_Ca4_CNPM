@@ -131,3 +131,4 @@ function searchUsers($db, $keyword) {
     
     return $stmt->fetchAll();
 }
+?>

@@ -337,3 +337,4 @@ function deleteUser($db, $id)
         sendJsonResponse(false, null, "Không thể xóa người dùng do lỗi máy chủ", 500);
     }
 }
+?>

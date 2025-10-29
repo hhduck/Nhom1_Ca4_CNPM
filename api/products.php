@@ -213,3 +213,4 @@ function deleteProduct($db) {
         sendJsonResponse(false, null, "Không thể xóa sản phẩm", 500);
     }
 }
+?>
