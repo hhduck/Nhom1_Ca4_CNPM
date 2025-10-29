@@ -326,12 +326,12 @@ INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, Or
 (4, 'Mousse Chanh Dây', 2, 'Bánh mousse chanh dây tươi mát', 550000, 600000, 25, 'available', '../../assets/images/Mousse Chanh dây.jpg', 450, 2, TRUE),
 (5, 'Mousse Dưa Lưới', 2, 'Mousse dưa lưới ngọt thanh', 550000, 600000, 20, 'available', '../../assets/images/Mousse Dưa lưới.jpg', 450, 2, TRUE),
 (6, 'Mousse Việt Quất', 2, 'Mousse việt quất chua ngọt', 550000, 600000, 18, 'available', '../../assets/images/Mousse Việt quất.jpg', 450, 2, FALSE),
-(7, 'Rustic Coffee Cake', 3, 'Bánh kem cà phê phong cách rustic', 450000, 500000, 15, 'available', '../../assets/images/Earl Grey Bloom.jpg', 600, 3, FALSE),
-(8, 'Serenity Cake', 3, 'Bánh kem truyền thống thanh lịch', 500000, 550000, 12, 'available', '../../assets/images/Rectangle 298.png', 650, 3, FALSE),
-(9, 'Strawberry Cloud Cake', 3, 'Bánh kem dâu tây mây', 500000, 550000, 10, 'available', '../../assets/images/Strawberry Cloud Cake.jpg', 650, 3, TRUE),
-(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', '../../assets/images/Rectangle 312.png', 20, 365, FALSE),
-(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', '../../assets/images/Rectangle 309.png', 50, 365, FALSE),
-(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', '../../assets/images/Rectangle 306.png', 100, 365, FALSE);
+(7, 'Orange Seranade', 3, 'Bánh kem cam phong cách rustic', 450000, 500000, 15, 'available', '../../assets/images/Orange Seranade.jpg', 600, 3, FALSE),
+(8, 'Strawberry Cloud Cake', 3, 'Bánh kem dâu tây mây', 500000, 550000, 12, 'available', '../../assets/images/Strawberry Cloud Cake.jpg', 650, 3, FALSE),
+(9, 'Earl Grey Bloom', 3, 'Bánh kem earl grey', 500000, 550000, 10, 'available', '../../assets/images/Earl Grey Bloom.jpg', 650, 3, TRUE),
+(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', '../../assets/images/nón.jpg', 20, 365, FALSE),
+(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', '../../assets/images/phaohoa.jpg', 50, 365, FALSE),
+(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', '../../assets/images/trang trí.jpg', 100, 365, FALSE);
 
 -- 4. Promotions
 INSERT INTO Promotions (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, Status, StartDate, EndDate)
