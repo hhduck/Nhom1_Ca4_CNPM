@@ -1,15 +1,15 @@
 /**
- * Home Page JavaScript - PHIÊN BẢN KẾT HỢP (ỔN ĐỊNH + ĐẦY ĐỦ TÍNH NĂNG)
+ * Home Page JavaScript - PHIÊN BẢN CHÍNH XÁC CHO TRANG HOME
  */
 
 document.addEventListener('DOMContentLoaded', function () {
   bindCategoryTabs();
   updateCartCount();
   bindProductCardNavigation();
-  handleUserDisplay(); // Gộp chung vào DOMContentLoaded
+  handleUserDisplay(); // Xử lý hiển thị user menu
 });
 
-// ===== CẬP NHẬT GIỎ HÀNG (GIỮ NGUYÊN) =====
+// ===== CẬP NHẬT GIỎ HÀNG =====
 function updateCartCount() {
   try {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -25,7 +25,7 @@ function updateCartCount() {
   }
 }
 
-// ===== XỬ LÝ USER DISPLAY (CẢI TIẾN) =====
+// ===== XỬ LÝ USER DISPLAY - SỬA LỖI HIỂN THỊ MENU =====
 function handleUserDisplay() {
   const loginLink = document.querySelector(".nav-login");
   const userMenu = document.querySelector(".user-menu");
@@ -35,7 +35,7 @@ function handleUserDisplay() {
     return;
   }
 
-  // ✅ Kiểm tra CẢ Staff VÀ Customer
+  // Kiểm tra CẢ Staff VÀ Customer
   const staffData = localStorage.getItem("currentStaff");
   const customerData = localStorage.getItem("currentUser");
   const jwtToken = localStorage.getItem("jwtToken");
@@ -66,28 +66,38 @@ function handleUserDisplay() {
   if (currentUser && currentUser.id) {
     // 🔹 ĐÃ ĐĂNG NHẬP → Hiện icon user
     loginLink.innerHTML = `<i class="fas fa-user"></i>`;
-    loginLink.href = "#";
+    loginLink.href = "#"; // ✅ QUAN TRỌNG: Đặt href="#" để không chuyển trang
 
-    // ✅ Cập nhật link "Thông tin tài khoản" theo user type
+    // ✅ Cập nhật link "Thông tin tài khoản" trong menu
     const accountBtn = document.getElementById("tt");
     if (accountBtn) {
-      accountBtn.onclick = (e) => {
+      // ✅ XÓA thuộc tính onclick cũ (nếu có)
+      accountBtn.onclick = null;
+
+      // ✅ GẮN sự kiện mới
+      accountBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const accountUrl = (userType === 'staff')
           ? "../staff/staffProfile/staff_profile.html"
           : "../account/account.html";
         window.location.href = accountUrl;
-      };
+      });
     }
 
-    // ✅ Toggle menu khi click icon (XÓA listener cũ trước)
+    // ✅ XÓA listener cũ của loginLink bằng cách clone
     const newLoginLink = loginLink.cloneNode(true);
     loginLink.parentNode.replaceChild(newLoginLink, loginLink);
 
+    // ✅ Gắn event listener MỚI cho icon user
     newLoginLink.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      userMenu.style.display = (userMenu.style.display === "block") ? "none" : "block";
+
+      // Toggle hiển thị menu
+      const isVisible = userMenu.style.display === "block";
+      userMenu.style.display = isVisible ? "none" : "block";
+      userMenu.classList.remove("hidden"); // Đảm bảo class hidden bị xóa
     });
 
     // ✅ Đóng menu khi click ra ngoài
@@ -97,9 +107,10 @@ function handleUserDisplay() {
       }
     });
 
-    // ✅ Xử lý đăng xuất (XÓA listener cũ trước)
+    // ✅ Xử lý nút ĐĂNG XUẤT
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
+      // XÓA listener cũ bằng cách clone
       const newLogoutBtn = logoutBtn.cloneNode(true);
       logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
 
@@ -114,11 +125,12 @@ function handleUserDisplay() {
         localStorage.removeItem("loggedIn");
         localStorage.removeItem("rememberMe");
 
+        // Chuyển về trang login
         window.location.href = "../login/login.html";
       });
     }
 
-    // Ẩn menu ban đầu
+    // ✅ Ẩn menu ban đầu
     userMenu.style.display = "none";
     userMenu.classList.remove("hidden");
 
@@ -131,7 +143,7 @@ function handleUserDisplay() {
   }
 }
 
-// ===== CATEGORY TABS (GIỮ NGUYÊN) =====
+// ===== CATEGORY TABS =====
 function bindCategoryTabs() {
   const categoryTabs = document.querySelectorAll('.category-tab');
   if (!categoryTabs.length) return;
@@ -154,7 +166,7 @@ function bindCategoryTabs() {
   });
 }
 
-// ===== PRODUCT CARD NAVIGATION (CẢI TIẾN) =====
+// ===== PRODUCT CARD NAVIGATION =====
 function bindProductCardNavigation() {
   // ✅ Bind TẤT CẢ loại card
   const allCards = document.querySelectorAll(
@@ -163,7 +175,7 @@ function bindProductCardNavigation() {
 
   allCards.forEach(card => {
     card.addEventListener('click', (event) => {
-      // Bỏ qua nếu click vào button/link
+      // ✅ Bỏ qua nếu click vào button hoặc link
       if (event.target.closest('button, a')) return;
 
       let productId = card.dataset.id;
@@ -195,7 +207,6 @@ function bindProductCardNavigation() {
     card.addEventListener('click', (event) => {
       event.stopPropagation();
       console.log("Promotion card clicked - Có thể thêm modal chi tiết khuyến mãi");
-      // TODO: Hiển thị modal với thông tin khuyến mãi chi tiết
     });
   });
 }
