@@ -441,11 +441,10 @@ function setupUserIconMenu() {
     function performLogout(redirectUrl) {
         if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
             console.log("Đang đăng xuất...");
-            localStorage.removeItem('currentUser');
+            // ĐÃ SỬA
+            localStorage.removeItem('currentStaff');
             localStorage.removeItem('jwtToken');
-            localStorage.removeItem('rememberMe');
-            alert("Bạn đã đăng xuất thành công.");
-            window.location.href = redirectUrl;
+            //...
         }
     }
 

@@ -1,0 +1,14 @@
+/* staff_profile.css */
+
+/* 1. Tái sử dụng CSS từ trang khiếu nại
+   Từ 'staff/staffProfile/' đi lùi 1 cấp -> 'staff/' rồi vào 'handleComplaint/'
+*/
+@import url('../handleComplaint/complaint.css');
+
+/* 2. Tái sử dụng CSS từ trang tài khoản
+   Từ 'staff/staffProfile/' đi lùi 2 cấp -> thư mục gốc rồi vào 'pages/account/'
+*/
+@import url('../../pages/account/account.css');
+
+
+/* 3. (Tùy chọn) Ghi đè style nếu cần */

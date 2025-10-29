@@ -1,6 +1,7 @@
 /* Register Page Styles */
 .navbar {
-    background-color: #395542; /* xanh rêu đậm */
+    background-color: #395542;
+    /* xanh rêu đậm */
     padding: 10px 60px;
     display: flex;
     justify-content: center;
@@ -9,104 +10,110 @@
     top: 0;
     z-index: 1000;
     height: 70px;
-  }
-  
-  .nav-container {
+}
+
+.nav-container {
     width: 100%;
     max-width: 1200px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  /* Logo */
-  .nav-logo a {
-  color: #fff;
-  font-family: 'Inspiration', cursive;
-  font-size: 52px;
-  font-weight: 200; 
-  text-decoration: none;
-  letter-spacing: 1px;
-  }
-  
-  /* Menu */
-  .nav-menu {
+}
+
+/* Logo */
+.nav-logo a {
+    color: #fff;
+    font-family: 'Inspiration', cursive;
+    font-size: 52px;
+    font-weight: 200;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+/* Menu */
+.nav-menu {
     list-style: none;
     display: flex;
     gap: 40px;
     padding: 0;
     margin-right: -70px;
-  }
-  
-  .nav-menu a {
+}
+
+.nav-menu a {
     color: white;
     text-decoration: none;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 15px;
-    text-transform: uppercase; /* Viết hoa toàn bộ */
+    text-transform: uppercase;
+    /* Viết hoa toàn bộ */
     transition: color 0.3s;
-  
-  }
-  
-  .nav-menu a:hover {
-    color: #e3c78d; /* vàng nhạt khi hover */
-  }
-  
-  /* Icons bên phải */
-  .nav-icons {
+
+}
+
+.nav-menu a:hover {
+    color: #e3c78d;
+    /* vàng nhạt khi hover */
+}
+
+/* Icons bên phải */
+.nav-icons {
     display: flex;
     align-items: center;
     gap: 25px;
     margin-left: -155px;
-  }
-  
-  .nav-icons a {
+}
+
+.nav-icons a {
     color: #fff;
     font-size: 20px;
     text-decoration: none;
     transition: 0.3s;
     left: 305px;
-  }
-  
-  .nav-icons a:hover {
+}
+
+.nav-icons a:hover {
     color: #e3c78d;
-  }
-  
-  /* Giỏ hàng */
-  .nav-cart {
+}
+
+/* Giỏ hàng */
+.nav-cart {
     position: relative;
-  }
-  
-  .nav-login {
-   margin-left: 285px;
-   margin-right: 50px;
-  }
-  
-  .nav-login:hover {
+}
+
+.nav-login {
+    margin-left: 285px;
+    margin-right: 50px;
+}
+
+.nav-login:hover {
     color: #e3c78d;
-  }
-  
-  /* Responsive (mobile) */
-  @media (max-width: 768px) {
+}
+
+/* Responsive (mobile) */
+@media (max-width: 768px) {
     .nav-container {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
     }
+
     .nav-menu {
-      gap: 20px;
+        gap: 20px;
     }
+
     .nav-icons {
-      gap: 15px;
+        gap: 15px;
     }
-  }
+}
+
 .form-container {
     max-width: 600px;
     margin: 120px auto 80px;
     padding: 40px;
     background: white;
     border-radius: 15px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
 }
@@ -146,8 +153,7 @@
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="tel"],
-.form-group input[type="password"],
-{
+.form-group input[type="password"] {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid #e1e5e9;
@@ -162,6 +168,7 @@ input[type="checkbox"] {
     outline: none;
     box-shadow: none;
 }
+
 input[type="checkbox"]:focus {
     outline: none;
     box-shadow: none;
@@ -215,7 +222,7 @@ input[type="checkbox"]:focus {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s;
 }
 
@@ -288,8 +295,13 @@ input[type="checkbox"]:focus {
 }
 
 @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 /* Error states */
@@ -351,16 +363,16 @@ input[type="checkbox"]:focus {
         margin: 100px 20px 60px;
         padding: 30px 25px;
     }
-    
+
     .form-title {
         font-size: 1.8rem;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr;
         gap: 0;
     }
-    
+
     .form-group label[for="agreeTerms"] {
         font-size: 13px;
     }
@@ -371,17 +383,18 @@ input[type="checkbox"]:focus {
         margin: 80px 15px 40px;
         padding: 25px 20px;
     }
-    
+
     .form-title {
         font-size: 1.6rem;
     }
-    
+
     .form-group input[type="text"],
     .form-group input[type="email"],
     .form-group input[type="tel"],
     .form-group input[type="password"],
     .form-group textarea {
-        font-size: 16px; /* Prevent zoom on iOS */
+        font-size: 16px;
+        /* Prevent zoom on iOS */
     }
 }
 
@@ -395,6 +408,7 @@ input[type="checkbox"]:focus {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -408,12 +422,12 @@ input[type="checkbox"]:focus {
     .form-container {
         border: 2px solid #000;
     }
-    
+
     .form-group input,
     .form-group textarea {
         border-width: 2px;
     }
-    
+
     .btn-submit {
         border: 2px solid #000;
     }
@@ -424,11 +438,11 @@ input[type="checkbox"]:focus {
     .form-container {
         animation: none;
     }
-    
+
     .btn-submit::before {
         display: none;
     }
-    
+
     .btn-submit:hover {
         transform: none;
     }
@@ -440,80 +454,81 @@ input[type="checkbox"]:focus {
     color: #ffffff;
     padding: 40px 100px;
     font-family: 'Crimson Text', serif;
-  }
-  
-  .footer-container {
+}
+
+.footer-container {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-  }
-  
-  .footer-left {
+}
+
+.footer-left {
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-  
-  .footer-logo {
+}
+
+.footer-logo {
     font-family: 'Inspiration', cursive;
     font-size: 52px;
     color: #fff;
-    font-weight: 200; 
+    font-weight: 200;
     text-decoration: none;
     letter-spacing: 1px;
-  
-  }
-  
-  .social-links {
-      display: flex;
-      gap: 15px;
-  }
-  
-  .social-links a {
-   width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2d5016;
-      transition: all 0.3s ease;
-      margin-top: -40px;
-  }
-  
-  .social-links a:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
-  }
-  
-  .footer-right {
+
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2d5016;
+    transition: all 0.3s ease;
+    margin-top: -40px;
+}
+
+.social-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.footer-right {
     text-align: right;
     line-height: 1.8;
     font-size: 15px;
-  }
-  
-  .footer-right b {
+}
+
+.footer-right b {
     font-weight: 600;
     font-size: 16px;
-  }
-  
-  @media (max-width: 768px) {
+}
+
+@media (max-width: 768px) {
     .footer-container {
-      flex-direction: column;
-      text-align: center;
-      gap: 30px;
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
     }
-  
+
     .footer-right {
-      text-align: center;
+        text-align: center;
     }
-  }
-  .password-wrapper {
+}
+
+.password-wrapper {
     position: relative;
-  }
-  
-  .password-wrapper .toggle-password {
+}
+
+.password-wrapper .toggle-password {
     position: absolute;
     right: 12px;
     top: 50%;
@@ -521,9 +536,8 @@ input[type="checkbox"]:focus {
     cursor: pointer;
     color: #999;
     transition: color 0.2s;
-  }
-  
-  .password-wrapper .toggle-password:hover {
+}
+
+.password-wrapper .toggle-password:hover {
     color: #333;
-  }
-  
+}

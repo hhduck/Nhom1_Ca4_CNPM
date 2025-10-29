@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hồ sơ Nhân viên - La Cuisine Ngọt</title>
+
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="staff_profile.css"> <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <a href="../../pages/home/home.html">La Cuisine Ngọt</a>
+        </div>
+        <a class="nav-menu-link" href="../ViewOders/order.html">Danh sách</a>
+        <a class="nav-menu-link" href="../handleComplaint/complaint.html">Khiếu nại</a>
+        
+        <div class="nav-user-icon">
+            <i class="fas fa-user"></i>
+            <div class="user-menu hidden">
+                <ul>
+                    <li><a href="staff_profile.html">Thông tin tài khoản</a></li> 
+                    <li><button id="logoutButton">Đăng xuất</button></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+  </nav>
+
+  <section class="account-section">
+    <div class="account-container">
+      <div class="sidebar">
+        <p class="customer-name">(Tên nhân viên)</p>
+        <ul class="sidebar-menu">
+          <li id="infoBtn">Thông tin</li>
+          <li id="complaintsBtn">Quản lý Khiếu nại</li> 
+          <li id="logoutBtn">Đăng xuất</li>
+        </ul>
+      </div>
+
+      <div class="account-info">
+        <h2 class="account-title">HỒ SƠ NHÂN VIÊN</h2>
+        <div class="info-content">
+          <h3>Thông tin</h3>
+          <form id="accountForm">
+            <label>Họ và Tên</label>
+            <input type="text" id="nameInput" placeholder="">
+
+            <label>Email</label>
+            <input type="email" id="emailInput" placeholder="">
+
+            <label>Số điện thoại</label>
+            <input type="tel" id="phoneInput" placeholder="">
+
+            <label>Địa chỉ</label>
+            <input type="text" id="addressInput" placeholder="">
+
+            <h3>Thay đổi mật khẩu</h3>
+
+            <label>Mật khẩu hiện tại (bỏ trống nếu không đổi)</label>
+            <div class="password-field">
+              <input type="password" id="oldPassword">
+              <i class="fa-solid fa-eye-slash toggle-password" data-target="oldPassword"></i>
+            </div>
+
+            <label>Mật khẩu mới (bỏ trống nếu không đổi)</label>
+            <div class="password-field">
+              <input type="password" id="newPassword">
+              <i class="fa-solid fa-eye-slash toggle-password" data-target="newPassword"></i>
+            </div>
+
+            <label>Xác nhận mật khẩu mới</label>
+            <div class="password-field">
+              <input type="password" id="confirmPassword">
+              <i class="fa-solid fa-eye-slash toggle-password" data-target="confirmPassword"></i>
+            </div>
+
+            <button type="submit" class="save-btn">Lưu thay đổi</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <script src="staff_profile.js"></script>
+
+</body>
+</html>
