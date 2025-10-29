@@ -201,7 +201,6 @@ function clearAllErrors() {
 
 async function performLogin(username, password, rememberMe) {
     try {
-        // ✅ FIX: Gọi API thực tế thay vì mock data
         const response = await fetch('../../api/auth/login.php', {
             method: 'POST',
             headers: {
@@ -217,7 +216,6 @@ async function performLogin(username, password, rememberMe) {
         submitBtn.classList.remove('loading');
         submitBtn.textContent = 'Đăng nhập';
 
-        // Kiểm tra response
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -235,14 +233,21 @@ async function performLogin(username, password, rememberMe) {
             const user = data.data.user;
             const token = data.data.token;
 
-            // ✅ SỬA LỖI: KIỂM TRA VAI TRÒ TRƯỚC KHI LƯU
-            if (user.role === 'staff' || user.role === 'admin') {
-                localStorage.setItem('currentStaff', JSON.stringify(user)); // Lưu nhân viên
+            // ✅ FIX: LƯU ĐÚNG CHO TỪNG VAI TRÒ
+            if (user.role === 'admin') {
+                // Admin cần cả 2 keys để tương thích với cả admin panel và các trang khác
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('currentStaff', JSON.stringify(user));
+            } else if (user.role === 'staff') {
+                localStorage.setItem('currentStaff', JSON.stringify(user));
+                // Staff cũng cần currentUser để một số trang dùng chung
+                localStorage.setItem('currentUser', JSON.stringify(user));
             } else {
-                localStorage.setItem('currentUser', JSON.stringify(user)); // Lưu khách hàng
+                // Customer chỉ cần currentUser
+                localStorage.setItem('currentUser', JSON.stringify(user));
             }
 
-            localStorage.setItem('jwtToken', token); // Token thì dùng chung
+            localStorage.setItem('jwtToken', token);
 
             if (rememberMe) {
                 localStorage.setItem('rememberMe', 'true');
@@ -272,7 +277,6 @@ async function performLogin(username, password, rememberMe) {
         submitBtn.classList.remove('loading');
         submitBtn.textContent = 'Đăng nhập';
 
-        // Fallback to mock data nếu API không hoạt động
         console.log('API không hoạt động, sử dụng mock data...');
         performLoginWithMockData(username, password, rememberMe);
     }
