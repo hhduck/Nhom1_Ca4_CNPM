@@ -334,10 +334,10 @@ INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, Or
 (12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', '../../assets/images/Rectangle 306.png', 100, 365, FALSE);
 
 -- 4. Promotions
-INSERT INTO Promotions (PromotionID, PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy) VALUES
-(1, 'FREESHIP2025', 'Miễn phí vận chuyển', 'Miễn phí ship cho đơn hàng từ 500k', 'free_shipping', 0, 500000, -1, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'active', 'all', 1),
-(2, 'NEWUSER10', 'Giảm 10% cho khách mới', 'Giảm 10% cho đơn hàng đầu tiên', 'percent', 10, 300000, 100, '2025-01-01 00:00:00', '2025-06-30 23:59:59', 'active', 'new', 1),
-(3, 'GIAM50K', 'Giảm 50K', 'Giảm 50,000đ cho đơn từ 500k', 'fixed_amount', 50000, 500000, 50, '2025-01-15 00:00:00', '2025-02-15 23:59:59', 'active', 'all', 1);
+INSERT INTO Promotions (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, Status, StartDate, EndDate)
+VALUES 
+('GIAM10TRON15', 'Giảm 10% cho đơn từ 150.000đ', 'percent', 10, 150000, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY)),
+('FREESHIPLOYAL', 'Miễn phí giao hàng khách hàng thân thiết', 'free_shipping', 0, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY));
 
 -- 5. Orders (Đơn hàng mẫu)
 INSERT INTO Orders (OrderID, OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, Note, CreatedAt, CompletedAt) VALUES
@@ -422,16 +422,47 @@ INSERT INTO ProductImages (ProductID, ImageURL, AltText, IsPrimary, DisplayOrder
 (2, '../../assets/images/Lime and Basil Entremets.jpg', 'Lime and Basil - View 1', TRUE, 1),
 (3, '../../assets/images/Blanche Figues & Framboises.jpg', 'Blanche Figues - View 1', TRUE, 1);
 
--- 14. Promotion Usage
-INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt) VALUES
-(2, 4, 2, 50000, DATE_SUB(NOW(), INTERVAL 2 DAY)),
-(3, 3, 5, 100000, DATE_SUB(NOW(), INTERVAL 25 DAY));
+-- 14. Promotion Usage & New Promotions (FIXED no duplicate)
+
+INSERT INTO Promotions 
+(PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy)
+VALUES
+('GIAM10TRON15', 'Giảm 10% cho đơn trên 1.500.000đ', 
+ 'Giảm 10% giá trị đơn hàng từ 1.500.000đ.', 
+ 'percent', 10, 1500000, 200, '2025-11-01 00:00:00', '2025-11-15 23:59:59', 
+ 'active', 'all', 1)
+ON DUPLICATE KEY UPDATE
+    PromotionName = VALUES(PromotionName),
+    Description   = VALUES(Description),
+    DiscountValue = VALUES(DiscountValue),
+    Status        = VALUES(Status);
+
+INSERT INTO Promotions 
+(PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy)
+VALUES
+('FREESHIPLOYAL', 'Miễn phí giao hàng', 
+ 'Áp dụng cho khách hàng thân thiết.', 
+ 'free_shipping', 0, 0, -1, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 
+ 'active', 'loyal', 1)
+ON DUPLICATE KEY UPDATE
+    PromotionName = VALUES(PromotionName),
+    Description   = VALUES(Description),
+    Status        = VALUES(Status);
+
+
+-- Ghi nhận lịch sử sử dụng khuyến mãi
+INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt)
+SELECT PromotionID, 4, 2, 50000, DATE_SUB(NOW(), INTERVAL 2 DAY)
+FROM Promotions WHERE PromotionCode = 'FREESHIPLOYAL';
+
+INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt)
+SELECT PromotionID, 3, 5, 100000, DATE_SUB(NOW(), INTERVAL 25 DAY)
+FROM Promotions WHERE PromotionCode = 'GIAM10TRON15';
 
 -- Cập nhật số lần sử dụng khuyến mãi
-UPDATE Promotions SET UsedCount = 1 WHERE PromotionID = 2;
-UPDATE Promotions SET UsedCount = 1 WHERE PromotionID = 3;
+UPDATE Promotions SET UsedCount = 1 WHERE PromotionID IN (2,3);
 
--- Cập nhật số lượng đã bán cho sản phẩm
+-- Cập nhật số lượng sản phẩm đã bán
 UPDATE Products SET SoldCount = 3 WHERE ProductID = 1;
 UPDATE Products SET SoldCount = 2 WHERE ProductID = 4;
 UPDATE Products SET SoldCount = 1 WHERE ProductID = 2;
@@ -447,7 +478,7 @@ UPDATE Products SET SoldCount = 1 WHERE ProductID = 11;
 -- ============================================
 -- THÔNG BÁO HOÀN TẤT
 -- ============================================
-SELECT 'Database created successfully!' as Status,
-       'lacuisinengot' as DatabaseName,
-       '14 tables' as TablesCreated,
-       'FULL DATA: 4 users, 12 products, 5 orders, 5 reviews, 3 complaints' as SampleData;
+SELECT 'Database created successfully with new promotions!' AS Status,
+       'lacuisinengot' AS DatabaseName,
+       'Promotions updated for Nov 2025' AS PromotionUpdate,
+       '2 new promotions added: GIAM10TRON15, FREESHIPLOYAL' AS NewPromotions;
