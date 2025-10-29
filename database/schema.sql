@@ -312,18 +312,18 @@ INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role,
 
 -- 3. Products
 INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, OriginalPrice, Quantity, Status, ImageURL, Weight, ShelfLife, IsFeatured) VALUES
-(1, 'Entremets Rose', 1, 'Bánh kem kiểu Pháp cao cấp với mousse hương hồng', 650000, 750000, 15, 'available', '../../assets/images/entremets-rose.jpg', 500, 3, TRUE),
-(2, 'Lime and Basil Entremets', 1, 'Entremet chanh và húng quế', 600000, 680000, 12, 'available', '../../assets/images/lime-and-basil-entremets.jpg', 500, 3, TRUE),
-(3, 'Blanche Figues & Framboises', 1, 'Entremet sang trọng với sung trắng và phúc bồn tử', 650000, 750000, 10, 'available', '../../assets/images/blanche-figues&framboises.jpg', 550, 3, TRUE),
-(4, 'Mousse Chanh Dây', 2, 'Bánh mousse chanh dây tươi mát', 550000, 600000, 25, 'available', '../../assets/images/mousse-chanh-day.jpg', 450, 2, TRUE),
-(5, 'Mousse Dưa Lưới', 2, 'Mousse dưa lưới ngọt thanh', 550000, 600000, 20, 'available', '../../assets/images/mousse-dua-luoi.jpg', 450, 2, TRUE),
-(6, 'Mousse Việt Quất', 2, 'Mousse việt quất chua ngọt', 550000, 600000, 18, 'available', '../../assets/images/mousse-viet-quat.jpg', 450, 2, FALSE),
-(7, 'Orange Seranade', 3, 'Bánh kem cam phong cách rustic', 450000, 500000, 15, 'available', '../../assets/images/orange-seranade.jpg', 600, 3, FALSE),
-(8, 'Strawberry Cloud Cake', 3, 'Bánh kem dâu tây mây', 500000, 550000, 12, 'available', '../../assets/images/strawberry-cloud-cake.jpg', 650, 3, FALSE),
-(9, 'Earl Grey Bloom', 3, 'Bánh kem earl grey', 500000, 550000, 10, 'available', '../../assets/images/earl-grey-bloom.jpg', 650, 3, TRUE),
-(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', '../../assets/images/non.jpg', 20, 365, FALSE),
-(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', '../../assets/images/phaohoa.jpg', 50, 365, FALSE),
-(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', '../../assets/images/trang-tri.jpg', 100, 365, FALSE);
+(1, 'Entremets Rose', 1, 'Bánh kem kiểu Pháp cao cấp với mousse hương hồng', 650000, 750000, 15, 'available', 'assets/images/entremets-rose.jpg', 500, 3, TRUE),
+(2, 'Lime and Basil Entremets', 1, 'Entremet chanh và húng quế', 600000, 680000, 12, 'available', 'assets/images/lime-and-basil-entremets.jpg', 500, 3, TRUE),
+(3, 'Blanche Figues & Framboises', 1, 'Entremet sang trọng với sung trắng và phúc bồn tử', 650000, 750000, 10, 'available', 'assets/images/blanche-figues&framboises.jpg', 550, 3, TRUE),
+(4, 'Mousse Chanh Dây', 2, 'Bánh mousse chanh dây tươi mát', 550000, 600000, 25, 'available', 'assets/images/mousse-chanh-day.jpg', 450, 2, TRUE),
+(5, 'Mousse Dưa Lưới', 2, 'Mousse dưa lưới ngọt thanh', 550000, 600000, 20, 'available', 'assets/images/mousse-dua-luoi.jpg', 450, 2, TRUE),
+(6, 'Mousse Việt Quất', 2, 'Mousse việt quất chua ngọt', 550000, 600000, 18, 'available', 'assets/images/mousse-viet-quat.jpg', 450, 2, FALSE),
+(7, 'Orange Seranade', 3, 'Bánh kem cam phong cách rustic', 450000, 500000, 15, 'available', 'assets/images/orange-serenade.jpg', 600, 3, FALSE),
+(8, 'Strawberry Cloud Cake', 3, 'Bánh kem dâu tây mây', 500000, 550000, 12, 'available', 'assets/images/strawberry-cloud-cake.jpg', 650, 3, FALSE),
+(9, 'Earl Grey Bloom', 3, 'Bánh kem earl grey', 500000, 550000, 10, 'available', 'assets/images/earl-grey-bloom.jpg', 650, 3, TRUE),
+(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', 'assets/images/non.jpg', 20, 365, FALSE),
+(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', 'assets/images/phaohoa.jpg', 50, 365, FALSE),
+(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', 'assets/images/trang-tri.jpg', 100, 365, FALSE);
 
 -- 4. Promotions
 INSERT INTO Promotions (PromotionID, PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy) VALUES
@@ -410,9 +410,9 @@ INSERT INTO Wishlist (UserID, ProductID) VALUES
 
 -- 13. Product Images (Hình ảnh sản phẩm)
 INSERT INTO ProductImages (ProductID, ImageURL, AltText, IsPrimary, DisplayOrder) VALUES
-(1, '../../assets/images/entremets-rose.jpg', 'Entremets Rose - View 1', TRUE, 1),
-(2, '../../assets/images/lime-and-basil-entremets.jpg', 'Lime and Basil - View 1', TRUE, 1),
-(3, '../../assets/images/blanche-figues&framboises.jpg', 'Blanche Figues - View 1', TRUE, 1);
+(1, 'assets/images/entremets-rose.jpg', 'Entremets Rose - View 1', TRUE, 1),
+(2, 'assets/images/lime-and-basil-entremets.jpg', 'Lime and Basil - View 1', TRUE, 1),
+(3, 'assets/images/blanche-figues&framboises.jpg', 'Blanche Figues - View 1', TRUE, 1);
 
 -- 14. Promotion Usage
 INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt) VALUES
