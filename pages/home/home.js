@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateCartCount();
   bindProductCardNavigation();
   handleUserDisplay(); // Xử lý hiển thị user menu
+  bindContactForm();   // <--- ĐÃ THÊM
 });
 
 // ===== CẬP NHẬT GIỎ HÀNG =====
@@ -107,7 +108,7 @@ function handleUserDisplay() {
       }
     });
 
-    // ✅ Xử lý nút ĐĂNG XUẤT
+    // ✅ Xử lý nút ĐĂNG XUẤT (Đã sửa ID thành logoutBtnNav)
     const logoutBtn = document.getElementById("logoutBtnNav");
     if (logoutBtn) {
       // XÓA listener cũ bằng cách clone
@@ -208,5 +209,75 @@ function bindProductCardNavigation() {
       event.stopPropagation();
       console.log("Promotion card clicked - Có thể thêm modal chi tiết khuyến mãi");
     });
+  });
+}
+
+// ===== XỬ LÝ FORM LIÊN HỆ =====
+function bindContactForm() {
+  const contactForm = document.getElementById('contactForm');
+  if (!contactForm) return;
+
+  contactForm.addEventListener('submit', async function (event) {
+    event.preventDefault(); // Ngăn trình duyệt tải lại trang
+
+    const subjectInput = document.getElementById('contactSubject');
+    const messageInput = document.getElementById('contactMessage');
+    const submitButton = contactForm.querySelector('.btn-submit');
+
+    // Lấy thông tin đăng nhập
+    const token = localStorage.getItem('jwtToken');
+    // Sửa lỗi nhỏ: Cần kiểm tra currentUser tồn tại trước khi parse
+    let currentUser = null;
+    const currentUserData = localStorage.getItem('currentUser');
+    if (currentUserData) {
+      try {
+        currentUser = JSON.parse(currentUserData);
+      } catch (e) {
+        console.error("Lỗi parse currentUser:", e);
+      }
+    }
+
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    if (!token || !currentUser || !currentUser.id) {
+      alert("Vui lòng đăng nhập để gửi liên hệ. Bạn sẽ được chuyển đến trang đăng nhập.");
+      window.location.href = "../login/login.html";
+      return;
+    }
+
+    const data = {
+      subject: subjectInput.value,
+      message: messageInput.value
+    };
+
+    // Vô hiệu hóa nút Gửi và thay đổi text
+    submitButton.disabled = true;
+    submitButton.textContent = 'Đang gửi...';
+
+    try {
+      const response = await fetch('../api/contacts.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Gửi token để xác thực
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert("Gửi liên hệ thành công! Chúng tôi sẽ phản hồi bạn sớm nhất.");
+        contactForm.reset(); // Xóa nội dung form
+      } else {
+        throw new Error(result.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi liên hệ:', error);
+      alert(`Lỗi: ${error.message}`);
+    } finally {
+      // Kích hoạt lại nút Gửi
+      submitButton.disabled = false;
+      submitButton.textContent = 'Gửi đi';
+    }
   });
 }
