@@ -1,4 +1,4 @@
-const API_URL = "../../api/cart.php"; 
+const API_URL = "../../api/cart.php";
 const urlParams = new URLSearchParams(window.location.search);
 const userId = urlParams.get('user_id') || 1; // nếu không có thì dùng 1
 
@@ -133,7 +133,7 @@ function renderCart(cartData) {
         <div class="cart-list">
             ${items.map(item => `
                 <div class="cart-item" data-id="${item.cart_id}">
-                    <img src="../../${item.image_url}" alt="${item.product_name}" class="cart-item-img">
+                    <img src="${item.image_url}" alt="${item.product_name}" class="cart-item-img">
                     <div class="cart-item-info">
                         <h3>${item.product_name}</h3>
                         <p>Giá: ${formatCurrency(item.price)}</p>
@@ -148,7 +148,6 @@ function renderCart(cartData) {
                 </div>
             `).join("")}
         </div>
-
         <div class="cart-summary">
             <h3>Tổng cộng: ${formatCurrency(total_amount)}</h3>
             <button class="btn-primary">Thanh toán</button>
