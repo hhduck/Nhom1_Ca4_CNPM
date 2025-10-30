@@ -60,7 +60,8 @@ function handleUserDisplay() {
   const loginLink_1 = document.querySelector(".nav-login-1"); // Link "ĐĂNG NHẬP"
   const loginLink_2 = document.querySelector(".nav-login-2"); // Link "ĐĂNG KÍ"
   const userMenu = document.querySelector(".user-menu");       // Menu xổ xuống (ẩn)
-  const navUserLi = document.querySelector(".nav-user");       // Thẻ <li> cha
+  const navUserLi = document.querySelector(".nav-user");
+  const navSeparator = document.querySelector(".nav-separator");    // Thẻ <li> cha
 
   // SỬA LỖI 1: Kiểm tra đúng các biến đã khai báo
   if (!loginLink_1 || !loginLink_2 || !userMenu || !navUserLi) {
@@ -97,11 +98,10 @@ function handleUserDisplay() {
   }
 
   if (currentUser && currentUser.id) {
-    // 🔹 ĐÃ ĐĂNG NHẬP
-
-    // SỬA LỖI 2: Ẩn link "Đăng nhập" và "Đăng ký"
+    // ĐÃ ĐĂNG NHẬP thì ẩn đi link đăng nhập và đăng ký
     loginLink_1.style.display = "none";
     loginLink_2.style.display = "none";
+    if (navSeparator) navSeparator.style.display = "none";
 
     // Hiện user menu (ban đầu ẩn)
     userMenu.style.display = "none";
