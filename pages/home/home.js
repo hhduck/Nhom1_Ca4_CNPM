@@ -255,24 +255,54 @@ function bindProductCardNavigation() {
   });
 }
 
-// ===== XỬ LÝ CONTACT FORM =====
+// ========== XỬ LÝ FORM LIÊN HỆ ==========
 function bindContactForm() {
   const contactForm = document.getElementById('contactForm');
+  if (!contactForm) return;
 
-  if (contactForm) {
-    contactForm.addEventListener('submit', function (e) {
-      // 1. Ngăn form gửi đi và reload lại trang
-      e.preventDefault();
+  contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-      // 2. Lấy dữ liệu (nếu cần)
-      const subject = document.getElementById('contactSubject').value;
-      const message = document.getElementById('contactMessage').value;
+    const subject = document.getElementById('contactSubject').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
 
-      // 3. Thông báo cho người dùng
-      alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.');
+    // ✅ Lấy user từ localStorage
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || !currentUser.id) {
+      alert("Vui lòng đăng nhập để gửi liên hệ.");
+      window.location.href = "../login/login.html";
+      return;
+    }
 
-      // 4. Xóa nội dung form sau khi gửi
-      contactForm.reset();
+    fetch("../../api/contact-home.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: currentUser.id, // Gửi ID người dùng
+        subject,
+        message
+      })
+    })
+    .then(async res => {
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        console.error("Server trả về không phải JSON:", text);
+        throw new Error("Server không trả về JSON hợp lệ");
+      }
+    })
+    .then(res => {
+      if (res.success) {
+        alert(res.message || "Gửi liên hệ thành công!");
+        contactForm.reset();
+      } else {
+        alert("Gửi thất bại: " + res.message);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Có lỗi xảy ra khi gửi liên hệ.");
     });
-  }
+  });
 }
