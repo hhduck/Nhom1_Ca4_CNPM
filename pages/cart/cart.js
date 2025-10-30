@@ -1,236 +1,215 @@
 const API_URL = "../../api/cart.php";
 const urlParams = new URLSearchParams(window.location.search);
-const userId = urlParams.get('user_id') || 1; // nếu không có thì dùng 1
-
+const userId = urlParams.get('user_id') || 1;
 const cartContainer = document.getElementById("cartContainer");
-// ==========================
-// ==========================
-// CART.JS - XỬ LÝ MENU USER DÀNH CHO KHÁCH HÀNG
-// ==========================
+
 document.addEventListener("DOMContentLoaded", () => {
   handleUserDisplay();
+  loadCart();
+  updateCartCount();
 });
 
-// ========== HIỂN THỊ ICON USER VÀ MENU ==========
+// ========== HIỂN THỊ MENU USER ==========
 function handleUserDisplay() {
   const loginLink = document.querySelector(".nav-login");
   const userMenu = document.querySelector(".user-menu");
 
-  if (!loginLink || !userMenu) {
-    console.error("Thiếu phần tử .nav-login hoặc .user-menu trong cart.html.");
-    return;
-  }
-
-  // Reset event listener
-  const newLoginLink = loginLink.cloneNode(true);
-  loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+  if (!loginLink || !userMenu) return;
 
   const customerData = localStorage.getItem("currentUser");
   const jwtToken = localStorage.getItem("jwtToken");
 
   let currentUser = null;
   if (customerData && jwtToken) {
-    try {
-      currentUser = JSON.parse(customerData);
-    } catch {
-      currentUser = null;
-    }
+    try { currentUser = JSON.parse(customerData); } catch {}
   }
 
-  // --- Nếu ĐÃ đăng nhập ---
   if (currentUser && currentUser.id) {
-    newLoginLink.innerHTML = `<i class="fas fa-user"></i>`;
-    newLoginLink.href = "#";
-
-    const accountLink = userMenu.querySelector("a[href*='account.html']");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    // Cập nhật link tài khoản
-    if (accountLink) accountLink.href = "../account/account.html";
-
-    // Toggle menu user
-    newLoginLink.addEventListener("click", (e) => {
+    loginLink.innerHTML = `<i class="fas fa-user"></i>`;
+    loginLink.href = "#";
+    loginLink.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       userMenu.style.display = userMenu.style.display === "block" ? "none" : "block";
     });
-
-    // Ẩn khi click ra ngoài
-    document.addEventListener("click", (e) => {
-      if (!newLoginLink.contains(e.target) && !userMenu.contains(e.target)) {
-        userMenu.style.display = "none";
-      }
+    document.addEventListener("click", e => {
+      if (!loginLink.contains(e.target) && !userMenu.contains(e.target)) userMenu.style.display = "none";
     });
-
-    // Logout
-    if (logoutBtn) {
-      const newLogoutBtn = logoutBtn.cloneNode(true);
-      logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
-      newLogoutBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        performLogout("../login/login.html");
-      });
-    }
-
-    userMenu.style.display = "none";
-  } 
-  // --- Nếu CHƯA đăng nhập ---
-  else {
-    newLoginLink.innerHTML = "ĐĂNG NHẬP/ĐĂNG KÍ";
-    newLoginLink.href = "../login/login.html";
-    userMenu.style.display = "none";
+    document.getElementById("logoutBtn").addEventListener("click", () => performLogout("../login/login.html"));
+  } else {
+    loginLink.textContent = "ĐĂNG NHẬP/ĐĂNG KÍ";
+    loginLink.href = "../login/login.html";
   }
 }
 
-// ========== ĐĂNG XUẤT ==========
 function performLogout(redirectUrl) {
-  localStorage.removeItem("currentUser");
-  localStorage.removeItem("jwtToken");
-  localStorage.removeItem("rememberMe");
+  ["currentUser", "jwtToken", "rememberMe"].forEach(k => localStorage.removeItem(k));
   window.location.href = redirectUrl;
 }
 
-// ========================
-// 🧠 HÀM CHÍNH
-// ========================
-document.addEventListener("DOMContentLoaded", () => {
-    loadCart();
-});
-
-// ========================
-// 🧩 LẤY DỮ LIỆU GIỎ HÀNG
-// ========================
+// ========== TẢI DỮ LIỆU GIỎ HÀNG ==========
 async function loadCart() {
-    try {
-        const res = await fetch(`${API_URL}?user_id=${userId}`);
-        const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}?user_id=${userId}`);
+    const data = await res.json();
 
-        if (!data.success || data.data.total_items === 0) {
-            cartContainer.innerHTML = `
-                <div class="empty-cart">
-                    <i class="fas fa-shopping-cart cart-icon"></i>
-                    <p class="cart-text">Giỏ hàng trống, vui lòng thêm sản phẩm!</p>
-                    <a href="../home/home.html" class="btn-primary">Quay lại trang chủ</a>
-                </div>
-            `;
-            return;
-        }
-
-        renderCart(data.data);
-    } catch (err) {
-        console.error("Lỗi tải giỏ hàng:", err);
-        cartContainer.innerHTML = `<p class="error">Không thể tải giỏ hàng.</p>`;
+    if (data.success && data.data.total_items > 0) {
+      renderCart(data.data);
+    } else {
+      const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      renderCartFromLocal(localCart);
     }
+  } catch (err) {
+    console.warn("Không lấy được từ API, fallback localStorage.");
+    const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    renderCartFromLocal(localCart);
+  }
 }
 
-// ========================
-// 🎨 HIỂN THỊ GIỎ HÀNG
-// ========================
-function renderCart(cartData) {
-    const { items, total_amount } = cartData;
-
+function renderCartFromLocal(cart) {
+  const cartContainer = document.getElementById("cartContainer");
+  if (cart.length === 0) {
     cartContainer.innerHTML = `
-        <div class="cart-list">
-            ${items.map(item => `
-                <div class="cart-item" data-id="${item.cart_id}">
-                    <img src="${item.image_url}" alt="${item.product_name}" class="cart-item-img">
-                    <div class="cart-item-info">
-                        <h3>${item.product_name}</h3>
-                        <p>Giá: ${formatCurrency(item.price)}</p>
-                        <div class="quantity-control">
-                            <button class="btn-qty decrease">-</button>
-                            <input type="number" value="${item.quantity}" min="1" class="input-qty">
-                            <button class="btn-qty increase">+</button>
-                        </div>
-                        <p class="subtotal">Tạm tính: ${formatCurrency(item.subtotal)}</p>
-                    </div>
-                    <button class="btn-remove"><i class="fas fa-trash"></i></button>
-                </div>
-            `).join("")}
-        </div>
-        <div class="cart-summary">
-            <h3>Tổng cộng: ${formatCurrency(total_amount)}</h3>
-            <button class="btn-primary">Thanh toán</button>
-        </div>
-    `;
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart cart-icon"></i>
+        <p class="cart-text">Giỏ hàng trống, vui lòng thêm sản phẩm!</p>
+        <a href="../home/home.html" class="btn-primary">Quay lại trang chủ</a>
+      </div>`;
+    return;
+  }
 
-    attachCartEvents();
+  let total = 0;
+  let rows = cart
+    .map((item, index) => {
+      const price = parseInt(item.price.replace(/[^\d]/g, "")) || 0;
+      const subtotal = price * item.quantity;
+      total += subtotal;
+      return `
+        <tr>
+          <td><img src="${item.image}" alt="${item.name}" class="cart-item-img"></td>
+          <td class="cart-item-name">${item.name}</td>
+          <td class="cart-item-price">${item.price}</td>
+          <td>
+            <div class="quantity-control">
+              <button class="decrease">-</button>
+              <input type="number" value="${item.quantity}" min="1" class="input-qty">
+              <button class="increase">+</button>
+            </div>
+          </td>
+          <td class="cart-subtotal">${subtotal.toLocaleString()} VND</td>
+          <td>
+            <button class="btn-remove" data-index="${index}">
+              <i class="fas fa-trash"></i> Xóa
+            </button>
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  cartContainer.innerHTML = `
+    <h2>Giỏ hàng của bạn</h2>
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Hình ảnh</th>
+          <th>Sản phẩm</th>
+          <th>Giá</th>
+          <th>Số lượng</th>
+          <th>Tạm tính</th>
+          <th>Xóa</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+
+    <div class="cart-summary">
+      <h3>Tổng cộng: ${total.toLocaleString()} VND</h3>
+      <button class="btn-primary">Tiến hành thanh toán</button>
+    </div>
+  `;
+
+  updateCartCount();
+  attachQuantityHandlers();
+  attachRemoveHandlers(); // Thêm sự kiện xoá
 }
 
-// ========================
-// ⚙️ GẮN SỰ KIỆN
-// ========================
-function attachCartEvents() {
-    // Xoá sản phẩm
-    document.querySelectorAll(".btn-remove").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-            const cartId = e.target.closest(".cart-item").dataset.id;
-            await removeCartItem(cartId);
-        });
-    });
-
-    // Tăng giảm số lượng
-    document.querySelectorAll(".btn-qty").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-            const item = e.target.closest(".cart-item");
-            const input = item.querySelector(".input-qty");
-            let newQty = parseInt(input.value);
-
-            if (e.target.classList.contains("increase")) newQty++;
-            else if (e.target.classList.contains("decrease")) newQty--;
-
-            if (newQty < 1) return;
-
-            input.value = newQty;
-            await updateCartItem(item.dataset.id, newQty);
-        });
-    });
-}
-
-// ========================
-// 🔧 CẬP NHẬT SỐ LƯỢNG
-// ========================
-async function updateCartItem(cartId, quantity) {
-    try {
-        const res = await fetch(`${API_URL}/${cartId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ quantity })
-        });
-
-        const data = await res.json();
-        if (data.success) loadCart();
-        else alert(data.message);
-    } catch (err) {
-        console.error("Lỗi cập nhật giỏ hàng:", err);
+// ========== HIỂN THỊ SỐ ICON ==========
+function updateCartCount() {
+  try {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const totalItems = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+    const cartCount = document.querySelector(".cart-count");
+    if (cartCount) {
+      cartCount.textContent = totalItems;
+      cartCount.style.display = totalItems > 0 ? "inline-block" : "none";
     }
+  } catch (e) {
+    console.error("Lỗi hiển thị số lượng giỏ hàng:", e);
+  }
 }
 
-// ========================
-// 🗑️ XÓA SẢN PHẨM
-// ========================
-async function removeCartItem(cartId) {
-    if (!confirm("Bạn có chắc muốn xoá sản phẩm này?")) return;
-
-    try {
-        const res = await fetch(`${API_URL}/${cartId}`, {
-            method: "DELETE"
-        });
-
-        const data = await res.json();
-        if (data.success) loadCart();
-        else alert(data.message);
-    } catch (err) {
-        console.error("Lỗi xoá sản phẩm:", err);
-    }
-}
-
-// ========================
-// 💰 ĐỊNH DẠNG TIỀN
-// ========================
+// ========== ĐỊNH DẠNG TIỀN ==========
 function formatCurrency(num) {
-    return new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND"
-    }).format(num);
+  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(num);
 }
+// ==========================
+// 🎛️ XỬ LÝ TĂNG / GIẢM SỐ LƯỢNG NGAY TRONG GIỎ HÀNG
+// ==========================
+function attachQuantityHandlers() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const cartContainer = document.getElementById("cartContainer");
+
+  cartContainer.querySelectorAll(".quantity-control").forEach((control, index) => {
+    const decreaseBtn = control.querySelector(".decrease");
+    const increaseBtn = control.querySelector(".increase");
+    const qtyInput = control.querySelector(".input-qty");
+
+    decreaseBtn.addEventListener("click", () => {
+      let newQty = parseInt(qtyInput.value) - 1;
+      if (newQty < 1) newQty = 1; // Không cho nhỏ hơn 1
+      qtyInput.value = newQty;
+      cart[index].quantity = newQty;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCartFromLocal(cart); // Cập nhật lại giao diện và tổng tiền
+    });
+
+    increaseBtn.addEventListener("click", () => {
+      let newQty = parseInt(qtyInput.value) + 1;
+      qtyInput.value = newQty;
+      cart[index].quantity = newQty;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCartFromLocal(cart);
+    });
+
+    // Cho phép nhập trực tiếp số lượng
+    qtyInput.addEventListener("change", () => {
+      let val = parseInt(qtyInput.value);
+      if (isNaN(val) || val < 1) val = 1;
+      qtyInput.value = val;
+      cart[index].quantity = val;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCartFromLocal(cart);
+    });
+  });
+}
+// ==========================
+// 🗑️ XỬ LÝ XÓA SẢN PHẨM KHỎI GIỎ
+// ==========================
+function attachRemoveHandlers() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const removeButtons = document.querySelectorAll(".btn-remove");
+
+  removeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = parseInt(btn.dataset.index);
+      if (confirm(`Bạn có chắc muốn xóa "${cart[index].name}" khỏi giỏ hàng không?`)) {
+        cart.splice(index, 1); // Xóa 1 sản phẩm tại vị trí index
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCartFromLocal(cart);
+      }
+    });
+  });
+}
+
+
