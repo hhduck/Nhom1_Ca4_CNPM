@@ -31,12 +31,14 @@ body {
 }
 
 .logo {
-    font-family: 'Inspiration', cursive !important;
+    font-family: 'Inspiration', 'Brush Script MT', cursive !important;
     font-size: 52px;
     color: #fff;
     font-weight: 200;
     text-decoration: none;
     letter-spacing: 1px;
+    /* Giảm FOUT bằng cách giữ không gian cho text */
+    font-display: block;
 }
 
 .main-nav {
