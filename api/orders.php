@@ -152,7 +152,29 @@ function getAllOrders($db)
 function getOrderById($db, $id)
 {
     $queryOrder = "SELECT 
-                     o.*,
+                     o.OrderID as order_id,
+                     o.OrderCode as order_code,
+                     o.CustomerID as customer_id,
+                     o.CustomerName as customer_name,
+                     o.CustomerPhone as customer_phone,
+                     o.CustomerEmail as customer_email,
+                     o.ShippingAddress as shipping_address,
+                     o.Ward as ward,
+                     o.District as district,
+                     o.City as city,
+                     o.TotalAmount as total_amount,
+                     o.DiscountAmount as discount_amount,
+                     o.ShippingFee as shipping_fee,
+                     o.FinalAmount as final_amount,
+                     o.PaymentMethod as payment_method,
+                     o.PaymentStatus as payment_status,
+                     o.OrderStatus as order_status,
+                     o.Note as note,
+                     o.CancelReason as cancel_reason,
+                     o.DeliveryDate as delivery_date,
+                     o.DeliveryTime as delivery_time,
+                     o.CreatedAt as created_at,
+                     o.UpdatedAt as updated_at,
                      u.FullName as customer_full_name
                    FROM Orders o
                    LEFT JOIN Users u ON o.CustomerID = u.UserID

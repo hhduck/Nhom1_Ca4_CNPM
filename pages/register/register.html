@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +11,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inspiration&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inspiration&family=Crimson+Text:wght@400;600&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -19,24 +23,35 @@
             <div class="nav-logo">
                 <a href="../home/home.html">La Cuisine Ngọt</a>
             </div>
-    
+
             <ul class="nav-menu">
                 <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
                 <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
                 <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
-                <div class="nav-icons">
-                    <a href="../cart/cart.html" class="nav-cart">
+
+                <li>
+                    <a href="../cart/cart.html" class="nav-cart" style="padding: 0 10px;">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
+                </li>
+
+                <li class="nav-user">
+                    <a href="../login/login.html" class="nav-login-1">ĐĂNG NHẬP</a>
+                    <span class="nav-separator">|</span>
+                    <a href="../register/register.html" class="nav-login-2">ĐĂNG KÍ</a>
+
+                    <div class="user-menu hidden">
+                        <ul>
+                            <li><button id="tt">Thông tin tài khoản</button></li>
+                            <li><button id="logoutBtnNav">Đăng xuất</button></li>
+                        </ul>
                     </div>
-    <li class="nav-user">
-    <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
-    </li>
-        </ul>
-            </div>
+                </li>
+            </ul>
+        </div>
         </div>
     </nav>
-  
+
 
     <!-- Register Form -->
     <div class="form-container">
@@ -52,80 +67,81 @@
                     <input type="text" id="lastName" name="lastName" required>
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="phone">Số điện thoại</label>
                 <input type="tel" id="phone" name="phone" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="username">Tên đăng nhập</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="password">Mật khẩu</label>
                 <div class="password-wrapper">
-                  <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu">
-                  <i class="fas fa-eye toggle-password"></i>
-                </div> </div>
-            
+                    <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu">
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="confirmPassword">Xác nhận mật khẩu</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="address">Địa chỉ</label>
                 <input type="text" id="address" name="address" required>
             </div>
-            
+
             <label for="agreeTerms">
                 <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
                 Tôi đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a>
-              </label>
-              
-            
+            </label>
+
+
             <button type="submit" class="btn-submit">Đăng ký</button>
         </form>
-        
+
         <div class="form-links">
             <a href="../login/login.html">Đã có tài khoản? Đăng nhập ngay</a>
         </div>
     </div>
 
     <!-- FOOTER -->
-<footer class="footer">
-    <div class="footer-container">
-      <div class="footer-left">
-        <h2 class="footer-logo">La Cuisine Ngọt</h2>
-        <div class="social-links">
-    <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
-      <i class="fab fa-facebook"></i>
-    </a>
-    <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
-      <i class="fab fa-instagram"></i>
-    </a>
-  </div>
-      </div>
-  
-      <div class="footer-right">
-        <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
-  </br>
-        <p><b>Ngọt INSIDE (Phan Rang)</b><br />85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p>
-      </br>
-        <p><b>Ngọt AROUND (Phan Thiết)</b><br />86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
-      </div>
-    </div>
-  </footer>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <h2 class="footer-logo">La Cuisine Ngọt</h2>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-right">
+                <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
+                </br>
+                <p><b>Ngọt INSIDE (Phan Rang)</b><br />85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p>
+                </br>
+                <p><b>Ngọt AROUND (Phan Thiết)</b><br />86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="../../assets/js/main.js"></script>
     <script src="register.js"></script>
 </body>
-</html>
 
+</html>

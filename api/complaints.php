@@ -116,7 +116,24 @@ function getAllComplaints($db) {
  */
 function getComplaintById($db, $complaintId) {
     $query = "SELECT 
-                c.*,
+                c.ComplaintID as complaint_id,
+                c.ComplaintCode as complaint_code,
+                c.OrderID as order_id,
+                c.CustomerID as customer_id,
+                c.ComplaintType as complaint_type,
+                c.Title as title,
+                c.Content as content,
+                c.Images as images,
+                c.Status as status,
+                c.Priority as priority,
+                c.AssignedTo as assigned_to,
+                c.Resolution as resolution,
+                c.CompensationType as compensation_type,
+                c.CompensationValue as compensation_value,
+                c.CreatedAt as created_at,
+                c.UpdatedAt as updated_at,
+                c.ResolvedAt as resolved_at,
+                c.ClosedAt as closed_at,
                 u.FullName as customer_name,
                 u.Phone as customer_phone,
                 u.Email as customer_email,
@@ -134,7 +151,14 @@ function getComplaintById($db, $complaintId) {
     if (!$complaint) {
         throw new Exception("Không tìm thấy khiếu nại", 404);
     }
-    $respQuery = "SELECT r.*, u.FullName as user_name 
+    $respQuery = "SELECT 
+                    r.ResponseID as response_id,
+                    r.ComplaintID as complaint_id,
+                    r.UserID as user_id,
+                    r.UserType as user_type,
+                    r.Content as content,
+                    r.CreatedAt as created_at,
+                    u.FullName as user_name 
                   FROM ComplaintResponses r
                   JOIN Users u ON r.UserID = u.UserID
                   WHERE r.ComplaintID = :id ORDER BY r.CreatedAt ASC";

@@ -40,6 +40,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Setup form login nếu chưa đăng nhập
     setupLoginForm();
+    handleUserDisplay(); // Dòng này bạn đã có
+    bindCartNavigation(); // <-- THÊM DÒNG NÀY
+
 });
 
 function setupLoginForm() {
@@ -425,3 +428,153 @@ window.addEventListener('load', function () {
     }
 });
 
+// ===== HÀM XỬ LÝ NAVBAR (Dán vào register.js) =====
+function handleUserDisplay() {
+    const loginLink_1 = document.querySelector(".nav-login-1");
+    const loginLink_2 = document.querySelector(".nav-login-2");
+    const navSeparator = document.querySelector(".nav-separator");
+    const userMenu = document.querySelector(".user-menu");
+    const navUserLi = document.querySelector(".nav-user");
+
+    if (!loginLink_1 || !loginLink_2 || !navSeparator || !userMenu || !navUserLi) {
+        console.error("Lỗi: Thiếu các thành phần navbar để JS hoạt động.");
+        return;
+    }
+
+    // Kiểm tra CẢ Staff VÀ Customer
+    const staffData = localStorage.getItem("currentStaff");
+    const customerData = localStorage.getItem("currentUser");
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    let currentUser = null;
+    let userType = null;
+
+    if (staffData && jwtToken) {
+        try {
+            currentUser = JSON.parse(staffData);
+            if (currentUser && currentUser.id) userType = 'staff';
+        } catch (e) { console.error("Lỗi parse staff data:", e); }
+    }
+
+    if (!currentUser && customerData && jwtToken) {
+        try {
+            currentUser = JSON.parse(customerData);
+            if (currentUser && currentUser.id) userType = 'customer';
+        } catch (e) { console.error("Lỗi parse customer data:", e); }
+    }
+
+    if (currentUser && currentUser.id) {
+        // ---- ĐÃ ĐĂNG NHẬP ----
+        loginLink_1.style.display = "none";
+        loginLink_2.style.display = "none";
+        navSeparator.style.display = "none";
+
+        userMenu.style.display = "none";
+        userMenu.classList.remove("hidden");
+
+        let userIcon = navUserLi.querySelector(".user-icon-link");
+        if (!userIcon) {
+            userIcon = document.createElement('a');
+            userIcon.href = "#";
+            userIcon.className = "user-icon-link";
+            userIcon.innerHTML = `<i class="fas fa-user"></i>`;
+            navUserLi.prepend(userIcon);
+        }
+        userIcon.style.display = 'inline-block';
+
+        const accountBtn = document.getElementById("tt");
+        if (accountBtn) {
+            accountBtn.onclick = null;
+            accountBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const accountUrl = (userType === 'staff')
+                    ? "../staff/staffProfile/staff_profile.html"
+                    // SỬA: Trang register/login không biết user là ai, mặc định về account.html
+                    : "../account/account.html";
+                window.location.href = accountUrl;
+            });
+        }
+
+        const newUserIcon = userIcon.cloneNode(true);
+        userIcon.parentNode.replaceChild(newUserIcon, userIcon);
+
+        newUserIcon.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const isVisible = userMenu.style.display === "block";
+            userMenu.style.display = isVisible ? "none" : "block";
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!newUserIcon.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.style.display = "none";
+            }
+        });
+
+        const logoutBtn = document.getElementById("logoutBtnNav");
+        if (logoutBtn) {
+            const newLogoutBtn = logoutBtn.cloneNode(true);
+            logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+
+            newLogoutBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                localStorage.removeItem("currentStaff");
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("jwtToken");
+                localStorage.removeItem("rememberMe");
+                window.location.href = "../login/login.html"; // Luôn về login khi logout
+            });
+        }
+
+    } else {
+        // ---- CHƯA ĐĂNG NHẬP ----
+        loginLink_1.style.display = "inline-block";
+        loginLink_2.style.display = "inline-block";
+        navSeparator.style.display = "inline-block";
+
+        userMenu.classList.add("hidden");
+        userMenu.style.display = "none";
+
+        let userIcon = navUserLi.querySelector(".user-icon-link");
+        if (userIcon) {
+            userIcon.style.display = 'none';
+        }
+    }
+}
+// ===== HẾT HÀM NAVBAR ===== 
+
+// ===== DÁN VÀO CUỐI TỆP LOGIN.JS VÀ REGISTER.JS =====
+
+/**
+ * Cập nhật số lượng hiển thị trên icon giỏ hàng
+ * (Lấy từ cart.js và sửa 'flex' cho nhất quán)
+ */
+/**
+ * Chặn click giỏ hàng và kiểm tra đăng nhập
+ * (Hàm này bị thiếu trong login.js và register.js)
+ */
+function bindCartNavigation() {
+    const cartIcon = document.querySelector('.nav-cart');
+    if (!cartIcon) return;
+
+    cartIcon.addEventListener('click', (e) => {
+        // Chặn hành vi <a href> mặc định
+        e.preventDefault();
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentStaff = JSON.parse(localStorage.getItem('currentStaff'));
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        // Nếu chưa đăng nhập -> Cảnh báo
+        if ((!currentUser && !currentStaff) || !jwtToken) {
+            alert("Vui lòng đăng nhập để xem giỏ hàng.");
+            window.location.href = "../login/login.html"; // Chuyển về trang login
+            return;
+        }
+
+        // Nếu đã đăng nhập -> Đi đến giỏ hàng
+        const userId = currentUser?.id || currentStaff?.id || 1;
+        window.location.href = `../cart/cart.html?user_id=${userId}`;
+    });
+}
