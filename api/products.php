@@ -21,8 +21,22 @@ $method = $_SERVER['REQUEST_METHOD'];
 try {
     switch($method) {
         case 'GET':
-            if (isset($_GET['id'])) {
-                getProductById($db, $_GET['id']);
+            // Kiểm tra cả URL path và query string
+            $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $pathParts = explode('/', trim($path, '/'));
+            $productId = null;
+            
+            // Lấy ID từ URL path (vd: /api/products.php/123)
+            if (end($pathParts) && is_numeric(end($pathParts))) {
+                $productId = end($pathParts);
+            }
+            // Hoặc từ query string (vd: ?id=123)
+            else if (isset($_GET['id'])) {
+                $productId = $_GET['id'];
+            }
+            
+            if ($productId) {
+                getProductById($db, $productId);
             } else {
                 getAllProducts($db);
             }
@@ -80,8 +94,10 @@ function getAllProducts($db) {
     $params = [];
     
     if ($search) {
-        $query .= " AND (p.ProductName LIKE :search OR p.Description LIKE :search OR c.CategoryName LIKE :search)";
-        $params[':search'] = "%$search%";
+        $query .= " AND (p.ProductName LIKE :search1 OR p.Description LIKE :search2 OR c.CategoryName LIKE :search3)";
+        $params[':search1'] = "%$search%";
+        $params[':search2'] = "%$search%";
+        $params[':search3'] = "%$search%";
     }
     
     if ($category) {
@@ -177,7 +193,9 @@ function updateProduct($db) {
               Description = :desc,
               Price = :price,
               Quantity = :quantity,
-              Status = :status
+              Status = :status,
+              ImageURL = :image_url,
+              UpdatedAt = CURRENT_TIMESTAMP
               WHERE ProductID = :id";
     
     $stmt = $db->prepare($query);
@@ -189,6 +207,7 @@ function updateProduct($db) {
     $stmt->bindParam(':price', $data['price']);
     $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
     $stmt->bindParam(':status', $data['status'] ?? 'available');
+    $stmt->bindParam(':image_url', sanitizeInput($data['image_url'] ?? ''));
     
     if ($stmt->execute()) {
         sendJsonResponse(true, null, "Cập nhật sản phẩm thành công");

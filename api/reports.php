@@ -39,12 +39,13 @@ function getReports($db) {
                     COALESCE(SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END), 0) as revenue,
                     COUNT(*) as total_orders,
                     SUM(CASE WHEN OrderStatus = 'completed' THEN 1 ELSE 0 END) as delivered_orders,
-                    (SELECT COUNT(*) FROM Users WHERE Role = 'customer' AND CreatedAt >= :start_date) as new_customers
+                    (SELECT COUNT(*) FROM Users WHERE Role = 'customer' AND CreatedAt >= :start_date1) as new_customers
                    FROM Orders
-                   WHERE CreatedAt >= :start_date";
+                   WHERE CreatedAt >= :start_date2";
     
     $stmt = $db->prepare($statsQuery);
-    $stmt->bindParam(':start_date', $startDate);
+    $stmt->bindParam(':start_date1', $startDate);
+    $stmt->bindParam(':start_date2', $startDate);
     $stmt->execute();
     $stats = $stmt->fetch();
     

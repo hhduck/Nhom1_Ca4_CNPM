@@ -113,13 +113,15 @@ function getAllOrders($db)
     $params = [];
 
     if ($search) {
-        $query .= " AND (o.OrderCode LIKE :search OR o.CustomerName LIKE :search OR o.CustomerPhone LIKE :search)";
-        $params[':search'] = "%" . $search . "%";
+        $query .= " AND (o.OrderCode LIKE :search1 OR o.CustomerName LIKE :search2 OR o.CustomerPhone LIKE :search3)";
+        $params[':search1'] = "%" . $search . "%";
+        $params[':search2'] = "%" . $search . "%";
+        $params[':search3'] = "%" . $search . "%";
     }
 
     if ($status) {
-        // *** SỬA LỖI (1/2): Thêm 'pending' vào đây để lọc hoạt động ***
-        $validStatuses = ['pending', 'received', 'shipping', 'success', 'failed'];
+        // *** SỬA LỖI: Thống nhất với Database Schema ***
+        $validStatuses = ['pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled'];
         if (in_array($status, $validStatuses)) {
             $query .= " AND o.OrderStatus = :status";
             $params[':status'] = $status;
@@ -212,8 +214,8 @@ function updateOrderData($db, $orderId, $staffUserId) {
     if (isset($data['order_status'])) {
         $newStatus = sanitizeInput($data['order_status']);
         
-        // *** SỬA LỖI (2/2): Thêm 'pending' vào đây để cho phép cập nhật ***
-        $validStatuses = ['pending', 'received', 'shipping', 'success', 'failed'];
+        // *** SỬA LỖI: Thống nhất với Database Schema ***
+        $validStatuses = ['pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled'];
         
         if (!in_array($newStatus, $validStatuses)) {
             throw new Exception("Trạng thái không hợp lệ: " . $newStatus, 400);
@@ -223,10 +225,10 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $params[':status'] = $newStatus;
             $isStatusUpdate = true;
             
-            if ($newStatus === 'success') {
+            if ($newStatus === 'completed') {
                 $fieldsToUpdate[] = "CompletedAt = NOW()";
             }
-            if ($newStatus === 'failed') {
+            if ($newStatus === 'cancelled') {
                 $fieldsToUpdate[] = "CancelledAt = NOW()";
             }
         }
@@ -271,7 +273,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $historyStmt->execute();
         }
 
-        if ($isStatusUpdate && $newStatus === 'success' && $oldStatus !== 'success') {
+        if ($isStatusUpdate && $newStatus === 'completed' && $oldStatus !== 'completed') {
             $updateSoldQuery = "UPDATE Products p
                                 INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
                                 SET p.SoldCount = p.SoldCount + oi.Quantity
@@ -281,7 +283,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $updateStmt->execute();
         }
         
-        if ($isStatusUpdate && $newStatus === 'failed' && $oldStatus !== 'failed') {
+        if ($isStatusUpdate && $newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
             $restoreQuery = "UPDATE Products p
                             INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
                             SET p.Quantity = p.Quantity + oi.Quantity 
@@ -336,26 +338,6 @@ function deleteOrder($db, $orderId)
     }
 }
 
-// Trong orders.php
-$validStatuses = ['pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled'];
-
-if (isset($_GET['status']) && in_array($_GET['status'], $validStatuses)) {
-    $status = $_GET['status'];
-    $sql .= " AND o.order_status = :status";
-    $params[':status'] = $status;
-}
-// ✅ Kiểm tra xem backend nhận tham số gì
-if (isset($_GET['order_status'])) {
-    $status = $_GET['order_status'];
-    $sql .= " AND o.order_status = :order_status";
-    $params[':order_status'] = $status;
-}
-
-// HOẶC nếu backend dùng 'status'
-if (isset($_GET['status'])) {
-    $status = $_GET['status'];
-    $sql .= " AND o.order_status = :status";
-    $params[':status'] = $status;
-}
+// *** Code thừa đã được xóa - Logic đã có ở trên rồi ***
 
 ?>

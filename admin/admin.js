@@ -414,6 +414,7 @@ function showAddProductModal() {
     document.getElementById('product-price').value = '';
     document.getElementById('product-quantity').value = '';
     document.getElementById('product-description').value = '';
+    document.getElementById('product-image-url').value = '';
 
     document.getElementById('productModal').classList.add('active');
 }
@@ -430,12 +431,13 @@ async function editProduct(productId) {
         if (data.success) {
             const product = data.data;
             document.getElementById('product-modal-title').textContent = 'Chỉnh sửa sản phẩm';
-            document.getElementById('product-id').value = product.product_id;
-            document.getElementById('product-name').value = product.product_name;
-            document.getElementById('product-category').value = product.category_id;
-            document.getElementById('product-price').value = product.price;
-            document.getElementById('product-quantity').value = product.quantity;
-            document.getElementById('product-description').value = product.description || '';
+            document.getElementById('product-id').value = product.product_id || product.ProductID;
+            document.getElementById('product-name').value = product.product_name || product.ProductName;
+            document.getElementById('product-category').value = product.category_id || product.CategoryID;
+            document.getElementById('product-price').value = product.price || product.Price;
+            document.getElementById('product-quantity').value = product.quantity || product.Quantity;
+            document.getElementById('product-description').value = product.description || product.Description || '';
+            document.getElementById('product-image-url').value = product.image_url || product.ImageURL || '';
 
             document.getElementById('productModal').classList.add('active');
         } else {
@@ -454,7 +456,8 @@ async function saveProduct() {
         category_id: document.getElementById('product-category').value,
         price: document.getElementById('product-price').value,
         quantity: document.getElementById('product-quantity').value,
-        description: document.getElementById('product-description').value
+        description: document.getElementById('product-description').value,
+        image_url: document.getElementById('product-image-url').value
     };
 
     if (!productData.product_name || !productData.category_id || !productData.price) {
@@ -600,12 +603,14 @@ async function searchOrders() {
     await loadOrders({ search: searchTerm });
 }
 
-async function filterOrders(status) {
+async function filterOrders(status, button) {
     // Cập nhật trạng thái active cho button
     document.querySelectorAll('.order-tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    event.target.classList.add('active');
+    if (button) {
+        button.classList.add('active');
+    }
     
     // Lọc đơn hàng theo trạng thái
     if (status === 'all') {
@@ -618,8 +623,19 @@ async function filterOrders(status) {
 async function viewOrderDetail(orderId) {
     try {
         currentOrderId = orderId;
-        const response = await fetch(`${API_BASE_URL}/orders.php/${orderId}`);
-        const order = await response.json();
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await fetch(`${API_BASE_URL}/orders.php/${orderId}`, {
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        const order = result.data || result;
 
         const modalBody = document.getElementById('order-modal-body');
         modalBody.innerHTML = `
@@ -696,24 +712,30 @@ async function viewOrderDetail(orderId) {
 
 async function updateOrderStatus() {
     const newStatus = document.getElementById('order-status-select').value;
+    const jwtToken = localStorage.getItem('jwtToken');
 
     try {
-        const response = await fetch(`${API_BASE_URL}/orders.php/${currentOrderId}/status`, {
+        const response = await fetch(`${API_BASE_URL}/orders.php/${currentOrderId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: newStatus })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwtToken}`
+            },
+            body: JSON.stringify({ order_status: newStatus })
         });
 
-        if (response.ok) {
-            showSuccess('Cập nhật trạng thái đơn hàng thành công');
-            closeModal('orderModal');
-            loadOrders();
-        } else {
-            throw new Error('Failed to update order status');
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'HTTP ' + response.status);
         }
+
+        showSuccess('Cập nhật trạng thái đơn hàng thành công');
+        closeModal('orderModal');
+        loadOrders();
     } catch (error) {
         console.error('Error updating order status:', error);
-        showError('Không thể cập nhật trạng thái đơn hàng');
+        showError('Không thể cập nhật trạng thái đơn hàng: ' + error.message);
     }
 }
 
@@ -746,16 +768,24 @@ async function loadUsers(filters = {}) {
                             <p><strong>SĐT:</strong> ${user.phone || 'N/A'}</p>
                             <p><strong>Địa chỉ:</strong> ${user.address || 'N/A'}</p>
                             <p><strong>Trạng thái:</strong> 
-                                <span class="status-badge status-${user.is_active ? 'active' : 'inactive'}">
-                                    ${getStatusText(user.is_active ? 'active' : 'inactive')}
+                                <span class="status-badge status-${user.status}">
+                                    ${getStatusText(user.status)}
                                 </span>
                             </p>
                         </div>
                         <div class="user-card-footer">
-                            <button class="icon-btn" onclick="editUser(${user.id})">
+                            <button class="icon-btn" onclick="editUser(${user.id})" title="Chỉnh sửa">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="icon-btn" onclick="deleteUser(${user.id})">
+                            ${user.status === 'banned' ? 
+                                `<button class="icon-btn" onclick="unlockUser(${user.id})" title="Mở khóa">
+                                    <i class="fas fa-unlock"></i>
+                                </button>` : 
+                                `<button class="icon-btn" onclick="lockUser(${user.id})" title="Khóa">
+                                    <i class="fas fa-lock"></i>
+                                </button>`
+                            }
+                            <button class="icon-btn" onclick="deleteUser(${user.id})" title="Xóa">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -799,16 +829,29 @@ function showAddUserModal() {
 async function editUser(userId) {
     try {
         currentUserId = userId;
-        const response = await fetch(`${API_BASE_URL}/users.php/${userId}`);
-        const user = await response.json();
+        const response = await fetch(`${API_BASE_URL}/users.php/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            }
+        });
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to load user');
+        }
+
+        const user = data.data || data;
 
         document.getElementById('user-modal-title').textContent = 'Chỉnh sửa người dùng';
-        document.getElementById('user-id').value = user.user_id;
-        document.getElementById('user-fullname').value = user.fullname;
-        document.getElementById('user-role').value = user.role;
-        document.getElementById('user-phone').value = user.phone || '';
-        document.getElementById('user-email').value = user.email;
-        document.getElementById('user-address').value = user.address || '';
+        document.getElementById('user-id').value = user.id || user.UserID;
+        document.getElementById('user-fullname').value = user.full_name || user.FullName;
+        document.getElementById('user-role').value = user.role || user.Role;
+        document.getElementById('user-phone').value = user.phone || user.Phone || '';
+        document.getElementById('user-email').value = user.email || user.Email;
+        document.getElementById('user-address').value = user.address || user.Address || '';
+        if (document.getElementById('user-status')) {
+            document.getElementById('user-status').value = user.status || user.Status || 'active';
+        }
 
         document.getElementById('userModal').classList.add('active');
     } catch (error) {
@@ -820,40 +863,100 @@ async function editUser(userId) {
 async function saveUser() {
     const userId = document.getElementById('user-id').value;
     const userData = {
-        fullname: document.getElementById('user-fullname').value,
+        full_name: document.getElementById('user-fullname').value,
         role: document.getElementById('user-role').value,
         phone: document.getElementById('user-phone').value,
         email: document.getElementById('user-email').value,
-        address: document.getElementById('user-address').value
+        address: document.getElementById('user-address').value,
+        status: document.getElementById('user-status') ? document.getElementById('user-status').value : 'active'
     };
 
-    if (!userData.fullname || !userData.email) {
+    if (!userData.full_name || !userData.email) {
         showError('Vui lòng điền đầy đủ thông tin bắt buộc');
         return;
     }
 
     try {
         const url = userId
-            ? `${API_BASE_URL}/users/${userId}`
-            : `${API_BASE_URL}/users`;
+            ? `${API_BASE_URL}/users.php/${userId}`
+            : `${API_BASE_URL}/users.php`;
         const method = userId ? 'PUT' : 'POST';
 
         const response = await fetch(url, {
             method: method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            },
             body: JSON.stringify(userData)
         });
 
-        if (response.ok) {
+        const data = await response.json();
+
+        if (data.success) {
             showSuccess(userId ? 'Cập nhật người dùng thành công' : 'Thêm người dùng thành công');
             closeModal('userModal');
             loadUsers();
         } else {
-            throw new Error('Failed to save user');
+            throw new Error(data.message || 'Failed to save user');
         }
     } catch (error) {
         console.error('Error saving user:', error);
         showError('Không thể lưu người dùng');
+    }
+}
+
+async function lockUser(userId) {
+    if (!confirm('Bạn có chắc chắn muốn khóa tài khoản này?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/users.php/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            },
+            body: JSON.stringify({ status: 'banned' })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess('Khóa tài khoản thành công');
+            loadUsers();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error locking user:', error);
+        showError('Không thể khóa tài khoản');
+    }
+}
+
+async function unlockUser(userId) {
+    if (!confirm('Bạn có chắc chắn muốn mở khóa tài khoản này?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/users.php/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            },
+            body: JSON.stringify({ status: 'active' })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess('Mở khóa tài khoản thành công');
+            loadUsers();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error unlocking user:', error);
+        showError('Không thể mở khóa tài khoản');
     }
 }
 
@@ -881,9 +984,14 @@ async function deleteUser(userId) {
 // REPORTS
 // ============================================
 
-async function loadReports(period) {
+async function loadReports(period, month, year) {
     try {
-        const response = await fetch(`${API_BASE_URL}/reports.php?period=${period}`, {
+        let url = `${API_BASE_URL}/reports.php?period=${period}`;
+        if (month && year) {
+            url += `&month=${month}&year=${year}`;
+        }
+        
+        const response = await fetch(url, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
             }
@@ -947,6 +1055,12 @@ function loadTopProducts(products) {
 
 function loadReportData(period) {
     loadReports(period);
+}
+
+function loadReportByMonth() {
+    const month = document.getElementById('report-month-select').value;
+    const year = document.getElementById('report-year-select').value;
+    loadReports('month', month, year);
 }
 
 function initCharts(chartData) {
@@ -1115,9 +1229,18 @@ async function createPromotion() {
 async function viewPromoDetail(promoId) {
     try {
         currentPromoId = promoId;
-        const response = await fetch(`${API_BASE_URL}/promotions.php/${promoId}`);
-        const promo = await response.json();
+        const response = await fetch(`${API_BASE_URL}/promotions.php/${promoId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            }
+        });
+        const data = await response.json();
 
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to load promotion');
+        }
+
+        const promo = data.data;
         const modalBody = document.getElementById('promo-detail-body');
         modalBody.innerHTML = `
             <div class="info-section">
@@ -1175,6 +1298,31 @@ async function viewPromoDetail(promoId) {
     }
 }
 
+async function deletePromotion(promoId) {
+    if (!confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/promotions.php/${promoId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess('Xóa khuyến mãi thành công');
+            loadPromotions();
+        } else {
+            throw new Error(data.message || 'Failed to delete promotion');
+        }
+    } catch (error) {
+        console.error('Error deleting promotion:', error);
+        showError('Không thể xóa khuyến mãi');
+    }
+}
+
 // ============================================
 // COMPLAINTS MANAGEMENT
 // ============================================
@@ -1193,23 +1341,29 @@ async function loadComplaints(filters = {}) {
 
         const tbody = document.getElementById('complaints-tbody');
 
-        if (data.success && data.data.complaints && data.data.complaints.length > 0) {
-            tbody.innerHTML = data.data.complaints.map(complaint => `
+        if (data.success && data.data && data.data.length > 0) {
+            const complaints = data.data;
+            tbody.innerHTML = complaints.map(complaint => `
                 <tr>
-                    <td>${complaint.complaint_code}</td>
-                    <td>${complaint.order_code}</td>
-                    <td>${complaint.customer_name}</td>
-                    <td>${complaint.title}</td>
-                    <td>${formatDate(complaint.created_at)}</td>
+                    <td>${complaint.ComplaintCode}</td>
+                    <td>${complaint.OrderCode}</td>
+                    <td>${complaint.CustomerName}</td>
+                    <td>${complaint.Title}</td>
+                    <td>${formatDate(complaint.CreatedAt)}</td>
                     <td>
-                        <span class="status-badge status-${complaint.status}">
-                            ${getComplaintStatusText(complaint.status)}
+                        <span class="status-badge status-${complaint.Status}">
+                            ${getComplaintStatusText(complaint.Status)}
                         </span>
                     </td>
                     <td>
-                        <button class="icon-btn" onclick="viewComplaintDetail(${complaint.complaint_id})" title="Chi tiết">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                        <div class="action-btns">
+                            <button class="icon-btn" onclick="viewComplaintDetail(${complaint.ComplaintID})" title="Chi tiết">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="icon-btn" onclick="deleteComplaint(${complaint.ComplaintID})" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -1238,7 +1392,12 @@ async function filterComplaints(status) {
 async function viewComplaintDetail(complaintId) {
     try {
         currentComplaintId = complaintId;
-        const response = await fetch(`${API_BASE_URL}/complaints.php/${complaintId}`);
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await fetch(`${API_BASE_URL}/complaints.php/${complaintId}`, {
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            }
+        });
 
         // ✅ FIX: Kiểm tra response
         if (!response.ok) {
@@ -1304,22 +1463,52 @@ async function updateComplaintStatus() {
     const newStatus = document.getElementById('complaint-status-select').value;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/complaints.php/${currentComplaintId}/status`, {
+        const response = await fetch(`${API_BASE_URL}/complaints.php/${currentComplaintId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            },
             body: JSON.stringify({ status: newStatus })
         });
 
-        if (response.ok) {
+        const data = await response.json();
+
+        if (data.success) {
             showSuccess('Cập nhật trạng thái khiếu nại thành công');
             closeModal('complaintModal');
             loadComplaints();
         } else {
-            throw new Error('Failed to update complaint status');
+            throw new Error(data.message || 'Failed to update complaint status');
         }
     } catch (error) {
         console.error('Error updating complaint status:', error);
         showError('Không thể cập nhật trạng thái khiếu nại');
+    }
+}
+
+async function deleteComplaint(complaintId) {
+    if (!confirm('Bạn có chắc chắn muốn xóa khiếu nại này?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/complaints.php/${complaintId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess('Xóa khiếu nại thành công');
+            loadComplaints();
+        } else {
+            throw new Error(data.message || 'Failed to delete complaint');
+        }
+    } catch (error) {
+        console.error('Error deleting complaint:', error);
+        showError('Không thể xóa khiếu nại');
     }
 }
 

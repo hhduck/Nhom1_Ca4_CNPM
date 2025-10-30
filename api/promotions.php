@@ -14,16 +14,42 @@ $db = $database->getConnection();
 
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Xử lý routing
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$pathParts = explode('/', trim($path, '/'));
+$promotionId = null;
+
+// Lấy ID từ URL path (vd: /api/promotions.php/123)
+if (end($pathParts) && is_numeric(end($pathParts))) {
+    $promotionId = end($pathParts);
+}
+// Hoặc từ query string (vd: ?id=123)
+else if (isset($_GET['id'])) {
+    $promotionId = $_GET['id'];
+}
+
 try {
     switch($method) {
         case 'GET':
             checkAdminPermission();
-            getAllPromotions($db);
+            if ($promotionId) {
+                getPromotionById($db, $promotionId);
+            } else {
+                getAllPromotions($db);
+            }
             break;
             
         case 'POST':
             checkAdminPermission();
             createPromotion($db);
+            break;
+            
+        case 'DELETE':
+            checkAdminPermission();
+            if (!$promotionId) {
+                sendJsonResponse(false, null, "Thiếu ID khuyến mãi", 400);
+            }
+            deletePromotion($db, $promotionId);
             break;
             
         default:
@@ -83,6 +109,38 @@ function getAllPromotions($db) {
     ], "Lấy danh sách khuyến mãi thành công");
 }
 
+function getPromotionById($db, $id) {
+    $query = "SELECT 
+                PromotionID as promotion_id,
+                PromotionCode as promotion_code,
+                PromotionName as promotion_name,
+                Description as description,
+                PromotionType as promotion_type,
+                DiscountValue as discount_value,
+                MinOrderValue as min_order_value,
+                MaxDiscount as max_discount,
+                Quantity as quantity,
+                UsedCount as used_count,
+                StartDate as start_date,
+                EndDate as end_date,
+                Status as status,
+                CreatedAt as created_at
+              FROM Promotions
+              WHERE PromotionID = :id";
+    
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    
+    $promotion = $stmt->fetch();
+    
+    if ($promotion) {
+        sendJsonResponse(true, $promotion, "Lấy thông tin khuyến mãi thành công");
+    } else {
+        sendJsonResponse(false, null, "Không tìm thấy khuyến mãi", 404);
+    }
+}
+
 function createPromotion($db) {
     $adminId = checkAdminPermission();
     $data = json_decode(file_get_contents("php://input"), true);
@@ -104,7 +162,7 @@ function createPromotion($db) {
               (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, 
                Quantity, StartDate, EndDate, Status, CreatedBy) 
               VALUES 
-              (:code, :name, :type, :value, :min_order, :quantity, :start_date, :end_date, 'pending', :created_by)";
+              (:code, :name, :type, :value, :min_order, :quantity, :start_date, :end_date, 'active', :created_by)";
     
     $stmt = $db->prepare($query);
     
@@ -124,6 +182,19 @@ function createPromotion($db) {
         ], "Tạo khuyến mãi thành công", 201);
     } else {
         sendJsonResponse(false, null, "Không thể tạo khuyến mãi", 500);
+    }
+}
+
+function deletePromotion($db, $id) {
+    $query = "DELETE FROM Promotions WHERE PromotionID = :id";
+    
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $id);
+    
+    if ($stmt->execute()) {
+        sendJsonResponse(true, null, "Xóa khuyến mãi thành công");
+    } else {
+        sendJsonResponse(false, null, "Không thể xóa khuyến mãi", 500);
     }
 }
 

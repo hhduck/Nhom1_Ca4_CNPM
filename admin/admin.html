@@ -170,9 +170,27 @@
         <div class="content-container">
             <div class="report-header-section">
                 <h2 class="page-title">QUẢN LÝ BÁO CÁO</h2>
-                <div class="report-time-filters">
-                    <button class="time-filter-btn active" onclick="loadReportData('month')">Tháng</button>
-                    <button class="time-filter-btn" onclick="loadReportData('year')">Năm</button>
+                <div class="report-time-filters" style="display: flex; gap: 15px; align-items: center;">
+                    <select id="report-month-select" class="form-input" style="width: 150px;" onchange="loadReportByMonth()">
+                        <option value="01">Tháng 1</option>
+                        <option value="02">Tháng 2</option>
+                        <option value="03">Tháng 3</option>
+                        <option value="04">Tháng 4</option>
+                        <option value="05">Tháng 5</option>
+                        <option value="06">Tháng 6</option>
+                        <option value="07">Tháng 7</option>
+                        <option value="08">Tháng 8</option>
+                        <option value="09">Tháng 9</option>
+                        <option value="10">Tháng 10</option>
+                        <option value="11">Tháng 11</option>
+                        <option value="12">Tháng 12</option>
+                    </select>
+                    <select id="report-year-select" class="form-input" style="width: 120px;" onchange="loadReportByMonth()">
+                        <option value="2023">2023</option>
+                        <option value="2024" selected>2024</option>
+                        <option value="2025">2025</option>
+                    </select>
+                    <button class="time-filter-btn" onclick="loadReportData('all')">Tất cả</button>
                 </div>
             </div>
 
@@ -415,6 +433,14 @@
                         <textarea id="product-description" class="form-textarea" rows="4"
                             placeholder="Nhập mô tả sản phẩm"></textarea>
                     </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Hình ảnh sản phẩm</label>
+                        <input type="text" id="product-image-url" class="form-input" 
+                               placeholder="Nhập đường dẫn ảnh (vd: assets/images/banh.jpg)">
+                        <small style="color: #666; font-size: 12px;">
+                            Lưu ý: Đường dẫn bắt đầu từ thư mục gốc dự án
+                        </small>
+                    </div>
                 </div>
                 <input type="hidden" id="product-id">
             </div>
@@ -438,6 +464,8 @@
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModal('orderModal')">Đóng</button>
                 <select id="order-status-select" class="form-input" style="margin-right: 8px;">
+                    <option value="pending">Chờ xác nhận</option>
+                    <option value="confirmed">Đã xác nhận</option>
                     <option value="preparing">Đang chuẩn bị</option>
                     <option value="shipping">Đang giao</option>
                     <option value="completed">Hoàn thành</option>
@@ -476,6 +504,14 @@
                     <div class="form-group">
                         <label class="form-label">Email *</label>
                         <input type="email" id="user-email" class="form-input" placeholder="Nhập email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái</label>
+                        <select id="user-status" class="form-input">
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Không hoạt động</option>
+                            <option value="banned">Bị khóa</option>
+                        </select>
                     </div>
                     <div class="form-group full-width">
                         <label class="form-label">Địa chỉ</label>

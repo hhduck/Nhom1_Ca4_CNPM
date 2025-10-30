@@ -58,6 +58,11 @@ try {
             }
             break;
 
+        case 'DELETE':
+            if (!$complaintId) throw new Exception("Thiếu ID khiếu nại", 400);
+            deleteComplaint($db, $complaintId);
+            break;
+
         default:
             throw new Exception("Method không được hỗ trợ", 405);
     }
@@ -86,8 +91,11 @@ function getAllComplaints($db) {
               WHERE 1=1";
     $params = [];
     if ($search) {
-        $query .= " AND (o.OrderCode LIKE :search OR u.FullName LIKE :search OR u.Phone LIKE :search OR c.ComplaintCode LIKE :search)";
-        $params[':search'] = "%" . $search . "%";
+        $query .= " AND (o.OrderCode LIKE :search1 OR u.FullName LIKE :search2 OR u.Phone LIKE :search3 OR c.ComplaintCode LIKE :search4)";
+        $params[':search1'] = "%" . $search . "%";
+        $params[':search2'] = "%" . $search . "%";
+        $params[':search3'] = "%" . $search . "%";
+        $params[':search4'] = "%" . $search . "%";
     }
     if ($status) {
         $validStatuses = ['pending', 'processing', 'resolved', 'closed', 'rejected']; 
@@ -261,5 +269,37 @@ function sendReplyToCustomer($db, $complaintId, $staffUserId) {
     ]);
 
     sendJsonResponse(true, null, "Gửi phản hồi cho khách hàng thành công");
+}
+
+/**
+ * Xóa khiếu nại (Admin only)
+ */
+function deleteComplaint($db, $complaintId) {
+    // Kiểm tra quyền admin
+    $currentUser = requireAdmin();
+    
+    $db->beginTransaction();
+    try {
+        // Xóa responses trước
+        $stmtResponses = $db->prepare("DELETE FROM ComplaintResponses WHERE ComplaintID = :id");
+        $stmtResponses->bindParam(':id', $complaintId, PDO::PARAM_INT);
+        $stmtResponses->execute();
+
+        // Xóa complaint
+        $stmtComplaint = $db->prepare("DELETE FROM Complaints WHERE ComplaintID = :id");
+        $stmtComplaint->bindParam(':id', $complaintId, PDO::PARAM_INT);
+        $stmtComplaint->execute();
+
+        if ($stmtComplaint->rowCount() === 0) {
+            throw new Exception("Không tìm thấy khiếu nại để xóa", 404);
+        }
+
+        $db->commit();
+        sendJsonResponse(true, null, "Xóa khiếu nại thành công");
+
+    } catch (Exception $e) {
+        $db->rollBack();
+        throw new Exception("Lỗi khi xóa khiếu nại: " . $e->getMessage(), 500);
+    }
 }
 ?>

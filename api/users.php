@@ -100,8 +100,10 @@ function getAllUsers($db)
     $params = [];
 
     if ($search) {
-        $query .= " AND (Username LIKE :search OR FullName LIKE :search OR Email LIKE :search)";
-        $params[':search'] = "%$search%";
+        $query .= " AND (Username LIKE :search1 OR FullName LIKE :search2 OR Email LIKE :search3)";
+        $params[':search1'] = "%$search%";
+        $params[':search2'] = "%$search%";
+        $params[':search3'] = "%$search%";
     }
 
     if ($role) {
@@ -240,12 +242,34 @@ function createUser($db)
 
 /**
  * Cập nhật người dùng (yêu cầu Admin)
+ * Hỗ trợ partial update - chỉ update các field được gửi lên
  */
 function updateUser($db, $id)
 { // Nhận $id làm tham số
     $data = json_decode(file_get_contents("php://input"), true);
 
-    // Validate dữ liệu tối thiểu
+    // Nếu chỉ update status (khóa/mở tài khoản)
+    if (isset($data['status']) && count($data) == 1) {
+        $status = sanitizeInput($data['status']);
+        if (!in_array($status, ['active', 'inactive', 'banned'])) {
+            sendJsonResponse(false, null, "Trạng thái không hợp lệ", 400);
+            return;
+        }
+
+        $query = "UPDATE Users SET Status = :status, UpdatedAt = NOW() WHERE UserID = :id";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':status', $status);
+
+        if ($stmt->execute() && $stmt->rowCount() > 0) {
+            sendJsonResponse(true, null, "Cập nhật trạng thái thành công");
+        } else {
+            sendJsonResponse(false, null, "Không tìm thấy người dùng", 404);
+        }
+        return;
+    }
+
+    // Update đầy đủ thông tin
     if (empty($data['full_name']) || empty($data['role'])) {
         sendJsonResponse(false, null, "Thiếu thông tin bắt buộc (Họ tên, Vai trò)", 400);
         return;
@@ -261,36 +285,34 @@ function updateUser($db, $id)
               Phone = :phone,
               Address = :address,
               Role = :role,
-              Status = :status, -- Thêm cập nhật Status
+              Status = :status,
               UpdatedAt = NOW()
               WHERE UserID = :id";
 
     $stmt = $db->prepare($query);
 
     // Sanitize input
-    $fullName = sanitizeInput($data['full_name']); // Sửa key
+    $fullName = sanitizeInput($data['full_name']);
     $phone = sanitizeInput($data['phone'] ?? '');
     $address = sanitizeInput($data['address'] ?? '');
     $role = sanitizeInput($data['role']);
-    $status = sanitizeInput($data['status'] ?? 'active'); // Thêm status, mặc định là active
+    $status = sanitizeInput($data['status'] ?? 'active');
     if (!in_array($status, ['active', 'inactive', 'banned'])) {
         $status = 'active';
-    } // Validate status
+    }
 
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Chỉ định kiểu INT
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->bindParam(':fullname', $fullName);
     $stmt->bindParam(':phone', $phone);
     $stmt->bindParam(':address', $address);
     $stmt->bindParam(':role', $role);
-    $stmt->bindParam(':status', $status); // Bind status
+    $stmt->bindParam(':status', $status);
 
     if ($stmt->execute()) {
-        // Kiểm tra xem có hàng nào thực sự được cập nhật không
         if ($stmt->rowCount() > 0) {
             sendJsonResponse(true, null, "Cập nhật người dùng thành công");
         } else {
-            // Có thể ID không tồn tại hoặc dữ liệu không thay đổi
-            sendJsonResponse(false, null, "Không tìm thấy người dùng hoặc không có gì thay đổi", 404);
+            sendJsonResponse(true, null, "Không có gì thay đổi");
         }
     } else {
         error_log("Failed to update user ID $id: " . implode(";", $stmt->errorInfo()));
