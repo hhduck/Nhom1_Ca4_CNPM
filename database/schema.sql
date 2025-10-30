@@ -463,7 +463,6 @@ INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt
 SELECT PromotionID, 3, 5, 100000, DATE_SUB(NOW(), INTERVAL 25 DAY)
 FROM Promotions WHERE PromotionCode = 'GIAM10TRON15';
 
--- (Tùy chọn) Mô phỏng một người dùng nhận ưu đãi đơn đầu tiên trong năm
 INSERT INTO PromotionUsage (PromotionID, UserID, OrderID, DiscountAmount, UsedAt)
 SELECT PromotionID, 5, 9, 75000, NOW()
 FROM Promotions WHERE PromotionCode = 'FIRSTORDER10';
