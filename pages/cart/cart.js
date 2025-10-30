@@ -1,7 +1,95 @@
-const API_URL = "../api/cart.php"; 
-const userId = 1; // giả định user_id = 1 (bạn có thể lấy từ session sau này)
+const API_URL = "../../api/cart.php";
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('user_id') || 1; // nếu không có thì dùng 1
+
 const cartContainer = document.getElementById("cartContainer");
-Nhom1_Ca4_CNPM-main\api\cart.php
+// ==========================
+// ==========================
+// CART.JS - XỬ LÝ MENU USER DÀNH CHO KHÁCH HÀNG
+// ==========================
+document.addEventListener("DOMContentLoaded", () => {
+  handleUserDisplay();
+});
+
+// ========== HIỂN THỊ ICON USER VÀ MENU ==========
+function handleUserDisplay() {
+  const loginLink = document.querySelector(".nav-login");
+  const userMenu = document.querySelector(".user-menu");
+
+  if (!loginLink || !userMenu) {
+    console.error("Thiếu phần tử .nav-login hoặc .user-menu trong cart.html.");
+    return;
+  }
+
+  // Reset event listener
+  const newLoginLink = loginLink.cloneNode(true);
+  loginLink.parentNode.replaceChild(newLoginLink, loginLink);
+
+  const customerData = localStorage.getItem("currentUser");
+  const jwtToken = localStorage.getItem("jwtToken");
+
+  let currentUser = null;
+  if (customerData && jwtToken) {
+    try {
+      currentUser = JSON.parse(customerData);
+    } catch {
+      currentUser = null;
+    }
+  }
+
+  // --- Nếu ĐÃ đăng nhập ---
+  if (currentUser && currentUser.id) {
+    newLoginLink.innerHTML = `<i class="fas fa-user"></i>`;
+    newLoginLink.href = "#";
+
+    const accountLink = userMenu.querySelector("a[href*='account.html']");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // Cập nhật link tài khoản
+    if (accountLink) accountLink.href = "../account/account.html";
+
+    // Toggle menu user
+    newLoginLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      userMenu.style.display = userMenu.style.display === "block" ? "none" : "block";
+    });
+
+    // Ẩn khi click ra ngoài
+    document.addEventListener("click", (e) => {
+      if (!newLoginLink.contains(e.target) && !userMenu.contains(e.target)) {
+        userMenu.style.display = "none";
+      }
+    });
+
+    // Logout
+    if (logoutBtn) {
+      const newLogoutBtn = logoutBtn.cloneNode(true);
+      logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+      newLogoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        performLogout("../login/login.html");
+      });
+    }
+
+    userMenu.style.display = "none";
+  } 
+  // --- Nếu CHƯA đăng nhập ---
+  else {
+    newLoginLink.innerHTML = "ĐĂNG NHẬP/ĐĂNG KÍ";
+    newLoginLink.href = "../login/login.html";
+    userMenu.style.display = "none";
+  }
+}
+
+// ========== ĐĂNG XUẤT ==========
+function performLogout(redirectUrl) {
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("jwtToken");
+  localStorage.removeItem("rememberMe");
+  window.location.href = redirectUrl;
+}
+
 // ========================
 // 🧠 HÀM CHÍNH
 // ========================
@@ -45,7 +133,7 @@ function renderCart(cartData) {
         <div class="cart-list">
             ${items.map(item => `
                 <div class="cart-item" data-id="${item.cart_id}">
-                    <img src="../../${item.image_url}" alt="${item.product_name}" class="cart-item-img">
+                    <img src="${item.image_url}" alt="${item.product_name}" class="cart-item-img">
                     <div class="cart-item-info">
                         <h3>${item.product_name}</h3>
                         <p>Giá: ${formatCurrency(item.price)}</p>
@@ -60,7 +148,6 @@ function renderCart(cartData) {
                 </div>
             `).join("")}
         </div>
-
         <div class="cart-summary">
             <h3>Tổng cộng: ${formatCurrency(total_amount)}</h3>
             <button class="btn-primary">Thanh toán</button>

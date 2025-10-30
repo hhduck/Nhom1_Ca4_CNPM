@@ -26,6 +26,12 @@ function getSafeImageUrl(imageUrl) {
         return imageUrl;
     }
 
+    // Nếu là đường dẫn tương đối từ database (ví dụ: assets/images/banh.jpg)
+    // Từ admin/admin.html cần thêm ../ để lên 1 cấp về thư mục gốc
+    if (imageUrl.startsWith('assets/')) {
+        return '../' + imageUrl;
+    }
+
     // Trả về URL gốc (đã có xử lý onerror bên dưới)
     return imageUrl;
 }
