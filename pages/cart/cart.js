@@ -125,13 +125,21 @@ function renderCartFromLocal(cart) {
 
     <div class="cart-summary">
       <h3>Tổng cộng: ${total.toLocaleString()} VND</h3>
-      <button class="btn-primary">Tiến hành thanh toán</button>
+      <button class="btn-primary" id="checkoutBtn">Tiến hành thanh toán</button>
     </div>
   `;
 
   updateCartCount();
   attachQuantityHandlers();
   attachRemoveHandlers(); // Thêm sự kiện xoá
+  const checkoutBtn = document.getElementById("checkoutBtn");
+if (checkoutBtn) {
+
+  checkoutBtn.addEventListener("click", () => {
+    window.location.href = "../pay/pay.html";
+  });
+}
+
 }
 
 // ========== HIỂN THỊ SỐ ICON ==========
