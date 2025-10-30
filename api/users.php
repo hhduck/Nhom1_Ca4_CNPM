@@ -36,18 +36,19 @@ if ($apiIndex !== false && isset($pathParts[$apiIndex + 2]) && is_numeric($pathP
 try {
     switch ($method) {
         case 'GET':
-            // *** TÍCH HỢP LOGIC TÌM KIẾM NHÂN VIÊN VÀO ĐÂY ***
+            checkAdminPermission();
+            // Kiểm tra xem có userId trong URL không
+            if ($userId) {
+                getUserById($db, $userId);
+            } 
             // Kiểm tra xem có phải yêu cầu tìm kiếm nhân viên không?
-            if (isset($_GET['role']) && $_GET['role'] === 'staff' && isset($_GET['search'])) {
-                // Nếu đúng, gọi hàm tìm kiếm (KHÔNG cần checkAdminPermission)
+            elseif (isset($_GET['role']) && $_GET['role'] === 'staff' && isset($_GET['search'])) {
                 findStaffByName($db, $_GET['search']);
-            } else {
-                // Nếu không, đây là yêu cầu lấy danh sách (cần quyền Admin)
-                checkAdminPermission(); // Chỉ kiểm tra quyền ở đây
+            } 
+            else {
                 getAllUsers($db);
             }
             break;
-        // *** KẾT THÚC TÍCH HỢP ***
 
         case 'POST':
             checkAdminPermission();
@@ -318,6 +319,33 @@ function updateUser($db, $id)
         error_log("Failed to update user ID $id: " . implode(";", $stmt->errorInfo()));
         sendJsonResponse(false, null, "Không thể cập nhật người dùng do lỗi máy chủ", 500);
     }
+}
+
+/**
+ * Lấy thông tin 1 người dùng theo ID
+ */
+function getUserById($db, $id)
+{
+    $query = "SELECT
+                UserID as id, Username as username, Email as email,
+                FullName as full_name, Phone as phone, Address as address,
+                Role as role, Status as status, Avatar as avatar,
+                CreatedAt as created_at, LastLogin as last_login
+              FROM Users
+              WHERE UserID = :id";
+
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$user) {
+        sendJsonResponse(false, null, "Không tìm thấy người dùng", 404);
+        return;
+    }
+    
+    sendJsonResponse(true, $user, "Lấy thông tin người dùng thành công");
 }
 
 /**

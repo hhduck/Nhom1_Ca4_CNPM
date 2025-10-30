@@ -1409,7 +1409,8 @@ async function viewComplaintDetail(complaintId) {
             throw new Error("Server không trả về JSON");
         }
 
-        const complaint = await response.json();
+        const result = await response.json();
+        const complaint = result.data || result;
 
         const modalBody = document.getElementById('complaint-modal-body');
         modalBody.innerHTML = `

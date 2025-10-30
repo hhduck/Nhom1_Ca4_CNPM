@@ -130,7 +130,19 @@ function getAllProducts($db) {
 
 function getProductById($db, $id) {
     $query = "SELECT 
-                p.*,
+                p.ProductID as product_id,
+                p.ProductName as product_name,
+                p.CategoryID as category_id,
+                p.Description as description,
+                p.Price as price,
+                p.Quantity as quantity,
+                p.Status as status,
+                p.ImageURL as image_url,
+                p.IsFeatured as is_featured,
+                p.Views as views,
+                p.SoldCount as sold_count,
+                p.CreatedAt as created_at,
+                p.UpdatedAt as updated_at,
                 c.CategoryName as category_name
               FROM Products p
               LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
@@ -140,7 +152,7 @@ function getProductById($db, $id) {
     $stmt->bindParam(':id', $id);
     $stmt->execute();
     
-    $product = $stmt->fetch();
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if ($product) {
         sendJsonResponse(true, $product, "Lấy thông tin sản phẩm thành công");
