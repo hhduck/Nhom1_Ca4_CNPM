@@ -19,7 +19,7 @@
     <header class="admin-header">
         <div class="header-container">
             <div class="header-left">
-                <a href="../pages/home/home.html" class="logo">La Cuisine Ngọt</a>
+                <a class="logo">La Cuisine Ngọt</a>
                 <nav class="main-nav">
                     <a class="nav-link" onclick="showPage('products')">Sản phẩm</a>
                     <a class="nav-link" onclick="showPage('orders')">Đơn hàng</a>
@@ -371,9 +371,8 @@
 
             <div class="toolbar">
                 <button class="tab-btn active" onclick="filterComplaints('all')">Tất cả</button>
-                <button class="tab-btn" onclick="filterComplaints('pending')">Đang xử lý</button>
+                <button class="tab-btn" onclick="filterComplaints('pending')">Chưa xử lý</button>
                 <button class="tab-btn" onclick="filterComplaints('resolved')">Đã xử lý</button>
-                <button class="tab-btn" onclick="filterComplaints('closed')">Đã đóng</button>
             </div>
 
             <div class="table-container">
@@ -540,10 +539,8 @@
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModal('complaintModal')">Đóng</button>
                 <select id="complaint-status-select" class="form-input" style="margin-right: 8px;">
-                    <option value="pending">Chờ xử lý</option>
-                    <option value="processing">Đang xử lý</option>
+                    <option value="pending">Chưa xử lý</option>
                     <option value="resolved">Đã xử lý</option>
-                    <option value="closed">Đã đóng</option>
                 </select>
                 <button class="btn-primary" onclick="updateComplaintStatus()">Cập nhật</button>
             </div>

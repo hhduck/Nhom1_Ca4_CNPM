@@ -907,7 +907,7 @@ async function saveUser() {
 }
 
 async function lockUser(userId) {
-    if (!confirm('Bạn có chắc chắn muốn khóa tài khoản này?')) return;
+    if (!confirm('Bạn có chắc chắn muốn khóa tài khoản này?\n\nLưu ý: Nếu user đang đăng nhập, họ sẽ bị logout khi thực hiện hành động tiếp theo.')) return;
     
     try {
         const response = await fetch(`${API_BASE_URL}/users.php/${userId}`, {
@@ -922,7 +922,7 @@ async function lockUser(userId) {
         const data = await response.json();
 
         if (data.success) {
-            showSuccess('Khóa tài khoản thành công');
+            showSuccess('Khóa tài khoản thành công. User sẽ không thể đăng nhập lại và sẽ bị logout tự động khi thực hiện hành động tiếp theo.');
             loadUsers();
         } else {
             throw new Error(data.message);
@@ -1615,11 +1615,8 @@ function getPromoTypeText(type) {
 
 function getComplaintStatusText(status) {
     const statusMap = {
-        'pending': 'Chờ xử lý',
-        'processing': 'Đang xử lý',
-        'resolved': 'Đã xử lý',
-        'closed': 'Đã đóng',
-        'rejected': 'Từ chối'
+        'pending': 'Chưa xử lý',
+        'resolved': 'Đã xử lý'
     };
     return statusMap[status] || status;
 }

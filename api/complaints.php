@@ -98,7 +98,7 @@ function getAllComplaints($db) {
         $params[':search4'] = "%" . $search . "%";
     }
     if ($status) {
-        $validStatuses = ['pending', 'processing', 'resolved', 'closed', 'rejected']; 
+        $validStatuses = ['pending', 'resolved']; 
         if (in_array($status, $validStatuses)) {
             $query .= " AND c.Status = :status";
             $params[':status'] = $status;
@@ -189,7 +189,7 @@ function updateComplaint($db, $complaintId, $staffUserId) {
     // Chỉ còn logic "Lưu"
     if (isset($data['status'])) {
         $status = sanitizeInput($data['status']);
-        $validStatuses = ['pending', 'processing', 'resolved', 'closed', 'rejected'];
+        $validStatuses = ['pending', 'resolved'];
         if (!in_array($status, $validStatuses)) {
             throw new Exception("Trạng thái không hợp lệ", 400);
         }
@@ -197,7 +197,6 @@ function updateComplaint($db, $complaintId, $staffUserId) {
         $params[':status'] = $status; // Thêm :status vào $params
         
         if ($status === 'resolved') $fieldsToUpdate[] = "ResolvedAt = NOW()";
-        if ($status === 'closed') $fieldsToUpdate[] = "ClosedAt = NOW()";
     }
     
     if (isset($data['resolutionText'])) {

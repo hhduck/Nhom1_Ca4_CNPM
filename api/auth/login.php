@@ -90,7 +90,7 @@ function login($db) {
         'user_id' => $user['id'],
         'username' => $user['username'],
         'role' => $user['role'],
-        'exp' => time() + (7 * 24 * 60 * 60) // 7 ngày
+        'exp' => time() + (24 * 60 * 60) // 1 ngày (giảm từ 7 ngày để bảo mật hơn)
     ]));
     
         // Xóa password hash khỏi response
