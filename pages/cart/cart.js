@@ -81,14 +81,16 @@ function renderCartFromLocal(cart) {
   let total = 0;
   let rows = cart
     .map((item, index) => {
-      const price = parseInt(item.price.replace(/[^\d]/g, "")) || 0;
-      const subtotal = price * item.quantity;
+      // ✅ Ép kiểu giá về số chính xác
+      const price = parseFloat(String(item.price).replace(/[^\d.]/g, "")) || 0;
+      const subtotal = price * (item.quantity || 1);
       total += subtotal;
+
       return `
         <tr>
-          <td><img src="${item.image}" alt="${item.name}" class="cart-item-img"></td>
+<td><img src="${normalizeImagePath(item.image)}" alt="${item.name}" class="cart-item-img"></td>
           <td class="cart-item-name">${item.name}</td>
-          <td class="cart-item-price">${item.price}</td>
+          <td class="cart-item-price">${formatCurrency(price)}</td>
           <td>
             <div class="quantity-control">
               <button class="decrease">-</button>
@@ -96,7 +98,7 @@ function renderCartFromLocal(cart) {
               <button class="increase">+</button>
             </div>
           </td>
-          <td class="cart-subtotal">${subtotal.toLocaleString()} VND</td>
+          <td class="cart-subtotal">${formatCurrency(subtotal)}</td>
           <td>
             <button class="btn-remove" data-index="${index}">
               <i class="fas fa-trash"></i> Xóa
@@ -124,22 +126,21 @@ function renderCartFromLocal(cart) {
     </table>
 
     <div class="cart-summary">
-      <h3>Tổng cộng: ${total.toLocaleString()} VND</h3>
+      <h3>Tổng cộng: ${formatCurrency(total)}</h3>
       <button class="btn-primary" id="checkoutBtn">Thanh toán</button>
     </div>
   `;
 
   updateCartCount();
   attachQuantityHandlers();
-  attachRemoveHandlers(); // Thêm sự kiện xoá
+  attachRemoveHandlers();
+
   const checkoutBtn = document.getElementById("checkoutBtn");
-if (checkoutBtn) {
-
-  checkoutBtn.addEventListener("click", () => {
-    window.location.href = "../pay/pay.html";
-  });
-}
-
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", () => {
+      window.location.href = "../pay/pay.html";
+    });
+  }
 }
 
 // ========== HIỂN THỊ SỐ ICON ==========
@@ -219,5 +220,20 @@ function attachRemoveHandlers() {
     });
   });
 }
+function formatCurrency(amount) {
+  if (isNaN(amount)) return "0 ₫";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    minimumFractionDigits: 0
+  }).format(amount);
+}
+function normalizeImagePath(path) {
+  if (!path) return "../../assets/images/default.jpg";
+  if (path.startsWith("assets/assets/")) path = path.replace("assets/assets/", "assets/");
+  if (!path.startsWith("../../")) path = "../../" + path;
+  return path;
+}
+
 
 
