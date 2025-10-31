@@ -352,50 +352,35 @@ function clearAllErrors() {
 }
 
 function performRegistration(userData) {
-    // In production, this would be an actual API call
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+fetch("../../api/auth/register.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData)
+})
+    .then(res => res.json())
+    .then(data => {
 
-    // Check if username or email already exists
-    const userExists = existingUsers.find(user =>
-        user.username === userData.username || user.email === userData.email
-    );
+        const btn = document.querySelector(".btn-submit");
+        btn.classList.remove("loading");
+        btn.textContent = "Đăng ký";
 
-    const submitBtn = document.querySelector('.btn-submit');
-    submitBtn.classList.remove('loading');
-    submitBtn.textContent = 'Đăng ký';
-
-    if (userExists) {
-        if (userExists.username === userData.username) {
-            showMessage('Tên đăng nhập đã được sử dụng!', 'error');
-        } else {
-            showMessage('Email đã được sử dụng!', 'error');
+        // Case API lỗi validate hoặc trùng
+        if (!data.success) {
+            showMessage(data.message || "Lỗi không xác định từ server", "error");
+            return;
         }
-        return;
-    }
 
-    // Create new user
-    const newUser = {
-        id: Date.now(),
-        username: userData.username,
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        phone: userData.phone,
-        address: userData.address,
-        role: 'customer',
-        createdAt: new Date().toISOString()
-    };
+        // Thành công → show success và chuyển trang
+        showMessage("Đăng ký thành công!", "success");
 
-    // Add to users list
-    existingUsers.push(newUser);
-    localStorage.setItem('users', JSON.stringify(existingUsers));
-
-    showMessage('Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.', 'success');
-
-    // Redirect to login page
-    setTimeout(() => {
-        window.location.href = '../login/login.html';
-    }, 2000);
+        setTimeout(() => {
+            window.location.href = "../login/login.html";
+        }, 1500);
+    })
+    .catch(error => {
+        console.error("Fetch error:", error);
+        showMessage("Không thể kết nối tới server!", "error");
+    });
 }
 
 // Utility function for showing messages
