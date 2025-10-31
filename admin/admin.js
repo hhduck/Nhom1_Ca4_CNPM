@@ -255,7 +255,8 @@ function showPage(pageName) {
                 loadUsers();
                 break;
             case 'reports':
-                loadReports('month');
+                initYearDropdown();
+                loadReports('month', null, new Date().getFullYear());
                 break;
             case 'promotions':
                 loadPromotions();
@@ -266,6 +267,9 @@ function showPage(pageName) {
         }
     }
 }
+
+// Expose showPage to global scope
+window.showPage = showPage;
 
 // ============================================
 // PRODUCTS MANAGEMENT
@@ -414,6 +418,11 @@ function showAddProductModal() {
     document.getElementById('product-price').value = '';
     document.getElementById('product-quantity').value = '';
     document.getElementById('product-description').value = '';
+    document.getElementById('product-short-intro').value = '';
+    document.getElementById('product-short-paragraph').value = '';
+    document.getElementById('product-structure').value = '';
+    document.getElementById('product-usage').value = '';
+    document.getElementById('product-bonus').value = '';
     document.getElementById('product-image-url').value = '';
 
     document.getElementById('productModal').classList.add('active');
@@ -437,6 +446,11 @@ async function editProduct(productId) {
             document.getElementById('product-price').value = product.price || product.Price;
             document.getElementById('product-quantity').value = product.quantity || product.Quantity;
             document.getElementById('product-description').value = product.description || product.Description || '';
+            document.getElementById('product-short-intro').value = product.short_intro || product.ShortIntro || '';
+            document.getElementById('product-short-paragraph').value = product.short_paragraph || product.ShortParagraph || '';
+            document.getElementById('product-structure').value = product.structure || product.Structure || '';
+            document.getElementById('product-usage').value = product.product_usage || product.usage || product.Usage || '';
+            document.getElementById('product-bonus').value = product.bonus || product.Bonus || '';
             document.getElementById('product-image-url').value = product.image_url || product.ImageURL || '';
 
             document.getElementById('productModal').classList.add('active');
@@ -457,6 +471,11 @@ async function saveProduct() {
         price: document.getElementById('product-price').value,
         quantity: document.getElementById('product-quantity').value,
         description: document.getElementById('product-description').value,
+        short_intro: document.getElementById('product-short-intro').value,
+        short_paragraph: document.getElementById('product-short-paragraph').value,
+        structure: document.getElementById('product-structure').value,
+        usage: document.getElementById('product-usage').value,
+        bonus: document.getElementById('product-bonus').value,
         image_url: document.getElementById('product-image-url').value
     };
 
@@ -987,8 +1006,13 @@ async function deleteUser(userId) {
 async function loadReports(period, month, year) {
     try {
         let url = `${API_BASE_URL}/reports.php?period=${period}`;
-        if (month && year) {
-            url += `&month=${month}&year=${year}`;
+        // Luôn gửi year nếu có
+        if (year) {
+            url += `&year=${year}`;
+        }
+        // Gửi month nếu có (cho biểu đồ tròn)
+        if (month) {
+            url += `&month=${month}`;
         }
         
         const response = await fetch(url, {
@@ -1022,8 +1046,46 @@ async function loadReports(period, month, year) {
             // Update charts
             initCharts(data.data.chart_data);
 
-            // Update top products table
-            loadTopProducts(data.data.top_products);
+            // Update top products table - dùng product_chart_full nếu có (khi chọn tháng)
+            // Kiểm tra xem có phải "Tất cả" (month = "") không
+            const monthSelect = document.getElementById('report-month-select');
+            const yearSelect = document.getElementById('report-year-select');
+            const selectedMonth = monthSelect?.value || '';
+            
+            // Nếu chọn "Tất cả" (month = ""), bảng để trống
+            if (!selectedMonth) {
+                // Chọn "Tất cả": bảng để trống (vì dữ liệu lấy từ biểu đồ tròn)
+                const tbody = document.getElementById('top-products-tbody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Vui lòng chọn tháng để xem chi tiết doanh thu theo sản phẩm</td></tr>';
+                }
+            } else {
+                // Kiểm tra xem có phải tháng tương lai không
+                let isFutureMonth = false;
+                if (selectedMonth) {
+                    const now = new Date();
+                    const currentYear = now.getFullYear();
+                    const currentMonth = now.getMonth() + 1;
+                    const year = parseInt(yearSelect?.value || currentYear);
+                    const monthNum = parseInt(selectedMonth);
+                    
+                    if (year > currentYear || (year === currentYear && monthNum > currentMonth)) {
+                        isFutureMonth = true;
+                    }
+                }
+                
+                if (isFutureMonth) {
+                    // Tháng tương lai: hiển thị trống
+                    const tbody = document.getElementById('top-products-tbody');
+                    if (tbody) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Tháng tương lai không có dữ liệu</td></tr>';
+                    }
+                } else if (data.data.product_chart_full && data.data.product_chart_full.length > 0) {
+                    loadTopProductsFromChart(data.data.product_chart_full);
+                } else {
+                    loadTopProducts(data.data.top_products);
+                }
+            }
         } else {
             throw new Error(data.message || 'Không thể tải báo cáo');
         }
@@ -1038,16 +1100,45 @@ function loadTopProducts(products) {
     const tbody = document.getElementById('top-products-tbody');
 
     if (products && products.length > 0) {
-        const totalRevenue = products.reduce((sum, p) => sum + p.revenue, 0);
+        const totalRevenue = products.reduce((sum, p) => sum + (parseFloat(p.revenue) || 0), 0);
 
-        tbody.innerHTML = products.map(product => `
+        tbody.innerHTML = products.map(product => {
+            const revenue = parseFloat(product.revenue) || 0;
+            const percentage = totalRevenue > 0 ? ((revenue / totalRevenue) * 100).toFixed(2) : '0.00';
+            return `
             <tr>
                 <td>${product.product_name}</td>
-                <td>${product.quantity_sold}</td>
-                <td>${formatCurrency(product.revenue)}</td>
-                <td>${((product.revenue / totalRevenue) * 100).toFixed(2)}%</td>
+                <td>${product.quantity_sold || 0}</td>
+                <td>${formatCurrency(revenue)}</td>
+                <td>${percentage}%</td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
+    } else {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Không có dữ liệu</td></tr>';
+    }
+}
+
+function loadTopProductsFromChart(products) {
+    const tbody = document.getElementById('top-products-tbody');
+
+    if (products && products.length > 0) {
+        // Tính tổng doanh thu từ biểu đồ tròn
+        const totalRevenue = products.reduce((sum, p) => sum + (parseFloat(p.revenue) || 0), 0);
+
+        tbody.innerHTML = products.map(product => {
+            const revenue = parseFloat(product.revenue) || 0;
+            const quantity = parseInt(product.quantity) || 0;
+            const percentage = totalRevenue > 0 ? ((revenue / totalRevenue) * 100).toFixed(2) : '0.00';
+            return `
+            <tr>
+                <td>${product.product_name}</td>
+                <td>${quantity}</td>
+                <td>${formatCurrency(revenue)}</td>
+                <td>${percentage}%</td>
+            </tr>
+        `;
+        }).join('');
     } else {
         tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Không có dữ liệu</td></tr>';
     }
@@ -1057,10 +1148,117 @@ function loadReportData(period) {
     loadReports(period);
 }
 
+function updateChartLegend(labels, colors) {
+    const legendContainer = document.getElementById('product-chart-legend') || document.querySelector('.chart-legend');
+    if (!legendContainer) return;
+    
+    if (labels && labels.length > 0) {
+        legendContainer.innerHTML = labels.map((label, index) => `
+            <div class="legend-item">
+                <span class="legend-color" style="background: ${colors[index]};"></span>
+                <span>${label}</span>
+            </div>
+        `).join('');
+    } else {
+        legendContainer.innerHTML = '';
+    }
+}
+
+// Initialize year dropdown từ 2024 đến năm hiện tại
+function initYearDropdown() {
+    const yearSelect = document.getElementById('report-year-select');
+    if (!yearSelect) return;
+    
+    const currentYear = new Date().getFullYear();
+    const startYear = 2024;
+    
+    yearSelect.innerHTML = '';
+    for (let year = startYear; year <= currentYear; year++) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        if (year === currentYear) {
+            option.selected = true;
+        }
+        yearSelect.appendChild(option);
+    }
+}
+
 function loadReportByMonth() {
-    const month = document.getElementById('report-month-select').value;
-    const year = document.getElementById('report-year-select').value;
-    loadReports('month', month, year);
+    const monthSelect = document.getElementById('report-month-select');
+    const yearSelect = document.getElementById('report-year-select');
+    
+    const month = monthSelect?.value || '';
+    const year = parseInt(yearSelect?.value || new Date().getFullYear());
+    const monthNum = month ? parseInt(month) : null;
+    
+    // Kiểm tra xem tháng được chọn có phải là tháng tương lai không
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // getMonth() trả về 0-11
+    
+    let isFutureMonth = false;
+    if (monthNum) {
+        // Nếu năm > năm hiện tại, hoặc năm = năm hiện tại nhưng tháng > tháng hiện tại
+        if (year > currentYear || (year === currentYear && monthNum > currentMonth)) {
+            isFutureMonth = true;
+        }
+    }
+    
+    // Nếu là tháng tương lai, hiển thị trống
+    if (isFutureMonth) {
+        clearChartsAndTable();
+        return;
+    }
+    
+    // Luôn gửi year (cho biểu đồ cột), gửi month nếu có (cho biểu đồ tròn)
+    loadReports('month', monthNum, year);
+}
+
+function clearChartsAndTable() {
+    // Xóa biểu đồ
+    if (revenueChart) {
+        revenueChart.destroy();
+        revenueChart = null;
+    }
+    if (categoryChart) {
+        categoryChart.destroy();
+        categoryChart = null;
+    }
+    
+    // Xóa canvas
+    const revenueCtx = document.getElementById('revenueChart');
+    const categoryCtx = document.getElementById('categoryChart');
+    if (revenueCtx) {
+        const ctx = revenueCtx.getContext('2d');
+        ctx.clearRect(0, 0, revenueCtx.width, revenueCtx.height);
+    }
+    if (categoryCtx) {
+        const ctx = categoryCtx.getContext('2d');
+        ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#999';
+        ctx.textAlign = 'center';
+        ctx.fillText('Tháng tương lai không có dữ liệu', categoryCtx.width / 2, categoryCtx.height / 2);
+    }
+    
+    // Xóa legend
+    const legendContainer = document.getElementById('product-chart-legend') || document.querySelector('.chart-legend');
+    if (legendContainer) {
+        legendContainer.innerHTML = '';
+    }
+    
+    // Xóa bảng doanh thu
+    const tbody = document.getElementById('top-products-tbody');
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Tháng tương lai không có dữ liệu</td></tr>';
+    }
+    
+    // Reset stats
+    document.getElementById('revenue-stat').textContent = '0 ₫';
+    document.getElementById('orders-stat').textContent = '0';
+    document.getElementById('delivered-stat').textContent = '0';
+    document.getElementById('customers-stat').textContent = '0';
 }
 
 function initCharts(chartData) {
@@ -1070,56 +1268,155 @@ function initCharts(chartData) {
     // Revenue Chart
     const revenueCtx = document.getElementById('revenueChart');
     if (revenueCtx && chartData.revenue) {
-        revenueChart = new Chart(revenueCtx.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: chartData.revenue.labels,
-                datasets: [{
-                    label: 'Doanh thu (VNĐ)',
-                    data: chartData.revenue.data,
-                    backgroundColor: '#4472C4',
-                    borderColor: '#4472C4',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return (value / 1000000) + 'M';
+        // Kiểm tra xem có phải năm tương lai không
+        const yearSelect = document.getElementById('report-year-select');
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const selectedYear = parseInt(yearSelect?.value || currentYear);
+        const isFutureYear = selectedYear > currentYear;
+        
+        if (isFutureYear) {
+            // Năm tương lai: hiển thị trống
+            const ctx = revenueCtx.getContext('2d');
+            ctx.clearRect(0, 0, revenueCtx.width, revenueCtx.height);
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#999';
+            ctx.textAlign = 'center';
+            ctx.fillText('Năm tương lai không có dữ liệu', revenueCtx.width / 2, revenueCtx.height / 2);
+        } else {
+            // Chuyển đổi labels từ "01", "02" sang "Tháng 1", "Tháng 2"
+            const monthLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
+                                 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+            const labels = chartData.revenue.labels ? chartData.revenue.labels.map((label, index) => {
+                const monthNum = parseInt(label) || (index + 1);
+                return monthLabels[monthNum - 1] || label;
+            }) : monthLabels;
+            
+            const data = chartData.revenue.data || Array(12).fill(0);
+            
+            revenueChart = new Chart(revenueCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: data,
+                        backgroundColor: '#4472C4',
+                        borderColor: '#4472C4',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return (value / 1000000) + 'M';
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
+    } else if (revenueCtx) {
+        // Nếu không có data, hiển thị trống
+        const ctx = revenueCtx.getContext('2d');
+        ctx.clearRect(0, 0, revenueCtx.width, revenueCtx.height);
     }
 
-    // Category Chart
+    // Category Chart (chỉ hiển thị khi có month được chọn cụ thể, không phải "Tất cả")
     const categoryCtx = document.getElementById('categoryChart');
-    if (categoryCtx && chartData.products) {
-        categoryChart = new Chart(categoryCtx.getContext('2d'), {
-            type: 'pie',
-            data: {
-                labels: chartData.products.labels,
-                datasets: [{
-                    data: chartData.products.data,
-                    backgroundColor: ['#4472C4', '#ED7D31', '#A5A5A5', '#FFC000', '#5B9BD5'],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
-            }
-        });
+    const monthSelect = document.getElementById('report-month-select');
+    const hasMonth = monthSelect && monthSelect.value && monthSelect.value !== '';
+    
+    // Kiểm tra xem có phải tháng tương lai không
+    let isFutureMonth = false;
+    if (hasMonth) {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+        const yearSelect = document.getElementById('report-year-select');
+        const year = parseInt(yearSelect?.value || currentYear);
+        const monthNum = parseInt(monthSelect.value);
+        
+        if (year > currentYear || (year === currentYear && monthNum > currentMonth)) {
+            isFutureMonth = true;
+        }
+    }
+    
+    // Màu sắc cho biểu đồ (đủ cho nhiều sản phẩm)
+    const chartColors = [
+        '#4472C4', '#ED7D31', '#A5A5A5', '#FFC000', '#5B9BD5', '#70AD47', '#FF0000', 
+        '#7030A0', '#00B0F0', '#C55A11', '#8FAADC', '#F4B084', '#9BBB59', '#8064A2', 
+        '#4BACC6', '#F79646', '#0000FF', '#00FF00', '#FF00FF'
+    ];
+    
+    if (categoryCtx) {
+        if (!hasMonth) {
+            // Chọn "Tất cả" (month = ""): biểu đồ tròn để trống
+            if (categoryChart) categoryChart.destroy();
+            const ctx = categoryCtx.getContext('2d');
+            ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#999';
+            ctx.textAlign = 'center';
+            ctx.fillText('Vui lòng chọn tháng để xem biểu đồ', categoryCtx.width / 2, categoryCtx.height / 2);
+            // Xóa legend
+            updateChartLegend([], []);
+        } else if (isFutureMonth) {
+            // Tháng tương lai: hiển thị trống
+            if (categoryChart) categoryChart.destroy();
+            const ctx = categoryCtx.getContext('2d');
+            ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#999';
+            ctx.textAlign = 'center';
+            ctx.fillText('Tháng tương lai không có dữ liệu', categoryCtx.width / 2, categoryCtx.height / 2);
+            // Xóa legend
+            updateChartLegend([], []);
+        } else if (hasMonth && chartData.products && chartData.products.labels && chartData.products.labels.length > 0) {
+            if (categoryChart) categoryChart.destroy();
+            
+            // Tạo mảng màu cho từng sản phẩm
+            const colors = chartData.products.labels.map((_, index) => 
+                chartColors[index % chartColors.length]
+            );
+            
+            categoryChart = new Chart(categoryCtx.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: chartData.products.labels,
+                    datasets: [{
+                        data: chartData.products.data,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            // Cập nhật legend động từ data
+            updateChartLegend(chartData.products.labels, colors);
+        } else {
+            // Ẩn biểu đồ hoặc hiển thị message
+            if (categoryChart) categoryChart.destroy();
+            const ctx = categoryCtx.getContext('2d');
+            ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#999';
+            ctx.textAlign = 'center';
+            ctx.fillText('Vui lòng chọn tháng để xem biểu đồ', categoryCtx.width / 2, categoryCtx.height / 2);
+        }
     }
 }
 
@@ -1190,7 +1487,8 @@ async function createPromotion() {
         end_date: document.getElementById('promo-end').value,
         discount_value: document.getElementById('promo-value').value,
         quantity: document.getElementById('promo-quantity').value,
-        min_order_value: document.getElementById('promo-condition').value || 0
+        min_order_value: document.getElementById('promo-condition').value || 0,
+        image_url: document.getElementById('promo-image-url').value || ''
     };
 
     if (!promoData.promotion_code || !promoData.promotion_name || !promoData.promotion_type) {
@@ -1217,6 +1515,7 @@ async function createPromotion() {
             document.getElementById('promo-value').value = '';
             document.getElementById('promo-quantity').value = '';
             document.getElementById('promo-condition').value = '';
+            document.getElementById('promo-image-url').value = '';
         } else {
             throw new Error('Failed to create promotion');
         }
@@ -1228,6 +1527,7 @@ async function createPromotion() {
 
 async function viewPromoDetail(promoId) {
     try {
+        window.currentPromoId = promoId;
         currentPromoId = promoId;
         const response = await fetch(`${API_BASE_URL}/promotions.php/${promoId}`, {
             headers: {
@@ -1244,6 +1544,14 @@ async function viewPromoDetail(promoId) {
         const modalBody = document.getElementById('promo-detail-body');
         modalBody.innerHTML = `
             <div class="info-section">
+                ${promo.image_url ? `
+                <div class="info-row">
+                    <span class="info-label">Hình ảnh:</span>
+                    <span class="info-value">
+                        <img src="../${promo.image_url}" alt="${promo.promotion_name}" style="max-width: 300px; max-height: 200px; border-radius: 8px;">
+                    </span>
+                </div>
+                ` : ''}
                 <div class="info-row">
                     <span class="info-label">Mã khuyến mãi:</span>
                     <span class="info-value">${promo.promotion_code}</span>
@@ -1320,6 +1628,98 @@ async function deletePromotion(promoId) {
     } catch (error) {
         console.error('Error deleting promotion:', error);
         showError('Không thể xóa khuyến mãi');
+    }
+}
+
+async function openEditPromoModal() {
+    if (!window.currentPromoId && !currentPromoId) return;
+    const promoId = window.currentPromoId || currentPromoId;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/promotions.php/${promoId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            }
+        });
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to load promotion');
+        }
+
+        const promo = data.data;
+        
+        // Fill form
+        document.getElementById('edit-promo-code').value = promo.promotion_code || '';
+        document.getElementById('edit-promo-name').value = promo.promotion_name || '';
+        document.getElementById('edit-promo-type').value = promo.promotion_type || '';
+        document.getElementById('edit-promo-value').value = promo.discount_value || '';
+        document.getElementById('edit-promo-min-order').value = promo.min_order_value || '';
+        document.getElementById('edit-promo-quantity').value = promo.quantity || '';
+        document.getElementById('edit-promo-status').value = promo.status || 'active';
+        document.getElementById('edit-promo-image-url').value = promo.image_url || '';
+        
+        // Format dates for datetime-local input
+        if (promo.start_date) {
+            const startDate = new Date(promo.start_date);
+            document.getElementById('edit-promo-start').value = startDate.toISOString().slice(0, 16);
+        }
+        if (promo.end_date) {
+            const endDate = new Date(promo.end_date);
+            document.getElementById('edit-promo-end').value = endDate.toISOString().slice(0, 16);
+        }
+
+        document.getElementById('promoEditModal').classList.add('active');
+    } catch (error) {
+        console.error('Error loading promotion for edit:', error);
+        showError('Không thể tải thông tin khuyến mãi');
+    }
+}
+
+async function updatePromotion() {
+    const promoId = window.currentPromoId || currentPromoId;
+    if (!promoId) return;
+    
+    const promoData = {
+        promotion_code: document.getElementById('edit-promo-code').value,
+        promotion_name: document.getElementById('edit-promo-name').value,
+        promotion_type: document.getElementById('edit-promo-type').value,
+        discount_value: document.getElementById('edit-promo-value').value || 0,
+        min_order_value: document.getElementById('edit-promo-min-order').value || 0,
+        quantity: document.getElementById('edit-promo-quantity').value || -1,
+        status: document.getElementById('edit-promo-status').value,
+        start_date: document.getElementById('edit-promo-start').value,
+        end_date: document.getElementById('edit-promo-end').value,
+        image_url: document.getElementById('edit-promo-image-url').value || ''
+    };
+
+    if (!promoData.promotion_code || !promoData.promotion_name || !promoData.promotion_type) {
+        showError('Vui lòng điền đầy đủ thông tin bắt buộc');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/promotions.php/${promoId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            },
+            body: JSON.stringify(promoData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess('Cập nhật khuyến mãi thành công');
+            closeModal('promoEditModal');
+            loadPromotions();
+        } else {
+            throw new Error(data.message || 'Failed to update promotion');
+        }
+    } catch (error) {
+        console.error('Error updating promotion:', error);
+        showError('Không thể cập nhật khuyến mãi');
     }
 }
 

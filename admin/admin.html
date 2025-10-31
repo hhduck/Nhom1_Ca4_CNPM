@@ -174,28 +174,6 @@
         <div class="content-container">
             <div class="report-header-section">
                 <h2 class="page-title">QUẢN LÝ BÁO CÁO</h2>
-                <div class="report-time-filters" style="display: flex; gap: 15px; align-items: center;">
-                    <select id="report-month-select" class="form-input" style="width: 150px;" onchange="loadReportByMonth()">
-                        <option value="01">Tháng 1</option>
-                        <option value="02">Tháng 2</option>
-                        <option value="03">Tháng 3</option>
-                        <option value="04">Tháng 4</option>
-                        <option value="05">Tháng 5</option>
-                        <option value="06">Tháng 6</option>
-                        <option value="07">Tháng 7</option>
-                        <option value="08">Tháng 8</option>
-                        <option value="09">Tháng 9</option>
-                        <option value="10">Tháng 10</option>
-                        <option value="11">Tháng 11</option>
-                        <option value="12">Tháng 12</option>
-                    </select>
-                    <select id="report-year-select" class="form-input" style="width: 120px;" onchange="loadReportByMonth()">
-                        <option value="2023">2023</option>
-                        <option value="2024" selected>2024</option>
-                        <option value="2025">2025</option>
-                    </select>
-                    <button class="time-filter-btn" onclick="loadReportData('all')">Tất cả</button>
-                </div>
             </div>
 
             <div class="stats-grid">
@@ -249,34 +227,37 @@
                 <div class="chart-box">
                     <h3 class="chart-header">Sản phẩm bán chạy</h3>
                     <canvas id="categoryChart"></canvas>
-                    <div class="chart-legend">
-                        <div class="legend-item">
-                            <span class="legend-color" style="background: #4472C4;"></span>
-                            <span>Blanche Figures & Framboises</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color" style="background: #ED7D31;"></span>
-                            <span>Mousse Chanh dây</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color" style="background: #A5A5A5;"></span>
-                            <span>Mousse Dưa Lưới</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color" style="background: #FFC000;"></span>
-                            <span>Strawberry Cloud</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color" style="background: #5B9BD5;"></span>
-                            <span>Entremets Rose</span>
-                        </div>
+                    <div class="chart-legend" id="product-chart-legend">
+                        <!-- Legend sẽ được tạo động từ JavaScript -->
                     </div>
                 </div>
             </div>
 
             <div class="top-products-section">
-                <div class="section-header-green">
+                <div class="section-header-green" style="margin-bottom: 20px;">
                     CHI TIẾT DOANH THU THEO SẢN PHẨM
+                </div>
+                <div class="report-time-filters" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px;">
+                    <label style="font-weight: 600;">Năm:</label>
+                    <select id="report-year-select" class="form-input" style="width: 120px;" onchange="loadReportByMonth()">
+                        <!-- Will be populated by JavaScript -->
+                    </select>
+                    <label style="font-weight: 600;">Tháng:</label>
+                    <select id="report-month-select" class="form-input" style="width: 150px;" onchange="loadReportByMonth()">
+                        <option value="">Tất cả</option>
+                        <option value="01">Tháng 1</option>
+                        <option value="02">Tháng 2</option>
+                        <option value="03">Tháng 3</option>
+                        <option value="04">Tháng 4</option>
+                        <option value="05">Tháng 5</option>
+                        <option value="06">Tháng 6</option>
+                        <option value="07">Tháng 7</option>
+                        <option value="08">Tháng 8</option>
+                        <option value="09">Tháng 9</option>
+                        <option value="10">Tháng 10</option>
+                        <option value="11">Tháng 11</option>
+                        <option value="12">Tháng 12</option>
+                    </select>
                 </div>
                 <table class="products-report-table">
                     <thead>
@@ -340,6 +321,10 @@
                         <label class="form-label">Điều kiện áp dụng</label>
                         <input type="text" id="promo-condition" class="form-input"
                             placeholder="VD: Đơn hàng từ 500,000đ">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">URL hình ảnh</label>
+                        <input type="text" id="promo-image-url" class="form-input" placeholder="VD: assets/images/promo.jpg">
                     </div>
                 </div>
                 <button class="btn-create-promo" onclick="createPromotion()">Tạo khuyến mãi mới</button>
@@ -435,6 +420,34 @@
                         <label class="form-label">Mô tả</label>
                         <textarea id="product-description" class="form-textarea" rows="4"
                             placeholder="Nhập mô tả sản phẩm"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Giới thiệu ngắn (Short Intro)</label>
+                        <textarea id="product-short-intro" class="form-textarea" rows="2"
+                            placeholder="VD: &lt;b&gt;Hoa hồng – Vải thiều – Mâm xôi&lt;/b&gt;"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Đoạn văn ngắn (Short Paragraph)</label>
+                        <textarea id="product-short-paragraph" class="form-textarea" rows="3"
+                            placeholder="Nhập đoạn văn ngắn giới thiệu sản phẩm"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Cấu trúc bánh (Structure)</label>
+                        <textarea id="product-structure" class="form-textarea" rows="6"
+                            placeholder="VD: &lt;ul&gt;&lt;li&gt;&lt;b&gt;Lớp 1:&lt;/b&gt; ...&lt;/li&gt;&lt;/ul&gt;"></textarea>
+                        <small style="color: #666; font-size: 12px;">Có thể sử dụng HTML để format</small>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Hướng dẫn sử dụng (Usage)</label>
+                        <textarea id="product-usage" class="form-textarea" rows="5"
+                            placeholder="VD: &lt;ul class='no-dot'&gt;&lt;li&gt;Bảo quản...&lt;/li&gt;&lt;/ul&gt;"></textarea>
+                        <small style="color: #666; font-size: 12px;">Có thể sử dụng HTML để format</small>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Quà tặng kèm (Bonus)</label>
+                        <textarea id="product-bonus" class="form-textarea" rows="4"
+                            placeholder="VD: &lt;ul class='no-dot'&gt;&lt;li&gt;Bộ dao, muỗng...&lt;/li&gt;&lt;/ul&gt;"></textarea>
+                        <small style="color: #666; font-size: 12px;">Có thể sử dụng HTML để format</small>
                     </div>
                     <div class="form-group full-width">
                         <label class="form-label">Hình ảnh sản phẩm</label>
@@ -562,11 +575,81 @@
                 <!-- Content will be loaded dynamically -->
             </div>
             <div class="modal-footer">
+                <button class="btn-danger" onclick="deletePromotion(window.currentPromoId); closeModal('promoDetailModal');">Xóa</button>
                 <button class="btn-secondary" onclick="closeModal('promoDetailModal')">Đóng</button>
-                <button class="btn-primary" onclick="editPromotion()">Chỉnh sửa</button>
+                <button class="btn-primary" onclick="openEditPromoModal(); closeModal('promoDetailModal');">Chỉnh sửa</button>
             </div>
         </div>
     </div>
+
+    <!-- Modal: Edit Promotion -->
+    <div id="promoEditModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 class="modal-title">Chỉnh sửa khuyến mãi</h3>
+                <button class="modal-close" onclick="closeModal('promoEditModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label class="form-label">Mã khuyến mãi *</label>
+                        <input type="text" id="edit-promo-code" class="form-input" placeholder="Nhập mã khuyến mãi">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tên khuyến mãi *</label>
+                        <input type="text" id="edit-promo-name" class="form-input" placeholder="Nhập tên khuyến mãi">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Loại khuyến mãi *</label>
+                        <select class="form-input" id="edit-promo-type">
+                            <option value="">Chọn loại khuyến mãi</option>
+                            <option value="percent">Giảm giá %</option>
+                            <option value="fixed_amount">Giảm giá VNĐ</option>
+                            <option value="free_shipping">Miễn phí vận chuyển</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Giá trị giảm</label>
+                        <input type="number" id="edit-promo-value" class="form-input" placeholder="Nhập giá trị">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đơn hàng tối thiểu</label>
+                        <input type="number" id="edit-promo-min-order" class="form-input" placeholder="Nhập đơn hàng tối thiểu">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số lượng mã</label>
+                        <input type="number" id="edit-promo-quantity" class="form-input" placeholder="Nhập số lượng">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ngày bắt đầu *</label>
+                        <input type="datetime-local" id="edit-promo-start" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ngày kết thúc *</label>
+                        <input type="datetime-local" id="edit-promo-end" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-input" id="edit-promo-status">
+                            <option value="pending">Chờ kích hoạt</option>
+                            <option value="active">Đang hoạt động</option>
+                            <option value="expired">Đã hết hạn</option>
+                            <option value="cancelled">Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">URL hình ảnh</label>
+                        <input type="text" id="edit-promo-image-url" class="form-input" placeholder="VD: assets/images/promo.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('promoEditModal')">Hủy</button>
+                <button class="btn-primary" onclick="updatePromotion()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+
     <script src="admin.js"></script>
 </body>
 

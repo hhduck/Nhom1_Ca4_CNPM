@@ -65,6 +65,11 @@ CREATE TABLE Products (
     Allergens VARCHAR(200),
     ShelfLife INT,
     StorageConditions VARCHAR(255),
+    ShortIntro TEXT,
+    ShortParagraph TEXT,
+    Structure TEXT,
+    `Usage` TEXT,
+    Bonus TEXT,
     Views INT DEFAULT 0,
     SoldCount INT DEFAULT 0,
     IsFeatured BOOLEAN DEFAULT FALSE,
@@ -165,6 +170,7 @@ CREATE TABLE Promotions (
     StartDate TIMESTAMP NOT NULL,
     EndDate TIMESTAMP NOT NULL,
     Status ENUM('pending', 'active', 'expired', 'cancelled') DEFAULT 'pending',
+    ImageURL VARCHAR(255),
     ApplicableProducts JSON,
     ApplicableCategories JSON,
     CustomerType ENUM('all', 'new', 'loyal') DEFAULT 'all',
@@ -311,19 +317,19 @@ INSERT INTO Users (UserID, Username, PasswordHash, FullName, Email, Phone, Role,
 (9, 'staff06', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Đặng Gia Hân', 'han.dang@lacuisine.vn', '0906555666', 'staff', 'active');
 
 -- 3. Products
-INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, OriginalPrice, Quantity, Status, ImageURL, Weight, ShelfLife, IsFeatured) VALUES
-(1, 'Entremets Rose', 1, 'Bánh kem kiểu Pháp cao cấp với mousse hương hồng', 650000, 750000, 15, 'available', 'assets/images/entremets-rose.jpg', 500, 3, TRUE),
-(2, 'Lime and Basil Entremets', 1, 'Entremet chanh và húng quế', 600000, 680000, 12, 'available', 'assets/images/lime-and-basil-entremets.jpg', 500, 3, TRUE),
-(3, 'Blanche Figues & Framboises', 1, 'Entremet sang trọng với sung trắng và phúc bồn tử', 650000, 750000, 10, 'available', 'assets/images/blanche-figues&framboises.jpg', 550, 3, TRUE),
-(4, 'Mousse Chanh Dây', 2, 'Bánh mousse chanh dây tươi mát', 550000, 600000, 25, 'available', 'assets/images/mousse-chanh-day.jpg', 450, 2, TRUE),
-(5, 'Mousse Dưa Lưới', 2, 'Mousse dưa lưới ngọt thanh', 550000, 600000, 20, 'available', 'assets/images/mousse-dua-luoi.jpg', 450, 2, TRUE),
-(6, 'Mousse Việt Quất', 2, 'Mousse việt quất chua ngọt', 550000, 600000, 18, 'available', 'assets/images/mousse-viet-quat.jpg', 450, 2, FALSE),
-(7, 'Orange Seranade', 3, 'Bánh kem cam phong cách rustic', 450000, 500000, 15, 'available', 'assets/images/orange-serenade.jpg', 600, 3, FALSE),
-(8, 'Strawberry Cloud Cake', 3, 'Bánh kem dâu tây mây', 500000, 550000, 12, 'available', 'assets/images/strawberry-cloud-cake.jpg', 650, 3, FALSE),
-(9, 'Earl Grey Bloom', 3, 'Bánh kem earl grey', 500000, 550000, 10, 'available', 'assets/images/earl-grey-bloom.jpg', 650, 3, TRUE),
-(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', 'assets/images/non.jpg', 20, 365, FALSE),
-(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', 'assets/images/phaohoa.jpg', 50, 365, FALSE),
-(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', 'assets/images/trang-tri.jpg', 100, 365, FALSE);
+INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, OriginalPrice, Quantity, Status, ImageURL, Weight, ShelfLife, IsFeatured, ShortIntro, ShortParagraph, Structure, `Usage`, Bonus) VALUES
+(1, 'Entremets Rose', 1, '<p>Một chiếc entremets tựa như đoá hồng nở trong nắng sớm — nhẹ nhàng, tinh khôi và ngọt ngào theo cách riêng. Entremets Rose là sự hòa quyện giữa vải thiều mọng nước, mâm xôi chua thanh, phô mai trắng béo mịn và hương hoa hồng phảng phất, tạo nên cảm giác trong trẻo, nữ tính và đầy tinh tế.</p>', 650000, 750000, 15, 'available', 'assets/images/entremets-rose.jpg', 500, 3, TRUE, '<b>Hoa hồng – Vải thiều – Mâm xôi – Phô mai trắng</b>', 'Chiếc entremets nhẹ như một khúc nhạc Pháp, hòa quyện hương hoa hồng thanh thoát, vải thiều ngọt mát, mâm xôi chua nhẹ và mousse phô mai trắng béo mềm. Từng lớp bánh được sắp đặt tỉ mỉ để mang đến cảm giác trong trẻo, tinh khôi và đầy nữ tính — một "nụ hồng ngọt ngào" dành cho những tâm hồn yêu sự dịu dàng.', '<ul><li><b>Lớp 1 – Biscuit Madeleine Framboise:</b> Cốt bánh mềm nhẹ, thấm vị chua thanh tự nhiên từ mâm xôi tươi.</li><li><b>Lớp 2 – Confit Framboise:</b> Mứt mâm xôi cô đặc nấu chậm, giữ trọn vị chua ngọt tươi mới.</li><li><b>Lớp 3 – Crémeux Litchi Rose:</b> Nhân kem vải thiều hòa cùng hương hoa hồng – mềm mịn, thanh tao và thơm dịu.</li><li><b>Lớp 4 – Mousse Fromage Blanc:</b> Lớp mousse phô mai trắng mịn như mây, mang vị béo nhẹ và cảm giác tan ngay nơi đầu lưỡi.</li><li><b>Lớp 5 – Shortbread:</b> Đế bánh bơ giòn tan, tạo điểm nhấn hài hòa cho tổng thể.</li></ul><p>Trang trí bằng hoa edible, mâm xôi tươi và lớp xịt nhung trắng (velours) — tinh khôi, thanh lịch.</p>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(2, 'Lime and Basil Entremets', 1, '<p>Bánh Entremets Chanh – Húng Quế là sự hòa quyện hoàn hảo giữa vị chua dịu của chanh xanh tươi và hương thơm thanh khiết của lá húng quế. Lớp mousse chanh mịn màng, vừa tươi vừa nhẹ, được điểm xuyết bằng những lá húng quế nghiền nhẹ, tạo cảm giác tươi mới và thanh thoát.</p>', 600000, 680000, 12, 'available', 'assets/images/lime-and-basil-entremets.jpg', 500, 3, TRUE, 'Chanh, Húng Quế và Kem Tươi', 'Chiếc entremets mang sắc xanh ngọc thạch quyến rũ, là bản hòa tấu bất ngờ giữa vị chua sáng rỡ của những trái chanh xanh căng mọng và hương thơm ấm áp, nồng nàn của húng quế.', '<ul><li><b>Lớp 1 – Biscuit Sablé (Đế bánh giòn):</b> Đế bơ giòn rụm, tạo độ tương phản hoàn hảo với phần mousse mềm mại phía trên.</li><li><b>Lớp 2 – Crèmeux Citron Vert (Kem chanh xanh):</b> Nhân kem chua dịu, đậm đặc từ nước cốt và vỏ chanh, mang vị chua thanh khiết, tươi mát.</li><li><b>Lớp 3 – Mousse Basilic (Mousse húng quế):</b> Lớp mousse nhẹ, xốp, thấm đượm hương thơm tinh tế của lá húng quế.</li><li><b>Lớp 4 – Gelée chanh:</b> Một lớp gelée chanh mỏng, tăng độ tươi mới và tạo chiều sâu cho bánh.</li><li><b>Lớp 5 – Miroir Glaze Vert:</b> Lớp phủ bóng màu xanh lá ngọc, giữ độ ẩm và tạo vẻ ngoài hấp dẫn.</li></ul><p>Trang trí: lát chanh tươi và lá húng quế (hoặc bạc hà), điểm xuyết chút đường bột.</p>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(3, 'Blanche Figues & Framboises', 1, '<p>Có những ngày, chỉ cần một miếng bánh thôi cũng đủ khiến lòng nhẹ đi đôi chút. Entremets Sung – Mâm Xôi – Sô Cô La Trắng là bản giao hưởng giữa vị chua thanh của mâm xôi, độ ngọt dịu của sung chín và sự béo mịn, thanh tao của sô cô la trắng.</p>', 650000, 750000, 10, 'available', 'assets/images/blanche-figues&framboises.jpg', 550, 3, TRUE, 'Sung – Mâm Xôi – Sô Cô La Trắng', 'Chiếc entremets mang vẻ tinh tế với lớp gương sô cô la trắng bóng mịn bao phủ. Bên trong là bánh bông xốp mâm xôi, compoté sung – mâm xôi dẻo thơm và mousse sô cô la trắng béo nhẹ, tan ngay trong miệng.', '<ul><li><b>Lớp 1 – Cốt bánh mâm xôi:</b> Bánh bông xốp mềm nhẹ, thấm vị chua thanh tự nhiên từ mâm xôi tươi.</li><li><b>Lớp 2 – Compoté sung – mâm xôi:</b> Hỗn hợp trái cây nấu chậm giữ cấu trúc và hương vị.</li><li><b>Lớp 3 – Mousse sô cô la trắng:</b> Mềm mượt, nhẹ bẫng như mây với sô cô la trắng cao cấp.</li><li><b>Lớp 4 – Gương sô cô la trắng:</b> Phủ bề mặt bằng glaçage mịn như lụa.</li></ul>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(4, 'Mousse Chanh Dây', 2, '<p>Bánh Mousse Chanh Dây là món tráng miệng tinh tế, mang đến cảm giác tươi mát và sảng khoái ngay từ muỗng đầu tiên. Bánh hòa quyện hoàn hảo vị chua thanh của chanh dây với lớp mousse whipping mềm mịn, béo nhẹ, tan chảy trên đầu lưỡi mà vẫn giữ sự nhẹ nhàng, không ngấy.</p>', 550000, 600000, 25, 'available', 'assets/images/mousse-chanh-day.jpg', 450, 2, TRUE, 'Chanh dây, whipping cream, phô mai mascarpone', 'Chiếc Mousse Chanh Dây là sự kết hợp tinh tế của hương vị nhiệt đới tươi mới. Lớp custard chua thanh hòa quyện cùng những miếng chanh dây mọng nước, điểm xuyết lớp mousse whipping mềm mịn, béo nhẹ, tan ngay trên đầu lưỡi.', '<ul><li><b>Lớp 1 – Đế bánh (Base Cookie / Biscuit):</b> Đế giòn rụm, thơm bơ.</li><li><b>Lớp 2 – Kem chanh dây + Whipping & Mascarpone:</b> Mousse mềm mượt, béo nhẹ và chua thanh.</li><li><b>Lớp 3 – Gelée chanh dây:</b> Lớp gelée tươi mát, hơi sánh nhẹ tăng độ sống động.</li></ul>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(5, 'Mousse Dưa Lưới', 2, '<p>Ra đời giữa những ngày oi ả của Sài Gòn, chiếc Bánh Dưa Lưới như mang đến một khoảng trời mát lành và thanh khiết. Lớp mousse mềm mại từ phô mai tươi và kem sữa hòa quyện hoàn hảo với dưa lưới mật Fuji nấu chậm, bên trong là những miếng dưa tươi mọng cùng cốt bánh gato vani ẩm mềm và một chút rượu dưa lưới nồng nàn, tạo nên hương vị tinh tế, dịu dàng nhưng đầy ấn tượng.</p>', 550000, 600000, 20, 'available', 'assets/images/mousse-dua-luoi.jpg', 450, 2, TRUE, 'Dưa lưới hữu cơ, kem sữa, phô mai Mascarpone', 'Bánh có vị thơm và béo nhẹ nhàng từ phô mai tươi kết hợp cùng kem sữa và dưa lưới mật Fuji nấu chậm, bên trong là rất nhiều dưa lưới tươi và cốt bánh gato vani, cùng với một ít rượu dưa lưới nồng nàn.', '<ul><li><b>Lớp 1 – Bánh bông lan vị vani (Vanilla Génoise):</b> Cốt bánh xốp mềm, ẩm mượt.</li><li><b>Lớp 2 – Dưa lưới mật tươi thái hạt lựu:</b> Miếng dưa tươi căng mọng.</li><li><b>Lớp 3 – Mousse dưa lưới:</b> Mousse mềm mượt, béo nhẹ.</li></ul>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(6, 'Mousse Việt Quất', 2, '<p>Bánh Mousse Việt Quất là sự kết hợp hoàn hảo giữa vị chua nhẹ thanh mát của quả việt quất và vị béo ngậy của kem tươi. Lớp mousse mịn màng, tan ngay trong miệng, mang lại cảm giác nhẹ nhàng, tươi mới nhưng vẫn đậm đà hương vị tự nhiên. Bánh được điểm xuyết những quả việt quất tươi trên mặt, tạo vẻ ngoài vừa tinh tế vừa sang trọng.</p>', 550000, 600000, 18, 'available', 'assets/images/mousse-viet-quat.jpg', 450, 2, FALSE, 'Việt quất, whipping cream', 'Mousse Việt Quất chinh phục vị giác bằng sắc tím quyến rũ và hương vị trái cây thanh mát. Lớp mousse mềm mượt, hòa quyện cùng vị chua nhẹ, mang lại cảm giác thanh tao và dễ chịu.', '<ul><li><b>Lớp 1 – Đế bánh bơ giòn:</b> Lớp đế cookie được nướng thủ công đến độ vàng ươm, giòn tan, mang hương bơ thơm dịu và vị ngọt vừa phải.</li><li><b>Lớp 2 – Mousse việt quất:</b> Lớp mousse tím nhạt mịn màng như nhung, hoà quyện giữa vị chua thanh của việt quất tươi và vị béo nhẹ của kem tươi.</li><li><b>Lớp 3 – Phủ việt quất tươi:</b> Bề mặt bánh được phủ đầy những quả việt quất tươi mọng nước, điểm xuyết sắc tím quyến rũ.</li></ul>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(7, 'Orange Serenade', 3, '<p>Orange Serenade được lấy cảm hứng từ tách trà Earl Grey ấm áp và lát cam tươi mát của mùa hè. Cốt bánh được ủ cùng trà bá tước, mang lại hương trà dịu nhẹ, thanh thoát. Xen giữa các lớp bánh là phần xốt cam chua ngọt và kem phô mai béo mịn — hòa quyện vừa đủ để tạo nên vị ngọt thanh, tròn đầy.</p>', 550000, 600000, 15, 'available', 'assets/images/orange-serenade.jpg', 600, 3, FALSE, 'Cam tươi, Earl Grey, kem phô mai, whipping cream', 'Chiếc bánh là sự kết hợp thanh tao giữa vị trà bá tước Earl Grey dịu nhẹ và vị cam tươi sáng chua ngọt. Cảm giác béo mịn, thoang thoảng hương trà và thoảng vị cam mọng nước như một buổi chiều hè dịu nắng.', '<ul><li><b>Lớp 1 – Gato trà bá tước (Earl Grey sponge):</b> Cốt bánh mềm ẩm, ủ cùng trà bá tước.</li><li><b>Lớp 2 – Jelly cam (Orange jelly):</b> Thạch cam mát lạnh, dẻo nhẹ.</li><li><b>Lớp 3 – Kem phô mai cam (Orange cream cheese):</b> Kem phô mai chua nhẹ, béo mịn.</li><li><b>Lớp 4 – Earl Grey cream:</b> Lớp kem trà mịn mượt.</li></ul>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(8, 'Strawberry Cloud Cake', 3, '<p>Strawberry Cloud Cake là chiếc bánh mang phong vị tươi sáng của những trái dâu mọng và việt quất ngọt thanh, kết hợp cùng lớp kem tươi mềm nhẹ và cốt bánh vani thơm dịu. Mỗi lát bánh là sự giao hòa giữa vị trái cây tươi mát, vị ngọt dịu của kem và cốt bánh ẩm mịn, tạo nên cảm giác trong trẻo và đầy sức sống.</p>', 500000, 550000, 12, 'available', 'assets/images/strawberry-cloud-cake.jpg', 650, 3, FALSE, 'Dâu tươi, việt quất, kem tươi Pháp, cốt bánh vanilla mềm ẩm', 'Chiếc bánh kem mang sắc trắng thanh khiết, điểm xuyết tầng dâu đỏ và việt quất xanh tím rực rỡ. Từng lớp bánh là sự hòa quyện giữa vị béo nhẹ của kem tươi, vị ngọt thanh của trái cây và cốt bánh vanilla mềm mịn — đơn giản mà tinh tế, như một áng mây ngọt ngào dành tặng những khoảnh khắc yêu thương.', '<ul><li><b>Lớp 1 – Cốt bánh vanilla mềm ẩm:</b> Lớp nền truyền thống, mềm mịn.</li><li><b>Lớp 2 – Kem tươi whipping nhẹ béo:</b> Kem đánh bông mềm mịn.</li><li><b>Lớp 3 – Mặt bánh phủ dâu tây & việt quất tươi:</b> Trái cây tươi trang trí trên mặt.</li></ul>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(9, 'Earl Grey Bloom', 3, '<p>Earl Grey Bloom là bản hòa ca của trà, trái cây và hương hoa — chiếc bánh dành riêng cho những ai yêu nét đẹp nhẹ nhàng, thanh lịch. Cốt bánh mềm mịn được ủ với lá trà bá tước hảo hạng, tỏa hương thơm thanh mát đặc trưng của cam bergamot.</p>', 500000, 550000, 10, 'available', 'assets/images/earl-grey-bloom.jpg', 650, 3, TRUE, 'Trà bá tước, xoài tươi, dâu tây, whipping cream', 'Chiếc bánh là phiên bản đặc biệt của dòng Earl Grey cake — mang hương vị thanh nhã, nhẹ nhàng và đầy nữ tính. Lớp cốt trà bá tước thơm dịu kết hợp cùng vị trái cây tươi chua ngọt, tạo nên tổng thể hài hòa, tinh tế và dễ chịu.', '<ul><li><b>Lớp 1 – Cốt bánh Earl Grey:</b> Bông lan mềm ẩm, ủ cùng trà bá tước.</li><li><b>Lớp 2 – Nhân trái cây tươi:</b> Xoài chín và dâu tây tươi xen kẽ.</li><li><b>Lớp 3 – Kem Earl Grey:</b> Kem whipping pha chiết xuất trà bá tước.</li></ul>', '<ul class="no-dot"><li>Bảo quản bánh trong hộp kín, giữ ở ngăn mát tủ lạnh (2–6°C).</li><li>Tránh để bánh tiếp xúc trực tiếp với ánh nắng hoặc nhiệt độ phòng quá lâu.</li><li>Bánh ngon nhất khi dùng trong vòng 24 giờ kể từ lúc nhận.</li><li>Nên dùng muỗng lạnh để cảm nhận rõ từng tầng hương vị – mềm, mịn và tan chảy tinh tế.</li></ul>', '<ul class="no-dot"><li>Bộ dao, muỗng và dĩa gỗ mang phong cách thủ công, tinh tế.</li><li>Hộp nến nhỏ để bạn dễ dàng biến chiếc bánh thành món quà hoặc điểm nhấn cho những dịp đặc biệt.</li><li>Thiệp cảm ơn La Cuisine Ngọt – gửi gắm lời chúc ngọt ngào kèm thông điệp từ trái tim.</li></ul>'),
+(10, 'Nón Sinh Nhật', 4, 'Nón sinh nhật xinh xắn', 10000, 10000, 200, 'available', 'assets/images/non.jpg', 20, 365, FALSE, '', '', '', '', ''),
+(11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', 'assets/images/phaohoa.jpg', 50, 365, FALSE, '', '', '', '', ''),
+(12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', 'assets/images/trang-tri.jpg', 100, 365, FALSE, '', '', '', '', '');
 
 -- 4. Promotions
 INSERT INTO Promotions
@@ -493,5 +499,152 @@ INSERT INTO Contacts (CustomerID, Subject, Message, Status, CreatedAt) VALUES
 -- Giả sử nhân viên staff01 (UserID=2) đã phản hồi
 UPDATE Contacts SET RespondedBy = 2, RespondedAt = DATE_SUB(NOW(), INTERVAL 4 DAY) WHERE ContactID = 3; -- Mousse Chanh Dây
 UPDATE Contacts SET RespondedBy = 2, RespondedAt = DATE_SUB(NOW(), INTERVAL 2 DAY) WHERE ContactID = 4; -- Strawberry Cloud Cake
+
+-- ============================================
+-- DỮ LIỆU MẪU CHO BÁO CÁO: Orders năm 2024 và 2025
+-- ============================================
+
+-- Năm 2024: 12 tháng với doanh thu mẫu
+INSERT INTO Orders (OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, CreatedAt, CompletedAt) VALUES
+-- Tháng 1/2024
+('ORD20240101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1500000, 0, 30000, 1530000, 'cod', 'paid', 'completed', '2024-01-15 10:00:00', '2024-01-17 14:00:00'),
+('ORD20240102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'bank_transfer', 'paid', 'completed', '2024-01-20 11:00:00', '2024-01-22 15:00:00'),
+-- Tháng 2/2024
+('ORD20240201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'cod', 'paid', 'completed', '2024-02-10 09:00:00', '2024-02-12 13:00:00'),
+('ORD20240202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1300000, 0, 30000, 1330000, 'momo', 'paid', 'completed', '2024-02-25 14:00:00', '2024-02-27 16:00:00'),
+-- Tháng 3/2024
+('ORD20240301', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 0, 30000, 1980000, 'cod', 'paid', 'completed', '2024-03-05 10:00:00', '2024-03-07 14:00:00'),
+('ORD20240302', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2024-03-18 11:00:00', '2024-03-20 15:00:00'),
+-- Tháng 4/2024
+('ORD20240401', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'cod', 'paid', 'completed', '2024-04-12 09:00:00', '2024-04-14 13:00:00'),
+('ORD20240402', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1400000, 0, 30000, 1430000, 'momo', 'paid', 'completed', '2024-04-28 14:00:00', '2024-04-30 16:00:00'),
+-- Tháng 5/2024
+('ORD20240501', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'cod', 'paid', 'completed', '2024-05-08 10:00:00', '2024-05-10 14:00:00'),
+('ORD20240502', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 50000, 30000, 1880000, 'bank_transfer', 'paid', 'completed', '2024-05-22 11:00:00', '2024-05-24 15:00:00'),
+-- Tháng 6/2024
+('ORD20240601', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'cod', 'paid', 'completed', '2024-06-03 09:00:00', '2024-06-05 13:00:00'),
+('ORD20240602', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1550000, 0, 30000, 1580000, 'momo', 'paid', 'completed', '2024-06-19 14:00:00', '2024-06-21 16:00:00'),
+-- Tháng 7/2024
+('ORD20240701', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 50000, 30000, 1830000, 'cod', 'paid', 'completed', '2024-07-11 10:00:00', '2024-07-13 14:00:00'),
+('ORD20240702', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 0, 30000, 2030000, 'bank_transfer', 'paid', 'completed', '2024-07-26 11:00:00', '2024-07-28 15:00:00'),
+-- Tháng 8/2024
+('ORD20240801', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'cod', 'paid', 'completed', '2024-08-07 09:00:00', '2024-08-09 13:00:00'),
+('ORD20240802', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2150000, 100000, 30000, 2080000, 'momo', 'paid', 'completed', '2024-08-23 14:00:00', '2024-08-25 16:00:00'),
+-- Tháng 9/2024
+('ORD20240901', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'cod', 'paid', 'completed', '2024-09-14 10:00:00', '2024-09-16 14:00:00'),
+('ORD20240902', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'bank_transfer', 'paid', 'completed', '2024-09-29 11:00:00', '2024-10-01 15:00:00'),
+-- Tháng 10/2024
+('ORD20241001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2050000, 0, 30000, 2080000, 'cod', 'paid', 'completed', '2024-10-09 09:00:00', '2024-10-11 13:00:00'),
+('ORD20241002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'momo', 'paid', 'completed', '2024-10-24 14:00:00', '2024-10-26 16:00:00'),
+-- Tháng 11/2024
+('ORD20241101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'cod', 'paid', 'completed', '2024-11-05 10:00:00', '2024-11-07 14:00:00'),
+('ORD20241102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2024-11-20 11:00:00', '2024-11-22 15:00:00'),
+-- Tháng 12/2024
+('ORD20241201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2400000, 100000, 30000, 2330000, 'cod', 'paid', 'completed', '2024-12-12 09:00:00', '2024-12-14 13:00:00'),
+('ORD20241202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 0, 30000, 2230000, 'momo', 'paid', 'completed', '2024-12-28 14:00:00', '2024-12-30 16:00:00'),
+-- Năm 2025: 10 tháng (tháng 1-10)
+-- Tháng 1/2025
+('ORD20250101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'cod', 'paid', 'completed', '2025-01-10 10:00:00', '2025-01-12 14:00:00'),
+('ORD20250102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'bank_transfer', 'paid', 'completed', '2025-01-25 11:00:00', '2025-01-27 15:00:00'),
+-- Tháng 2/2025
+('ORD20250201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 0, 30000, 1880000, 'cod', 'paid', 'completed', '2025-02-08 09:00:00', '2025-02-10 13:00:00'),
+('ORD20250202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'momo', 'paid', 'completed', '2025-02-22 14:00:00', '2025-02-24 16:00:00'),
+-- Tháng 3/2025
+('ORD20250301', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-03-15 10:00:00', '2025-03-17 14:00:00'),
+('ORD20250302', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 0, 30000, 2030000, 'bank_transfer', 'paid', 'completed', '2025-03-28 11:00:00', '2025-03-30 15:00:00'),
+-- Tháng 4/2025
+('ORD20250401', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 0, 30000, 1930000, 'cod', 'paid', 'completed', '2025-04-12 09:00:00', '2025-04-14 13:00:00'),
+('ORD20250402', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'momo', 'paid', 'completed', '2025-04-26 14:00:00', '2025-04-28 16:00:00'),
+-- Tháng 5/2025
+('ORD20250501', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2025-05-09 10:00:00', '2025-05-11 14:00:00'),
+('ORD20250502', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2150000, 0, 30000, 2180000, 'bank_transfer', 'paid', 'completed', '2025-05-23 11:00:00', '2025-05-25 15:00:00'),
+-- Tháng 6/2025
+('ORD20250601', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'cod', 'paid', 'completed', '2025-06-06 09:00:00', '2025-06-08 13:00:00'),
+('ORD20250602', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'momo', 'paid', 'completed', '2025-06-20 14:00:00', '2025-06-22 16:00:00'),
+-- Tháng 7/2025
+('ORD20250701', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2050000, 100000, 30000, 1980000, 'cod', 'paid', 'completed', '2025-07-13 10:00:00', '2025-07-15 14:00:00'),
+('ORD20250702', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'bank_transfer', 'paid', 'completed', '2025-07-27 11:00:00', '2025-07-29 15:00:00'),
+-- Tháng 8/2025
+('ORD20250801', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 50000, 30000, 1830000, 'cod', 'paid', 'completed', '2025-08-10 09:00:00', '2025-08-12 13:00:00'),
+('ORD20250802', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 0, 30000, 2230000, 'momo', 'paid', 'completed', '2025-08-24 14:00:00', '2025-08-26 16:00:00'),
+-- Tháng 9/2025
+('ORD20250901', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'cod', 'paid', 'completed', '2025-09-07 10:00:00', '2025-09-09 14:00:00'),
+('ORD20250902', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-09-21 11:00:00', '2025-09-23 15:00:00'),
+-- Tháng 10/2025
+('ORD20251001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 0, 30000, 2130000, 'cod', 'paid', 'completed', '2025-10-14 09:00:00', '2025-10-16 13:00:00'),
+('ORD20251002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'momo', 'paid', 'completed', '2025-10-28 14:00:00', '2025-10-30 16:00:00');
+-- Tháng 11-12/2025: Không có đơn hàng (sẽ hiển thị 0 trên biểu đồ)
+
+-- Thêm OrderItems cho các đơn hàng mẫu năm 2024-2025
+-- Mỗi đơn hàng có 1-3 sản phẩm để đa dạng
+INSERT INTO OrderItems (OrderID, ProductID, ProductName, ProductPrice, Quantity, Subtotal) VALUES
+-- Orders 2024
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240101'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240101'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240102'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240201'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240201'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240202'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240202'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240301'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240301'), 2, 'Lime and Basil Entremets', 600000, 1, 600000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240302'), 9, 'Strawberry Cloud Cake', 500000, 2, 1000000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240401'), 7, 'Orange Serenade', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240401'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240402'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240402'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240501'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240501'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240502'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240601'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240601'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240602'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240701'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240701'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240702'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240702'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240801'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240802'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240901'), 2, 'Lime and Basil Entremets', 600000, 1, 600000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240901'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240902'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241001'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241001'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241002'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241002'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241101'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241102'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241201'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241201'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241202'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241202'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+-- Orders 2025
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250101'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250102'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250102'), 2, 'Lime and Basil Entremets', 600000, 1, 600000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250201'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250201'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250202'), 9, 'Strawberry Cloud Cake', 500000, 2, 1000000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250301'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250302'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250302'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250401'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250402'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250402'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250501'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250502'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250601'), 6, 'Mousse Việt Quất', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250602'), 9, 'Strawberry Cloud Cake', 500000, 2, 1000000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250701'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250701'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250702'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250801'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250801'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250802'), 7, 'Orange Serenade', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250901'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250901'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250902'), 6, 'Mousse Việt Quất', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251001'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251002'), 9, 'Strawberry Cloud Cake', 500000, 2, 1000000);
 
 

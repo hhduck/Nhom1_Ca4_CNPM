@@ -80,6 +80,11 @@ function getAllProducts($db) {
                 p.Quantity as quantity,
                 p.Status as status,
                 p.ImageURL as image_url,
+                p.ShortIntro as short_intro,
+                p.ShortParagraph as short_paragraph,
+                p.Structure as structure,
+                p.`Usage` as product_usage,
+                p.Bonus as bonus,
                 p.IsFeatured as is_featured,
                 p.Views as views,
                 p.SoldCount as sold_count,
@@ -138,6 +143,11 @@ function getProductById($db, $id) {
                 p.Quantity as quantity,
                 p.Status as status,
                 p.ImageURL as image_url,
+                p.ShortIntro as short_intro,
+                p.ShortParagraph as short_paragraph,
+                p.Structure as structure,
+                p.`Usage` as product_usage,
+                p.Bonus as bonus,
                 p.IsFeatured as is_featured,
                 p.Views as views,
                 p.SoldCount as sold_count,
@@ -169,9 +179,9 @@ function createProduct($db) {
     }
     
     $query = "INSERT INTO Products 
-              (ProductName, CategoryID, Description, Price, Quantity, Status, ImageURL) 
+              (ProductName, CategoryID, Description, Price, Quantity, Status, ImageURL, ShortIntro, ShortParagraph, Structure, `Usage`, Bonus) 
               VALUES 
-              (:name, :category, :desc, :price, :quantity, :status, :image)";
+              (:name, :category, :desc, :price, :quantity, :status, :image, :short_intro, :short_paragraph, :structure, :usage, :bonus)";
     
     $stmt = $db->prepare($query);
     
@@ -182,6 +192,11 @@ function createProduct($db) {
     $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
     $stmt->bindParam(':status', $data['status'] ?? 'available');
     $stmt->bindParam(':image', $data['image_url'] ?? '');
+    $stmt->bindParam(':short_intro', sanitizeInput($data['short_intro'] ?? ''));
+    $stmt->bindParam(':short_paragraph', sanitizeInput($data['short_paragraph'] ?? ''));
+    $stmt->bindParam(':structure', sanitizeInput($data['structure'] ?? ''));
+    $stmt->bindParam(':usage', sanitizeInput($data['usage'] ?? ''));
+    $stmt->bindParam(':bonus', sanitizeInput($data['bonus'] ?? ''));
     
     if ($stmt->execute()) {
         sendJsonResponse(true, [
@@ -207,6 +222,11 @@ function updateProduct($db) {
               Quantity = :quantity,
               Status = :status,
               ImageURL = :image_url,
+              ShortIntro = :short_intro,
+              ShortParagraph = :short_paragraph,
+              Structure = :structure,
+              `Usage` = :usage,
+              Bonus = :bonus,
               UpdatedAt = CURRENT_TIMESTAMP
               WHERE ProductID = :id";
     
@@ -220,6 +240,11 @@ function updateProduct($db) {
     $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
     $stmt->bindParam(':status', $data['status'] ?? 'available');
     $stmt->bindParam(':image_url', sanitizeInput($data['image_url'] ?? ''));
+    $stmt->bindParam(':short_intro', sanitizeInput($data['short_intro'] ?? ''));
+    $stmt->bindParam(':short_paragraph', sanitizeInput($data['short_paragraph'] ?? ''));
+    $stmt->bindParam(':structure', sanitizeInput($data['structure'] ?? ''));
+    $stmt->bindParam(':usage', sanitizeInput($data['usage'] ?? ''));
+    $stmt->bindParam(':bonus', sanitizeInput($data['bonus'] ?? ''));
     
     if ($stmt->execute()) {
         sendJsonResponse(true, null, "Cập nhật sản phẩm thành công");

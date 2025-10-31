@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Hàm từ listener 2
   bindCartNavigation();
+
+  // Load products từ API
+  loadProductsFromAPI();
+  
+  // Load promotions từ API
+  loadPromotionsFromAPI();
 });
 
 // ===== CẬP NHẬT GIỎ HÀNG =====
@@ -253,6 +259,182 @@ function bindProductCardNavigation() {
       console.log("Promotion card clicked - Có thể thêm modal chi tiết khuyến mãi");
     });
   });
+}
+
+// ========== LOAD SẢN PHẨM TỪ API ==========
+async function loadProductsFromAPI() {
+  try {
+    // Load tất cả sản phẩm available
+    const response = await fetch('../../api/products.php?status=available');
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+    const result = await response.json();
+    
+    if (result.success && result.data && result.data.products) {
+      const products = result.data.products;
+      
+      // Render products vào các section
+      renderProductsByCategory(products);
+    } else {
+      console.error('Không thể load sản phẩm:', result.message);
+    }
+  } catch (error) {
+    console.error('Lỗi load sản phẩm:', error);
+  }
+}
+
+function renderProductsByCategory(products) {
+  // Map category names
+  const categoryMap = {
+    'Entremet': 1,
+    'Mousse': 2,
+    'Truyền thống': 3,
+    'Phụ kiện': 4
+  };
+
+  // Render vào products-grid (section SẢN PHẨM)
+  const productsGrid = document.getElementById('productsGrid');
+  if (productsGrid) {
+    // Lấy 3 sản phẩm đầu tiên
+    const featuredProducts = products.slice(0, 3);
+    productsGrid.innerHTML = featuredProducts.map(product => `
+      <div class="product-card" data-id="${product.product_id}">
+        <div class="product-image-container">
+          <a href="../product/product.html?id=${product.product_id}" class="product-item">
+            <img src="../../${product.image_url}" alt="${product.product_name}" class="product-image">
+          </a>
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">${product.product_name}</h3>
+          <p class="product-price">${formatPrice(product.price)}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render vào entremet-grid
+  const entremetGrid = document.querySelector('.entremet-grid');
+  if (entremetGrid) {
+    const entremetProducts = products.filter(p => p.category_id == categoryMap['Entremet'] || p.category_name === 'Entremet');
+    entremetGrid.innerHTML = entremetProducts.map(product => `
+      <div class="entremet-card" data-id="${product.product_id}">
+        <div class="entremet-image-container">
+          <a href="../product/product.html?id=${product.product_id}" class="product-item">
+            <img class="entremet-image" src="../../${product.image_url}" alt="${product.product_name}" />
+          </a>
+        </div>
+        <div class="entremet-info">
+          <div class="entremet-name">${product.product_name}</div>
+          <div class="entremet-price">${formatPrice(product.price)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render vào mousse-grid
+  const mousseGrid = document.querySelector('.mousse-grid');
+  if (mousseGrid) {
+    const mousseProducts = products.filter(p => p.category_id == categoryMap['Mousse'] || p.category_name === 'Mousse');
+    mousseGrid.innerHTML = mousseProducts.map(product => `
+      <div class="mousse-card" data-id="${product.product_id}">
+        <div class="mousse-image-container">
+          <a href="../product/product.html?id=${product.product_id}" class="product-item">
+            <img class="mousse-image" src="../../${product.image_url}" alt="${product.product_name}" />
+          </a>
+        </div>
+        <div class="mousse-info">
+          <div class="mousse-name">${product.product_name}</div>
+          <div class="mousse-price">${formatPrice(product.price)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render vào truyenthong-grid
+  const truyenthongGrid = document.querySelector('.truyenthong-grid');
+  if (truyenthongGrid) {
+    const truyenthongProducts = products.filter(p => p.category_id == categoryMap['Truyền thống'] || p.category_name === 'Truyền thống');
+    truyenthongGrid.innerHTML = truyenthongProducts.map(product => `
+      <div class="truyenthong-card" data-id="${product.product_id}">
+        <div class="truyenthong-image-container">
+          <a href="../product/product.html?id=${product.product_id}" class="product-item">
+            <img class="truyenthong-image" src="../../${product.image_url}" alt="${product.product_name}" />
+          </a>
+        </div>
+        <div class="truyenthong-info">
+          <div class="truyenthong-name">${product.product_name}</div>
+          <div class="truyenthong-price">${formatPrice(product.price)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Re-bind navigation sau khi render
+  bindProductCardNavigation();
+}
+
+function formatPrice(price) {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(price);
+}
+
+// ========== LOAD PROMOTIONS TỪ API ==========
+async function loadPromotionsFromAPI() {
+  try {
+    const response = await fetch('../../api/promotions.php?public=1');
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+    const result = await response.json();
+    
+    if (result.success && result.data && result.data.promotions) {
+      const promotions = result.data.promotions;
+      renderPromotions(promotions);
+    } else {
+      console.error('Không thể load khuyến mãi:', result.message);
+    }
+  } catch (error) {
+    console.error('Lỗi load khuyến mãi:', error);
+  }
+}
+
+function renderPromotions(promotions) {
+  const promotionGrid = document.querySelector('.promotion-grid');
+  if (!promotionGrid) return;
+  
+  if (promotions.length === 0) {
+    promotionGrid.innerHTML = '<p style="text-align: center; width: 100%;">Hiện tại không có khuyến mãi nào</p>';
+    return;
+  }
+  
+  promotionGrid.innerHTML = promotions.map(promo => {
+    const startDate = new Date(promo.start_date);
+    const endDate = new Date(promo.end_date);
+    const formatDateVN = (date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+    
+    // Nếu không có image_url, dùng placeholder hoặc bỏ qua ảnh
+    const imageUrl = promo.image_url ? `../../${promo.image_url}` : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%23f8f9fa%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23adb5bd%22 font-family=%22Arial%22 font-size=%2214%22%3EKhuy%E1%BA%BFn m%C3%A3i%3C/text%3E%3C/svg%3E';
+    
+    return `
+      <div class="promotion-card">
+        <div class="promotion-image-container">
+          <img src="${imageUrl}" alt="${promo.promotion_name}" class="promotion-image">
+        </div>
+        <div class="promotion-info">
+          <div class="promotion-name">${promo.promotion_name}</div>
+          <div class="promotion-date">Áp dụng từ ${formatDateVN(startDate)} đến ${formatDateVN(endDate)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // ========== XỬ LÝ FORM LIÊN HỆ ==========
