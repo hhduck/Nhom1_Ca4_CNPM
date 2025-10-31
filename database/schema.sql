@@ -332,12 +332,14 @@ INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, Or
 (12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', 'assets/images/trang-tri.jpg', 100, 365, FALSE, '', '', '', '', '');
 
 -- 4. Promotions
-INSERT INTO Promotions
-  (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, Status, StartDate, EndDate)
-VALUES
-  ('GIAM10TRON15', 'Giảm 10% cho đơn từ 150.000đ', 'percent', 10, 150000, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY)),
-  ('FREESHIPLOYAL', 'Miễn phí giao hàng khách hàng thân thiết', 'free_shipping', 0, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY)),
-  ('FIRSTORDER10', 'Giảm 10% cho đơn hàng đầu tiên trong năm', 'percent', 10, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 365 DAY));
+-- Note: Promotion INSERTs with ImageURL are below (lines 425-465)
+-- This old INSERT is kept for reference but will be replaced by the ones below with ImageURL
+-- INSERT INTO Promotions
+--   (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, Status, StartDate, EndDate, ImageURL)
+-- VALUES
+--   ('GIAM10TRON15', 'Giảm 10% cho đơn từ 150.000đ', 'percent', 10, 150000, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'assets/images/buy-1-get-1.jpg'),
+--   ('FREESHIPLOYAL', 'Miễn phí giao hàng khách hàng thân thiết', 'free_shipping', 0, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'assets/images/free-ship.jpg'),
+--   ('FIRSTORDER10', 'Giảm 10% cho đơn hàng đầu tiên trong năm', 'percent', 10, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 365 DAY), 'assets/images/gg.jpg');
 
 -- 5. Orders (Đơn hàng mẫu)
 INSERT INTO Orders (OrderID, OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, Note, CreatedAt, CompletedAt) VALUES
@@ -424,42 +426,45 @@ INSERT INTO ProductImages (ProductID, ImageURL, AltText, IsPrimary, DisplayOrder
 
 -- 14. Promotion Usage & New Promotions (FIXED no duplicate)
 INSERT INTO Promotions 
-  (PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy)
+  (PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy, ImageURL)
 VALUES
   ('GIAM10TRON15', 'Giảm 10% cho đơn trên 1.500.000đ', 
    'Giảm 10% giá trị đơn hàng từ 1.500.000đ.', 
    'percent', 10, 1500000, 200, '2025-11-01 00:00:00', '2025-11-15 23:59:59', 
-   'active', 'all', 1)
+   'active', 'all', 1, 'assets/images/buy-1-get-1.jpg')
 ON DUPLICATE KEY UPDATE
     PromotionName = VALUES(PromotionName),
     Description   = VALUES(Description),
     DiscountValue = VALUES(DiscountValue),
-    Status        = VALUES(Status);
+    Status        = VALUES(Status),
+    ImageURL      = VALUES(ImageURL);
 
 INSERT INTO Promotions 
-  (PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy)
+  (PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy, ImageURL)
 VALUES
   ('FREESHIPLOYAL', 'Miễn phí giao hàng', 
    'Áp dụng cho khách hàng thân thiết.', 
    'free_shipping', 0, 0, -1, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 
-   'active', 'loyal', 1)
+   'active', 'loyal', 1, 'assets/images/free-ship.jpg')
 ON DUPLICATE KEY UPDATE
     PromotionName = VALUES(PromotionName),
     Description   = VALUES(Description),
-    Status        = VALUES(Status);
+    Status        = VALUES(Status),
+    ImageURL      = VALUES(ImageURL);
 
 INSERT INTO Promotions 
-  (PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy)
+  (PromotionCode, PromotionName, Description, PromotionType, DiscountValue, MinOrderValue, Quantity, StartDate, EndDate, Status, CustomerType, CreatedBy, ImageURL)
 VALUES
   ('FIRSTORDER10', 'Giảm 10% cho đơn hàng đầu tiên trong năm', 
    'Áp dụng giảm 10% cho đơn hàng đầu tiên của mỗi khách hàng trong năm.', 
    'percent', 10, 0, -1, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 
-   'active', 'all', 1)
+   'active', 'all', 1, 'assets/images/gg.jpg')
 ON DUPLICATE KEY UPDATE
     PromotionName = VALUES(PromotionName),
     Description   = VALUES(Description),
     DiscountValue = VALUES(DiscountValue),
-    Status        = VALUES(Status);
+    Status        = VALUES(Status),
+    ImageURL      = VALUES(ImageURL);
 
 -- Thêm vào cuối file schema.sql trước phần INSERT dữ liệu mẫu
 

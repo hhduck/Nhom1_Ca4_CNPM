@@ -360,6 +360,4 @@ function deleteOrder($db, $orderId)
     }
 }
 
-// *** Code thừa đã được xóa - Logic đã có ở trên rồi ***
-
 ?>
