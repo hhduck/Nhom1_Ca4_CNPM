@@ -207,59 +207,67 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
 
-  // --- HÀM HIỂN THỊ ĐƠN HÀNG ---
+  // --- HÀM HIỂN THỊ ĐƠN HÀNG (DẠNG BẢNG) ---
   function displayOrders(orders) {
     if (!Array.isArray(orders)) orders = [];
     orderListContainer.innerHTML = ''; // Xóa các đơn hàng cũ
+    
     if (orders.length === 0) {
-      orderListContainer.innerHTML = '<p class="text-center text-gray-500">Bạn chưa có đơn hàng nào.</p>';
+      orderListContainer.innerHTML = '<p class="text-center text-gray-500" style="padding: 20px;">Bạn chưa có đơn hàng nào.</p>';
       return;
     }
 
-    orders.forEach(order => {
-      const orderCard = document.createElement('div');
-      orderCard.classList.add('order-card', 'p-4', 'mb-4', 'border', 'rounded-lg', 'shadow-sm', 'bg-white');
-
-      let itemDetailsHtml = '';
-      if (order.items && order.items.length > 0) {
-        itemDetailsHtml = `
-          <div class="mb-2">
-            <h4 class="font-semibold text-gray-700">Chi tiết sản phẩm:</h4>
-            <ul class="list-disc list-inside text-sm text-gray-600">
-              ${order.items.map(item => `
-                <li>${item.product_name} (x${item.quantity}) - ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.subtotal)}</li>
-              `).join('')}
-            </ul>
-          </div>
-        `;
-      } else {
-        itemDetailsHtml = `<p class="text-sm text-gray-500">Không có sản phẩm nào trong đơn hàng này.</p>`;
-      }
-
-      orderCard.innerHTML = `
-        <div class="flex justify-between items-center mb-2 pb-2 border-b">
-          <h3 class="font-bold text-lg text-red-600">Mã đơn hàng: ${order.order_code}</h3>
-          <span class="text-sm px-3 py-1 rounded-full ${getOrderStatusClass(order.order_status)}">${getVietnameseStatus(order.order_status)}</span>
-        </div>
-        <p class="text-gray-700 mb-1">Ngày đặt: ${new Date(order.created_at).toLocaleDateString('vi-VN')} ${new Date(order.created_at).toLocaleTimeString('vi-VN')}</p>
-        <p class="text-gray-700 mb-1">Tổng tiền: <span class="font-semibold text-green-600">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.final_amount)}</span></p>
-        <p class="text-gray-700 mb-1">Phương thức thanh toán: ${order.payment_method}</p>
-        <p class="text-gray-700 mb-1">Trạng thái thanh toán: ${order.payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
-        <p class="text-gray-700 mb-3">Địa chỉ giao hàng: ${order.shipping_address}, ${order.ward}, ${order.district}, ${order.city}</p>
-        ${itemDetailsHtml}
-      `;
-      orderListContainer.appendChild(orderCard);
-    });
-
-    // Thêm listener cho nút "Xem chi tiết" (nếu bạn có trang chi tiết đơn hàng riêng)
-    orderListContainer.querySelectorAll('.view-details-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const orderId = e.target.dataset.orderId;
-            // Điều hướng đến trang chi tiết đơn hàng hoặc mở modal
-            alert(`Xem chi tiết đơn hàng ID: ${orderId}`);
-            // Ví dụ: window.location.href = `../order_details.html?order_id=${orderId}`;
-        });
-    });
+    // Tạo bảng HTML
+    const table = document.createElement('table');
+    table.className = 'orders-table';
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Mã đơn hàng</th>
+          <th>Ngày đặt</th>
+          <th>Sản phẩm</th>
+          <th>Tổng tiền</th>
+          <th>Phương thức thanh toán</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${orders.map(order => {
+          const orderDate = new Date(order.created_at);
+          const formattedDate = orderDate.toLocaleDateString('vi-VN') + ' ' + orderDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+          
+          // Hiển thị danh sách sản phẩm từ items
+          let productsList = 'Chưa có sản phẩm';
+          if (order.items && order.items.length > 0) {
+            productsList = order.items.map(item => 
+              `${item.product_name} (x${item.quantity})`
+            ).join('<br>');
+          }
+          
+          const totalAmount = new Intl.NumberFormat('vi-VN', { 
+            style: 'currency', 
+            currency: 'VND' 
+          }).format(order.final_amount);
+          
+          const paymentMethodText = order.payment_method === 'cod' ? 'Thanh toán khi nhận hàng' :
+                                    order.payment_method === 'bank_transfer' ? 'Chuyển khoản' :
+                                    order.payment_method === 'momo' ? 'Ví MoMo' : order.payment_method;
+          
+          return `
+            <tr>
+              <td><strong>${order.order_code}</strong></td>
+              <td>${formattedDate}</td>
+              <td>${productsList}</td>
+              <td><strong style="color: #2d5016;">${totalAmount}</strong></td>
+              <td>${paymentMethodText}</td>
+              <td><span class="status-badge ${getOrderStatusClass(order.order_status)}">${getVietnameseStatus(order.order_status)}</span></td>
+            </tr>
+          `;
+        }).join('')}
+      </tbody>
+    `;
+    
+    orderListContainer.appendChild(table);
   }
 
   // Hàm giúp hiển thị trạng thái tiếng Việt

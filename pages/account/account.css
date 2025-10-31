@@ -172,8 +172,8 @@
 .account-info {
   flex: 1;
   border-radius: 15px;
-  padding: 0px 350px;
-  margin-left: -300px;
+  padding: 40px 50px;
+  margin-left: 0;
 }
 
 .account-title {
@@ -431,4 +431,98 @@ input {
 
 .user-menu.hidden {
   display: none;
+}
+
+/* Orders Table Styles */
+.orders-table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: 0;
+  margin-right: 0;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.orders-table thead {
+  background-color: #2d5016;
+  color: white;
+}
+
+.orders-table thead th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.orders-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.orders-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.orders-table tbody td {
+  padding: 16px;
+  font-size: 14px;
+  color: #333;
+  vertical-align: top;
+}
+
+.orders-table tbody td strong {
+  color: #2d5016;
+  font-weight: 600;
+}
+
+.orders-table .status-badge {
+  white-space: nowrap;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.orders-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0;
+  margin-right: 0;
+}
+
+#orderHistorySection {
+  padding: 0;
+  margin: 0;
+}
+
+.info-content {
+  padding: 0;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .orders-table {
+    font-size: 12px;
+  }
+  
+  .orders-table thead th,
+  .orders-table tbody td {
+    padding: 10px 8px;
+  }
+  
+  .orders-table thead th {
+    font-size: 11px;
+  }
 }

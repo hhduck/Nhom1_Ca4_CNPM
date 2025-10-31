@@ -36,16 +36,20 @@ if ($apiIndex !== false && isset($pathParts[$apiIndex + 2]) && is_numeric($pathP
 try {
     switch ($method) {
         case 'GET':
-            checkAdminPermission();
             // Kiểm tra xem có userId trong URL không
             if ($userId) {
+                // Cho phép customer xem thông tin của chính họ, hoặc admin xem tất cả
+                requireOwnerOrAdmin($userId);
                 getUserById($db, $userId);
             } 
             // Kiểm tra xem có phải yêu cầu tìm kiếm nhân viên không?
             elseif (isset($_GET['role']) && $_GET['role'] === 'staff' && isset($_GET['search'])) {
+                // Tìm kiếm staff không yêu cầu admin (đã được implement sẵn trong findStaffByName)
                 findStaffByName($db, $_GET['search']);
             } 
             else {
+                // Xem danh sách tất cả users chỉ dành cho admin
+                checkAdminPermission();
                 getAllUsers($db);
             }
             break;
@@ -56,8 +60,9 @@ try {
             break;
 
         case 'PUT':
-            checkAdminPermission();
             if (!$userId) throw new Exception("Thiếu User ID để cập nhật", 400);
+            // Cho phép customer cập nhật thông tin của chính họ, hoặc admin cập nhật tất cả
+            requireOwnerOrAdmin($userId);
             updateUser($db, $userId); // Truyền $userId vào hàm
             break;
 
@@ -242,15 +247,27 @@ function createUser($db)
 }
 
 /**
- * Cập nhật người dùng (yêu cầu Admin)
+ * Cập nhật người dùng
+ * - Admin có thể cập nhật tất cả thông tin (bao gồm role, status)
+ * - Customer chỉ có thể cập nhật thông tin cá nhân của chính họ (không được thay đổi role, status)
  * Hỗ trợ partial update - chỉ update các field được gửi lên
  */
 function updateUser($db, $id)
 { // Nhận $id làm tham số
     $data = json_decode(file_get_contents("php://input"), true);
+    
+    // Lấy thông tin user hiện tại để kiểm tra quyền
+    $currentUser = requireAuth();
+    $isAdmin = ($currentUser['role'] === 'admin');
+    $isOwner = ($currentUser['id'] == $id);
 
-    // Nếu chỉ update status (khóa/mở tài khoản)
+    // Nếu chỉ update status (khóa/mở tài khoản) - CHỈ ADMIN
     if (isset($data['status']) && count($data) == 1) {
+        if (!$isAdmin) {
+            sendJsonResponse(false, null, "Bạn không có quyền thay đổi trạng thái tài khoản", 403);
+            return;
+        }
+        
         $status = sanitizeInput($data['status']);
         if (!in_array($status, ['active', 'inactive', 'banned'])) {
             sendJsonResponse(false, null, "Trạng thái không hợp lệ", 400);
@@ -270,7 +287,59 @@ function updateUser($db, $id)
         return;
     }
 
-    // Update đầy đủ thông tin
+    // Customer chỉ có thể cập nhật thông tin cá nhân (full_name, phone, address)
+    if ($isOwner && !$isAdmin) {
+        // Không cho phép customer thay đổi role hoặc status
+        if (isset($data['role']) || isset($data['status'])) {
+            sendJsonResponse(false, null, "Bạn không có quyền thay đổi vai trò hoặc trạng thái", 403);
+            return;
+        }
+        
+        // Cập nhật thông tin cá nhân
+        $fields = [];
+        $params = [':id' => $id];
+        
+        if (isset($data['full_name'])) {
+            $fields[] = "FullName = :fullname";
+            $params[':fullname'] = sanitizeInput($data['full_name']);
+        }
+        if (isset($data['phone'])) {
+            $fields[] = "Phone = :phone";
+            $params[':phone'] = sanitizeInput($data['phone']);
+        }
+        if (isset($data['address'])) {
+            $fields[] = "Address = :address";
+            $params[':address'] = sanitizeInput($data['address']);
+        }
+        
+        if (empty($fields)) {
+            sendJsonResponse(false, null, "Không có thông tin nào để cập nhật", 400);
+            return;
+        }
+        
+        $fields[] = "UpdatedAt = NOW()";
+        $query = "UPDATE Users SET " . implode(", ", $fields) . " WHERE UserID = :id";
+        $stmt = $db->prepare($query);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        if ($stmt->execute()) {
+            if ($stmt->rowCount() > 0) {
+                // Lấy thông tin user đã cập nhật để trả về
+                getUserById($db, $id);
+            } else {
+                sendJsonResponse(true, null, "Không có gì thay đổi");
+            }
+        } else {
+            error_log("Failed to update user ID $id: " . implode(";", $stmt->errorInfo()));
+            sendJsonResponse(false, null, "Không thể cập nhật người dùng do lỗi máy chủ", 500);
+        }
+        return;
+    }
+
+    // Admin update đầy đủ thông tin
     if (empty($data['full_name']) || empty($data['role'])) {
         sendJsonResponse(false, null, "Thiếu thông tin bắt buộc (Họ tên, Vai trò)", 400);
         return;
@@ -311,7 +380,8 @@ function updateUser($db, $id)
 
     if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
-            sendJsonResponse(true, null, "Cập nhật người dùng thành công");
+            // Lấy thông tin user đã cập nhật để trả về
+            getUserById($db, $id);
         } else {
             sendJsonResponse(true, null, "Không có gì thay đổi");
         }

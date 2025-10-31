@@ -40,10 +40,24 @@ if (!$orderId && isset($_GET['id']) && is_numeric($_GET['id'])) {
 try {
     switch ($method) {
         case 'GET':
-            $currentUser = requireStaff();
-            if ($orderId) {
+            // Kiểm tra xem có user_id trong query string không (cho customer xem đơn hàng của chính họ)
+            $requestedUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : null;
+            
+            if ($requestedUserId) {
+                // Nếu có user_id, cho phép customer xem đơn hàng của chính họ hoặc admin/staff xem tất cả
+                $currentUser = requireAuth();
+                if ($currentUser['role'] !== 'admin' && $currentUser['role'] !== 'staff' && $currentUser['id'] != $requestedUserId) {
+                    sendJsonResponse(false, null, "Bạn không có quyền truy cập đơn hàng của người dùng khác", 403);
+                    exit();
+                }
+                getAllOrders($db, $requestedUserId);
+            } elseif ($orderId) {
+                // Xem chi tiết 1 đơn hàng - chỉ admin/staff
+                $currentUser = requireStaff();
                 getOrderById($db, $orderId);
             } else {
+                // Xem tất cả đơn hàng - chỉ admin/staff
+                $currentUser = requireStaff();
                 getAllOrders($db);
             }
             break;
@@ -77,8 +91,10 @@ try {
 
 /**
  * Lấy tất cả đơn hàng
+ * @param PDO $db Database connection
+ * @param int|null $customerId Nếu có, chỉ lấy đơn hàng của customer này (cho customer xem đơn hàng của chính họ)
  */
-function getAllOrders($db)
+function getAllOrders($db, $customerId = null)
 {
     $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
     $status = isset($_GET['status']) ? sanitizeInput($_GET['status']) : null;
@@ -112,6 +128,12 @@ function getAllOrders($db)
 
     $params = [];
 
+    // Nếu có customerId, chỉ lấy đơn hàng của customer đó (cho customer xem đơn hàng của chính họ)
+    if ($customerId) {
+        $query .= " AND o.CustomerID = :customer_id";
+        $params[':customer_id'] = $customerId;
+    }
+
     if ($search) {
         $query .= " AND (o.OrderCode LIKE :search1 OR o.CustomerName LIKE :search2 OR o.CustomerPhone LIKE :search3)";
         $params[':search1'] = "%" . $search . "%";
@@ -133,6 +155,27 @@ function getAllOrders($db)
     $stmt = $db->prepare($query);
     $stmt->execute($params);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Lấy items cho mỗi đơn hàng
+    foreach ($orders as &$order) {
+        $itemsQuery = "SELECT 
+                         oi.OrderItemID as order_item_id,
+                         oi.ProductID as product_id,
+                         oi.ProductName as product_name,
+                         oi.ProductPrice as product_price,
+                         oi.Quantity as quantity,
+                         oi.Subtotal as subtotal,
+                         p.ImageURL as image_url 
+                       FROM OrderItems oi
+                       LEFT JOIN Products p ON oi.ProductID = p.ProductID
+                       WHERE oi.OrderID = :order_id";
+        
+        $itemsStmt = $db->prepare($itemsQuery);
+        $itemsStmt->bindParam(':order_id', $order['order_id'], PDO::PARAM_INT);
+        $itemsStmt->execute();
+        $order['items'] = $itemsStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    unset($order); // Xóa reference
 
     // *** THÊM 3 DÒNG NÀY VÀO ĐỂ CHỐNG CACHE TỪ SERVER ***
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');

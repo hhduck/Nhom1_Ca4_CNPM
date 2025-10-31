@@ -331,15 +331,7 @@ INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, Or
 (11, 'Pháo Hoa', 4, 'Pháo hoa trang trí bánh', 55000, 55000, 150, 'available', 'assets/images/phaohoa.jpg', 50, 365, FALSE, '', '', '', '', ''),
 (12, 'Bóng Bay và Dây Trang Trí', 4, 'Set bóng bay và dây trang trí', 40000, 40000, 100, 'available', 'assets/images/trang-tri.jpg', 100, 365, FALSE, '', '', '', '', '');
 
--- 4. Promotions
--- Note: Promotion INSERTs with ImageURL are below (lines 425-465)
--- This old INSERT is kept for reference but will be replaced by the ones below with ImageURL
--- INSERT INTO Promotions
---   (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, Status, StartDate, EndDate, ImageURL)
--- VALUES
---   ('GIAM10TRON15', 'Giảm 10% cho đơn từ 150.000đ', 'percent', 10, 150000, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'assets/images/buy-1-get-1.jpg'),
---   ('FREESHIPLOYAL', 'Miễn phí giao hàng khách hàng thân thiết', 'free_shipping', 0, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'assets/images/free-ship.jpg'),
---   ('FIRSTORDER10', 'Giảm 10% cho đơn hàng đầu tiên trong năm', 'percent', 10, 0, 'active', NOW(), DATE_ADD(NOW(), INTERVAL 365 DAY), 'assets/images/gg.jpg');
+-- 4. Promotions (INSERT statements with ImageURL are below at lines 425-465)
 
 -- 5. Orders (Đơn hàng mẫu)
 INSERT INTO Orders (OrderID, OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, Note, CreatedAt, CompletedAt) VALUES
