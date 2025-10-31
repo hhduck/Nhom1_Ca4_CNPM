@@ -17,6 +17,10 @@ enableCORS(); // Hàm này giả định có trong database.php hoặc middlewar
 $database = new Database();
 $db = $database->getConnection();
 
+if (!$db) {
+    die("Không thể kết nối tới cơ sở dữ liệu.");
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Chỉ chấp nhận phương thức POST
