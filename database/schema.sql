@@ -572,7 +572,105 @@ INSERT INTO Orders (OrderCode, CustomerID, CustomerName, CustomerPhone, Customer
 ('ORD20250902', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-09-21 11:00:00', '2025-09-23 15:00:00'),
 -- Tháng 10/2025
 ('ORD20251001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 0, 30000, 2130000, 'cod', 'paid', 'completed', '2025-10-14 09:00:00', '2025-10-16 13:00:00'),
-('ORD20251002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'momo', 'paid', 'completed', '2025-10-28 14:00:00', '2025-10-30 16:00:00');
+('ORD20251002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'momo', 'paid', 'completed', '2025-10-28 14:00:00', '2025-10-30 16:00:00'),
+-- Thêm đơn hàng cho mỗi tháng để đủ dữ liệu khớp với biểu đồ cột
+-- Tháng 1/2024 - thêm 3 đơn hàng
+('ORD20240103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'cod', 'paid', 'completed', '2024-01-08 14:00:00', '2024-01-10 16:00:00'),
+('ORD20240104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'momo', 'paid', 'completed', '2024-01-18 11:00:00', '2024-01-20 15:00:00'),
+('ORD20240105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2024-01-25 10:00:00', '2024-01-27 14:00:00'),
+-- Tháng 2/2024 - thêm 3 đơn hàng
+('ORD20240203', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'cod', 'paid', 'completed', '2024-02-05 09:00:00', '2024-02-07 13:00:00'),
+('ORD20240204', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 50000, 30000, 1680000, 'momo', 'paid', 'completed', '2024-02-15 14:00:00', '2024-02-17 16:00:00'),
+('ORD20240205', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1550000, 50000, 30000, 1530000, 'bank_transfer', 'paid', 'completed', '2024-02-20 10:00:00', '2024-02-22 14:00:00'),
+-- Tháng 3/2024 - thêm 3 đơn hàng
+('ORD20240303', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 100000, 30000, 1780000, 'cod', 'paid', 'completed', '2024-03-10 11:00:00', '2024-03-12 15:00:00'),
+('ORD20240304', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'momo', 'paid', 'completed', '2024-03-22 09:00:00', '2024-03-24 13:00:00'),
+('ORD20240305', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 50000, 30000, 1580000, 'bank_transfer', 'paid', 'completed', '2024-03-28 14:00:00', '2024-03-30 16:00:00'),
+-- Tháng 4/2024 - thêm 3 đơn hàng
+('ORD20240403', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-04-05 10:00:00', '2024-04-07 14:00:00'),
+('ORD20240404', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2024-04-15 11:00:00', '2024-04-17 15:00:00'),
+('ORD20240405', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'bank_transfer', 'paid', 'completed', '2024-04-22 09:00:00', '2024-04-24 13:00:00'),
+-- Tháng 5/2024 - thêm 5 đơn hàng (để có tổng Subtotal khớp với biểu đồ)
+('ORD20240503', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-05-03 09:00:00', '2024-05-05 13:00:00'),
+('ORD20240504', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-05-12 14:00:00', '2024-05-14 16:00:00'),
+('ORD20240505', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2024-05-17 10:00:00', '2024-05-19 14:00:00'),
+('ORD20240506', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'cod', 'paid', 'completed', '2024-05-26 11:00:00', '2024-05-28 15:00:00'),
+('ORD20240507', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 100000, 30000, 1680000, 'momo', 'paid', 'completed', '2024-05-29 09:00:00', '2024-05-31 13:00:00'),
+-- Tháng 6/2024 - thêm 3 đơn hàng
+('ORD20240603', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'cod', 'paid', 'completed', '2024-06-10 14:00:00', '2024-06-12 16:00:00'),
+('ORD20240604', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 50000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-06-14 10:00:00', '2024-06-16 14:00:00'),
+('ORD20240605', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 50000, 30000, 1580000, 'bank_transfer', 'paid', 'completed', '2024-06-25 11:00:00', '2024-06-27 15:00:00'),
+-- Tháng 7/2024 - thêm 3 đơn hàng
+('ORD20240703', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-07-05 09:00:00', '2024-07-07 13:00:00'),
+('ORD20240704', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-07-16 14:00:00', '2024-07-18 16:00:00'),
+('ORD20240705', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2024-07-22 10:00:00', '2024-07-24 14:00:00'),
+-- Tháng 8/2024 - thêm 3 đơn hàng
+('ORD20240803', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 50000, 30000, 1680000, 'cod', 'paid', 'completed', '2024-08-12 14:00:00', '2024-08-14 16:00:00'),
+('ORD20240804', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-08-18 09:00:00', '2024-08-20 13:00:00'),
+('ORD20240805', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2024-08-28 11:00:00', '2024-08-30 15:00:00'),
+-- Tháng 9/2024 - thêm 3 đơn hàng
+('ORD20240903', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-09-08 10:00:00', '2024-09-10 14:00:00'),
+('ORD20240904', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2024-09-19 14:00:00', '2024-09-21 16:00:00'),
+('ORD20240905', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'bank_transfer', 'paid', 'completed', '2024-09-25 09:00:00', '2024-09-27 13:00:00'),
+-- Tháng 10/2024 - thêm 5 đơn hàng (tháng này có doanh thu cao)
+('ORD20241003', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'cod', 'paid', 'completed', '2024-10-03 11:00:00', '2024-10-05 15:00:00'),
+('ORD20241004', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2400000, 0, 30000, 2430000, 'momo', 'paid', 'completed', '2024-10-13 09:00:00', '2024-10-15 13:00:00'),
+('ORD20241005', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 50000, 30000, 2080000, 'bank_transfer', 'paid', 'completed', '2024-10-19 14:00:00', '2024-10-21 16:00:00'),
+('ORD20241006', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'cod', 'paid', 'completed', '2024-10-27 10:00:00', '2024-10-29 14:00:00'),
+('ORD20241007', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 50000, 30000, 2180000, 'momo', 'paid', 'completed', '2024-10-30 11:00:00', '2024-11-01 15:00:00'),
+-- Tháng 11/2024 - thêm 3 đơn hàng
+('ORD20241103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2024-11-10 09:00:00', '2024-11-12 13:00:00'),
+('ORD20241104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2024-11-15 14:00:00', '2024-11-17 16:00:00'),
+('ORD20241105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'bank_transfer', 'paid', 'completed', '2024-11-25 10:00:00', '2024-11-27 14:00:00'),
+-- Tháng 12/2024 - thêm 3 đơn hàng
+('ORD20241203', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'cod', 'paid', 'completed', '2024-12-05 11:00:00', '2024-12-07 15:00:00'),
+('ORD20241204', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2350000, 0, 30000, 2380000, 'momo', 'paid', 'completed', '2024-12-18 09:00:00', '2024-12-20 13:00:00'),
+('ORD20241205', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'bank_transfer', 'paid', 'completed', '2024-12-23 14:00:00', '2024-12-25 16:00:00'),
+-- Năm 2025 - thêm đơn hàng cho mỗi tháng
+-- Tháng 1/2025 - thêm 3 đơn hàng
+('ORD20250103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'cod', 'paid', 'completed', '2025-01-05 09:00:00', '2025-01-07 13:00:00'),
+('ORD20250104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 100000, 30000, 1930000, 'momo', 'paid', 'completed', '2025-01-15 14:00:00', '2025-01-17 16:00:00'),
+('ORD20250105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'bank_transfer', 'paid', 'completed', '2025-01-28 10:00:00', '2025-01-30 14:00:00'),
+-- Tháng 2/2025 - thêm 3 đơn hàng
+('ORD20250203', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-02-03 11:00:00', '2025-02-05 15:00:00'),
+('ORD20250204', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-02-14 09:00:00', '2025-02-16 13:00:00'),
+('ORD20250205', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'bank_transfer', 'paid', 'completed', '2025-02-26 14:00:00', '2025-02-28 16:00:00'),
+-- Tháng 3/2025 - thêm 3 đơn hàng
+('ORD20250303', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'cod', 'paid', 'completed', '2025-03-05 10:00:00', '2025-03-07 14:00:00'),
+('ORD20250304', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2025-03-12 11:00:00', '2025-03-14 15:00:00'),
+('ORD20250305', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-03-22 09:00:00', '2025-03-24 13:00:00'),
+-- Tháng 4/2025 - thêm 3 đơn hàng
+('ORD20250403', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-04-05 14:00:00', '2025-04-07 16:00:00'),
+('ORD20250404', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 100000, 30000, 1930000, 'momo', 'paid', 'completed', '2025-04-18 10:00:00', '2025-04-20 14:00:00'),
+('ORD20250405', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2025-04-29 11:00:00', '2025-05-01 15:00:00'),
+-- Tháng 5/2025 - thêm 5 đơn hàng
+('ORD20250503', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-05-04 09:00:00', '2025-05-06 13:00:00'),
+('ORD20250504', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-05-11 14:00:00', '2025-05-13 16:00:00'),
+('ORD20250505', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2025-05-17 10:00:00', '2025-05-19 14:00:00'),
+('ORD20250506', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'cod', 'paid', 'completed', '2025-05-26 11:00:00', '2025-05-28 15:00:00'),
+('ORD20250507', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 100000, 30000, 1630000, 'momo', 'paid', 'completed', '2025-05-30 09:00:00', '2025-06-01 13:00:00'),
+-- Tháng 6/2025 - thêm 3 đơn hàng
+('ORD20250603', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-06-10 14:00:00', '2025-06-12 16:00:00'),
+('ORD20250604', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2025-06-14 10:00:00', '2025-06-16 14:00:00'),
+('ORD20250605', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-06-25 11:00:00', '2025-06-27 15:00:00'),
+-- Tháng 7/2025 - thêm 3 đơn hàng
+('ORD20250703', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-07-05 09:00:00', '2025-07-07 13:00:00'),
+('ORD20250704', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-07-16 14:00:00', '2025-07-18 16:00:00'),
+('ORD20250705', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2025-07-22 10:00:00', '2025-07-24 14:00:00'),
+-- Tháng 8/2025 - thêm 3 đơn hàng
+('ORD20250803', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-08-12 14:00:00', '2025-08-14 16:00:00'),
+('ORD20250804', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-08-18 09:00:00', '2025-08-20 13:00:00'),
+('ORD20250805', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-08-28 11:00:00', '2025-08-30 15:00:00'),
+-- Tháng 9/2025 - thêm 3 đơn hàng
+('ORD20250903', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-09-08 10:00:00', '2025-09-10 14:00:00'),
+('ORD20250904', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2025-09-19 14:00:00', '2025-09-21 16:00:00'),
+('ORD20250905', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'bank_transfer', 'paid', 'completed', '2025-09-25 09:00:00', '2025-09-27 13:00:00'),
+-- Tháng 10/2025 - thêm 5 đơn hàng (tháng này có doanh thu cao)
+('ORD20251003', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'cod', 'paid', 'completed', '2025-10-05 11:00:00', '2025-10-07 15:00:00'),
+('ORD20251004', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2350000, 0, 30000, 2380000, 'momo', 'paid', 'completed', '2025-10-12 09:00:00', '2025-10-14 13:00:00'),
+('ORD20251005', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 50000, 30000, 2080000, 'bank_transfer', 'paid', 'completed', '2025-10-19 14:00:00', '2025-10-21 16:00:00'),
+('ORD20251006', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'cod', 'paid', 'completed', '2025-10-22 10:00:00', '2025-10-24 14:00:00'),
+('ORD20251007', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'momo', 'paid', 'completed', '2025-10-29 11:00:00', '2025-10-31 15:00:00');
 -- Tháng 11-12/2025: Không có đơn hàng (sẽ hiển thị 0 trên biểu đồ)
 
 -- Thêm OrderItems cho các đơn hàng mẫu năm 2024-2025
@@ -645,6 +743,184 @@ INSERT INTO OrderItems (OrderID, ProductID, ProductName, ProductPrice, Quantity,
 ((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250901'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
 ((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250902'), 6, 'Mousse Việt Quất', 550000, 2, 1100000),
 ((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251001'), 1, 'Entremets Rose', 650000, 2, 1300000),
-((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251002'), 9, 'Strawberry Cloud Cake', 500000, 2, 1000000);
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251002'), 9, 'Strawberry Cloud Cake', 500000, 2, 1000000),
+-- OrderItems cho các đơn hàng mới (thêm nhiều đơn hàng cho mỗi tháng)
+-- Tháng 1/2024 - OrderItems cho ORD20240103, ORD20240104, ORD20240105
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240103'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240103'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240104'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240104'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240105'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240105'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+-- Tháng 2/2024 - OrderItems cho ORD20240203, ORD20240204, ORD20240205
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240203'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240203'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240204'), 7, 'Orange Serenade', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240204'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240205'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240205'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+-- Tháng 3/2024 - OrderItems cho ORD20240303, ORD20240304, ORD20240305
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240303'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240303'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240304'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240304'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240305'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240305'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+-- Tháng 4/2024 - OrderItems cho ORD20240403, ORD20240404, ORD20240405
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240403'), 6, 'Mousse Việt Quất', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240403'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240404'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240404'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240405'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240405'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+-- Tháng 5/2024 - OrderItems cho ORD20240503, ORD20240504, ORD20240505, ORD20240506, ORD20240507
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240503'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240503'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240504'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240504'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240505'), 7, 'Orange Serenade', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240505'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240506'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240506'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240507'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240507'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+-- Tháng 6/2024 - OrderItems cho ORD20240603, ORD20240604, ORD20240605
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240603'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240603'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240604'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240604'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240605'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240605'), 7, 'Orange Serenade', 550000, 1, 550000),
+-- Tháng 7/2024 - OrderItems cho ORD20240703, ORD20240704, ORD20240705
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240703'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240703'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240704'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240704'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240705'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240705'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+-- Tháng 8/2024 - OrderItems cho ORD20240803, ORD20240804, ORD20240805
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240803'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240803'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240804'), 7, 'Orange Serenade', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240804'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240805'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240805'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+-- Tháng 9/2024 - OrderItems cho ORD20240903, ORD20240904, ORD20240905
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240903'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240903'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240904'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240904'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240905'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20240905'), 7, 'Orange Serenade', 550000, 1, 550000),
+-- Tháng 10/2024 - OrderItems cho ORD20241003, ORD20241004, ORD20241005, ORD20241006, ORD20241007
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241003'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241003'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241004'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241004'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241004'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241005'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241005'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241005'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241006'), 8, 'Earl Grey Bloom', 500000, 2, 1000000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241006'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241007'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241007'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+-- Tháng 11/2024 - OrderItems cho ORD20241103, ORD20241104, ORD20241105
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241103'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241103'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241104'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241104'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241105'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241105'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+-- Tháng 12/2024 - OrderItems cho ORD20241203, ORD20241204, ORD20241205
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241203'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241203'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241204'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241204'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241204'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241205'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20241205'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+-- Năm 2025 - OrderItems cho các đơn hàng mới
+-- Tháng 1/2025 - OrderItems cho ORD20250103, ORD20250104, ORD20250105
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250103'), 6, 'Mousse Việt Quất', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250103'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250104'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250104'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250105'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250105'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+-- Tháng 2/2025 - OrderItems cho ORD20250203, ORD20250204, ORD20250205
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250203'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250203'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250204'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250204'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250205'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250205'), 7, 'Orange Serenade', 550000, 1, 550000),
+-- Tháng 3/2025 - OrderItems cho ORD20250303, ORD20250304, ORD20250305
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250303'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250303'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250304'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250304'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250305'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250305'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+-- Tháng 4/2025 - OrderItems cho ORD20250403, ORD20250404, ORD20250405
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250403'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250403'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250404'), 7, 'Orange Serenade', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250404'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250405'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250405'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+-- Tháng 5/2025 - OrderItems cho ORD20250503, ORD20250504, ORD20250505, ORD20250506, ORD20250507
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250503'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250503'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250504'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250504'), 2, 'Lime and Basil Entremets', 600000, 1, 600000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250505'), 6, 'Mousse Việt Quất', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250505'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250506'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250506'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250507'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250507'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+-- Tháng 6/2025 - OrderItems cho ORD20250603, ORD20250604, ORD20250605
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250603'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250603'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250604'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250604'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250605'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250605'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+-- Tháng 7/2025 - OrderItems cho ORD20250703, ORD20250704, ORD20250705
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250703'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250703'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250704'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250704'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250705'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250705'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+-- Tháng 8/2025 - OrderItems cho ORD20250803, ORD20250804, ORD20250805
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250803'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250803'), 6, 'Mousse Việt Quất', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250804'), 3, 'Blanche Figues & Framboises', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250804'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250805'), 7, 'Orange Serenade', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250805'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+-- Tháng 9/2025 - OrderItems cho ORD20250903, ORD20250904, ORD20250905
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250903'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250903'), 5, 'Mousse Dưa Lưới', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250904'), 4, 'Mousse Chanh Dây', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250904'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250905'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20250905'), 7, 'Orange Serenade', 550000, 1, 550000),
+-- Tháng 10/2025 - OrderItems cho ORD20251003, ORD20251004, ORD20251005, ORD20251006, ORD20251007
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251003'), 6, 'Mousse Việt Quất', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251003'), 1, 'Entremets Rose', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251003'), 9, 'Strawberry Cloud Cake', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251004'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251004'), 3, 'Blanche Figues & Framboises', 650000, 1, 650000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251004'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251005'), 5, 'Mousse Dưa Lưới', 550000, 2, 1100000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251005'), 7, 'Orange Serenade', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251005'), 8, 'Earl Grey Bloom', 500000, 1, 500000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251006'), 1, 'Entremets Rose', 650000, 2, 1300000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251006'), 4, 'Mousse Chanh Dây', 550000, 1, 550000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251007'), 2, 'Lime and Basil Entremets', 600000, 2, 1200000),
+((SELECT OrderID FROM Orders WHERE OrderCode = 'ORD20251007'), 6, 'Mousse Việt Quất', 550000, 1, 550000);
 
 

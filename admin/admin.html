@@ -221,11 +221,33 @@
             <div class="charts-section">
                 <div class="chart-box">
                     <h3 class="chart-header">Doanh thu (tháng) (VNĐ)</h3>
+                    <div class="report-time-filters" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; margin-top: 10px;">
+                        <label style="font-weight: 600;">Năm:</label>
+                        <select id="report-year-select" class="form-input" style="width: 120px;" onchange="loadReportByMonth()">
+                            <!-- Will be populated by JavaScript -->
+                        </select>
+                        <label style="font-weight: 600;">Tháng:</label>
+                        <select id="report-month-select" class="form-input" style="width: 150px;" onchange="loadReportByMonth()">
+                            <option value="">Tất cả</option>
+                            <option value="01">Tháng 1</option>
+                            <option value="02">Tháng 2</option>
+                            <option value="03">Tháng 3</option>
+                            <option value="04">Tháng 4</option>
+                            <option value="05">Tháng 5</option>
+                            <option value="06">Tháng 6</option>
+                            <option value="07">Tháng 7</option>
+                            <option value="08">Tháng 8</option>
+                            <option value="09">Tháng 9</option>
+                            <option value="10">Tháng 10</option>
+                            <option value="11">Tháng 11</option>
+                            <option value="12">Tháng 12</option>
+                        </select>
+                    </div>
                     <canvas id="revenueChart"></canvas>
                 </div>
 
                 <div class="chart-box">
-                    <h3 class="chart-header">Sản phẩm bán chạy</h3>
+                    <h3 class="chart-header">Sản phẩm</h3>
                     <canvas id="categoryChart"></canvas>
                     <div class="chart-legend" id="product-chart-legend">
                         <!-- Legend sẽ được tạo động từ JavaScript -->
@@ -236,28 +258,6 @@
             <div class="top-products-section">
                 <div class="section-header-green" style="margin-bottom: 20px;">
                     CHI TIẾT DOANH THU THEO SẢN PHẨM
-                </div>
-                <div class="report-time-filters" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px;">
-                    <label style="font-weight: 600;">Năm:</label>
-                    <select id="report-year-select" class="form-input" style="width: 120px;" onchange="loadReportByMonth()">
-                        <!-- Will be populated by JavaScript -->
-                    </select>
-                    <label style="font-weight: 600;">Tháng:</label>
-                    <select id="report-month-select" class="form-input" style="width: 150px;" onchange="loadReportByMonth()">
-                        <option value="">Tất cả</option>
-                        <option value="01">Tháng 1</option>
-                        <option value="02">Tháng 2</option>
-                        <option value="03">Tháng 3</option>
-                        <option value="04">Tháng 4</option>
-                        <option value="05">Tháng 5</option>
-                        <option value="06">Tháng 6</option>
-                        <option value="07">Tháng 7</option>
-                        <option value="08">Tháng 8</option>
-                        <option value="09">Tháng 9</option>
-                        <option value="10">Tháng 10</option>
-                        <option value="11">Tháng 11</option>
-                        <option value="12">Tháng 12</option>
-                    </select>
                 </div>
                 <table class="products-report-table">
                     <thead>

@@ -31,119 +31,107 @@ function getReports($db) {
     $month = isset($_GET['month']) ? (int)sanitizeInput($_GET['month']) : null;
     $year = isset($_GET['year']) ? (int)sanitizeInput($_GET['year']) : null;
     
-    // Nếu có month và year, dùng để filter
+    // Xác định startDate và endDate dựa trên month và year
     if ($month && $year) {
+        // Có cả tháng và năm: tính trong tháng đó
         $startDate = sprintf('%04d-%02d-01', $year, $month);
         $endDate = date('Y-m-t', strtotime($startDate)); // Last day of month
+    } else if ($year) {
+        // Chỉ có năm (không có tháng): tính TẤT CẢ các tháng trong năm đó
+        $startDate = sprintf('%04d-01-01', $year); // Ngày đầu năm
+        $currentYear = date('Y');
+        $currentMonth = date('m');
+        if ($year == $currentYear) {
+            // Nếu là năm hiện tại, tính đến tháng hiện tại
+            $endDate = date('Y-m-t', strtotime(sprintf('%04d-%02d-01', $year, $currentMonth))); // Ngày cuối tháng hiện tại
+        } else {
+            // Nếu là năm quá khứ, tính đến cuối năm
+            $endDate = sprintf('%04d-12-31', $year); // Ngày cuối năm
+        }
     } else if ($period === 'month') {
+        // Không có năm/tháng, dùng period logic
         $startDate = date('Y-m-d', strtotime('-1 month'));
         $endDate = date('Y-m-d');
     } else {
+        // Default: -1 year
         $startDate = date('Y-m-d', strtotime('-1 year'));
         $endDate = date('Y-m-d');
     }
     
     // Stats query: Tính tổng doanh thu, đơn hàng, v.v.
-    // Nếu có month và year, chỉ tính trong tháng đó (từ startDate đến endDate)
-    // Nếu không có month, tính từ startDate đến hiện tại
-    if ($month && $year) {
-        // Có tháng cụ thể: tính trong khoảng thời gian của tháng đó
-        $statsQuery = "SELECT 
-                        COALESCE(SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END), 0) as revenue,
-                        COUNT(*) as total_orders,
-                        SUM(CASE WHEN OrderStatus = 'completed' THEN 1 ELSE 0 END) as delivered_orders,
-                        (SELECT COUNT(*) FROM Users WHERE Role = 'customer' AND CreatedAt >= :start_date1 AND CreatedAt <= :end_date1) as new_customers
-                       FROM Orders
-                       WHERE CreatedAt >= :start_date2
-                         AND CreatedAt <= :end_date2";
-        $stmt = $db->prepare($statsQuery);
-        $stmt->bindParam(':start_date1', $startDate);
-        $stmt->bindParam(':end_date1', $endDate);
-        $stmt->bindParam(':start_date2', $startDate);
-        $stmt->bindParam(':end_date2', $endDate);
-    } else {
-        // Không có tháng cụ thể: tính từ startDate đến hiện tại
-        $statsQuery = "SELECT 
-                        COALESCE(SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END), 0) as revenue,
-                        COUNT(*) as total_orders,
-                        SUM(CASE WHEN OrderStatus = 'completed' THEN 1 ELSE 0 END) as delivered_orders,
-                        (SELECT COUNT(*) FROM Users WHERE Role = 'customer' AND CreatedAt >= :start_date1) as new_customers
-                       FROM Orders
-                       WHERE CreatedAt >= :start_date2";
-        $stmt = $db->prepare($statsQuery);
-        $stmt->bindParam(':start_date1', $startDate);
-        $stmt->bindParam(':start_date2', $startDate);
-    }
+    // Doanh thu tính từ Subtotal của OrderItems (đồng nhất với bảng chi tiết)
+    // Để đảm bảo tổng các sản phẩm trong bảng = KPI doanh thu
+    $statsQuery = "SELECT 
+                    COALESCE(SUM(oi.Subtotal), 0) as revenue,
+                    COUNT(DISTINCT o.OrderID) as total_orders,
+                    COUNT(DISTINCT CASE WHEN o.OrderStatus = 'completed' THEN o.OrderID END) as delivered_orders,
+                    (SELECT COUNT(*) FROM Users WHERE Role = 'customer' AND CreatedAt >= :start_date1 AND CreatedAt <= :end_date1) as new_customers
+                   FROM Orders o
+                   LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID AND o.OrderStatus = 'completed'
+                   WHERE o.CreatedAt >= :start_date2
+                     AND o.CreatedAt <= :end_date2";
+    $stmt = $db->prepare($statsQuery);
+    $stmt->bindParam(':start_date1', $startDate);
+    $stmt->bindParam(':end_date1', $endDate);
+    $stmt->bindParam(':start_date2', $startDate);
+    $stmt->bindParam(':end_date2', $endDate);
     
     $stmt->execute();
     $stats = $stmt->fetch();
     
     // Top products query: Tính sản phẩm bán chạy
-    // Nếu có month và year, chỉ tính trong tháng đó
-    if ($month && $year) {
-        $topProductsQuery = "SELECT 
-                              p.ProductName as product_name,
-                              SUM(oi.Quantity) as quantity_sold,
-                              SUM(oi.Subtotal) as revenue
-                             FROM OrderItems oi
-                             INNER JOIN Products p ON oi.ProductID = p.ProductID
-                             INNER JOIN Orders o ON oi.OrderID = o.OrderID
-                             WHERE o.OrderStatus = 'completed' 
-                               AND o.CreatedAt >= :start_date
-                               AND o.CreatedAt <= :end_date
-                             GROUP BY p.ProductID, p.ProductName
-                             ORDER BY revenue DESC
-                             LIMIT 10";
-        $stmt = $db->prepare($topProductsQuery);
-        $stmt->bindParam(':start_date', $startDate);
-        $stmt->bindParam(':end_date', $endDate);
-    } else {
-        $topProductsQuery = "SELECT 
-                              p.ProductName as product_name,
-                              SUM(oi.Quantity) as quantity_sold,
-                              SUM(oi.Subtotal) as revenue
-                             FROM OrderItems oi
-                             INNER JOIN Products p ON oi.ProductID = p.ProductID
-                             INNER JOIN Orders o ON oi.OrderID = o.OrderID
-                             WHERE o.OrderStatus = 'completed' AND o.CreatedAt >= :start_date
-                             GROUP BY p.ProductID, p.ProductName
-                             ORDER BY revenue DESC
-                             LIMIT 10";
-        $stmt = $db->prepare($topProductsQuery);
-        $stmt->bindParam(':start_date', $startDate);
-    }
+    // Luôn dùng startDate và endDate để đảm bảo tính đúng
+    $topProductsQuery = "SELECT 
+                          p.ProductName as product_name,
+                          SUM(oi.Quantity) as quantity_sold,
+                          SUM(oi.Subtotal) as revenue
+                         FROM OrderItems oi
+                         INNER JOIN Products p ON oi.ProductID = p.ProductID
+                         INNER JOIN Orders o ON oi.OrderID = o.OrderID
+                         WHERE o.OrderStatus = 'completed' 
+                           AND o.CreatedAt >= :start_date
+                           AND o.CreatedAt <= :end_date
+                         GROUP BY p.ProductID, p.ProductName
+                         ORDER BY revenue DESC
+                         LIMIT 10";
+    $stmt = $db->prepare($topProductsQuery);
+    $stmt->bindParam(':start_date', $startDate);
+    $stmt->bindParam(':end_date', $endDate);
     
     $stmt->execute();
     $topProducts = $stmt->fetchAll();
     
     // Biểu đồ cột: Doanh thu theo tháng của năm được chọn
-    // Tính TỔNG doanh thu của TẤT CẢ các đơn hàng completed trong mỗi tháng
+    // Tính TỔNG doanh thu từ Subtotal của OrderItems (đồng nhất với bảng chi tiết)
+    // Để đảm bảo tổng các sản phẩm trong bảng = doanh thu trong biểu đồ
     if ($year) {
         // Query doanh thu theo tháng trong năm đó
-        // Tính tổng FinalAmount của tất cả đơn hàng completed trong mỗi tháng
+        // Tính tổng Subtotal của tất cả OrderItems trong các đơn hàng completed của tháng đó
         $revenueChartQuery = "SELECT 
-                               MONTH(CreatedAt) as month,
-                               DATE_FORMAT(CreatedAt, '%m') as period,
-                               COALESCE(SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END), 0) as revenue
-                              FROM Orders
-                              WHERE YEAR(CreatedAt) = :year
-                                AND OrderStatus = 'completed'
-                              GROUP BY MONTH(CreatedAt), DATE_FORMAT(CreatedAt, '%m')
-                              ORDER BY MONTH(CreatedAt)";
+                               MONTH(o.CreatedAt) as month,
+                               DATE_FORMAT(o.CreatedAt, '%m') as period,
+                               COALESCE(SUM(oi.Subtotal), 0) as revenue
+                              FROM Orders o
+                              INNER JOIN OrderItems oi ON o.OrderID = oi.OrderID
+                              WHERE YEAR(o.CreatedAt) = :year
+                                AND o.OrderStatus = 'completed'
+                              GROUP BY MONTH(o.CreatedAt), DATE_FORMAT(o.CreatedAt, '%m')
+                              ORDER BY MONTH(o.CreatedAt)";
         $stmt = $db->prepare($revenueChartQuery);
         $stmt->bindParam(':year', $year);
     } else {
         // Default: doanh thu theo tháng trong năm hiện tại
         $currentYear = date('Y');
         $revenueChartQuery = "SELECT 
-                               MONTH(CreatedAt) as month,
-                               DATE_FORMAT(CreatedAt, '%m') as period,
-                               COALESCE(SUM(CASE WHEN OrderStatus = 'completed' THEN FinalAmount ELSE 0 END), 0) as revenue
-                              FROM Orders
-                              WHERE YEAR(CreatedAt) = :year
-                                AND OrderStatus = 'completed'
-                              GROUP BY MONTH(CreatedAt), DATE_FORMAT(CreatedAt, '%m')
-                              ORDER BY MONTH(CreatedAt)";
+                               MONTH(o.CreatedAt) as month,
+                               DATE_FORMAT(o.CreatedAt, '%m') as period,
+                               COALESCE(SUM(oi.Subtotal), 0) as revenue
+                              FROM Orders o
+                              INNER JOIN OrderItems oi ON o.OrderID = oi.OrderID
+                              WHERE YEAR(o.CreatedAt) = :year
+                                AND o.OrderStatus = 'completed'
+                              GROUP BY MONTH(o.CreatedAt), DATE_FORMAT(o.CreatedAt, '%m')
+                              ORDER BY MONTH(o.CreatedAt)";
         $stmt = $db->prepare($revenueChartQuery);
         $stmt->bindParam(':year', $currentYear);
     }
@@ -230,24 +218,77 @@ function getReports($db) {
             return strcmp($a['product_name'], $b['product_name']);
         });
     } else {
-        // Default: tất cả sản phẩm (không có data)
-        $productChart = [];
+        // Khi không có month (chọn "Tất cả"): lấy dữ liệu tổng hợp theo năm
+        // Lấy tất cả sản phẩm với số lượng bán trong cả năm
+        if ($year) {
+            $allProductsQuery = "SELECT ProductID, ProductName FROM Products WHERE Status = 'available' ORDER BY ProductName";
+            $stmt = $db->prepare($allProductsQuery);
+            $stmt->execute();
+            $allProducts = $stmt->fetchAll();
+            
+            // Lấy số lượng bán được trong cả năm
+            $salesQuery = "SELECT 
+                            p.ProductID,
+                            p.ProductName as product_name,
+                            COALESCE(SUM(oi.Quantity), 0) as quantity,
+                            COALESCE(SUM(oi.Subtotal), 0) as revenue
+                          FROM Products p
+                          LEFT JOIN OrderItems oi ON p.ProductID = oi.ProductID
+                          LEFT JOIN Orders o ON oi.OrderID = o.OrderID 
+                            AND o.OrderStatus = 'completed' 
+                            AND YEAR(o.CreatedAt) = :year
+                          WHERE p.Status = 'available'
+                          GROUP BY p.ProductID, p.ProductName
+                          ORDER BY quantity DESC, p.ProductName";
+            $stmt = $db->prepare($salesQuery);
+            $stmt->bindParam(':year', $year);
+            $stmt->execute();
+            $productChart = $stmt->fetchAll();
+            
+            // Đảm bảo tất cả sản phẩm đều có (nếu không bán được thì quantity = 0)
+            $productMap = [];
+            foreach ($productChart as $p) {
+                $productMap[$p['ProductID']] = $p;
+            }
+            foreach ($allProducts as $p) {
+                if (!isset($productMap[$p['ProductID']])) {
+                    $productChart[] = [
+                        'ProductID' => $p['ProductID'],
+                        'product_name' => $p['ProductName'],
+                        'quantity' => 0,
+                        'revenue' => 0
+                    ];
+                }
+            }
+            
+            // Sắp xếp lại: sản phẩm bán được trước, không bán được sau
+            usort($productChart, function($a, $b) {
+                if ($b['quantity'] != $a['quantity']) {
+                    return $b['quantity'] - $a['quantity'];
+                }
+                return strcmp($a['product_name'], $b['product_name']);
+            });
+        } else {
+            // Không có year: trả về rỗng
+            $productChart = [];
+        }
     }
     
     // Chuẩn bị dữ liệu cho biểu đồ tròn
     $productChartData = [];
-    if ($month && $year) {
-        // Khi có month, trả về tất cả sản phẩm với số lượng bán
+    if (!empty($productChart)) {
+        // Trả về tất cả sản phẩm với số lượng bán
         $productChartData = [
             'labels' => array_column($productChart, 'product_name'),
             'data' => array_column($productChart, 'quantity'),
             'revenues' => array_column($productChart, 'revenue') // Thêm revenues để tính tỉ lệ
         ];
     } else {
-        // Khi không có month, dùng topProducts
+        // Không có dữ liệu
         $productChartData = [
-            'labels' => array_column($productChart, 'product_name'),
-            'data' => array_column($productChart, 'quantity')
+            'labels' => [],
+            'data' => [],
+            'revenues' => []
         ];
     }
     
@@ -263,7 +304,7 @@ function getReports($db) {
         'new_customers' => $stats['new_customers'],
         'top_products' => $topProducts,
         'chart_data' => $chartData,
-        'product_chart_full' => $productChart // Trả về full data cho bảng
+        'product_chart_full' => $productChart // Trả về full data cho bảng (theo tháng hoặc theo năm)
     ], "Lấy báo cáo thành công");
 }
 ?>
