@@ -441,3 +441,44 @@ letter-spacing: 1px;
 .btn-remove:hover {
   background-color: #d9363e;
 }
+/* Ẩn mũi tên tăng giảm mặc định trong input number */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Căn chỉnh ô nhập số */
+.quantity-control input[type=number] {
+  width: 45px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Style cho các nút cộng trừ */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.quantity-control button {
+  background-color: #2f4730;
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: background-color 0.2s ease;
+}
+
+.quantity-control button:hover {
+  background-color: #3a5a38;
+}
