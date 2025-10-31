@@ -102,9 +102,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleIcons = document.querySelectorAll(".toggle-password");
   const saveButton = accountForm?.querySelector(".save-btn"); // Thêm kiểm tra null
 
+  // Thêm các element liên quan đến hiển thị đơn hàng
+  const orderSection = document.getElementById("orderHistorySection");
+  const orderListContainer = document.getElementById("orderList");
+
   // Kiểm tra null cho các element quan trọng
-  if (!customerNameDisplay || !accountForm || !sidebarItems.length) {
-    console.error("Thiếu các element chính của trang account (form, sidebar...).");
+  if (!customerNameDisplay || !accountForm || !sidebarItems.length || !orderSection || !orderListContainer) {
+    console.error("Thiếu các element chính của trang account (form, sidebar, order section...).");
     // Có thể không cần return, nhưng phải cẩn thận
   }
 
@@ -174,6 +178,116 @@ document.addEventListener("DOMContentLoaded", () => {
       emailInput.title = "Không thể thay đổi địa chỉ email.";
     }
   }
+
+  // --- HÀM LẤY ĐƠN HÀNG CỦA NGƯỜI DÙNG ---
+  async function fetchUserOrders(userId) {
+    const headers = getAuthHeaders();
+    if (!headers) return [];
+  
+    try {
+      const response = await fetch(`../../api/orders.php?user_id=${userId}`, {
+        method: 'GET',
+        headers: headers
+      });
+      const result = await response.json();
+  
+      if (!response.ok || !result.success) {
+        console.error("Phản hồi lỗi từ server:", result);
+        throw new Error(result.error_details || `Lỗi khi lấy đơn hàng: ${response.status}`);
+      }
+  
+      // Nếu server trả về data kiểu khác, vẫn có fallback
+      return result.data?.orders || [];
+
+    } catch (error) {
+      console.error("Lỗi khi lấy đơn hàng:", error);
+      alert("Không thể tải lịch sử đơn hàng: " + error.message);
+      return [];
+    }
+  }
+  
+
+  // --- HÀM HIỂN THỊ ĐƠN HÀNG ---
+  function displayOrders(orders) {
+    if (!Array.isArray(orders)) orders = [];
+    orderListContainer.innerHTML = ''; // Xóa các đơn hàng cũ
+    if (orders.length === 0) {
+      orderListContainer.innerHTML = '<p class="text-center text-gray-500">Bạn chưa có đơn hàng nào.</p>';
+      return;
+    }
+
+    orders.forEach(order => {
+      const orderCard = document.createElement('div');
+      orderCard.classList.add('order-card', 'p-4', 'mb-4', 'border', 'rounded-lg', 'shadow-sm', 'bg-white');
+
+      let itemDetailsHtml = '';
+      if (order.items && order.items.length > 0) {
+        itemDetailsHtml = `
+          <div class="mb-2">
+            <h4 class="font-semibold text-gray-700">Chi tiết sản phẩm:</h4>
+            <ul class="list-disc list-inside text-sm text-gray-600">
+              ${order.items.map(item => `
+                <li>${item.product_name} (x${item.quantity}) - ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.subtotal)}</li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      } else {
+        itemDetailsHtml = `<p class="text-sm text-gray-500">Không có sản phẩm nào trong đơn hàng này.</p>`;
+      }
+
+      orderCard.innerHTML = `
+        <div class="flex justify-between items-center mb-2 pb-2 border-b">
+          <h3 class="font-bold text-lg text-red-600">Mã đơn hàng: ${order.order_code}</h3>
+          <span class="text-sm px-3 py-1 rounded-full ${getOrderStatusClass(order.order_status)}">${getVietnameseStatus(order.order_status)}</span>
+        </div>
+        <p class="text-gray-700 mb-1">Ngày đặt: ${new Date(order.created_at).toLocaleDateString('vi-VN')} ${new Date(order.created_at).toLocaleTimeString('vi-VN')}</p>
+        <p class="text-gray-700 mb-1">Tổng tiền: <span class="font-semibold text-green-600">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.final_amount)}</span></p>
+        <p class="text-gray-700 mb-1">Phương thức thanh toán: ${order.payment_method}</p>
+        <p class="text-gray-700 mb-1">Trạng thái thanh toán: ${order.payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
+        <p class="text-gray-700 mb-3">Địa chỉ giao hàng: ${order.shipping_address}, ${order.ward}, ${order.district}, ${order.city}</p>
+        ${itemDetailsHtml}
+      `;
+      orderListContainer.appendChild(orderCard);
+    });
+
+    // Thêm listener cho nút "Xem chi tiết" (nếu bạn có trang chi tiết đơn hàng riêng)
+    orderListContainer.querySelectorAll('.view-details-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const orderId = e.target.dataset.orderId;
+            // Điều hướng đến trang chi tiết đơn hàng hoặc mở modal
+            alert(`Xem chi tiết đơn hàng ID: ${orderId}`);
+            // Ví dụ: window.location.href = `../order_details.html?order_id=${orderId}`;
+        });
+    });
+  }
+
+  // Hàm giúp hiển thị trạng thái tiếng Việt
+  function getVietnameseStatus(status) {
+      switch(status) {
+          case 'pending': return 'Đang chờ xác nhận';
+          case 'confirmed': return 'Đã xác nhận';
+          case 'preparing': return 'Đang chuẩn bị hàng';
+          case 'shipping': return 'Đang giao hàng';
+          case 'completed': return 'Đã hoàn thành';
+          case 'cancelled': return 'Đã hủy';
+          default: return status;
+      }
+  }
+
+  // Hàm giúp thêm class CSS cho trạng thái
+  function getOrderStatusClass(status) {
+      switch(status) {
+          case 'pending': return 'bg-yellow-100 text-yellow-800';
+          case 'confirmed': return 'bg-blue-100 text-blue-800';
+          case 'preparing': return 'bg-indigo-100 text-indigo-800';
+          case 'shipping': return 'bg-purple-100 text-purple-800';
+          case 'completed': return 'bg-green-100 text-green-800';
+          case 'cancelled': return 'bg-red-100 text-red-800';
+          default: return 'bg-gray-100 text-gray-800';
+      }
+  }
+
 
   // --- 2. ẨN/HIỆN MẬT KHẨU ---
   if (toggleIcons) {
@@ -245,7 +359,17 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log("Chuẩn bị gọi API đổi mật khẩu...");
           // const passwordData = { oldPassword: oldPassword, newPassword: newPassword };
           try {
-            alert("⚠️ Chức năng đổi mật khẩu chưa được kết nối API.");
+            // Đây là nơi bạn sẽ gọi API đổi mật khẩu
+            // const apiUrlChangePassword = `../../api/users.php/${userData.id}/change-password`; // Giả định có endpoint này
+            // const responseChangePassword = await fetch(apiUrlChangePassword, {
+            //   method: 'POST',
+            //   headers: headers,
+            //   body: JSON.stringify(passwordData)
+            // });
+            // const resultChangePassword = await responseChangePassword.json();
+            // if (!responseChangePassword.ok || !resultChangePassword.success) throw new Error(resultChangePassword.message || `Lỗi ${responseChangePassword.status}`);
+
+            alert("⚠️ Chức năng đổi mật khẩu chưa được kết nối API. Mật khẩu vẫn chưa thay đổi.");
             // Tạm thời reset form
             passwordChanged = true; // Giả sử thành công để test alert
             document.getElementById("oldPassword").value = "";
@@ -260,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // --- Thông báo kết quả ---
       if (infoUpdated || passwordChanged) {
         alert(`✅ ${infoUpdated ? 'Thông tin đã được cập nhật.' : ''} ${passwordChanged ? 'Mật khẩu đã được thay đổi.' : ''}`);
-      } else if (!infoChanged && !oldPassword) {
+      } else if (!infoChanged && !oldPassword && !newPassword && !confirmPassword) {
         alert("ℹ️ Không có thay đổi nào để lưu.");
       }
 
@@ -272,18 +396,51 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 4. XỬ LÝ SIDEBAR ---
   if (sidebarItems) {
     sidebarItems.forEach(item => {
-      item.addEventListener("click", () => {
+      item.addEventListener("click", async () => { // Thêm async ở đây
+        // Ẩn tất cả các phần nội dung trước
+        document.getElementById("personalInfoSection").classList.add("hidden");
+        document.getElementById("orderHistorySection").classList.add("hidden");
+        // ... thêm các phần khác nếu có
+
+        // Xóa class 'active' khỏi tất cả các mục sidebar
+        sidebarItems.forEach(el => el.classList.remove('active'));
+        // Thêm class 'active' vào mục được click
+        item.classList.add('active');
+
+
         const actionId = item.id;
         switch (actionId) {
-          case "infoBtn": window.scrollTo({ top: 0, behavior: "smooth" }); break;
-          case "ordersBtn": alert("📦 Tính năng xem đơn hàng đang được phát triển!"); break;
+          case "infoBtn":
+            document.getElementById("personalInfoSection").classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            break;
+          case "ordersBtn":
+            document.getElementById("orderHistorySection").classList.remove("hidden");
+            // Tải và hiển thị đơn hàng khi click vào "Đơn hàng của tôi"
+            if (userData && userData.id) {
+                const userOrders = await fetchUserOrders(userData.id);
+                displayOrders(userOrders);
+            }
+            break;
           case "logoutBtn": // Đây là nút logout CỦA SIDEBAR
             if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
               logoutAndRedirect();
-            } break;
+            }
+            break;
+          default:
+            // Mặc định hiển thị thông tin cá nhân
+            document.getElementById("personalInfoSection").classList.remove("hidden");
+            break;
         }
       });
     });
+
+    // Mặc định kích hoạt mục "Thông tin cá nhân" khi tải trang
+    const initialActiveItem = document.getElementById("infoBtn");
+    if (initialActiveItem) {
+        initialActiveItem.classList.add('active');
+        document.getElementById("personalInfoSection").classList.remove("hidden");
+    }
   }
 
   // === 5. GỌI HÀM XỬ LÝ NAVBAR (CUỐI CÙNG) ===
