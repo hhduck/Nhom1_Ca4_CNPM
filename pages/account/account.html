@@ -10,13 +10,13 @@
   <link rel="stylesheet" href="../../assets/css/style.css">
   <link rel="stylesheet" href="../../assets/css/animations.css">
   <link rel="stylesheet" href="account.css">
-  
-  <!-- Preload fonts để tránh FOUT -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@600&family=Inspiration&family=Crimson+Text:wght@400;600&display=block" rel="stylesheet">
-  
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
@@ -64,11 +64,13 @@
         </ul>
       </div>
 
-      <!-- Account Info -->
+      <!-- Main Content Area - Chứa cả thông tin cá nhân và đơn hàng, ẩn/hiện bằng JS -->
       <div class="account-info">
-        <h2 class="account-title">TÀI KHOẢN</h2>
-        <div class="info-content">
-          <h3>Thông tin</h3>
+        <h2 class="account-title">TÀI KHOẢN CỦA TÔI</h2> <!-- Tiêu đề chung cho trang tài khoản -->
+
+        <!-- Phần thông tin cá nhân -->
+        <div id="personalInfoSection" class="info-content">
+          <h3>Thông tin cá nhân</h3>
           <form id="accountForm">
             <label>Họ và Tên</label>
             <input type="text" id="nameInput" placeholder="">
@@ -105,10 +107,21 @@
             <button type="submit" class="save-btn">Lưu thay đổi</button>
           </form>
         </div>
-      </div>
-    </div>
-  </section>
 
+        <!-- Phần lịch sử đơn hàng -->
+        <!-- Ban đầu ẩn, sẽ hiển thị khi click vào "Đơn hàng" trên sidebar -->
+        <div id="orderHistorySection" class="info-content hidden">
+            <h3>Đơn hàng của bạn</h3>
+            <div id="orderList" class="orders-container">
+                <!-- Đơn hàng sẽ được tải và hiển thị ở đây bằng JavaScript -->
+                <p>Đang tải đơn hàng...</p>
+            </div>
+        </div>
+
+      </div> <!-- End .account-info -->
+    </div> <!-- End .account-container -->
+  </section>
+  
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
@@ -128,8 +141,6 @@
     </div>
   </footer>
   <script src="account.js"></script>
-
-
 </body>
 
 </html>
