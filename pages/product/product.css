@@ -120,14 +120,29 @@ letter-spacing: 1px;
   gap: 100px;
   width: 100%;
   margin-bottom: 80px;
+  position: relative;
+  z-index: 0;
+}
+
+.product-image {
+  position: relative;
+  width: 600px;
+  height: 600px;
+}
+
+.product-image::before,
+.product-image::after {
+  display: none !important;
+  content: none !important;
 }
 
 .product-image img {
-  width: 600px;
-  height: 600px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 14px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  display: block;
 }
 
 .product-info {
@@ -150,6 +165,19 @@ letter-spacing: 1px;
   font-size: 28px;
   font-weight: 600;
   margin-bottom: 20px;
+}
+
+.product-info-title {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  color: #000;
+  border-bottom: 2px solid #b5c4a6;
+  display: inline-block;
+  padding-bottom: 4px;
+  margin-bottom: 20px;
+  margin-top: 0;
+  text-align: left;
 }
 
 .short-desc {
@@ -244,6 +272,8 @@ letter-spacing: 1px;
 
 /* --- PHẦN THÔNG TIN SẢN PHẨM DƯỚI CÙNG --- */
 .product-details {
+  position: relative;
+  z-index: 1;
   max-width: 1000px;   /* cho rộng ra toàn màn hình hơn */
   margin-top: 40px;
   margin-left: 0;       /* SÁT LỀ TRÁI */
@@ -251,10 +281,13 @@ letter-spacing: 1px;
   line-height: 1.7;
   color: #000;
   padding-left: 10px;   /* thêm nhẹ padding cho chữ không dính mép */
+  clear: both;
 }
 
 /* Tiêu đề lớn: THÔNG TIN SẢN PHẨM */
 .product-details h3 {
+  position: relative;
+  z-index: 1;
   font-size: 20px;
   font-weight: 700;
   font-family: 'Inter', sans-serif;
@@ -265,6 +298,7 @@ letter-spacing: 1px;
   margin-bottom: 20px;
   text-align: left;
   margin-left: 0;
+  background: transparent;
 }
 
 /* Tiêu đề nhỏ: MÔ TẢ, CẤU TRÚC BÁNH... */
