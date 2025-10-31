@@ -125,7 +125,7 @@ function renderCartFromLocal(cart) {
 
     <div class="cart-summary">
       <h3>Tổng cộng: ${total.toLocaleString()} VND</h3>
-      <button class="btn-primary" id="checkoutBtn">Tiến hành thanh toán</button>
+      <button class="btn-primary" id="checkoutBtn">Thanh toán</button>
     </div>
   `;
 
