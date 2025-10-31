@@ -31,7 +31,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     const product = result.data;
 
     // 3. Điền thông tin sản phẩm
-    document.getElementById("product-img").src = `../../${product.image_url || 'assets/images/default.jpg'}`;
+// Chuẩn hóa đường dẫn ảnh trước khi gán
+let imagePath = product.image_url || 'assets/images/default.jpg';
+
+// Nếu trong đường dẫn có "assets/assets/" thì sửa lại cho đúng
+if (imagePath.startsWith("assets/assets/")) {
+  imagePath = imagePath.replace("assets/assets/", "assets/");
+}
+
+// Nếu chưa có "../../" ở đầu thì thêm vào (vì file product.js nằm trong /pages/product)
+if (!imagePath.startsWith("../../")) {
+  imagePath = "../../" + imagePath;
+}
+
+document.getElementById("product-img").src = imagePath;
     document.getElementById("product-img").alt = product.product_name;
     document.getElementById("product-name").textContent = product.product_name;
     document.getElementById("product-price").textContent = formatPrice(product.price);
