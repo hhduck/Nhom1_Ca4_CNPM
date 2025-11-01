@@ -43,6 +43,7 @@ function getSafeImageUrl(imageUrl) {
 document.addEventListener('DOMContentLoaded', function () {
     // Check authentication first
     checkAuthentication();
+    loadCategories();
     showPage('products');
     setupNavigation();
     setupEventListeners();
@@ -270,6 +271,42 @@ function showPage(pageName) {
 
 // Expose showPage to global scope
 window.showPage = showPage;
+
+// ============================================
+// CATEGORIES MANAGEMENT
+// ============================================
+
+let categoriesMap = {}; // Map category_name -> category_id
+
+async function loadCategories() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/categories.php`);
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.categories) {
+            const categories = data.data.categories;
+            categoriesMap = {};
+            
+            const categorySelect = document.getElementById('product-category');
+            if (categorySelect) {
+                // Clear existing options except the first one
+                categorySelect.innerHTML = '<option value="">Chọn danh mục</option>';
+                
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.category_id;
+                    option.textContent = category.category_name;
+                    categorySelect.appendChild(option);
+                    
+                    // Map for quick lookup
+                    categoriesMap[category.category_name] = category.category_id;
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading categories:', error);
+    }
+}
 
 // ============================================
 // PRODUCTS MANAGEMENT
@@ -589,9 +626,14 @@ async function loadOrders(filters = {}) {
                         </span>
                     </td>
                     <td>
-                        <button class="icon-btn" onclick="viewOrderDetail(${order.order_id})" title="Chi tiết">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                        <div class="action-btns">
+                            <button class="icon-btn" onclick="viewOrderDetail(${order.order_id})" title="Chi tiết">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="icon-btn" onclick="deleteOrder(${order.order_id})" title="Xóa">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -755,6 +797,31 @@ async function updateOrderStatus() {
     } catch (error) {
         console.error('Error updating order status:', error);
         showError('Không thể cập nhật trạng thái đơn hàng: ' + error.message);
+    }
+}
+
+async function deleteOrder(orderId) {
+    if (!confirm('Bạn có chắc chắn muốn xóa đơn hàng này?\n\nLưu ý: Hành động này không thể hoàn tác và đơn hàng sẽ bị xóa khỏi cơ sở dữ liệu.')) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/orders.php/${orderId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken') || 'demo'}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess('Xóa đơn hàng thành công');
+            loadOrders();
+        } else {
+            throw new Error(data.message || 'Failed to delete order');
+        }
+    } catch (error) {
+        console.error('Error deleting order:', error);
+        showError('Không thể xóa đơn hàng: ' + error.message);
     }
 }
 
@@ -980,22 +1047,44 @@ async function unlockUser(userId) {
 }
 
 async function deleteUser(userId) {
-    if (!confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
+    if (!confirm('Bạn có chắc chắn muốn xóa người dùng này?\n\nLưu ý: Hành động này sẽ xóa người dùng khỏi cơ sở dữ liệu và không thể hoàn tác.')) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/users.php/${userId}`, {
-            method: 'DELETE'
+        const jwtToken = localStorage.getItem('jwtToken') || 'demo';
+        const url = `${API_BASE_URL}/users.php/${userId}`;
+        
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`,
+                'Content-Type': 'application/json'
+            }
         });
 
-        if (response.ok) {
+        // Kiểm tra response status trước khi parse JSON
+        if (!response.ok) {
+            let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                const errorText = await response.text();
+                errorMessage = errorText || errorMessage;
+            }
+            throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
             showSuccess('Xóa người dùng thành công');
             loadUsers();
         } else {
-            throw new Error('Failed to delete user');
+            throw new Error(data.message || 'Failed to delete user');
         }
     } catch (error) {
         console.error('Error deleting user:', error);
-        showError('Không thể xóa người dùng');
+        showError('Không thể xóa người dùng: ' + error.message);
     }
 }
 
@@ -1454,7 +1543,7 @@ function initCharts(chartData, selectedMonth = null, selectedYear = null) {
         ctx.clearRect(0, 0, revenueCtx.width, revenueCtx.height);
     }
 
-    // Category Chart (chỉ hiển thị khi có month được chọn cụ thể, không phải "Tất cả")
+    // Category Chart (biểu đồ tròn) - luôn hiển thị khi có dữ liệu (theo tháng hoặc theo năm)
     const categoryCtx = document.getElementById('categoryChart');
     
     // Màu sắc cho biểu đồ (đủ cho nhiều sản phẩm)
@@ -1465,7 +1554,8 @@ function initCharts(chartData, selectedMonth = null, selectedYear = null) {
     ];
     
     if (categoryCtx) {
-        // Luôn hiển thị biểu đồ bên phải, cập nhật liên tục
+        // Luôn hiển thị biểu đồ bên phải, cập nhật liên tục khi chọn tháng/năm
+        // Hiển thị dữ liệu theo tháng (nếu có month) hoặc theo năm (nếu chọn "Tất cả")
         if (chartData.products && chartData.products.labels && chartData.products.labels.length > 0 && !isFutureMonth) {
             // Có dữ liệu sản phẩm: hiển thị biểu đồ tròn (theo tháng hoặc theo năm)
             if (categoryChart) categoryChart.destroy();
@@ -1575,15 +1665,15 @@ async function filterPromotions(status) {
 
 async function createPromotion() {
     const promoData = {
-        promotion_code: document.getElementById('promo-code').value,
-        promotion_name: document.getElementById('promo-name').value,
+        promotion_code: document.getElementById('promo-code').value.trim(),
+        promotion_name: document.getElementById('promo-name').value.trim(),
         promotion_type: document.getElementById('promo-type').value,
         start_date: document.getElementById('promo-start').value,
         end_date: document.getElementById('promo-end').value,
-        discount_value: document.getElementById('promo-value').value,
-        quantity: document.getElementById('promo-quantity').value,
+        discount_value: document.getElementById('promo-value').value || 0,
+        quantity: document.getElementById('promo-quantity').value || -1,
         min_order_value: document.getElementById('promo-condition').value || 0,
-        image_url: document.getElementById('promo-image-url').value || ''
+        image_url: document.getElementById('promo-image-url').value.trim() || ''
     };
 
     if (!promoData.promotion_code || !promoData.promotion_name || !promoData.promotion_type) {
@@ -1591,14 +1681,38 @@ async function createPromotion() {
         return;
     }
 
+    if (!promoData.start_date || !promoData.end_date) {
+        showError('Vui lòng chọn ngày bắt đầu và ngày kết thúc');
+        return;
+    }
+
     try {
+        const jwtToken = localStorage.getItem('jwtToken') || 'demo';
         const response = await fetch(`${API_BASE_URL}/promotions.php`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwtToken}`
+            },
             body: JSON.stringify(promoData)
         });
 
-        if (response.ok) {
+        // Kiểm tra response status trước khi parse JSON
+        if (!response.ok) {
+            let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                const errorText = await response.text();
+                errorMessage = errorText || errorMessage;
+            }
+            throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
             showSuccess('Tạo khuyến mãi thành công');
             loadPromotions();
             // Clear form
@@ -1612,11 +1726,11 @@ async function createPromotion() {
             document.getElementById('promo-condition').value = '';
             document.getElementById('promo-image-url').value = '';
         } else {
-            throw new Error('Failed to create promotion');
+            throw new Error(data.message || 'Failed to create promotion');
         }
     } catch (error) {
         console.error('Error creating promotion:', error);
-        showError('Không thể tạo khuyến mãi');
+        showError('Không thể tạo khuyến mãi: ' + error.message);
     }
 }
 

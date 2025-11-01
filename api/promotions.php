@@ -5,6 +5,11 @@
  * FILE: api/promotions.php
  */
 
+ini_set('display_errors', 0); // Không hiển thị errors trực tiếp (sẽ trả về JSON)
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL); // Vẫn log errors
+header('Content-Type: application/json; charset=utf-8');
+
 require_once __DIR__ . '/config/database.php';
 
 enableCORS();
@@ -75,8 +80,8 @@ try {
             sendJsonResponse(false, null, "Method không được hỗ trợ", 405);
     }
 } catch(Exception $e) {
-    error_log("Promotions API Error: " . $e->getMessage());
-    sendJsonResponse(false, null, "Có lỗi xảy ra", 500);
+    error_log("Promotions API Error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    sendJsonResponse(false, null, "Có lỗi xảy ra: " . $e->getMessage(), 500);
 }
 
 function getAllPromotions($db) {
@@ -163,7 +168,15 @@ function getPromotionById($db, $id) {
 }
 
 function getAllPromotionsPublic($db) {
+    // Thêm cache headers để tránh cache
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    
     // Chỉ lấy promotions active cho home page
+    // Sửa: Lấy tất cả promotions active (không giới hạn StartDate/EndDate trong query)
+    // vì promotions có thể có StartDate trong tương lai nhưng vẫn cần hiển thị
+    // Sửa: Dùng COALESCE để đảm bảo ImageURL không phải NULL
     $query = "SELECT 
                 PromotionID as promotion_id,
                 PromotionCode as promotion_code,
@@ -174,18 +187,16 @@ function getAllPromotionsPublic($db) {
                 MinOrderValue as min_order_value,
                 StartDate as start_date,
                 EndDate as end_date,
-                ImageURL as image_url
+                COALESCE(ImageURL, '') as image_url
               FROM Promotions
-              WHERE Status = 'active' 
-                AND StartDate <= NOW() 
-                AND EndDate >= NOW()
+              WHERE Status = 'active'
               ORDER BY CreatedAt DESC
               LIMIT 10";
     
     $stmt = $db->prepare($query);
     $stmt->execute();
     
-    $promotions = $stmt->fetchAll();
+    $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     sendJsonResponse(true, [
         "promotions" => $promotions,
@@ -225,47 +236,90 @@ function getPromotionByIdPublic($db, $id) {
 }
 
 function createPromotion($db) {
-    $adminId = checkAdminPermission();
-    $data = json_decode(file_get_contents("php://input"), true);
-    
-    if (empty($data['promotion_code']) || empty($data['promotion_name']) || empty($data['promotion_type'])) {
-        sendJsonResponse(false, null, "Thiếu thông tin bắt buộc", 400);
-    }
-    
-    $checkQuery = "SELECT PromotionID FROM Promotions WHERE PromotionCode = :code";
-    $checkStmt = $db->prepare($checkQuery);
-    $checkStmt->bindParam(':code', $data['promotion_code']);
-    $checkStmt->execute();
-    
-    if ($checkStmt->fetch()) {
-        sendJsonResponse(false, null, "Mã khuyến mãi đã tồn tại", 400);
-    }
-    
-    $query = "INSERT INTO Promotions 
-              (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, 
-               Quantity, StartDate, EndDate, Status, ImageURL, CreatedBy) 
-              VALUES 
-              (:code, :name, :type, :value, :min_order, :quantity, :start_date, :end_date, 'active', :image_url, :created_by)";
-    
-    $stmt = $db->prepare($query);
-    
-    $stmt->bindParam(':code', sanitizeInput($data['promotion_code']));
-    $stmt->bindParam(':name', sanitizeInput($data['promotion_name']));
-    $stmt->bindParam(':type', $data['promotion_type']);
-    $stmt->bindParam(':value', $data['discount_value'] ?? 0);
-    $stmt->bindParam(':min_order', $data['min_order_value'] ?? 0);
-    $stmt->bindParam(':quantity', $data['quantity'] ?? -1);
-    $stmt->bindParam(':start_date', $data['start_date']);
-    $stmt->bindParam(':end_date', $data['end_date']);
-    $stmt->bindParam(':image_url', sanitizeInput($data['image_url'] ?? ''));
-    $stmt->bindParam(':created_by', $adminId);
-    
-    if ($stmt->execute()) {
-        sendJsonResponse(true, [
-            "promotion_id" => $db->lastInsertId()
-        ], "Tạo khuyến mãi thành công", 201);
-    } else {
-        sendJsonResponse(false, null, "Không thể tạo khuyến mãi", 500);
+    try {
+        $adminId = checkAdminPermission();
+        
+        $input = file_get_contents("php://input");
+        if (empty($input)) {
+            sendJsonResponse(false, null, "Dữ liệu không hợp lệ", 400);
+        }
+        
+        $data = json_decode($input, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            sendJsonResponse(false, null, "Dữ liệu JSON không hợp lệ: " . json_last_error_msg(), 400);
+        }
+        
+        if (empty($data['promotion_code']) || empty($data['promotion_name']) || empty($data['promotion_type'])) {
+            sendJsonResponse(false, null, "Thiếu thông tin bắt buộc", 400);
+        }
+        
+        // Validate promotion_type
+        $validTypes = ['percent', 'fixed_amount', 'free_shipping', 'gift'];
+        if (!in_array($data['promotion_type'], $validTypes)) {
+            sendJsonResponse(false, null, "Loại khuyến mãi không hợp lệ. Phải là: " . implode(', ', $validTypes), 400);
+        }
+        
+        // Kiểm tra mã khuyến mãi đã tồn tại chưa
+        $checkQuery = "SELECT PromotionID FROM Promotions WHERE PromotionCode = :code";
+        $checkStmt = $db->prepare($checkQuery);
+        $checkStmt->bindParam(':code', $data['promotion_code']);
+        $checkStmt->execute();
+        
+        if ($checkStmt->fetch()) {
+            sendJsonResponse(false, null, "Mã khuyến mãi đã tồn tại", 400);
+        }
+        
+        // Format dates: Convert from YYYY-MM-DD to YYYY-MM-DD HH:MM:SS for TIMESTAMP
+        $startDate = $data['start_date'] ?? '';
+        $endDate = $data['end_date'] ?? '';
+        
+        if (strlen($startDate) == 10) {
+            $startDate .= ' 00:00:00';
+        }
+        if (strlen($endDate) == 10) {
+            $endDate .= ' 23:59:59';
+        }
+        
+        $query = "INSERT INTO Promotions 
+                  (PromotionCode, PromotionName, PromotionType, DiscountValue, MinOrderValue, 
+                   Quantity, StartDate, EndDate, Status, ImageURL, CreatedBy) 
+                  VALUES 
+                  (:code, :name, :type, :value, :min_order, :quantity, :start_date, :end_date, 'active', :image_url, :created_by)";
+        
+        $stmt = $db->prepare($query);
+        
+        $code = sanitizeInput($data['promotion_code']);
+        $name = sanitizeInput($data['promotion_name']);
+        $type = $data['promotion_type'];
+        $value = isset($data['discount_value']) ? (float)$data['discount_value'] : 0;
+        $minOrder = isset($data['min_order_value']) ? (float)$data['min_order_value'] : 0;
+        $quantity = isset($data['quantity']) ? (int)$data['quantity'] : -1;
+        $imageUrl = sanitizeInput($data['image_url'] ?? '');
+        
+        $stmt->bindParam(':code', $code);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':type', $type);
+        $stmt->bindParam(':value', $value);
+        $stmt->bindParam(':min_order', $minOrder);
+        $stmt->bindParam(':quantity', $quantity);
+        $stmt->bindParam(':start_date', $startDate);
+        $stmt->bindParam(':end_date', $endDate);
+        $stmt->bindParam(':image_url', $imageUrl);
+        $stmt->bindParam(':created_by', $adminId, PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            sendJsonResponse(true, [
+                "promotion_id" => $db->lastInsertId()
+            ], "Tạo khuyến mãi thành công", 201);
+        } else {
+            $errorInfo = $stmt->errorInfo();
+            error_log("Promotion creation error: " . json_encode($errorInfo));
+            sendJsonResponse(false, null, "Không thể tạo khuyến mãi: " . ($errorInfo[2] ?? 'Unknown error'), 500);
+        }
+    } catch (Exception $e) {
+        error_log("Create promotion exception: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+        sendJsonResponse(false, null, "Lỗi khi tạo khuyến mãi: " . $e->getMessage(), 500);
     }
 }
 

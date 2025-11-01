@@ -71,6 +71,11 @@ function getAllProducts($db) {
     $status = isset($_GET['status']) ? sanitizeInput($_GET['status']) : null;
     $featured = isset($_GET['featured']) ? sanitizeInput($_GET['featured']) : null;
     
+    // Thêm cache headers để tránh cache
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    
     $query = "SELECT 
                 p.ProductID as product_id,
                 p.ProductName as product_name,
@@ -178,6 +183,24 @@ function createProduct($db) {
         sendJsonResponse(false, null, "Thiếu thông tin bắt buộc", 400);
     }
     
+    // Convert category_id to integer if it's a string
+    $categoryId = is_numeric($data['category_id']) ? (int)$data['category_id'] : null;
+    
+    // If category_id is not a number, try to find by category name
+    if (!$categoryId || $categoryId <= 0) {
+        $categoryName = sanitizeInput($data['category_id']);
+        $catQuery = "SELECT CategoryID FROM Categories WHERE CategoryName = :name LIMIT 1";
+        $catStmt = $db->prepare($catQuery);
+        $catStmt->bindParam(':name', $categoryName);
+        $catStmt->execute();
+        $catResult = $catStmt->fetch();
+        if ($catResult) {
+            $categoryId = (int)$catResult['CategoryID'];
+        } else {
+            sendJsonResponse(false, null, "Danh mục không tồn tại", 400);
+        }
+    }
+    
     $query = "INSERT INTO Products 
               (ProductName, CategoryID, Description, Price, Quantity, Status, ImageURL, ShortIntro, ShortParagraph, Structure, `Usage`, Bonus) 
               VALUES 
@@ -186,7 +209,7 @@ function createProduct($db) {
     $stmt = $db->prepare($query);
     
     $stmt->bindParam(':name', sanitizeInput($data['product_name']));
-    $stmt->bindParam(':category', sanitizeInput($data['category_id']));
+    $stmt->bindParam(':category', $categoryId, PDO::PARAM_INT);
     $stmt->bindParam(':desc', sanitizeInput($data['description'] ?? ''));
     $stmt->bindParam(':price', $data['price']);
     $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
@@ -203,7 +226,8 @@ function createProduct($db) {
             "product_id" => $db->lastInsertId()
         ], "Thêm sản phẩm thành công", 201);
     } else {
-        sendJsonResponse(false, null, "Không thể thêm sản phẩm", 500);
+        $errorInfo = $stmt->errorInfo();
+        sendJsonResponse(false, null, "Không thể thêm sản phẩm: " . ($errorInfo[2] ?? 'Unknown error'), 500);
     }
 }
 
@@ -213,6 +237,27 @@ function updateProduct($db) {
     $id = end($pathParts);
     
     $data = json_decode(file_get_contents("php://input"), true);
+    
+    // Convert category_id to integer if it's a string
+    $categoryId = null;
+    if (isset($data['category_id'])) {
+        $categoryId = is_numeric($data['category_id']) ? (int)$data['category_id'] : null;
+        
+        // If category_id is not a number, try to find by category name
+        if (!$categoryId || $categoryId <= 0) {
+            $categoryName = sanitizeInput($data['category_id']);
+            $catQuery = "SELECT CategoryID FROM Categories WHERE CategoryName = :name LIMIT 1";
+            $catStmt = $db->prepare($catQuery);
+            $catStmt->bindParam(':name', $categoryName);
+            $catStmt->execute();
+            $catResult = $catStmt->fetch();
+            if ($catResult) {
+                $categoryId = (int)$catResult['CategoryID'];
+            } else {
+                sendJsonResponse(false, null, "Danh mục không tồn tại", 400);
+            }
+        }
+    }
     
     $query = "UPDATE Products SET 
               ProductName = :name,
@@ -234,7 +279,7 @@ function updateProduct($db) {
     
     $stmt->bindParam(':id', $id);
     $stmt->bindParam(':name', sanitizeInput($data['product_name']));
-    $stmt->bindParam(':category', sanitizeInput($data['category_id']));
+    $stmt->bindParam(':category', $categoryId, PDO::PARAM_INT);
     $stmt->bindParam(':desc', sanitizeInput($data['description'] ?? ''));
     $stmt->bindParam(':price', $data['price']);
     $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
@@ -249,7 +294,8 @@ function updateProduct($db) {
     if ($stmt->execute()) {
         sendJsonResponse(true, null, "Cập nhật sản phẩm thành công");
     } else {
-        sendJsonResponse(false, null, "Không thể cập nhật sản phẩm", 500);
+        $errorInfo = $stmt->errorInfo();
+        sendJsonResponse(false, null, "Không thể cập nhật sản phẩm: " . ($errorInfo[2] ?? 'Unknown error'), 500);
     }
 }
 

@@ -165,7 +165,6 @@ function handleUserDisplay() {
 
       newLogoutBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        console.log("Đăng xuất...");
         localStorage.removeItem("currentStaff");
         localStorage.removeItem("currentUser");
         localStorage.removeItem("jwtToken");
@@ -257,7 +256,6 @@ function bindProductCardNavigation() {
   promotionCards.forEach(card => {
     card.addEventListener('click', (event) => {
       event.stopPropagation();
-      console.log("Promotion card clicked - Có thể thêm modal chi tiết khuyến mãi");
     });
   });
 }
@@ -265,8 +263,15 @@ function bindProductCardNavigation() {
 // ========== LOAD SẢN PHẨM TỪ API ==========
 async function loadProductsFromAPI() {
   try {
-    // Load tất cả sản phẩm available
-    const response = await fetch('../../api/products.php?status=available');
+    // Load tất cả sản phẩm available với cache-busting để đảm bảo load dữ liệu mới
+    const cacheBuster = new Date().getTime();
+    const response = await fetch(`../../api/products.php?status=available&_t=${cacheBuster}`, {
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
     if (!response.ok) {
       throw new Error('HTTP ' + response.status);
     }
@@ -385,7 +390,15 @@ function formatPrice(price) {
 // ========== LOAD PROMOTIONS TỪ API ==========
 async function loadPromotionsFromAPI() {
   try {
-    const response = await fetch('../../api/promotions.php?public=1');
+    // Load promotions với cache-busting để đảm bảo load dữ liệu mới
+    const cacheBuster = new Date().getTime();
+    const response = await fetch(`../../api/promotions.php?public=1&_t=${cacheBuster}`, {
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
     if (!response.ok) {
       throw new Error('HTTP ' + response.status);
     }
@@ -404,7 +417,10 @@ async function loadPromotionsFromAPI() {
 
 function renderPromotions(promotions) {
   const promotionGrid = document.querySelector('.promotion-grid');
-  if (!promotionGrid) return;
+  if (!promotionGrid) {
+    console.error('Không tìm thấy .promotion-grid');
+    return;
+  }
   
   if (promotions.length === 0) {
     promotionGrid.innerHTML = '<p style="text-align: center; width: 100%;">Hiện tại không có khuyến mãi nào</p>';
@@ -421,13 +437,36 @@ function renderPromotions(promotions) {
       return `${day}/${month}/${year}`;
     };
     
-    // Nếu không có image_url, dùng placeholder hoặc bỏ qua ảnh
-    const imageUrl = promo.image_url ? `../../${promo.image_url}` : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%23f8f9fa%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23adb5bd%22 font-family=%22Arial%22 font-size=%2214%22%3EKhuy%E1%BA%BFn m%C3%A3i%3C/text%3E%3C/svg%3E';
+    // Xử lý image_url: Nếu có đường dẫn và không bắt đầu bằng http/https, thêm prefix
+    let imageUrl = '';
+    // Kiểm tra image_url có giá trị không (không phải null, undefined, hoặc empty string)
+    if (promo.image_url && promo.image_url.trim() !== '') {
+      // Nếu đã có đường dẫn đầy đủ (http/https), dùng trực tiếp
+      if (promo.image_url.startsWith('http://') || promo.image_url.startsWith('https://')) {
+        imageUrl = promo.image_url;
+      } 
+      // Nếu bắt đầu bằng "assets/", thêm "../.." để đi từ pages/home/
+      else if (promo.image_url.startsWith('assets/')) {
+        imageUrl = `../../${promo.image_url}`;
+      }
+      // Nếu không có prefix, thêm "assets/images/" nếu chưa có
+      else if (!promo.image_url.includes('/')) {
+        imageUrl = `../../assets/images/${promo.image_url}`;
+      }
+      // Giữ nguyên nếu có đường dẫn đầy đủ
+      else {
+        imageUrl = `../../${promo.image_url}`;
+      }
+    } else {
+      // Placeholder nếu không có image_url
+      imageUrl = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%23f8f9fa%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23adb5bd%22 font-family=%22Arial%22 font-size=%2214%22%3EKhuy%E1%BA%BFn m%C3%A3i%3C/text%3E%3C/svg%3E';
+    }
     
     return `
       <div class="promotion-card">
         <div class="promotion-image-container">
-          <img src="${imageUrl}" alt="${promo.promotion_name}" class="promotion-image">
+          <img src="${imageUrl}" alt="${promo.promotion_name}" class="promotion-image" 
+               onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%23f8f9fa%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23adb5bd%22 font-family=%22Arial%22 font-size=%2214%22%3EKhuy%E1%BA%BFn m%C3%A3i%3C/text%3E%3C/svg%3E';">
         </div>
         <div class="promotion-info">
           <div class="promotion-name">${promo.promotion_name}</div>
@@ -718,13 +757,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!keyword) return;
 
         const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
-        console.log("🔍 Gọi API tìm kiếm:", url);
-
         try {
           const res = await fetch(url);
           const data = await res.json();
-          console.log("✅ Kết quả:", data);
-
           showPopup(data.products);
         } catch (err) {
           console.error("❌ Lỗi tìm kiếm:", err);
@@ -751,12 +786,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!keyword) return;
 
         const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
-        console.log("🔍 Gọi API tìm kiếm:", url);
-
         try {
           const res = await fetch(url);
           const data = await res.json();
-          console.log("✅ Kết quả:", data);
 
           // Hiện kết quả trên popup (hàm showPopup bạn đã có)
           if (typeof showPopup === "function") {

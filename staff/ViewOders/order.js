@@ -207,13 +207,14 @@ async function fetchOrders() {
 }
 
 function applyFilters() {
-    // --- BẮT ĐẦU SỬA LỖI ---
+    // --- ĐỒNG BỘ VỚI ADMIN ---
     const filterStatusMap = {
         'filter-pending': 'pending',
-        'filter-received': 'confirmed', // SỬA: received -> confirmed
+        'filter-confirmed': 'confirmed',
+        'filter-preparing': 'preparing',
         'filter-shipping': 'shipping',
-        'filter-success': 'completed',  // SỬA: success -> completed
-        'filter-failed': 'cancelled'   // SỬA: failed -> cancelled
+        'filter-completed': 'completed',
+        'filter-cancelled': 'cancelled'
     };
 
     const selectedStatuses = Array.from(document.querySelectorAll('.filters input[type="checkbox"]:checked'))

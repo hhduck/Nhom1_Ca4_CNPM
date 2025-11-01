@@ -25,11 +25,16 @@ $method = $_SERVER['REQUEST_METHOD'];
 $userId = null;
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $pathParts = explode('/', trim($path, '/'));
-$apiIndex = array_search('api', $pathParts);
 
-// Lấy ID từ URL nếu có (cho PUT, DELETE) ví dụ: /api/users/123
-if ($apiIndex !== false && isset($pathParts[$apiIndex + 2]) && is_numeric($pathParts[$apiIndex + 2])) {
-    $userId = (int)$pathParts[$apiIndex + 2];
+// Lấy ID từ URL path (vd: /api/users.php/123 hoặc /Nhom1_Ca4_CNPM/api/users.php/123)
+// Sử dụng cách đơn giản: lấy phần tử cuối cùng nếu nó là số
+if (end($pathParts) && is_numeric(end($pathParts))) {
+    $userId = (int)end($pathParts);
+}
+
+// Fallback: Kiểm tra query string
+if (!$userId && isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $userId = (int)$_GET['id'];
 }
 
 

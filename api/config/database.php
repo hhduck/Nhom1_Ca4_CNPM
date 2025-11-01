@@ -112,11 +112,28 @@ function validateToken($token) {
 
 // Lấy Authorization token từ header
 function getBearerToken() {
+    // Thử đọc từ getallheaders() trước
     $headers = getallheaders();
     
-    if (isset($headers['Authorization'])) {
+    if ($headers && isset($headers['Authorization'])) {
         $matches = [];
         if (preg_match('/Bearer\s+(.*)$/i', $headers['Authorization'], $matches)) {
+            return $matches[1];
+        }
+    }
+    
+    // Fallback: Đọc từ $_SERVER (cho trường hợp getallheaders() không hoạt động)
+    if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        $matches = [];
+        if (preg_match('/Bearer\s+(.*)$/i', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+            return $matches[1];
+        }
+    }
+    
+    // Fallback khác: Đọc từ REDIRECT_HTTP_AUTHORIZATION (khi dùng rewrite rules)
+    if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+        $matches = [];
+        if (preg_match('/Bearer\s+(.*)$/i', $_SERVER['REDIRECT_HTTP_AUTHORIZATION'], $matches)) {
             return $matches[1];
         }
     }
