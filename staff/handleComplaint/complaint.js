@@ -73,7 +73,7 @@ function setupFilterListeners() {
         if (allCheckbox.checked) {
             otherCheckboxes.forEach(cb => cb.checked = false);
         } else if (!Array.from(otherCheckboxes).some(cb => cb.checked)) {
-             // Nếu bỏ check 'Tất cả' và không có cái nào khác được check -> check lại 'Tất cả'
+            // Nếu bỏ check 'Tất cả' và không có cái nào khác được check -> check lại 'Tất cả'
             allCheckbox.checked = true;
         }
         applyFilters();
@@ -104,7 +104,7 @@ async function fetchComplaints() {
     try {
         const antiCache = `_=${new Date().getTime()}`;
         const response = await fetch(`../../api/complaints.php?${antiCache}`, { method: 'GET', headers: headers, cache: 'no-store' });
-        if (!response.ok) { const err = await response.json().catch(()=>({message:`HTTP ${response.status}`})); throw new Error(err.message); }
+        if (!response.ok) { const err = await response.json().catch(() => ({ message: `HTTP ${response.status}` })); throw new Error(err.message); }
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
             allComplaints = result.data;
@@ -186,8 +186,8 @@ function handleComplaintListClick(e) {
 // Tải chi tiết khiếu nại
 async function loadComplaintDetails(id) {
     console.log(`Tải chi tiết ID: ${id}`);
-    currentComplaintId = id;
     clearForm();
+    currentComplaintId = id;
     const formActions = document.querySelector('.form-actions');
     let loadingDiv = document.querySelector('.form-loading');
     if (!loadingDiv && formActions) { /* ... chèn loading ... */ loadingDiv = document.createElement('div'); loadingDiv.className = 'form-loading'; loadingDiv.style.textAlign = 'center'; loadingDiv.style.padding = '20px'; loadingDiv.style.color = '#888'; loadingDiv.textContent = 'Đang tải...'; formActions.insertAdjacentElement('beforebegin', loadingDiv); }
@@ -195,7 +195,7 @@ async function loadComplaintDetails(id) {
     try {
         const headers = getAuthHeaders(); if (!headers) throw new Error("Lỗi xác thực.");
         const response = await fetch(`../../api/complaints.php/${id}`, { method: 'GET', headers: headers });
-        if (!response.ok) { const err = await response.json().catch(()=>({message:`HTTP ${response.status}`})); throw new Error(err.message); }
+        if (!response.ok) { const err = await response.json().catch(() => ({ message: `HTTP ${response.status}` })); throw new Error(err.message); }
         const result = await response.json();
         if (result.success && result.data) fillFormWithData(result.data);
         else throw new Error(result.message || 'Không có dữ liệu');
@@ -225,7 +225,7 @@ function fillFormWithData(data) {
 // Xóa trắng form
 function clearForm() {
     console.log("Xóa form"); currentComplaintId = null;
-    const form = document.getElementById('complaint-form'); if(form) form.reset(); // Dùng reset tiện hơn
+    const form = document.getElementById('complaint-form'); if (form) form.reset(); // Dùng reset tiện hơn
     const customerNameInput = document.getElementById('customerName');
     if (customerNameInput) customerNameInput.value = '(Chọn khiếu nại)'; // Đặt lại placeholder
     // Reset assigned staff display
@@ -280,9 +280,9 @@ async function validateStaffById(staffId) {
     const headers = getAuthHeaders(); if (!headers) return;
     try {
         // *** Đảm bảo API này tồn tại và hoạt động ***
-        const response = await fetch(`../../api/users.php?id=${encodeURIComponent(staffId)}&roleCheck=staff_admin`, { method: 'GET', headers: headers });
+        const response = await fetch(`../../api/staff_search.php?id=${encodeURIComponent(staffId)}`, { method: 'GET', headers: headers });
         const result = await response.json();
-        if (response.ok && result.success && result.data && ['staff', 'admin'].includes(result.data.role)) {
+        if (response.ok && result.success && result.data) {
             validatedStaffId = result.data.id; assignedStaffIdInput.value = result.data.id;
             if (assignedStaffNameDisplay) assignedStaffNameDisplay.value = result.data.full_name;
         } else {
@@ -300,7 +300,7 @@ async function handleSaveAndClose() {
     console.log("Lưu dữ liệu:", dataToSave);
     const btnSave = document.querySelector('.form-actions .btn-primary-green');
     if (btnSave) { btnSave.disabled = true; btnSave.textContent = 'Đang lưu...'; }
-    const headers = getAuthHeaders(); if (!headers) { if(btnSave){btnSave.disabled=false; btnSave.textContent='Lưu và đóng';} return; }
+    const headers = getAuthHeaders(); if (!headers) { if (btnSave) { btnSave.disabled = false; btnSave.textContent = 'Lưu và đóng'; } return; }
     try {
         const response = await fetch(`../../api/complaints.php/${currentComplaintId}`, { method: 'PUT', headers: headers, body: JSON.stringify(dataToSave) });
         const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.message || `Lỗi ${response.status}`);
@@ -316,7 +316,7 @@ async function handleReplyToCustomer() {
     const content = responseText?.value.trim(); if (!content) { alert("Nhập nội dung phản hồi."); return; }
     if (!confirm("Gửi email, lưu phản hồi và chuyển status thành 'Đã giải quyết'?")) return;
     if (btnReplyCustomer) { btnReplyCustomer.disabled = true; btnReplyCustomer.textContent = 'Đang gửi...'; }
-    const headers = getAuthHeaders(); if (!headers) { if(btnReplyCustomer){btnReplyCustomer.disabled=false; btnReplyCustomer.textContent='Trả lời';} return; }
+    const headers = getAuthHeaders(); if (!headers) { if (btnReplyCustomer) { btnReplyCustomer.disabled = false; btnReplyCustomer.textContent = 'Trả lời'; } return; }
     try {
         const response = await fetch(`../../api/complaints.php/${currentComplaintId}?action=reply`, { method: 'POST', headers: headers, body: JSON.stringify({ responseText: content }) });
         const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.message || `Lỗi ${response.status}`);
@@ -326,7 +326,7 @@ async function handleReplyToCustomer() {
 }
 
 // --- Các hàm tiện ích ---
-function showSuccessToast(message) { const toast = document.createElement('div'); toast.textContent = message; toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px;border-radius:5px;z-index:1000;opacity:0;transition:all 0.5s'; document.body.appendChild(toast); setTimeout(()=>{toast.style.opacity='1';toast.style.top='30px'},100); setTimeout(()=>{toast.style.opacity='0';toast.style.top='20px';setTimeout(()=>toast.remove(),500)},3000); }
+function showSuccessToast(message) { const toast = document.createElement('div'); toast.textContent = message; toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#28a745;color:white;padding:15px;border-radius:5px;z-index:1000;opacity:0;transition:all 0.5s'; document.body.appendChild(toast); setTimeout(() => { toast.style.opacity = '1'; toast.style.top = '30px' }, 100); setTimeout(() => { toast.style.opacity = '0'; toast.style.top = '20px'; setTimeout(() => toast.remove(), 500) }, 3000); }
 function showLoadingState() { const el = document.getElementById('complaints-table-body'); if (el) el.innerHTML = `<tr><td colspan="7" class="loading-state">Đang tải...</td></tr>`; }
 function showErrorState(message) { const el = document.getElementById('complaints-table-body'); if (el) el.innerHTML = `<tr><td colspan="7" class="error-state">${message}</td></tr>`; }
 function formatDateTime(d) { try { return d ? new Date(d).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' }) : 'N/A'; } catch (e) { return 'Invalid Date'; } }

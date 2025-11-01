@@ -7,10 +7,11 @@ let currentDisplayedOrderId = null;
 // Map trạng thái sang tiếng Việt
 const STATUS_MAP = {
     pending: 'Chờ xử lý',
-    received: 'Đã nhận đơn',
+    confirmed: 'Đã nhận đơn',   // SỬA: received -> confirmed
+    preparing: 'Đang chuẩn bị', // THÊM MỚI (Từ CSDL)
     shipping: 'Đang giao',
-    success: 'Giao hàng thành công',
-    failed: 'Giao hàng thất bại'
+    completed: 'Giao hàng thành công', // SỬA: success -> completed
+    cancelled: 'Giao hàng thất bại'  // SỬA: failed -> cancelled
 };
 
 // Map phương thức thanh toán sang tiếng Việt
@@ -75,7 +76,8 @@ function setupModalListeners() {
             if (selectElement) {
                 const order = allOrders.find(o => o.order_id == pendingUpdate.orderId);
                 if (order) {
-                    selectElement.value = order.order_status;
+                    // Dòng này hoạt động đúng cho cả 2 trường hợp
+                    selectElement.value = order.order_status || 'pending';
                 }
             }
         }
@@ -92,7 +94,7 @@ function setupModalListeners() {
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            cancelBtn.click();
+            cancelBtn.click(); // Gọi sự kiện click của nút Hủy
         }
     });
 }
@@ -118,16 +120,40 @@ function handleTableViewClick(e) {
     const row = target.closest('tr');
     if (!row || !row.dataset.orderInfo) return;
 
+    // 1. Xử lý khi nhấp vào icon LƯU GHI CHÚ (dấu tích)
+    const saveIcon = target.closest('.save-note-icon');
+    if (saveIcon) {
+        e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
+        console.log('Save note icon clicked');
+
+        // Tìm ô input tương ứng trong cùng wrapper
+        const wrapper = saveIcon.closest('.note-cell-wrapper');
+        const inputElement = wrapper.querySelector('.table-note-input');
+
+        if (inputElement) {
+            // Gọi hàm xử lý thay đổi ghi chú
+            handleNoteChange(inputElement);
+        }
+        return; // Dừng thực thi, không làm gì thêm
+    }
+
+    // 2. Ngăn các hành vi khác nếu nhấp vào select hoặc input
     if (target.tagName === 'SELECT' || target.tagName === 'INPUT') {
         return;
     }
 
+    // 3. Xử lý khi nhấp vào icon XEM CHI TIẾT (con mắt) hoặc nhấp vào hàng
+    const viewIcon = target.closest('.view-icon');
+
+    // Luôn hiển thị chi tiết khi nhấp vào hàng (trừ các trường hợp đã return ở trên)
     const orderData = JSON.parse(row.dataset.orderInfo);
     currentDisplayedOrderId = orderData.order_id;
     displayOrderDetails(orderData);
 
-    if (target.classList.contains('view-icon') || target.closest('.view-icon')) {
-        e.preventDefault();
+    // 4. CHỈ cuộn trang xuống nếu nhấp vào icon con mắt
+    if (viewIcon) {
+        e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
+        console.log('View icon clicked');
         const detailSection = document.querySelector('.order-info-display');
         if (detailSection) {
             detailSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -181,12 +207,13 @@ async function fetchOrders() {
 }
 
 function applyFilters() {
+    // --- BẮT ĐẦU SỬA LỖI ---
     const filterStatusMap = {
         'filter-pending': 'pending',
-        'filter-received': 'received',
+        'filter-received': 'confirmed', // SỬA: received -> confirmed
         'filter-shipping': 'shipping',
-        'filter-success': 'success',
-        'filter-failed': 'failed'
+        'filter-success': 'completed',  // SỬA: success -> completed
+        'filter-failed': 'cancelled'   // SỬA: failed -> cancelled
     };
 
     const selectedStatuses = Array.from(document.querySelectorAll('.filters input[type="checkbox"]:checked'))
@@ -235,9 +262,17 @@ function renderOrderList(orders) {
             </select>
         `;
 
-        const noteInputHTML = `
-            <input type="text" class="table-note-input" data-order-id="${orderId}" value="${currentNote.replace(/"/g, '&quot;')}" placeholder="Thêm ghi chú..." onblur="handleNoteChange(this)">
+        // --- BẮT ĐẦU THAY ĐỔI ---
+        // Xóa onblur và thêm icon dấu tích vào trong một div wrapper
+        const noteCellHTML = `
+            <div class="note-cell-wrapper">
+                <input type="text" class="table-note-input" data-order-id="${orderId}" value="${currentNote.replace(/"/g, '&quot;')}" placeholder="Thêm ghi chú...">
+                <a href="#" class="save-note-icon" data-order-id="${orderId}" title="Lưu ghi chú">
+                    <i class="fas fa-check"></i>
+                </a>
+            </div>
         `;
+        // --- KẾT THÚC THAY ĐỔI ---
 
         row.innerHTML = `
             <td>${order.order_code || orderId}</td>
@@ -245,7 +280,9 @@ function renderOrderList(orders) {
             <td>${new Date(order.created_at).toLocaleDateString('vi-VN')}</td>
             <td>${new Intl.NumberFormat('vi-VN').format(order.final_amount)} VND</td>
             <td>${statusSelectHTML}</td>
-            <td>${noteInputHTML}</td>
+            
+            <td>${noteCellHTML}</td>
+            
             <td><a href="#" class="view-icon"><i class="fas fa-eye"></i></a></td>
         `;
         tableBody.appendChild(row);
@@ -460,7 +497,7 @@ function setupUserIconMenu() {
 }
 
 // Thêm keyframes cho animation
-const styleSheet = document.styleSheets[0];
+const styleSheet = document.styleSheets[document.styleSheets.length - 1];
 try {
     styleSheet.insertRule(`
         @keyframes slideInUp {

@@ -877,5 +877,44 @@ body.order-page {
 .user-menu.hidden {
     /* Class mặc định để ẩn menu */
     display: none;
-    /* Dùng display none ban đầu để tránh lỗi layout */
+    /* Dùng display none ban đầu để
+    
+    tránh lỗi layout */
 }
+
+/* order.css */
+
+/* --- THÊM MỚI: CSS CHO Ô GHI CHÚ VÀ ICON LƯU --- */
+
+.note-cell-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Khoảng cách giữa input và icon */
+}
+
+.note-cell-wrapper .table-note-input {
+    flex-grow: 1;
+    /* Input chiếm phần lớn không gian */
+    width: auto;
+    /* Ghi đè width 100% (nếu có) để flex hoạt động */
+    /* Các style khác của table-note-input vẫn được giữ nguyên */
+}
+
+.save-note-icon {
+    color: #395542;
+    /* Màu xanh lá giống icon xem */
+    font-size: 18px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    flex-shrink: 0;
+    /* Đảm bảo icon không bị bóp lại */
+}
+
+.save-note-icon:hover {
+    color: #2a3a2f;
+    /* Màu xanh đậm hơn khi hover */
+}
+
+/* --- KẾT THÚC PHẦN THÊM MỚI --- */

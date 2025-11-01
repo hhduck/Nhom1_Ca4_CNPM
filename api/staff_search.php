@@ -1,4 +1,5 @@
 <?php
+
 /**
  * File: api/staff_search.php
  * PHIÊN BẢN SỬA ĐỔI (28/10/2025)
@@ -12,7 +13,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/auth/middleware.php'; 
+require_once __DIR__ . '/auth/middleware.php';
 
 enableCORS();
 
@@ -23,8 +24,8 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 try {
     // Yêu cầu đăng nhập (ít nhất là Staff)
-    $currentUser = requireStaff(); 
-    
+    $currentUser = requireStaff();
+
     if ($method !== 'GET') {
         throw new Exception("Method không được hỗ trợ", 405);
     }
@@ -45,17 +46,17 @@ try {
                 Role = 'staff' 
                 AND Status = 'active'
                 AND UserID = :id";
-    
+
     $params = [
         ':id' => $staffId
     ];
-    
+
     $stmt = $db->prepare($query);
-    
+
     if (!$stmt->execute($params)) {
         throw new Exception("Lỗi thực thi SQL: " + implode(", ", $stmt->errorInfo()));
     }
-    
+
     // (SỬA) Lấy một kết quả (fetch) thay vì (fetchAll)
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -66,14 +67,11 @@ try {
         // Vẫn trả về success=true nhưng data=null (hoặc false) để JS biết là "không tìm thấy"
         sendJsonResponse(false, null, "Không tìm thấy nhân viên với ID này.");
     }
-
 } catch (PDOException $e) {
     error_log("staff_search.php PDOException: " . $e->getMessage());
     sendJsonResponse(false, null, "Lỗi Database (PDO): " . $e->getMessage(), 500);
-
 } catch (Exception $e) {
     error_log("staff_search.php Exception: " . $e->getMessage());
     $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
     sendJsonResponse(false, null, "Lỗi máy chủ chung: " . $e->getMessage(), $statusCode);
 }
-?>
