@@ -116,7 +116,7 @@
 
 /* Account Section */
 .account-section {
-  background-color: #ffffff;
+  background-color: #EDDECD;
   min-height: 90vh;
   padding: 50px 80px;
   display: flex;
@@ -126,11 +126,13 @@
 .account-container {
   display: flex;
   background-color: #EDDECD;
-  border-radius: 20px;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
   padding: 40px;
+  flex-wrap: wrap;
+  border-radius: 20px;
   width: 100%;
-  max-width: 1100px;
-  gap: 30px;
 }
 
 /* Sidebar */
@@ -170,10 +172,13 @@
 /* Account Info */
 
 .account-info {
-  flex: 1;
-  border-radius: 15px;
-  padding: 40px 50px;
-  margin-left: 0;
+  flex: 1 1 800px; /* khung chính to hơn */
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  min-height: 500px;
 }
 
 .account-title {
@@ -422,7 +427,7 @@ input {
 }
 
 .user-menu button:hover {
-  background-color: #f4f4f4;
+  background-color: #f4f4f4e4;
 }
 
 .user-menu a {
@@ -441,10 +446,11 @@ input {
   margin-top: 20px;
   margin-left: 0;
   margin-right: 0;
-  background: white;
+  background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
+  
 }
 
 .orders-table thead {
@@ -497,9 +503,13 @@ input {
 
 .orders-container {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
-  padding: 0;
-  margin-right: 0;
+  background-color: #ffffff; 
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+
 }
 
 #orderHistorySection {
@@ -525,4 +535,7 @@ input {
   .orders-table thead th {
     font-size: 11px;
   }
+}
+.hidden {
+  display: none !important;
 }
