@@ -249,9 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
             currency: 'VND' 
           }).format(order.final_amount);
           
-          const paymentMethodText = order.payment_method === 'cod' ? 'Thanh toán khi nhận hàng' :
-                                    order.payment_method === 'bank_transfer' ? 'Chuyển khoản' :
-                                    order.payment_method === 'momo' ? 'Ví MoMo' : order.payment_method;
+          const paymentMethodText = order.payment_method === 'vnpay' ? 'Ví điện tử VNPay' : order.payment_method || 'VNPay';
           
           return `
             <tr>
