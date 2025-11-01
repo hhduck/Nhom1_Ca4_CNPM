@@ -36,7 +36,14 @@ async function checkUserStatus() {
     if (!userId) return;
     
     try {
-        const response = await fetch(`../api/users.php/${userId}`, {
+        // Xác định đường dẫn API đúng dựa trên vị trí hiện tại
+        let apiPath = '../api/users.php/';
+        // Nếu đang ở trong staff/, cần đi lên 2 cấp
+        if (window.location.pathname.includes('/staff/')) {
+            apiPath = '../../api/users.php/';
+        }
+        // Nếu đang ở root hoặc pages/, đi lên 1 cấp
+        const response = await fetch(`${apiPath}${userId}`, {
             headers: {
                 'Authorization': `Bearer ${jwtToken}`
             }
@@ -45,7 +52,11 @@ async function checkUserStatus() {
         if (!response.ok) {
             // Nếu 401/403, logout ngay
             if (response.status === 401 || response.status === 403) {
-                performLogout('../login/login.html?message=banned');
+                let loginPath = '../pages/login/login.html';
+                if (window.location.pathname.includes('/staff/')) {
+                    loginPath = '../../pages/login/login.html';
+                }
+                performLogout(`${loginPath}?message=banned`);
                 return;
             }
             return; // Lỗi khác thì bỏ qua
@@ -59,7 +70,11 @@ async function checkUserStatus() {
             // Nếu status không phải 'active', logout
             if (user.status !== 'active') {
                 alert('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ.');
-                performLogout('../login/login.html?message=banned');
+                let loginPath = '../pages/login/login.html';
+                if (window.location.pathname.includes('/staff/')) {
+                    loginPath = '../../pages/login/login.html';
+                }
+                performLogout(`${loginPath}?message=banned`);
             }
         }
     } catch (error) {
@@ -69,7 +84,15 @@ async function checkUserStatus() {
 }
 
 // Function logout chung
-function performLogout(redirectUrl = '../login/login.html') {
+function performLogout(redirectUrl = '../pages/login/login.html') {
+    // Tự động điều chỉnh đường dẫn nếu đang ở trong staff/
+    if (!redirectUrl.startsWith('http') && window.location.pathname.includes('/staff/')) {
+        if (redirectUrl.startsWith('../')) {
+            redirectUrl = '../' + redirectUrl;
+        } else if (!redirectUrl.startsWith('../../')) {
+            redirectUrl = '../../' + redirectUrl;
+        }
+    }
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentStaff');
     localStorage.removeItem('jwtToken');
@@ -102,7 +125,11 @@ window.fetch = async function(...args) {
             const data = await clonedResponse.json();
             if (data.message && (data.message.includes('khóa') || data.message.includes('banned') || data.message.includes('không hoạt động'))) {
                 alert('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.');
-                performLogout('../login/login.html?message=banned');
+                let loginPath = '../pages/login/login.html';
+                if (window.location.pathname.includes('/staff/')) {
+                    loginPath = '../../pages/login/login.html';
+                }
+                performLogout(`${loginPath}?message=banned`);
             }
         } catch (e) {
             // Không parse được JSON thì bỏ qua

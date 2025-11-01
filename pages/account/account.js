@@ -360,31 +360,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // b) Đổi mật khẩu
       if (newPassword || confirmPassword || oldPassword) {
-        if (!oldPassword) alert("⚠️ Vui lòng nhập Mật khẩu hiện tại!");
-        else if (newPassword.length < 6) alert("❌ Mật khẩu mới phải có ít nhất 6 ký tự!");
-        else if (newPassword !== confirmPassword) alert("❌ Mật khẩu xác nhận không khớp!");
+        if (!oldPassword) {
+          alert("⚠️ Vui lòng nhập Mật khẩu hiện tại!");
+          saveButton.disabled = false;
+          saveButton.textContent = "Lưu thay đổi";
+          return;
+        }
+        else if (newPassword.length < 6) {
+          alert("❌ Mật khẩu mới phải có ít nhất 6 ký tự!");
+          saveButton.disabled = false;
+          saveButton.textContent = "Lưu thay đổi";
+          return;
+        }
+        else if (newPassword !== confirmPassword) {
+          alert("❌ Mật khẩu xác nhận không khớp!");
+          saveButton.disabled = false;
+          saveButton.textContent = "Lưu thay đổi";
+          return;
+        }
         else {
           console.log("Chuẩn bị gọi API đổi mật khẩu...");
-          // const passwordData = { oldPassword: oldPassword, newPassword: newPassword };
+          const passwordData = { oldPassword: oldPassword, newPassword: newPassword };
           try {
-            // Đây là nơi bạn sẽ gọi API đổi mật khẩu
-            // const apiUrlChangePassword = `../../api/users.php/${userData.id}/change-password`; // Giả định có endpoint này
-            // const responseChangePassword = await fetch(apiUrlChangePassword, {
-            //   method: 'POST',
-            //   headers: headers,
-            //   body: JSON.stringify(passwordData)
-            // });
-            // const resultChangePassword = await responseChangePassword.json();
-            // if (!responseChangePassword.ok || !resultChangePassword.success) throw new Error(resultChangePassword.message || `Lỗi ${responseChangePassword.status}`);
+            const apiUrlChangePassword = `../../api/users.php/${userData.id}/change-password`;
+            const responseChangePassword = await fetch(apiUrlChangePassword, {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify(passwordData)
+            });
+            const resultChangePassword = await responseChangePassword.json();
+            
+            if (!responseChangePassword.ok || !resultChangePassword.success) {
+              throw new Error(resultChangePassword.message || `Lỗi ${responseChangePassword.status}`);
+            }
 
-            alert("⚠️ Chức năng đổi mật khẩu chưa được kết nối API. Mật khẩu vẫn chưa thay đổi.");
-            // Tạm thời reset form
-            passwordChanged = true; // Giả sử thành công để test alert
+            passwordChanged = true;
+            // Reset form mật khẩu
             document.getElementById("oldPassword").value = "";
             document.getElementById("newPassword").value = "";
             document.getElementById("confirmPassword").value = "";
           } catch (error) {
-            alert(`Lỗi đổi mật khẩu: ${error.message}`);
+            console.error('Lỗi đổi mật khẩu:', error);
+            alert(`❌ Lỗi đổi mật khẩu: ${error.message}`);
+            saveButton.disabled = false;
+            saveButton.textContent = "Lưu thay đổi";
+            return;
           }
         }
       }

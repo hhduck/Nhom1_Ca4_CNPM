@@ -23,13 +23,23 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // ---- Xử lý Routing ----
 $userId = null;
+$isChangePassword = false;
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $pathParts = explode('/', trim($path, '/'));
 
 // Lấy ID từ URL path (vd: /api/users.php/123 hoặc /Nhom1_Ca4_CNPM/api/users.php/123)
-// Sử dụng cách đơn giản: lấy phần tử cuối cùng nếu nó là số
-if (end($pathParts) && is_numeric(end($pathParts))) {
-    $userId = (int)end($pathParts);
+// Kiểm tra xem có phải change-password không
+$lastPart = end($pathParts);
+if ($lastPart === 'change-password') {
+    $isChangePassword = true;
+    // Lấy phần tử trước đó là userId
+    $secondLast = $pathParts[count($pathParts) - 2];
+    if (is_numeric($secondLast)) {
+        $userId = (int)$secondLast;
+    }
+} else if (is_numeric($lastPart)) {
+    // Nếu không phải change-password, lấy phần tử cuối cùng nếu nó là số
+    $userId = (int)$lastPart;
 }
 
 // Fallback: Kiểm tra query string
@@ -60,8 +70,15 @@ try {
             break;
 
         case 'POST':
-            checkAdminPermission();
-            createUser($db);
+            // Kiểm tra xem có phải yêu cầu đổi mật khẩu không
+            if ($isChangePassword && $userId) {
+                // Đổi mật khẩu - cần đăng nhập (không cần admin)
+                changePassword($db, $userId);
+            } else {
+                // Tạo user mới - cần admin
+                checkAdminPermission();
+                createUser($db);
+            }
             break;
 
         case 'PUT':
@@ -460,6 +477,79 @@ function deleteUser($db, $id)
     } else {
         error_log("Failed to delete user ID $id: " . implode(";", $stmt->errorInfo()));
         sendJsonResponse(false, null, "Không thể xóa người dùng do lỗi máy chủ", 500);
+    }
+}
+
+/**
+ * Đổi mật khẩu (POST /api/users.php/{userId}/change-password)
+ * Yêu cầu đăng nhập và chỉ có thể đổi mật khẩu của chính mình (trừ admin)
+ */
+function changePassword($db, $userId)
+{
+    try {
+        // Xác thực người dùng (chỉ cần đăng nhập)
+        $loggedInUser = requireAuth();
+        $currentUserId = $loggedInUser['id'];
+        
+        // Chỉ cho phép user đổi mật khẩu của chính họ, hoặc admin đổi mật khẩu của ai cũng được
+        if ($currentUserId != $userId && $loggedInUser['role'] !== 'admin') {
+            sendJsonResponse(false, null, "Bạn chỉ có thể đổi mật khẩu của chính mình", 403);
+            return;
+        }
+        
+        // Nhận và giải mã dữ liệu
+        $data = json_decode(file_get_contents("php://input"), true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || empty($data) || empty($data['oldPassword']) || empty($data['newPassword'])) {
+            sendJsonResponse(false, null, "Dữ liệu không hợp lệ. Vui lòng cung cấp mật khẩu cũ và mới.", 400);
+            return;
+        }
+        
+        $oldPassword = $data['oldPassword'];
+        $newPassword = $data['newPassword'];
+        
+        if (strlen($newPassword) < 6) {
+            sendJsonResponse(false, null, "Mật khẩu mới phải có ít nhất 6 ký tự.", 400);
+            return;
+        }
+        
+        // Kiểm tra mật khẩu cũ
+        $query = "SELECT PasswordHash FROM Users WHERE UserID = :id";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        $userRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$userRow) {
+            sendJsonResponse(false, null, "Không tìm thấy người dùng.", 404);
+            return;
+        }
+        
+        // So sánh mật khẩu cũ người dùng nhập với mật khẩu đã băm trong CSDL
+        if (!password_verify($oldPassword, $userRow['PasswordHash'])) {
+            sendJsonResponse(false, null, "Mật khẩu hiện tại không chính xác.", 401);
+            return;
+        }
+        
+        // Băm và cập nhật mật khẩu mới
+        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        
+        $updateQuery = "UPDATE Users SET PasswordHash = :new_hash, UpdatedAt = NOW() WHERE UserID = :id";
+        $updateStmt = $db->prepare($updateQuery);
+        $updateStmt->bindParam(':new_hash', $newPasswordHash);
+        $updateStmt->bindParam(':id', $userId, PDO::PARAM_INT);
+        
+        if ($updateStmt->execute()) {
+            sendJsonResponse(true, null, "Đổi mật khẩu thành công.");
+        } else {
+            error_log("Failed to change password for user ID $userId: " . implode(";", $updateStmt->errorInfo()));
+            sendJsonResponse(false, null, "Lỗi khi cập nhật mật khẩu vào cơ sở dữ liệu.", 500);
+        }
+        
+    } catch (Exception $e) {
+        error_log("Change Password Error: " . $e->getMessage());
+        $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
+        sendJsonResponse(false, null, "Lỗi máy chủ: " . $e->getMessage(), $statusCode);
     }
 }
 ?>

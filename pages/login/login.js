@@ -355,12 +355,30 @@ function performLoginWithMockData(username, password, rememberMe) {
     }
 }
 
-function forgotPassword() {
+async function forgotPassword() {
     const email = prompt('Nhập email của bạn để đặt lại mật khẩu:');
     if (email) {
         if (validateEmail(email)) {
-            // In production, implement password reset functionality
-            showMessage('Hướng dẫn đặt lại mật khẩu đã được gửi đến email của bạn!', 'info');
+            try {
+                const response = await fetch('../../api/auth/forgot-password.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showMessage(result.message || 'Mật khẩu mới đã được gửi đến email của bạn! Mật khẩu mặc định: ' + result.data.default_password, 'info');
+                } else {
+                    showMessage(result.message || 'Không thể đặt lại mật khẩu. Vui lòng thử lại.', 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi đặt lại mật khẩu:', error);
+                showMessage('Lỗi kết nối. Vui lòng thử lại sau.', 'error');
+            }
         } else {
             showMessage('Email không hợp lệ!', 'error');
         }
