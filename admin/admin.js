@@ -627,9 +627,9 @@ async function loadOrders(filters = {}) {
                     </td>
                     <td>
                         <div class="action-btns">
-                            <button class="icon-btn" onclick="viewOrderDetail(${order.order_id})" title="Chi tiết">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                        <button class="icon-btn" onclick="viewOrderDetail(${order.order_id})" title="Chi tiết">
+                            <i class="fas fa-eye"></i>
+                        </button>
                             <button class="icon-btn" onclick="deleteOrder(${order.order_id})" title="Xóa">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -791,8 +791,8 @@ async function updateOrderStatus() {
             throw new Error(result.message || 'HTTP ' + response.status);
         }
 
-        showSuccess('Cập nhật trạng thái đơn hàng thành công');
-        closeModal('orderModal');
+            showSuccess('Cập nhật trạng thái đơn hàng thành công');
+            closeModal('orderModal');
         loadOrders();
     } catch (error) {
         console.error('Error updating order status:', error);
@@ -994,7 +994,7 @@ async function saveUser() {
 
 async function lockUser(userId) {
     if (!confirm('Bạn có chắc chắn muốn khóa tài khoản này?\n\nLưu ý: Nếu user đang đăng nhập, họ sẽ bị logout khi thực hiện hành động tiếp theo.')) return;
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/users.php/${userId}`, {
             method: 'PUT',
@@ -1187,7 +1187,7 @@ async function loadReports(period, month, year) {
                 // Cập nhật bảng với dữ liệu mới theo tháng/năm được chọn
                 loadTopProductsFromChart(data.data.product_chart_full);
             } else if (data.data.top_products && data.data.top_products.length > 0) {
-                loadTopProducts(data.data.top_products);
+            loadTopProducts(data.data.top_products);
             } else {
                 // Nếu không có dữ liệu, vẫn hiển thị bảng nhưng trống
                 const tbody = document.getElementById('top-products-tbody');
@@ -1508,34 +1508,34 @@ function initCharts(chartData, selectedMonth = null, selectedYear = null) {
                 return '#4472C4'; // Màu xanh cho các tháng khác
             });
             
-            revenueChart = new Chart(revenueCtx.getContext('2d'), {
-                type: 'bar',
-                data: {
+        revenueChart = new Chart(revenueCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
                     labels: labels,
-                    datasets: [{
-                        label: 'Doanh thu (VNĐ)',
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
                         data: data,
                         backgroundColor: backgroundColor,
                         borderColor: backgroundColor,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) {
-                                    return (value / 1000000) + 'M';
-                                }
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return (value / 1000000) + 'M';
                             }
                         }
                     }
                 }
-            });
+            }
+        });
         }
     } else if (revenueCtx) {
         // Nếu không có data, hiển thị trống
@@ -1565,23 +1565,23 @@ function initCharts(chartData, selectedMonth = null, selectedYear = null) {
                 chartColors[index % chartColors.length]
             );
             
-            categoryChart = new Chart(categoryCtx.getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: chartData.products.labels,
-                    datasets: [{
-                        data: chartData.products.data,
+        categoryChart = new Chart(categoryCtx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: chartData.products.labels,
+                datasets: [{
+                    data: chartData.products.data,
                         backgroundColor: colors,
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
-                }
-            });
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
             
             // Cập nhật legend động từ data (với % nếu có revenues)
             const revenues = chartData.products.revenues || chartData.products.data.map(() => 0);
@@ -1967,8 +1967,8 @@ async function loadComplaints(filters = {}) {
                     <td>
                         <div class="action-btns">
                             <button class="icon-btn" onclick="viewComplaintDetail(${complaint.ComplaintID})" title="Chi tiết">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                            <i class="fas fa-eye"></i>
+                        </button>
                             <button class="icon-btn" onclick="deleteComplaint(${complaint.ComplaintID})" title="Xóa">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -2173,7 +2173,7 @@ function getStatusText(status) {
 
 function getOrderStatusText(status) {
     const statusMap = {
-        'pending': 'Chờ xử lý',
+        'pending': 'Chờ xử lý',          
         'order_received': 'Đã nhận đơn',
         'preparing': 'Đang chuẩn bị',
         'delivering': 'Đang giao',
