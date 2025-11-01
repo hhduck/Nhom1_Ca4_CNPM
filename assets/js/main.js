@@ -455,7 +455,10 @@ function updateUserInterface() {
 function logout() {
     // ✅ FIX: Xóa tất cả dữ liệu đăng nhập
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentStaff');
     localStorage.removeItem('jwtToken');
+    localStorage.removeItem('rememberMe');
+    localStorage.removeItem('cart'); // Xóa giỏ hàng khi logout
     currentUser = null;
     
     // Hiển thị thông báo đăng xuất thành công

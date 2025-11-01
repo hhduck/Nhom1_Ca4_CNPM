@@ -23,11 +23,51 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // ===== CẬP NHẬT GIỎ HÀNG =====
-function updateCartCount() {
+async function updateCartCount() {
   try {
+    // Kiểm tra xem có user đăng nhập không
+    const customerData = localStorage.getItem("currentUser");
+    const jwtToken = localStorage.getItem("jwtToken");
+    
+    if (customerData && jwtToken) {
+      try {
+        const currentUser = JSON.parse(customerData);
+        const userId = currentUser?.id;
+        
+        if (userId) {
+          // Lấy từ database nếu đã đăng nhập - CHỈ dùng database, không fallback localStorage
+          try {
+            const res = await fetch(`../../api/cart.php?user_id=${userId}`);
+            const data = await res.json();
+            
+            const cartCount = document.querySelector('.cart-count');
+            if (cartCount) {
+              if (data.success && data.data.total_items > 0) {
+                cartCount.textContent = data.data.total_items;
+                cartCount.style.display = 'flex';
+              } else {
+                cartCount.style.display = 'none';
+              }
+            }
+            return;
+          } catch (e) {
+            console.error("Lỗi khi lấy giỏ hàng từ API:", e);
+            // Nếu API lỗi khi đã đăng nhập, hiển thị 0 thay vì dùng localStorage
+            const cartCount = document.querySelector('.cart-count');
+            if (cartCount) {
+              cartCount.style.display = 'none';
+            }
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Lỗi parse user data:", e);
+      }
+    }
+    
+    // Chỉ dùng localStorage nếu CHƯA đăng nhập
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const totalItems = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
-
     const cartCount = document.querySelector('.cart-count');
     if (cartCount) {
       cartCount.textContent = totalItems;
@@ -170,6 +210,7 @@ function handleUserDisplay() {
         localStorage.removeItem("jwtToken");
         localStorage.removeItem("loggedIn");
         localStorage.removeItem("rememberMe");
+        localStorage.removeItem("cart"); // Xóa giỏ hàng khi logout
         window.location.href = "../login/login.html";
       });
     }

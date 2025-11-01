@@ -10,6 +10,7 @@ function performLogout(redirectUrl) {
   localStorage.removeItem('currentUser');
   localStorage.removeItem('jwtToken');
   localStorage.removeItem('rememberMe');
+  localStorage.removeItem('cart'); // Xóa giỏ hàng khi logout
   window.location.href = redirectUrl; // Chuyển hướng
 }
 

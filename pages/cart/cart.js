@@ -297,14 +297,11 @@ async function updateCartCount() {
         }
       }
     } catch (e) {
-      console.warn("Không lấy được số lượng từ API, dùng localStorage fallback:", e);
-      // Fallback sang localStorage nếu API lỗi
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const totalItems = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+      console.error("Lỗi khi lấy số lượng giỏ hàng từ API:", e);
+      // KHÔNG fallback localStorage khi đã đăng nhập - chỉ ẩn số lượng
       const cartCount = document.querySelector(".cart-count");
       if (cartCount) {
-        cartCount.textContent = totalItems;
-        cartCount.style.display = totalItems > 0 ? "inline-block" : "none";
+        cartCount.style.display = "none";
       }
     }
   } catch (e) {
