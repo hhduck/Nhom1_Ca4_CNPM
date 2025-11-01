@@ -55,6 +55,12 @@ document.getElementById("product-img").src = imagePath;
     document.getElementById("usage").innerHTML = product.product_usage || product.usage || '';
     document.getElementById("bonus").innerHTML = product.bonus || '';
 
+    // 3.5. Ẩn phần "THÔNG TIN SẢN PHẨM" nếu sản phẩm thuộc danh mục "Phụ kiện"
+    const productDetailsSection = document.querySelector(".product-details");
+    if (productDetailsSection && product.category_name === "Phụ kiện") {
+      productDetailsSection.style.display = "none";
+    }
+
     // 4. Cập nhật số lượng giỏ hàng
     updateCartCount();
 

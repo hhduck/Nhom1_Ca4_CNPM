@@ -235,10 +235,25 @@ function bindProductCardNavigation() {
         const productLink = card.querySelector('a.product-item, a[href*="product.html?id="]');
         if (productLink) {
           try {
-            const url = new URL(productLink.href, window.location.origin);
+            // Thử parse với URL đầy đủ
+            let url;
+            if (productLink.href.startsWith('http://') || productLink.href.startsWith('https://')) {
+              url = new URL(productLink.href);
+            } else {
+              // Relative URL - cần convert sang absolute
+              url = new URL(productLink.href, window.location.origin);
+            }
             productId = url.searchParams.get('id');
           } catch (e) {
-            console.error("Lỗi parse URL:", e);
+            // Fallback: Parse thủ công từ href
+            try {
+              const match = productLink.href.match(/[?&]id=(\d+)/);
+              if (match && match[1]) {
+                productId = match[1];
+              }
+            } catch (e2) {
+              console.error("Lỗi parse URL:", e2);
+            }
           }
         }
       }
@@ -371,6 +386,25 @@ function renderProductsByCategory(products) {
         <div class="truyenthong-info">
           <div class="truyenthong-name">${product.product_name}</div>
           <div class="truyenthong-price">${formatPrice(product.price)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render vào phukien-grid
+  const phukienGrid = document.querySelector('.phukien-grid');
+  if (phukienGrid) {
+    const phukienProducts = products.filter(p => p.category_id == categoryMap['Phụ kiện'] || p.category_name === 'Phụ kiện');
+    phukienGrid.innerHTML = phukienProducts.map(product => `
+      <div class="phukien-card" data-id="${product.product_id}">
+        <div class="phukien-image-container">
+          <a href="../product/product.html?id=${product.product_id}" class="product-item">
+            <img class="phukien-image" src="../../${product.image_url}" alt="${product.product_name}" />
+          </a>
+        </div>
+        <div class="phukien-info">
+          <div class="phukien-name">${product.product_name}</div>
+          <div class="phukien-price">${formatPrice(product.price)}</div>
         </div>
       </div>
     `).join('');
@@ -581,7 +615,7 @@ function initProductFilter() {
 
     filtered.forEach(p => {
       const card = `
-        <div class="product-card">
+        <div class="product-card" data-id="${p.ProductID}">
           <div class="product-image-container">
             <a href="../product/product.html?id=${p.ProductID}" class="product-item">
               <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
@@ -594,6 +628,9 @@ function initProductFilter() {
         </div>`;
       grid.insertAdjacentHTML("beforeend", card);
     });
+    
+    // Re-bind navigation sau khi render
+    bindProductCardNavigation();
   }
 }
 
@@ -630,7 +667,7 @@ function showPopup(products) {
   } else {
     products.forEach(p => {
       popupProducts.insertAdjacentHTML("beforeend", `
-        <div class="product-card">
+        <div class="product-card" data-id="${p.ProductID}">
           <div class="product-image-container">
             <a href="../product/product.html?id=${p.ProductID}" class="product-item">
               <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
@@ -646,6 +683,9 @@ function showPopup(products) {
   }
 
   overlay.classList.remove("hidden");
+  
+  // Re-bind navigation sau khi render popup
+  bindProductCardNavigation();
 }
 
 // ===== HIỂN THỊ KẾT QUẢ TRÊN NỀN MỜ =====
