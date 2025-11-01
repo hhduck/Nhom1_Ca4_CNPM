@@ -133,6 +133,7 @@ function performLogout(redirectUrl = '../pages/login/login.html') {
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('loggedIn');
     localStorage.removeItem('rememberMe');
+    localStorage.removeItem('cart'); // Xóa giỏ hàng khi logout
     
     if (redirectUrl) {
         window.location.href = redirectUrl;

@@ -255,6 +255,9 @@ async function performLogin(username, password, rememberMe) {
             if (rememberMe) {
                 localStorage.setItem('rememberMe', 'true');
             }
+            
+            // Xóa giỏ hàng cũ trong localStorage khi đăng nhập để đảm bảo load từ database
+            localStorage.removeItem('cart');
 
             showMessage(`Đăng nhập thành công! Chào mừng ${data.data.user.full_name}!`, 'success');
 
@@ -541,6 +544,7 @@ function handleUserDisplay() {
                 localStorage.removeItem("currentUser");
                 localStorage.removeItem("jwtToken");
                 localStorage.removeItem("rememberMe");
+                localStorage.removeItem("cart"); // Xóa giỏ hàng khi logout
                 window.location.href = "../login/login.html"; // Luôn về login khi logout
             });
         }
