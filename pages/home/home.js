@@ -285,7 +285,8 @@ async function loadProductsFromAPI() {
       headers: {
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache'
-      }
+      },
+      cache: 'no-store' // Đảm bảo không cache request
     });
     if (!response.ok) {
       throw new Error('HTTP ' + response.status);
@@ -295,13 +296,23 @@ async function loadProductsFromAPI() {
     if (result.success && result.data && result.data.products) {
       const products = result.data.products;
       
-      // Render products vào các section
+      // Render products vào các section (sẽ tự động filter status='available' bên trong)
       renderProductsByCategory(products);
     } else {
       console.error('Không thể load sản phẩm:', result.message);
+      // Hiển thị message lỗi trên UI nếu cần
+      const productsGrid = document.getElementById('productsGrid');
+      if (productsGrid) {
+        productsGrid.innerHTML = '<p style="text-align: center; width: 100%;">Không thể tải sản phẩm. Vui lòng thử lại sau.</p>';
+      }
     }
   } catch (error) {
     console.error('Lỗi load sản phẩm:', error);
+    // Hiển thị message lỗi trên UI
+    const productsGrid = document.getElementById('productsGrid');
+    if (productsGrid) {
+      productsGrid.innerHTML = '<p style="text-align: center; width: 100%;">Không thể tải sản phẩm. Vui lòng thử lại sau.</p>';
+    }
   }
 }
 
@@ -314,12 +325,19 @@ function renderProductsByCategory(products) {
     'Phụ kiện': 4
   };
 
+  // Lọc chỉ lấy sản phẩm có status = 'available'
+  const availableProducts = products.filter(p => p.status === 'available');
+
   // Render vào products-grid (section SẢN PHẨM)
   const productsGrid = document.getElementById('productsGrid');
   if (productsGrid) {
-    // Lấy 3 sản phẩm đầu tiên
-    const featuredProducts = products.slice(0, 3);
-    productsGrid.innerHTML = featuredProducts.map(product => `
+    // Clear trước khi render
+    productsGrid.innerHTML = '';
+    
+    // Lấy 3 sản phẩm đầu tiên từ danh sách available
+    const featuredProducts = availableProducts.slice(0, 3);
+    if (featuredProducts.length > 0) {
+      productsGrid.innerHTML = featuredProducts.map(product => `
       <div class="product-card" data-id="${product.product_id}">
         <div class="product-image-container">
           <a href="../product/product.html?id=${product.product_id}" class="product-item">
@@ -332,13 +350,20 @@ function renderProductsByCategory(products) {
         </div>
       </div>
     `).join('');
+    } else {
+      productsGrid.innerHTML = '<p style="text-align: center; width: 100%;">Chưa có sản phẩm nổi bật</p>';
+    }
   }
 
   // Render vào entremet-grid
   const entremetGrid = document.querySelector('.entremet-grid');
   if (entremetGrid) {
-    const entremetProducts = products.filter(p => p.category_id == categoryMap['Entremet'] || p.category_name === 'Entremet');
-    entremetGrid.innerHTML = entremetProducts.map(product => `
+    // Clear trước khi render
+    entremetGrid.innerHTML = '';
+    
+    const entremetProducts = availableProducts.filter(p => p.category_id == categoryMap['Entremet'] || p.category_name === 'Entremet');
+    if (entremetProducts.length > 0) {
+      entremetGrid.innerHTML = entremetProducts.map(product => `
       <div class="entremet-card" data-id="${product.product_id}">
         <div class="entremet-image-container">
           <a href="../product/product.html?id=${product.product_id}" class="product-item">
@@ -351,13 +376,20 @@ function renderProductsByCategory(products) {
         </div>
       </div>
     `).join('');
+    } else {
+      entremetGrid.innerHTML = '<p style="text-align: center; width: 100%;">Chưa có sản phẩm Entremet</p>';
+    }
   }
 
   // Render vào mousse-grid
   const mousseGrid = document.querySelector('.mousse-grid');
   if (mousseGrid) {
-    const mousseProducts = products.filter(p => p.category_id == categoryMap['Mousse'] || p.category_name === 'Mousse');
-    mousseGrid.innerHTML = mousseProducts.map(product => `
+    // Clear trước khi render
+    mousseGrid.innerHTML = '';
+    
+    const mousseProducts = availableProducts.filter(p => p.category_id == categoryMap['Mousse'] || p.category_name === 'Mousse');
+    if (mousseProducts.length > 0) {
+      mousseGrid.innerHTML = mousseProducts.map(product => `
       <div class="mousse-card" data-id="${product.product_id}">
         <div class="mousse-image-container">
           <a href="../product/product.html?id=${product.product_id}" class="product-item">
@@ -370,13 +402,20 @@ function renderProductsByCategory(products) {
         </div>
       </div>
     `).join('');
+    } else {
+      mousseGrid.innerHTML = '<p style="text-align: center; width: 100%;">Chưa có sản phẩm Mousse</p>';
+    }
   }
 
   // Render vào truyenthong-grid
   const truyenthongGrid = document.querySelector('.truyenthong-grid');
   if (truyenthongGrid) {
-    const truyenthongProducts = products.filter(p => p.category_id == categoryMap['Truyền thống'] || p.category_name === 'Truyền thống');
-    truyenthongGrid.innerHTML = truyenthongProducts.map(product => `
+    // Clear trước khi render
+    truyenthongGrid.innerHTML = '';
+    
+    const truyenthongProducts = availableProducts.filter(p => p.category_id == categoryMap['Truyền thống'] || p.category_name === 'Truyền thống');
+    if (truyenthongProducts.length > 0) {
+      truyenthongGrid.innerHTML = truyenthongProducts.map(product => `
       <div class="truyenthong-card" data-id="${product.product_id}">
         <div class="truyenthong-image-container">
           <a href="../product/product.html?id=${product.product_id}" class="product-item">
@@ -389,13 +428,20 @@ function renderProductsByCategory(products) {
         </div>
       </div>
     `).join('');
+    } else {
+      truyenthongGrid.innerHTML = '<p style="text-align: center; width: 100%;">Chưa có sản phẩm Truyền thống</p>';
+    }
   }
 
   // Render vào phukien-grid
   const phukienGrid = document.querySelector('.phukien-grid');
   if (phukienGrid) {
-    const phukienProducts = products.filter(p => p.category_id == categoryMap['Phụ kiện'] || p.category_name === 'Phụ kiện');
-    phukienGrid.innerHTML = phukienProducts.map(product => `
+    // Clear trước khi render
+    phukienGrid.innerHTML = '';
+    
+    const phukienProducts = availableProducts.filter(p => p.category_id == categoryMap['Phụ kiện'] || p.category_name === 'Phụ kiện');
+    if (phukienProducts.length > 0) {
+      phukienGrid.innerHTML = phukienProducts.map(product => `
       <div class="phukien-card" data-id="${product.product_id}">
         <div class="phukien-image-container">
           <a href="../product/product.html?id=${product.product_id}" class="product-item">
@@ -408,6 +454,9 @@ function renderProductsByCategory(products) {
         </div>
       </div>
     `).join('');
+    } else {
+      phukienGrid.innerHTML = '<p style="text-align: center; width: 100%;">Chưa có sản phẩm Phụ kiện</p>';
+    }
   }
 
   // Re-bind navigation sau khi render

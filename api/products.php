@@ -99,7 +99,7 @@ function getAllProducts($db) {
                 p.UpdatedAt as updated_at
               FROM Products p
               LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
-              WHERE 1=1";
+              WHERE p.IsActive = 1";
     
     $params = [];
     

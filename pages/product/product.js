@@ -242,7 +242,7 @@ function setupActionButtons(product) {
       if (!isCustomer && !isStaff) { alert("Vui lòng đăng nhập để mua hàng."); window.location.href = "../login/login.html"; }
       else {
         if (product) { const quantity = parseInt(quantityInput.value) || 1; addToCart(product, quantity); }
-        window.location.href = "../checkout/checkout.html";
+        window.location.href = "../pay/pay.html";
       }
     });
   }
