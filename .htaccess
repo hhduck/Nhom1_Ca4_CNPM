@@ -1,9 +1,34 @@
-# Enable rewrite engine
+# ------------------------------
+# BẬT CHẾ ĐỘ VIẾT LẠI URL (URL Rewrite)
+# ------------------------------
+
+# Kích hoạt mô-đun "mod_rewrite" của Apache,
+# cho phép bạn viết lại (rewrite) hoặc chuyển hướng (redirect) URL linh hoạt.
 RewriteEngine On
 
-# Set the default file to serve when a directory is requested
+
+# ------------------------------
+# ĐẶT TRANG MẶC ĐỊNH KHI TRUY CẬP THƯ MỤC
+# ------------------------------
+
+# Khi người dùng truy cập vào thư mục (ví dụ: http://localhost/),
+# Apache sẽ tự động hiển thị file "pages/home/home.html" thay vì hiển thị danh sách file.
 DirectoryIndex pages/home/home.html
 
-# Rule to internally rewrite the root URL to the home page
-# This handles requests for just "http://localhost/"
+
+# ------------------------------
+# LUẬT VIẾT LẠI URL GỐC (ROOT URL)
+# ------------------------------
+
+# Khi người dùng truy cập vào URL gốc (http://localhost/),
+# tức là không có phần đường dẫn phía sau (“^$” nghĩa là chuỗi rỗng),
+# Apache sẽ tự động chuyển hướng nội bộ (internal rewrite)
+# đến file "pages/home/home.html".
 RewriteRule ^$ /pages/home/home.html [L]
+
+
+# ------------------------------
+# CHÚ THÍCH THÊM:
+# [L] = Last rule → Khi luật này khớp, Apache sẽ dừng lại
+# và không xử lý các luật rewrite khác phía sau.
+# ------------------------------
