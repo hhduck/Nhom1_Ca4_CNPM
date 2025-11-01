@@ -7,20 +7,16 @@ let currentDisplayedOrderId = null;
 // Map trạng thái sang tiếng Việt
 const STATUS_MAP = {
     pending: 'Chờ xử lý',
-    confirmed: 'Đã nhận đơn',   // SỬA: received -> confirmed
-    preparing: 'Đang chuẩn bị', // THÊM MỚI (Từ CSDL)
-    shipping: 'Đang giao',
-    completed: 'Giao hàng thành công', // SỬA: success -> completed
-    cancelled: 'Giao hàng thất bại'  // SỬA: failed -> cancelled
+    order_received: 'Đã nhận đơn',
+    preparing: 'Đang chuẩn bị',
+    delivering: 'Đang giao',
+    delivery_successful: 'Giao hàng thành công',
+    delivery_failed: 'Giao hàng thất bại'
 };
 
 // Map phương thức thanh toán sang tiếng Việt
 const PAYMENT_METHOD_MAP = {
-    cod: 'Tiền mặt (COD)',
-    bank_transfer: 'Chuyển khoản',
-    momo: 'MoMo',
-    zalopay: 'ZaloPay',
-    vnpay: 'VNPay'
+    vnpay: 'Ví điện tử VNPay'
 };
 
 // ===== HÀM ĐĂNG XUẤT (TÁCH RA NGOÀI) =====
@@ -210,11 +206,11 @@ function applyFilters() {
     // --- ĐỒNG BỘ VỚI ADMIN ---
     const filterStatusMap = {
         'filter-pending': 'pending',
-        'filter-confirmed': 'confirmed',
+        'filter-order_received': 'order_received',
         'filter-preparing': 'preparing',
-        'filter-shipping': 'shipping',
-        'filter-completed': 'completed',
-        'filter-cancelled': 'cancelled'
+        'filter-delivering': 'delivering',
+        'filter-delivery_successful': 'delivery_successful',
+        'filter-delivery_failed': 'delivery_failed'
     };
 
     const selectedStatuses = Array.from(document.querySelectorAll('.filters input[type="checkbox"]:checked'))

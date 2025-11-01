@@ -143,7 +143,7 @@ function getAllOrders($db, $customerId = null)
 
     if ($status) {
         // *** SỬA LỖI: Thống nhất với Database Schema ***
-        $validStatuses = ['pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled'];
+        $validStatuses = ['pending', 'order_received', 'preparing', 'delivering', 'delivery_successful', 'delivery_failed'];
         if (in_array($status, $validStatuses)) {
             $query .= " AND o.OrderStatus = :status";
             $params[':status'] = $status;
@@ -280,7 +280,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
         $newStatus = sanitizeInput($data['order_status']);
         
         // *** SỬA LỖI: Thống nhất với Database Schema ***
-        $validStatuses = ['pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled'];
+        $validStatuses = ['pending', 'order_received', 'preparing', 'delivering', 'delivery_successful', 'delivery_failed'];
         
         if (!in_array($newStatus, $validStatuses)) {
             throw new Exception("Trạng thái không hợp lệ: " . $newStatus, 400);
@@ -290,10 +290,10 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $params[':status'] = $newStatus;
             $isStatusUpdate = true;
             
-            if ($newStatus === 'completed') {
+            if ($newStatus === 'delivery_successful') {
                 $fieldsToUpdate[] = "CompletedAt = NOW()";
             }
-            if ($newStatus === 'cancelled') {
+            if ($newStatus === 'delivery_failed') {
                 $fieldsToUpdate[] = "CancelledAt = NOW()";
             }
         }
@@ -303,7 +303,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
         $newNote = sanitizeInput($data['note']);
         $fieldsToUpdate[] = "Note = :note";
         $params[':note'] = $newNote;
-        if ($isStatusUpdate && $newStatus === 'failed') {
+        if ($isStatusUpdate && $newStatus === 'delivery_failed') {
             $fieldsToUpdate[] = "CancelReason = :cancel_reason";
             $params[':cancel_reason'] = $newNote;
         }
@@ -338,7 +338,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $historyStmt->execute();
         }
 
-        if ($isStatusUpdate && $newStatus === 'completed' && $oldStatus !== 'completed') {
+        if ($isStatusUpdate && $newStatus === 'delivery_successful' && $oldStatus !== 'delivery_successful') {
             $updateSoldQuery = "UPDATE Products p
                                 INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
                                 SET p.SoldCount = p.SoldCount + oi.Quantity
@@ -348,7 +348,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $updateStmt->execute();
         }
         
-        if ($isStatusUpdate && $newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+        if ($isStatusUpdate && $newStatus === 'delivery_failed' && $oldStatus !== 'delivery_failed') {
             $restoreQuery = "UPDATE Products p
                             INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
                             SET p.Quantity = p.Quantity + oi.Quantity 

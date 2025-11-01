@@ -2173,12 +2173,12 @@ function getStatusText(status) {
 
 function getOrderStatusText(status) {
     const statusMap = {
-        'pending': 'Chờ xử lý',          
-        'confirmed': 'Đã xác nhận',
+        'pending': 'Chờ xử lý',
+        'order_received': 'Đã nhận đơn',
         'preparing': 'Đang chuẩn bị',
-        'shipping': 'Đang giao',          
-        'completed': 'Hoàn thành',       
-        'cancelled': 'Đã hủy'
+        'delivering': 'Đang giao',
+        'delivery_successful': 'Giao hàng thành công',
+        'delivery_failed': 'Giao hàng thất bại'
     };
     return statusMap[status] || status;
 }

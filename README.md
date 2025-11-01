@@ -14,6 +14,7 @@
 - [Tính năng](#-tính-năng)
 - [API Endpoints](#-api-endpoints)
 - [Database Schema](#-database-schema)
+- [Authentication & Authorization](#-authentication--authorization)
 
 ---
 
@@ -33,6 +34,7 @@
 - ✅ Hệ thống xác thực và bảo mật (JWT, middleware)
 - ✅ Báo cáo thống kê theo tháng/năm với biểu đồ cột và tròn
 - ✅ Tự động đăng xuất khi tài khoản bị khóa
+- ✅ Đổi mật khẩu và quên mật khẩu
 
 ---
 
@@ -67,19 +69,20 @@ Nhom1_Ca4_CNPM/
 ├── admin/                          # 👑 ADMIN PANEL
 │   ├── admin.html                  # Dashboard quản trị
 │   ├── admin.css                   # Styling admin
-│   └── admin.js                    # Logic admin (2384 dòng)
+│   └── admin.js                    # Logic admin
 │
 ├── api/                            # 🔌 BACKEND API
 │   ├── auth/
 │   │   ├── login.php              # API đăng nhập
 │   │   ├── register.php           # API đăng ký
-│   │   └── middleware.php        # Xác thực và phân quyền
+│   │   ├── forgot-password.php    # API quên mật khẩu (reset về "123456")
+│   │   └── middleware.php         # Xác thực và phân quyền
 │   ├── config/
 │   │   └── database.php           # Kết nối database
 │   ├── products.php               # API sản phẩm (CRUD)
 │   ├── products_c.php             # API sản phẩm (public)
 │   ├── orders.php                 # API đơn hàng (CRUD, xóa)
-│   ├── users.php                  # API người dùng (CRUD)
+│   ├── users.php                  # API người dùng (CRUD, đổi mật khẩu)
 │   ├── cart.php                   # API giỏ hàng
 │   ├── promotions.php             # API khuyến mãi (CRUD)
 │   ├── complaints.php             # API khiếu nại
@@ -90,7 +93,7 @@ Nhom1_Ca4_CNPM/
 │   ├── categories.php             # API danh mục (CRUD)
 │   ├── search.php                 # API tìm kiếm
 │   ├── staff_profile.php          # API hồ sơ nhân viên
-│   ├── staff_search.php          # API tìm kiếm nhân viên
+│   ├── staff_search.php           # API tìm kiếm nhân viên
 │   └── upload.php                 # API upload file
 │
 ├── assets/                         # 🎨 TÀI NGUYÊN
@@ -99,12 +102,12 @@ Nhom1_Ca4_CNPM/
 │   │   └── animations.css         # Hiệu ứng
 │   ├── js/
 │   │   ├── main.js                # JavaScript chung
-│   │   ├── image-handler.js      # Xử lý ảnh
-│   │   └── auth-check.js         # Kiểm tra xác thực client-side
+│   │   ├── image-handler.js       # Xử lý ảnh
+│   │   └── auth-check.js         # Kiểm tra xác thực client-side (auto logout nếu banned)
 │   └── images/                    # Hình ảnh sản phẩm, khuyến mãi
 │
 ├── database/                       # 🗄️ DATABASE
-│   └── schema.sql                 # Cấu trúc database + Dữ liệu mẫu (923 dòng)
+│   └── schema.sql                 # Cấu trúc database + Dữ liệu mẫu
 │
 ├── pages/                          # 📄 CÁC TRANG
 │   ├── home/                      # Trang chủ
@@ -114,7 +117,7 @@ Nhom1_Ca4_CNPM/
 │   ├── login/                     # Đăng nhập
 │   │   ├── login.html
 │   │   ├── login.css
-│   │   └── login.js
+│   │   └── login.js               # Đăng nhập, quên mật khẩu
 │   ├── register/                  # Đăng ký
 │   │   ├── register.html
 │   │   ├── register.css
@@ -122,15 +125,15 @@ Nhom1_Ca4_CNPM/
 │   ├── product/                   # Chi tiết sản phẩm
 │   │   ├── product.html
 │   │   ├── product.css
-│   │   └── product.js
+│   │   └── product.js             # Ẩn "THÔNG TIN SẢN PHẨM" nếu là Phụ kiện
 │   ├── cart/                      # Giỏ hàng
 │   │   ├── cart.html
 │   │   ├── cart.css
 │   │   └── cart.js
-│   ├── pay/                       # Thanh toán
-│   │   ├── pay.html
-│   │   ├── pay.css
-│   │   └── pay.js
+│   ├── checkout/                  # Thanh toán
+│   │   ├── checkout.html
+│   │   ├── checkout.css
+│   │   └── checkout.js
 │   ├── order-confirmation/        # Xác nhận đơn
 │   │   ├── order-confirmation.html
 │   │   ├── order-confirmation.css
@@ -138,12 +141,19 @@ Nhom1_Ca4_CNPM/
 │   ├── account/                   # Tài khoản khách hàng
 │   │   ├── account.html
 │   │   ├── account.css
-│   │   └── account.js             # Xem đơn hàng dạng bảng
+│   │   └── account.js             # Xem đơn hàng dạng bảng, đổi mật khẩu
 │   ├── contact/                   # Liên hệ
 │   │   ├── contact.html
 │   │   ├── contact.css
 │   │   └── contact.js
-│   └── xuatfigma.html            # Trang xuất Figma (test)
+│   ├── about/                     # Về chúng tôi
+│   │   ├── about.html
+│   │   ├── about.css
+│   │   └── about.js
+│   └── pay/                       # Thanh toán
+│       ├── pay.html
+│       ├── pay.css
+│       └── pay.js
 │
 ├── staff/                          # 👨‍💼 NHÂN VIÊN
 │   ├── handleComplaint/          # Xử lý khiếu nại
@@ -157,14 +167,14 @@ Nhom1_Ca4_CNPM/
 │   ├── staffProfile/             # Hồ sơ nhân viên
 │   │   ├── staff_profile.html
 │   │   ├── staff_profile.css
-│   │   └── staff_profile.js
-│   └── ViewOders/               # Xem đơn hàng (Lưu ý: tên thư mục có typo "Oders")
+│   │   └── staff_profile.js       # Cập nhật thông tin, đổi mật khẩu
+│   └── ViewOders/                # Xem đơn hàng (Lưu ý: tên thư mục có typo "Oders")
 │       ├── order.html
 │       ├── order.css
 │       └── order.js
 │
-├── docker/                        # Docker configuration (nếu có)
-├── test.md                        # Bảng kiểm thử phần mềm
+├── .htaccess                      # Apache URL Rewrite rules
+├── test.md                        # Bảng kiểm thử phần mềm (150 test cases)
 └── README.md                      # 📖 Tài liệu này
 ```
 
@@ -188,11 +198,9 @@ Nhom1_Ca4_CNPM/
    - Cài đặt vào `C:\xampp\` (hoặc đường dẫn tùy chọn)
 
 2. **Copy project vào thư mục htdocs:**
-   ```bash
+```bash
    # Windows
    C:\xampp\htdocs\Nhom1_Ca4_CNPM\
-   
-   # hoặc copy thư mục project vào đây
    ```
 
 3. **Khởi động XAMPP:**
@@ -238,7 +246,7 @@ mysql -u root -p < "D:\Hoc_tap\Lap_trinh_PHP\htdocs\Nhom1_Ca4_CNPM\database\sche
   - 4 danh mục sản phẩm
   - 12 sản phẩm
   - 9 users (1 admin, 6 staff, 2 customer)
-  - 5 đơn hàng mẫu
+  - 50+ đơn hàng mẫu (phân bố theo tháng/năm để test báo cáo)
   - 3 khuyến mãi mẫu
 
 ---
@@ -311,11 +319,14 @@ Hoặc: customer02
 
 - ✅ **Duyệt sản phẩm** với tìm kiếm và lọc theo danh mục
 - ✅ **Xem chi tiết** sản phẩm (hình ảnh, giá, mô tả, cấu trúc, hướng dẫn sử dụng)
+- ✅ **Ẩn "THÔNG TIN SẢN PHẨM"** nếu sản phẩm là "Phụ kiện"
 - ✅ **Giỏ hàng** thông minh (thêm, sửa, xóa)
 - ✅ **Đặt hàng** với form đầy đủ thông tin
 - ✅ **Theo dõi đơn hàng** của mình (xem dạng bảng với chi tiết sản phẩm)
 - ✅ **Xem khuyến mãi** trên trang home
 - ✅ **Cập nhật thông tin** cá nhân (tên, số điện thoại, địa chỉ)
+- ✅ **Đổi mật khẩu** trong phần thông tin tài khoản
+- ✅ **Quên mật khẩu** (reset về "123456")
 - ✅ **Đăng ký/Đăng nhập** tài khoản
 - ✅ **Tự động đăng xuất** nếu tài khoản bị khóa
 
@@ -336,7 +347,7 @@ Hoặc: customer02
 - **Xóa sản phẩm** (với xác nhận)
 - **Tìm kiếm sản phẩm**
 - **Lọc theo danh mục và trạng thái**
-- **Sản phẩm mới xuất hiện trên trang home** sau khi refresh
+- **Sản phẩm mới xuất hiện trên trang home** sau khi refresh (cache-busting)
 
 #### 📋 Quản lý đơn hàng
 - **Xem danh sách đơn hàng** với đầy đủ thông tin
@@ -359,13 +370,14 @@ Hoặc: customer02
 - **Sửa khuyến mãi**
 - **Xóa khuyến mãi**
 - **Xem danh sách khuyến mãi** (lọc theo trạng thái)
-- **Khuyến mãi mới xuất hiện trên trang home** sau khi refresh
+- **Khuyến mãi mới xuất hiện trên trang home** sau khi refresh (cache-busting)
 - **Validate:** Kiểm tra mã khuyến mãi đã tồn tại
 
 #### 📞 Quản lý khiếu nại
 - **Xem danh sách khiếu nại**
 - **Cập nhật trạng thái** xử lý
 - **Phản hồi khách hàng**
+- **Xóa khiếu nại** (Admin)
 
 #### 📧 Quản lý liên hệ
 - **Xem danh sách liên hệ** từ khách hàng
@@ -377,7 +389,8 @@ Hoặc: customer02
 - ✅ **Cập nhật trạng thái** đơn hàng
 - ✅ **Xử lý liên hệ** từ khách
 - ✅ **Xử lý khiếu nại** (cập nhật trạng thái, phản hồi)
-- ✅ **Cập nhật hồ sơ** cá nhân
+- ✅ **Cập nhật hồ sơ** cá nhân (tên, số điện thoại, địa chỉ)
+- ✅ **Đổi mật khẩu** trong phần hồ sơ nhân viên
 - ✅ **Tìm kiếm đơn hàng** và nhân viên
 
 ---
@@ -388,106 +401,115 @@ Hoặc: customer02
 ```
 POST   /api/auth/login.php              - Đăng nhập
 POST   /api/auth/register.php           - Đăng ký
+POST   /api/auth/forgot-password.php    - Quên mật khẩu (reset về "123456")
 ```
 
 ### 📦 Products
 ```
 GET    /api/products.php                - Lấy danh sách sản phẩm
-GET    /api/products.php?id=1           - Lấy chi tiết sản phẩm
+GET    /api/products.php?id=1            - Lấy chi tiết sản phẩm
 GET    /api/products.php?search=Bánh    - Tìm kiếm sản phẩm
 GET    /api/products.php?category=Entremet - Lọc theo danh mục
 GET    /api/products.php?status=available - Lọc theo trạng thái
 GET    /api/products.php?featured=1     - Sản phẩm nổi bật
-POST   /api/products.php                 - Tạo sản phẩm (Admin)
+POST   /api/products.php                - Tạo sản phẩm (Admin)
 PUT    /api/products.php/{id}            - Cập nhật sản phẩm (Admin)
-DELETE /api/products.php/{id}            - Xóa sản phẩm (Admin)
+DELETE /api/products.php/{id}           - Xóa sản phẩm (Admin)
 ```
 
 ### 📋 Orders
 ```
-GET    /api/orders.php                    - Lấy danh sách đơn hàng (Staff/Admin)
-GET    /api/orders.php?user_id=3          - Lấy đơn hàng của customer (Owner/Admin)
-GET    /api/orders.php/{id}                - Chi tiết đơn hàng
-GET    /api/orders.php?status=pending     - Lọc theo trạng thái
-POST   /api/orders.php                     - Tạo đơn hàng mới
-PUT    /api/orders.php/{id}                - Cập nhật đơn hàng (Staff/Admin)
-DELETE /api/orders.php/{id}                - Xóa đơn hàng (Admin)
+GET    /api/orders.php                  - Lấy danh sách đơn hàng (Staff/Admin)
+GET    /api/orders.php?user_id=3        - Lấy đơn hàng của customer (Owner/Admin)
+GET    /api/orders.php/{id}             - Chi tiết đơn hàng
+GET    /api/orders.php?status=pending   - Lọc theo trạng thái
+POST   /api/orders.php                  - Tạo đơn hàng mới
+PUT    /api/orders.php/{id}             - Cập nhật đơn hàng (Staff/Admin)
+DELETE /api/orders.php/{id}             - Xóa đơn hàng (Admin)
 ```
 
 ### 👥 Users
 ```
-GET    /api/users.php                     - Danh sách users (Admin)
-GET    /api/users.php/{id}                 - Chi tiết user (Owner/Admin)
+GET    /api/users.php                   - Danh sách users (Admin)
+GET    /api/users.php/{id}              - Chi tiết user (Owner/Admin)
 GET    /api/users.php?role=staff&search=abc - Tìm kiếm nhân viên
-POST   /api/users.php                      - Tạo user (Admin)
-PUT    /api/users.php/{id}                 - Cập nhật user (Owner có thể cập nhật thông tin cá nhân, Admin có thể cập nhật tất cả)
-DELETE /api/users.php/{id}                 - Xóa user (Admin, không cho xóa admin chính)
+POST   /api/users.php                   - Tạo user (Admin)
+PUT    /api/users.php/{id}              - Cập nhật user (Owner có thể cập nhật thông tin cá nhân, Admin có thể cập nhật tất cả)
+POST   /api/users.php/{userId}/change-password - Đổi mật khẩu (Owner/Admin)
+DELETE /api/users.php/{id}              - Xóa user (Admin, không cho xóa admin chính)
 ```
 
 ### 🎁 Promotions
 ```
-GET    /api/promotions.php                 - Danh sách khuyến mãi (Admin)
-GET    /api/promotions.php?public=1        - Danh sách khuyến mãi active (Public)
-GET    /api/promotions.php/{id}            - Chi tiết khuyến mãi
-GET    /api/promotions.php?status=active    - Lọc theo trạng thái
-POST   /api/promotions.php                 - Tạo khuyến mãi (Admin)
-PUT    /api/promotions.php/{id}            - Cập nhật khuyến mãi (Admin)
-DELETE /api/promotions.php/{id}            - Xóa khuyến mãi (Admin)
+GET    /api/promotions.php              - Danh sách khuyến mãi (Admin)
+GET    /api/promotions.php?public=1     - Danh sách khuyến mãi active (Public)
+GET    /api/promotions.php/{id}         - Chi tiết khuyến mãi
+GET    /api/promotions.php?status=active - Lọc theo trạng thái
+POST   /api/promotions.php              - Tạo khuyến mãi (Admin)
+PUT    /api/promotions.php/{id}         - Cập nhật khuyến mãi (Admin)
+DELETE /api/promotions.php/{id}         - Xóa khuyến mãi (Admin)
 ```
 
 ### 📊 Reports
 ```
-GET    /api/reports.php?period=month       - Báo cáo tháng hiện tại
-GET    /api/reports.php?period=year        - Báo cáo năm hiện tại
-GET    /api/reports.php?month=5&year=2024   - Báo cáo tháng cụ thể
-GET    /api/reports.php?year=2024           - Báo cáo cả năm (không chọn tháng)
+GET    /api/reports.php?period=month    - Báo cáo tháng hiện tại
+GET    /api/reports.php?period=year     - Báo cáo năm hiện tại
+GET    /api/reports.php?month=5&year=2024 - Báo cáo tháng cụ thể
+GET    /api/reports.php?year=2024       - Báo cáo cả năm (không chọn tháng)
 ```
 
 ### 🛒 Cart
 ```
-GET    /api/cart.php?user_id=3             - Lấy giỏ hàng
-POST   /api/cart.php                        - Thêm vào giỏ
-PUT    /api/cart.php                        - Cập nhật số lượng
-DELETE /api/cart.php                        - Xóa khỏi giỏ
+GET    /api/cart.php?user_id=3          - Lấy giỏ hàng
+POST   /api/cart.php                    - Thêm vào giỏ
+PUT    /api/cart.php                    - Cập nhật số lượng
+DELETE /api/cart.php                    - Xóa khỏi giỏ
 ```
 
 ### 📂 Categories
 ```
-GET    /api/categories.php                 - Danh sách danh mục
-POST   /api/categories.php                 - Tạo danh mục (Admin)
-PUT    /api/categories.php/{id}            - Cập nhật danh mục (Admin)
-DELETE /api/categories.php/{id}            - Xóa danh mục (Admin)
+GET    /api/categories.php              - Danh sách danh mục
+POST   /api/categories.php              - Tạo danh mục (Admin)
+PUT    /api/categories.php/{id}         - Cập nhật danh mục (Admin)
+DELETE /api/categories.php/{id}         - Xóa danh mục (Admin)
 ```
 
 ### 📞 Contacts
 ```
-GET    /api/contacts.php                    - Danh sách liên hệ (Staff/Admin)
-PUT    /api/contacts.php/{id}               - Cập nhật trạng thái (Staff/Admin)
-POST   /api/contact-home.php                - Gửi liên hệ (Public)
+GET    /api/contacts.php                - Danh sách liên hệ (Staff/Admin)
+PUT    /api/contacts.php/{id}           - Cập nhật trạng thái (Staff/Admin)
+POST   /api/contact-home.php            - Gửi liên hệ (Public)
 ```
 
 ### 📝 Complaints
 ```
-GET    /api/complaints.php                  - Danh sách khiếu nại (Staff/Admin)
-GET    /api/complaints.php/{id}              - Chi tiết khiếu nại
-PUT    /api/complaints.php/{id}             - Cập nhật khiếu nại (Staff/Admin)
+GET    /api/complaints.php              - Danh sách khiếu nại (Staff/Admin)
+GET    /api/complaints.php/{id}         - Chi tiết khiếu nại
+PUT    /api/complaints.php/{id}         - Cập nhật khiếu nại (Staff/Admin)
 POST   /api/complaints.php/{id}?action=reply - Phản hồi khách hàng (Staff/Admin)
-DELETE /api/complaints.php/{id}             - Xóa khiếu nại (Admin)
+DELETE /api/complaints.php/{id}         - Xóa khiếu nại (Admin)
 ```
 
 ### ⭐ Reviews
 ```
-GET    /api/reviews.php                     - Danh sách đánh giá
-GET    /api/reviews.php?product_id=1        - Đánh giá theo sản phẩm
-POST   /api/reviews.php                     - Tạo đánh giá
-PUT    /api/reviews.php/{id}                - Cập nhật đánh giá (Admin)
-DELETE /api/reviews.php/{id}                - Xóa đánh giá (Admin)
+GET    /api/reviews.php                 - Danh sách đánh giá
+GET    /api/reviews.php?product_id=1    - Đánh giá theo sản phẩm
+POST   /api/reviews.php                 - Tạo đánh giá
+PUT    /api/reviews.php/{id}            - Cập nhật đánh giá (Admin)
+DELETE /api/reviews.php/{id}           - Xóa đánh giá (Admin)
 ```
 
 ### 🔍 Search
 ```
 GET    /api/search.php?keyword=Bánh&type=products - Tìm kiếm sản phẩm
 GET    /api/search.php?keyword=staff&type=users   - Tìm kiếm users (Admin)
+```
+
+### 👨‍💼 Staff Profile
+```
+GET    /api/staff_profile.php/{id}      - Lấy thông tin nhân viên (Owner/Staff)
+PUT    /api/staff_profile.php/{id}      - Cập nhật thông tin nhân viên (Owner/Staff)
+POST   /api/staff_profile.php           - Đổi mật khẩu nhân viên (Owner/Staff)
 ```
 
 ---
@@ -544,10 +566,23 @@ GET    /api/search.php?keyword=staff&type=users   - Tìm kiếm users (Admin)
 ### Client-side Authentication Check
 
 File `assets/js/auth-check.js` tự động:
-- Kiểm tra JWT token và user status
+- Kiểm tra JWT token và user status mỗi 30 giây
 - Đăng xuất tự động nếu tài khoản bị khóa
 - Redirect nếu không có quyền truy cập
 - Kiểm tra role khi truy cập admin/staff pages
+- Tính toán đường dẫn API đúng dựa trên vị trí file HTML hiện tại
+
+### Password Management
+
+- **Đổi mật khẩu:** `POST /api/users.php/{userId}/change-password`
+  - Yêu cầu: Owner hoặc Admin
+  - Validate: oldPassword và newPassword
+  - Hash mật khẩu mới với `PASSWORD_DEFAULT`
+
+- **Quên mật khẩu:** `POST /api/auth/forgot-password.php`
+  - Reset mật khẩu về "123456"
+  - Yêu cầu: Email hợp lệ và tài khoản active
+  - Hash và cập nhật PasswordHash trong database
 
 ---
 
@@ -559,6 +594,7 @@ File `assets/js/auth-check.js` tự động:
    - ✅ Thêm/sửa/xóa sản phẩm cập nhật database và hiển thị trên home
    - ✅ Load categories từ API để populate dropdown
    - ✅ Xử lý category_id đúng cách (convert tên → ID nếu cần)
+   - ✅ Cache-busting để đảm bảo sản phẩm mới xuất hiện ngay
 
 2. **Quản lý đơn hàng:**
    - ✅ Thêm nút xóa đơn hàng (Admin)
@@ -570,24 +606,42 @@ File `assets/js/auth-check.js` tự động:
    - ✅ Tự động đăng xuất nếu user đang đăng nhập bị khóa
    - ✅ Xóa user xóa khỏi database và danh sách
    - ✅ Customer có thể xem và cập nhật thông tin cá nhân
+   - ✅ Đổi mật khẩu trong phần tài khoản (Owner/Admin)
 
 4. **Quản lý báo cáo:**
    - ✅ Nút tháng cập nhật biểu đồ tròn và bảng chi tiết đúng
    - ✅ Hiển thị sản phẩm theo tháng/năm được chọn
    - ✅ Khi chọn "Tất cả" tháng: bảng chi tiết để trống, chỉ hiển thị biểu đồ cột và KPI
    - ✅ Khi chọn tháng tương lai: tất cả để trống với thông báo
+   - ✅ KPI doanh thu khớp với biểu đồ cột
+   - ✅ "Đã giao" ≤ "Tổng đơn hàng" (fixed COUNT DISTINCT)
 
 5. **Quản lý khuyến mãi:**
    - ✅ CRUD operations cập nhật database
    - ✅ Validate mã khuyến mãi đã tồn tại
    - ✅ Validate loại khuyến mãi (percent, fixed_amount, free_shipping, gift)
    - ✅ Format dates đúng (YYYY-MM-DD → YYYY-MM-DD HH:MM:SS)
-   - ✅ Khuyến mãi mới xuất hiện trên trang home
+   - ✅ Khuyến mãi mới xuất hiện trên trang home (cache-busting)
+   - ✅ Hiển thị ảnh khuyến mãi từ database (xử lý NULL và empty)
 
 6. **Trang Home:**
    - ✅ Load sản phẩm và khuyến mãi từ API với cache-busting
    - ✅ Hiển thị ảnh khuyến mãi từ database (xử lý NULL và empty)
    - ✅ Tự động cập nhật khi có sản phẩm/khuyến mãi mới
+
+7. **Trang Product:**
+   - ✅ Ẩn "THÔNG TIN SẢN PHẨM" nếu sản phẩm là "Phụ kiện"
+   - ✅ Fix lỗi 404 cho product-data.js
+
+8. **Trang Account:**
+   - ✅ Hiển thị đơn hàng dạng bảng với chi tiết sản phẩm
+   - ✅ Đổi mật khẩu (Owner/Admin)
+   - ✅ CSS spacing đều trong khung
+
+9. **Authentication:**
+   - ✅ Quên mật khẩu (reset về "123456")
+   - ✅ Đổi mật khẩu trong tài khoản (Owner/Admin)
+   - ✅ Fix auth-check.js để tính toán đường dẫn API đúng
 
 ---
 
@@ -622,12 +676,13 @@ File `assets/js/auth-check.js` tự động:
 - Xóa cache trình duyệt (Ctrl + F5)
 - Kiểm tra đường dẫn trong database (phải bắt đầu bằng `assets/`)
 
-### ❌ Lỗi: API không hoạt động
+### ❌ Lỗi: API không hoạt động (404 Not Found)
 
 **Giải pháp:**
 - Kiểm tra Apache đang chạy
 - Kiểm tra Console trong trình duyệt (F12)
 - Kiểm tra Network tab để xem request/response
+- Kiểm tra đường dẫn API trong `auth-check.js` (tự động tính toán dựa trên vị trí file)
 - Kiểm tra PHP error logs trong XAMPP
 
 ---
@@ -645,7 +700,7 @@ Website hoạt động tốt trên mọi thiết bị:
 
 ## 🔒 Bảo mật
 
-- ✅ **Password Hashing:** bcrypt
+- ✅ **Password Hashing:** bcrypt (`PASSWORD_DEFAULT`)
 - ✅ **JWT Authentication:** Token-based (đơn giản hóa)
 - ✅ **SQL Injection Prevention:** Prepared statements (PDO)
 - ✅ **XSS Protection:** Input sanitization (htmlspecialchars, strip_tags)
@@ -653,6 +708,7 @@ Website hoạt động tốt trên mọi thiết bị:
 - ✅ **Authorization:** Role-based access control (Admin, Staff, Customer)
 - ✅ **Account Status Check:** Banned accounts cannot login
 - ✅ **Client-side Auth Check:** Auto logout if account is banned
+- ✅ **URL Routing:** Parse ID từ URL path và query string
 
 ---
 

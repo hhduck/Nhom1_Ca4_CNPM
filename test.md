@@ -1,220 +1,286 @@
-# BẢNG KIỂM THỬ PHẦN MỀM
-## Hệ thống Quản lý Bán hàng - LA CUISINE NGỌT
-
-| Step no | Steps | Data | Expected result | Actual results | Status |
-|---------|-------|------|-----------------|----------------|--------|
-| 1 | Nhập **Username** và ấn nút **Đăng nhập** | Username = "admin" | Hiển thị thông báo "Vui lòng nhập username và password" | | PASS |
-| 2 | Nhập **Password** và ấn nút **Đăng nhập** | Password = "password" | Hiển thị thông báo "Vui lòng nhập username và password" | | PASS |
-| 3 | Nhập **Username**, **Password** và ấn nút **Đăng nhập** | Username = "admin", Password = "wrong" | Hiển thị thông báo "Username và password không hợp lệ" | | PASS |
-| 4 | Nhập **Username**, **Password** và ấn nút **Đăng nhập** | Username = "invalid", Password = "password" | Hiển thị thông báo "Username và password không hợp lệ" | | PASS |
-| 5 | Nhập **Username**, **Password** và ấn nút **Đăng nhập** | Username = "", Password = "" | Hiển thị thông báo "Vui lòng nhập username và password" | | PASS |
-| 6 | Nhập **Username**, **Password** và ấn nút **Đăng nhập** | Username = "admin", Password = "password" | Hiển thị trang admin với tài khoản "admin" | | PASS |
-| 7 | Nhập **Username**, **Password** và ấn nút **Đăng nhập** | Username = "staff01", Password = "password" | Hiển thị trang quản lý đơn hàng staff với tài khoản staff | | PASS |
-| 8 | Nhập **Username**, **Password** và ấn nút **Đăng nhập** | Username = "customer01", Password = "password" | Hiển thị trang chủ với tài khoản customer01 | | PASS |
-| 9 | Đăng nhập với tài khoản đã bị khóa | Username = "banned_user", Password = "password" (sau khi admin khóa) | Hiển thị thông báo "Tài khoản đã bị khóa" và không cho đăng nhập | | PASS |
-| 10 | Nhập thông tin đăng ký và ấn nút **Đăng ký** | Username = "", Email = "", Password = "" | Hiển thị thông báo "Vui lòng điền đầy đủ thông tin" | | PASS |
-| 11 | Nhập thông tin đăng ký và ấn nút **Đăng ký** | Username = "newuser", Email = "invalid", Password = "123" | Hiển thị thông báo "Email không hợp lệ" hoặc "Password phải có ít nhất 6 ký tự" | | PASS |
-| 12 | Nhập thông tin đăng ký và ấn nút **Đăng ký** | Username = "admin", Email = "new@email.com", Password = "123456" | Hiển thị thông báo "Username đã tồn tại" | | PASS |
-| 13 | Nhập thông tin đăng ký và ấn nút **Đăng ký** | Username = "newuser", Email = "admin@lacuisine.vn", Password = "123456" | Hiển thị thông báo "Email đã tồn tại" | | PASS |
-| 14 | Nhập thông tin đăng ký và ấn nút **Đăng ký** | Username = "newuser", Email = "newuser@email.com", Password = "123456", FullName = "Nguyễn Văn Mới" | Đăng ký thành công và chuyển đến trang đăng nhập hoặc trang chủ | | PASS |
-| 15 | Vào trang **Quản lý sản phẩm** (Admin) và ấn nút **Thêm sản phẩm** | Không nhập thông tin | Hiển thị thông báo "Vui lòng điền đầy đủ thông tin" | | PASS |
-| 16 | Vào trang **Quản lý sản phẩm** và điền thông tin sản phẩm, ấn **Lưu** | ProductName = "Entremets Mới", Category = "Entremet", Price = "650000", Quantity = "10" | Thêm sản phẩm thành công và hiển thị trong danh sách | | PASS |
-| 17 | Vào trang **Quản lý sản phẩm**, chọn sản phẩm "Entremets Rose" và ấn **Sửa** | Sửa Price = "700000" | Cập nhật sản phẩm thành công, giá được cập nhật | | PASS |
-| 18 | Vào trang **Quản lý sản phẩm**, chọn sản phẩm và ấn **Xóa** | Xác nhận xóa | Xóa sản phẩm thành công và sản phẩm biến mất khỏi danh sách | | PASS |
-| 19 | Vào trang **Quản lý sản phẩm** và tìm kiếm | Search = "Entremets" | Hiển thị các sản phẩm có tên chứa "Entremets" (Entremets Rose, Lime and Basil Entremets, Blanche Figues & Framboises) | | PASS |
-| 20 | Vào trang **Quản lý sản phẩm** và lọc theo danh mục | Category = "Entremet" | Chỉ hiển thị các sản phẩm thuộc danh mục "Entremet" | | PASS |
-| 21 | Thêm sản phẩm mới từ Admin | ProductName = "Bánh Test", Category = "Mousse", Price = "550000", ImageURL = "assets/images/test.jpg" | Sản phẩm xuất hiện trên trang home sau khi refresh | | PASS |
-| 22 | Vào trang **Quản lý đơn hàng** (Admin) | Không có điều kiện | Hiển thị danh sách tất cả đơn hàng | | PASS |
-| 23 | Lọc đơn hàng theo trạng thái **Chờ xử lý** | Status = "pending" | Chỉ hiển thị các đơn hàng có trạng thái "pending" | | PASS |
-| 24 | Lọc đơn hàng theo trạng thái **Đã xác nhận** | Status = "confirmed" | Chỉ hiển thị các đơn hàng có trạng thái "confirmed" | | PASS |
-| 25 | Lọc đơn hàng theo trạng thái **Đang chuẩn bị** | Status = "preparing" | Chỉ hiển thị các đơn hàng có trạng thái "preparing" | | PASS |
-| 26 | Lọc đơn hàng theo trạng thái **Đang giao** | Status = "shipping" | Chỉ hiển thị các đơn hàng có trạng thái "shipping" | | PASS |
-| 27 | Lọc đơn hàng theo trạng thái **Hoàn thành** | Status = "completed" | Chỉ hiển thị các đơn hàng có trạng thái "completed" | | PASS |
-| 28 | Lọc đơn hàng theo trạng thái **Đã hủy** | Status = "cancelled" | Chỉ hiển thị các đơn hàng có trạng thái "cancelled" | | PASS |
-| 29 | Chọn đơn hàng và ấn **Xóa** (Admin) | Xác nhận xóa | Xóa đơn hàng thành công và đơn hàng biến mất khỏi danh sách | | PASS |
-| 30 | Chọn đơn hàng và cập nhật trạng thái | Status = "shipping" | Cập nhật trạng thái thành công | | PASS |
-| 31 | Xóa đơn hàng từ Admin | Xác nhận xóa đơn hàng ORD001 | Đơn hàng bị xóa khỏi cơ sở dữ liệu và không hiển thị ở trang khách hàng | | PASS |
-| 32 | Vào trang **Quản lý người dùng** (Admin) | Không có điều kiện | Hiển thị danh sách tất cả người dùng (admin, staff, customer) | | PASS |
-| 33 | Chọn người dùng customer01 và ấn **Khóa tài khoản** | Status = "banned" | Khóa tài khoản thành công, người dùng không thể đăng nhập | | PASS |
-| 34 | Đăng nhập với tài khoản đã bị khóa | Username = "customer01" (sau khi bị khóa) | Hiển thị thông báo "Tài khoản đã bị khóa" và không cho đăng nhập | | PASS |
-| 35 | User đang đăng nhập bị khóa tài khoản | Admin khóa tài khoản customer01 đang đăng nhập | User bị đăng xuất tự động và hiển thị thông báo "Tài khoản đã bị khóa" | | PASS |
-| 36 | Chọn người dùng đã bị khóa và ấn **Mở khóa** | Status = "active" | Mở khóa tài khoản thành công, người dùng có thể đăng nhập lại | | PASS |
-| 37 | Chọn người dùng và ấn **Xóa** (Admin) | Xác nhận xóa (không phải admin chính) | Xóa người dùng thành công và người dùng biến mất khỏi danh sách | | PASS |
-| 38 | Cố gắng xóa admin chính (UserID = 1) | Xác nhận xóa admin | Hiển thị thông báo "Không thể xóa admin chính" | | PASS |
-| 39 | Cập nhật thông tin người dùng | FullName = "Tên mới", Phone = "0901234567" | Cập nhật thông tin thành công | | PASS |
-| 40 | Vào trang **Quản lý khuyến mãi** (Admin) và ấn **Thêm khuyến mãi** | Không nhập thông tin | Hiển thị thông báo "Vui lòng điền đầy đủ thông tin" | | PASS |
-| 41 | Vào trang **Quản lý khuyến mãi** và điền thông tin, ấn **Lưu** | Code = "PROMO01", Name = "Giảm 10%", Type = "percent", Value = "10", StartDate = "2024-01-01", EndDate = "2024-12-31" | Thêm khuyến mãi thành công và hiển thị trong danh sách | | PASS |
-| 42 | Vào trang **Quản lý khuyến mãi** và điền thông tin, ấn **Lưu** | Code = "FREESHIP01", Type = "free_shipping", MinOrderValue = "500000", StartDate = "2024-01-01", EndDate = "2024-12-31" | Thêm khuyến mãi free shipping thành công | | PASS |
-| 43 | Vào trang **Quản lý khuyến mãi** và điền thông tin, ấn **Lưu** | Code = "GIAM50K", Type = "fixed_amount", Value = "50000", MinOrderValue = "1000000", StartDate = "2024-01-01", EndDate = "2024-12-31" | Thêm khuyến mãi giảm giá cố định thành công | | PASS |
-| 44 | Chọn khuyến mãi và ấn **Sửa** | Sửa DiscountValue = "15" | Cập nhật khuyến mãi thành công | | PASS |
-| 45 | Chọn khuyến mãi và ấn **Xóa** | Xác nhận xóa | Xóa khuyến mãi thành công | | PASS |
-| 46 | Thêm khuyến mãi mới với ImageURL | Code = "TESTPROMO", ImageURL = "assets/images/promo.jpg" | Khuyến mãi xuất hiện trên trang home sau khi refresh với ảnh đúng | | PASS |
-| 47 | Thêm khuyến mãi với mã đã tồn tại | Code = "GIAM10TRON15" | Hiển thị thông báo "Mã khuyến mãi đã tồn tại" | | PASS |
-| 48 | Vào trang **Báo cáo** (Admin) và chọn **Năm** | Year = "2024" | Hiển thị doanh thu và số liệu thống kê của năm 2024 | | PASS |
-| 49 | Chọn **Tháng** từ dropdown | Month = "5", Year = "2024" | Hiển thị doanh thu tháng 5/2024, biểu đồ tròn hiển thị sản phẩm bán được trong tháng đó, bảng chi tiết cập nhật | | PASS |
-| 50 | Chọn **Tất cả** tháng | Month = "", Year = "2024" | Bảng chi tiết doanh thu theo sản phẩm để trống, chỉ hiển thị biểu đồ cột và số liệu KPI tổng | | PASS |
-| 51 | Chọn tháng tương lai | Month = "12", Year = "2025" (nếu hiện tại < 12/2025) | Tất cả biểu đồ và bảng để trống, hiển thị thông báo "Tháng tương lai không có dữ liệu" | | PASS |
-| 52 | Kiểm tra KPI và biểu đồ cột | Month = "5", Year = "2024" | Doanh thu KPI khớp với giá trị trên biểu đồ cột tháng 5 | | PASS |
-| 53 | Kiểm tra tổng doanh thu sản phẩm | Month = "5", Year = "2024" | Tổng doanh thu các sản phẩm trong bảng chi tiết khớp với doanh thu KPI | | PASS |
-| 54 | Kiểm tra số đơn hàng | Month = "5", Year = "2024" | Số "Tổng đơn hàng" >= "Đã giao" (đã giao ≤ tổng đơn hàng) | | PASS |
-| 55 | Kiểm tra biểu đồ cột phân biệt tháng hiện tại | Month = tháng hiện tại, Year = năm hiện tại | Cột tháng hiện tại có màu khác (#2d4a3e) so với các tháng khác (#4472C4) | | PASS |
-| 56 | Kiểm tra biểu đồ tròn hiển thị phần trăm | Month = "5", Year = "2024" | Chú thích biểu đồ tròn hiển thị tên sản phẩm kèm phần trăm (ví dụ: "Entremets Rose (25.5%)") | | PASS |
-| 57 | Kiểm tra bảng chi tiết có dòng TỔNG CỘNG | Month = "5", Year = "2024" | Bảng có dòng cuối cùng là "TỔNG CỘNG" với tổng số lượng, tổng doanh thu và 100% | | PASS |
-| 58 | Kiểm tra tỷ lệ phần trăm tổng = 100% | Month = "5", Year = "2024" | Tổng các phần trăm trong bảng chi tiết = 100% (có điều chỉnh rounding) | | PASS |
-| 59 | Kiểm tra sản phẩm 0 doanh thu không hiển thị | Month = "5", Year = "2024" | Các sản phẩm có doanh thu = 0 không hiển thị trong bảng chi tiết | | PASS |
-| 60 | Kiểm tra loading state khi chuyển tháng/năm | Chọn tháng/năm khác | Hiển thị "Đang tải..." trên biểu đồ và bảng trong khi load dữ liệu | | PASS |
-| 61 | Mở trang **Home** | Không có điều kiện | Hiển thị danh sách sản phẩm và khuyến mãi từ cơ sở dữ liệu | | PASS |
-| 62 | Kiểm tra sản phẩm mới được thêm | Thêm sản phẩm "Test Product" từ admin, refresh home | Sản phẩm "Test Product" xuất hiện trên trang home | | PASS |
-| 63 | Kiểm tra khuyến mãi mới được thêm | Thêm khuyến mãi từ admin, refresh home | Khuyến mãi mới xuất hiện trên trang home | | PASS |
-| 64 | Kiểm tra ảnh khuyến mãi | Promotion có ImageURL = "assets/images/buy-1-get-1.jpg" | Ảnh khuyến mãi hiển thị đúng, không hiển thị placeholder | | PASS |
-| 65 | Kiểm tra placeholder khi không có ImageURL | Promotion không có ImageURL hoặc ImageURL = "" | Hiển thị placeholder "Không có ảnh" thay vì ảnh | | PASS |
-| 66 | Click vào sản phẩm trên trang home | Click vào "Entremets Rose" | Chuyển đến trang chi tiết sản phẩm với ProductID = 1 | | PASS |
-| 67 | Tìm kiếm sản phẩm trên trang home | Search = "Entremets" | Hiển thị popup với kết quả tìm kiếm chứa các sản phẩm Entremets | | PASS |
-| 68 | Tìm kiếm sản phẩm với từ khóa không có kết quả | Search = "xyz123abc" | Hiển thị thông báo "Không tìm thấy sản phẩm" | | PASS |
-| 69 | Lọc sản phẩm theo danh mục trên trang home | Click tab "Entremet" | Chỉ hiển thị sản phẩm thuộc danh mục "Entremet" (Entremets Rose, Lime and Basil Entremets, Blanche Figues & Framboises) | | PASS |
-| 70 | Lọc sản phẩm theo danh mục "Mousse" | Click tab "Mousse" | Chỉ hiển thị sản phẩm thuộc danh mục "Mousse" (Mousse Chanh Dây, Mousse Dưa Lưới, Mousse Việt Quất) | | PASS |
-| 71 | Đăng nhập với tài khoản customer01 và vào **Tài khoản** | Username = "customer01", Password = "password" | Hiển thị thông tin tài khoản và lịch sử đơn hàng | | PASS |
-| 72 | Xem lịch sử đơn hàng (Customer) | Đăng nhập customer01 | Hiển thị bảng danh sách đơn hàng của chính khách hàng đó (chỉ ORD001, ORD003, ORD005) | | PASS |
-| 73 | Xem chi tiết đơn hàng (Customer) | Click vào đơn hàng ORD001 | Hiển thị chi tiết sản phẩm trong đơn hàng, số lượng, giá trị (Entremets Rose x1, Mousse Chanh Dây x1) | | PASS |
-| 74 | Cập nhật thông tin cá nhân (Customer) | FullName = "Nguyễn Văn A Mới", Phone = "0901234567", Address = "123 Nguyễn Huệ, Q1, TP.HCM" | Cập nhật thông tin thành công | | PASS |
-| 75 | Khách hàng cố gắng xem đơn hàng của người khác | customer01 cố gắng truy cập /api/orders.php?user_id=4 | Hiển thị thông báo "Bạn không có quyền truy cập" hoặc 403 Forbidden | | PASS |
-| 76 | Thêm sản phẩm vào giỏ hàng | Click "Thêm vào giỏ" cho "Entremets Rose", Quantity = 2 | Sản phẩm được thêm vào giỏ hàng với số lượng 2 | | PASS |
-| 77 | Xem giỏ hàng | Click icon giỏ hàng trên navigation | Hiển thị trang giỏ hàng với các sản phẩm đã thêm | | PASS |
-| 78 | Cập nhật số lượng trong giỏ hàng | ProductID = 1, Quantity = 5 | Số lượng sản phẩm trong giỏ hàng được cập nhật thành 5 | | PASS |
-| 79 | Xóa sản phẩm khỏi giỏ hàng | Click "Xóa" cho sản phẩm trong giỏ hàng | Sản phẩm bị xóa khỏi giỏ hàng | | PASS |
-| 80 | Xem giỏ hàng khi chưa đăng nhập | Không đăng nhập, click icon giỏ hàng | Hiển thị thông báo "Vui lòng đăng nhập để xem giỏ hàng" và chuyển đến trang đăng nhập | | PASS |
-| 81 | Đặt hàng với giỏ hàng trống | Giỏ hàng rỗng, click "Đặt hàng" | Hiển thị thông báo "Giỏ hàng trống" | | PASS |
-| 82 | Đặt hàng với thông tin thiếu | Không điền địa chỉ giao hàng, click "Đặt hàng" | Hiển thị thông báo "Vui lòng điền đầy đủ thông tin" | | PASS |
-| 83 | Đặt hàng thành công | Điền đầy đủ thông tin (tên, số điện thoại, địa chỉ, phương thức thanh toán) | Tạo đơn hàng thành công và chuyển đến trang xác nhận đơn hàng | | PASS |
-| 84 | Áp dụng mã khuyến mãi hợp lệ | PromotionCode = "GIAM10TRON15" (nếu tồn tại) | Mã khuyến mãi được áp dụng, giảm giá đúng | | PASS |
-| 85 | Áp dụng mã khuyến mãi không hợp lệ | PromotionCode = "INVALID123" | Hiển thị thông báo "Mã khuyến mãi không hợp lệ" | | PASS |
-| 86 | Áp dụng mã khuyến mãi đã hết hạn | PromotionCode đã có EndDate < NOW() | Hiển thị thông báo "Mã khuyến mãi đã hết hạn" | | PASS |
-| 87 | Staff truy cập trang quản lý đơn hàng | Username = "staff01", Password = "password" | Truy cập thành công trang /staff/ViewOders/order.html | | PASS |
-| 88 | Staff xem danh sách đơn hàng | Đăng nhập staff01, vào trang quản lý đơn hàng | Hiển thị danh sách tất cả đơn hàng | | PASS |
-| 89 | Staff cập nhật trạng thái đơn hàng | Chọn đơn hàng, cập nhật Status = "confirmed" | Cập nhật trạng thái thành công | | PASS |
-| 90 | Staff lọc đơn hàng theo trạng thái | Chọn checkbox "Chờ xử lý" | Chỉ hiển thị các đơn hàng có trạng thái "pending" | | PASS |
-| 91 | Customer truy cập trang admin | Username = "customer01", vào /admin/admin.html | Hiển thị thông báo "Bạn không có quyền truy cập" và chuyển về trang chủ | | PASS |
-| 92 | Customer truy cập trang staff | Username = "customer01", vào /staff/ViewOders/order.html | Hiển thị thông báo "Bạn không có quyền truy cập" và chuyển về trang chủ | | PASS |
-| 93 | Staff truy cập trang admin | Username = "staff01", vào /admin/admin.html | Hiển thị thông báo "Bạn không có quyền truy cập" và chuyển về trang chủ | | PASS |
-| 94 | Admin truy cập trang admin | Username = "admin", Password = "password" | Truy cập thành công trang /admin/admin.html | | PASS |
-| 95 | Gửi request API không có token | Authorization header = null | Trả về 401 Unauthorized | | PASS |
-| 96 | Gửi request API với token không hợp lệ | Token = "invalid_token" | Trả về 401 Unauthorized hoặc 403 Forbidden | | PASS |
-| 97 | Xóa sản phẩm không tồn tại | ProductID = "99999", DELETE /api/products.php/99999 | Trả về thông báo lỗi "Không tìm thấy sản phẩm" | | PASS |
-| 98 | Cập nhật đơn hàng với trạng thái không hợp lệ | Status = "invalid_status" | Trả về thông báo lỗi "Trạng thái không hợp lệ" | | PASS |
-| 99 | Thêm sản phẩm với danh mục không tồn tại | CategoryID = "999" | Trả về thông báo lỗi "Danh mục không tồn tại" | | PASS |
-| 100 | Refresh trang home sau khi thêm sản phẩm/khuyến mãi | Thêm sản phẩm/khuyến mãi từ admin, F5 trang home | Sản phẩm/khuyến mãi mới xuất hiện trên trang home với cache-busting | | PASS |
-| 101 | Thêm sản phẩm với giá âm | Price = "-50000" | Hiển thị thông báo lỗi "Giá không hợp lệ" và không cho thêm | | PASS |
-| 102 | Thêm sản phẩm với số lượng âm | Quantity = "-10" | Hiển thị thông báo lỗi "Số lượng không hợp lệ" và không cho thêm | | PASS |
-| 103 | Thêm sản phẩm với tên quá dài | ProductName = "A" x 300 ký tự | Hiển thị thông báo lỗi "Tên sản phẩm quá dài" | | FAIL |
-| 104 | Thêm sản phẩm với giá = 0 | Price = "0" | Hiển thị thông báo lỗi "Giá phải lớn hơn 0" hoặc cho phép (tùy business logic) | | PASS |
-| 105 | Cập nhật số lượng sản phẩm thành 0 | Sản phẩm có Quantity > 0, sửa Quantity = 0 | Sản phẩm được cập nhật và trạng thái chuyển thành "out_of_stock" | | FAIL |
-| 106 | Xem chi tiết sản phẩm không tồn tại | ProductID = "99999", truy cập /pages/product/product.html?id=99999 | Hiển thị thông báo "Sản phẩm không tồn tại" | | PASS |
-| 107 | Thêm nhiều sản phẩm vào giỏ hàng liên tiếp | Thêm 10 sản phẩm khác nhau vào giỏ hàng | Tất cả 10 sản phẩm đều được thêm vào giỏ hàng đúng | | PASS |
-| 108 | Cập nhật số lượng trong giỏ hàng thành 0 | ProductID = 1, Quantity = 0 | Sản phẩm bị xóa khỏi giỏ hàng hoặc hiển thị lỗi | | FAIL |
-| 109 | Cập nhật số lượng trong giỏ hàng vượt quá số lượng tồn kho | ProductID = 1 có Quantity = 10, cập nhật Quantity = 100 | Hiển thị thông báo "Số lượng vượt quá tồn kho" | | FAIL |
-| 110 | Đặt hàng với số lượng sản phẩm lớn | Giỏ hàng có 50 sản phẩm, đặt hàng | Đơn hàng được tạo thành công với tất cả 50 sản phẩm | | PASS |
-| 111 | Đặt hàng với giá trị đơn hàng vượt quá giới hạn | Tổng giá trị đơn hàng > 50,000,000 VNĐ | Đơn hàng được tạo thành công hoặc có cảnh báo (tùy business logic) | | PASS |
-| 112 | Áp dụng mã khuyến mãi với đơn hàng không đạt min_order_value | MinOrderValue = 1000000, đơn hàng = 500000 | Hiển thị thông báo "Đơn hàng chưa đạt giá trị tối thiểu" | | PASS |
-| 113 | Áp dụng mã khuyến mãi đã đạt giới hạn sử dụng | PromotionCode đã có UsedCount >= Quantity | Hiển thị thông báo "Mã khuyến mãi đã hết lượt sử dụng" | | FAIL |
-| 114 | Áp dụng mã khuyến mãi loại "gift" | PromotionCode có Type = "gift" | Mã được áp dụng và quà tặng được thêm vào đơn hàng | | FAIL |
-| 115 | Xem báo cáo theo năm không có dữ liệu | Year = "2023" (nếu không có đơn hàng năm 2023) | Hiển thị doanh thu = 0, tất cả số liệu = 0, biểu đồ trống | | PASS |
-| 116 | Xem báo cáo theo năm chưa tồn tại | Year = "2030" | Hiển thị thông báo hoặc số liệu = 0 cho năm tương lai | | PASS |
-| 117 | Chọn nhiều filter đơn hàng cùng lúc | Chọn "Chờ xử lý" và "Đã xác nhận" cùng lúc | Hiển thị đơn hàng có trạng thái "pending" HOẶC "confirmed" | | FAIL |
-| 118 | Tìm kiếm đơn hàng theo mã đơn hàng | Search = "ORD001" | Hiển thị đơn hàng có mã ORD001 | | PASS |
-| 119 | Tìm kiếm đơn hàng theo tên khách hàng | Search = "Nguyễn Văn A" | Hiển thị các đơn hàng của khách hàng "Nguyễn Văn A" | | PASS |
-| 120 | Xem chi tiết đơn hàng với nhiều sản phẩm | Đơn hàng có 10 sản phẩm khác nhau | Hiển thị đầy đủ 10 sản phẩm trong chi tiết đơn hàng | | PASS |
-| 121 | Cập nhật trạng thái đơn hàng từ "completed" về "pending" | Đơn hàng đã hoàn thành, cập nhật Status = "pending" | Hiển thị thông báo "Không thể chuyển đơn hàng đã hoàn thành về trạng thái chờ xử lý" | | FAIL |
-| 122 | Xóa đơn hàng đã được giao | Đơn hàng có Status = "completed", ấn Xóa | Hiển thị thông báo cảnh báo hoặc ngăn xóa đơn hàng đã giao | | PASS |
-| 123 | Khách hàng gửi khiếu nại | Customer01 gửi khiếu nại về đơn hàng ORD001 | Khiếu nại được tạo thành công và hiển thị trong danh sách | | PASS |
-| 124 | Staff xem danh sách khiếu nại | Staff01 đăng nhập, vào /staff/handleComplaint/complaint.html | Hiển thị danh sách tất cả khiếu nại | | PASS |
-| 125 | Staff cập nhật trạng thái khiếu nại | Chọn khiếu nại, cập nhật Status = "processing" | Cập nhật trạng thái thành công | | PASS |
-| 126 | Staff phản hồi khách hàng | Chọn khiếu nại, điền nội dung phản hồi, ấn "Gửi phản hồi" | Phản hồi được gửi thành công và ghi vào ComplaintResponses | | PASS |
-| 127 | Admin xem danh sách khiếu nại | Admin đăng nhập, vào trang quản lý khiếu nại | Hiển thị danh sách tất cả khiếu nại với đầy đủ thông tin | | PASS |
-| 128 | Admin xóa khiếu nại | Chọn khiếu nại, ấn Xóa | Xóa khiếu nại thành công và biến mất khỏi danh sách | | PASS |
-| 129 | Lọc khiếu nại theo trạng thái | Chọn trạng thái "pending" | Chỉ hiển thị khiếu nại có trạng thái "pending" | | PASS |
-| 130 | Tìm kiếm khiếu nại theo mã đơn hàng | Search = "ORD001" | Hiển thị khiếu nại liên quan đến đơn hàng ORD001 | | PASS |
-| 131 | Khách hàng gửi liên hệ | Customer01 gửi form liên hệ với Subject = "Câu hỏi", Message = "Tôi muốn tư vấn" | Liên hệ được gửi thành công | | PASS |
-| 132 | Staff xem danh sách liên hệ | Staff01 đăng nhập, vào /staff/handleContact/contact.html | Hiển thị danh sách tất cả liên hệ từ khách hàng | | PASS |
-| 133 | Staff đánh dấu đã phản hồi liên hệ | Chọn liên hệ, ấn "Đánh dấu đã phản hồi" | Trạng thái liên hệ chuyển thành "responded" | | PASS |
-| 134 | Lọc liên hệ theo trạng thái | Chọn trạng thái "pending" | Chỉ hiển thị liên hệ có trạng thái "pending" | | PASS |
-| 135 | Tìm kiếm liên hệ theo tên khách hàng | Search = "Nguyễn Văn A" | Hiển thị liên hệ từ khách hàng "Nguyễn Văn A" | | PASS |
-| 136 | Gửi form liên hệ với thông tin thiếu | Không điền Subject hoặc Message | Hiển thị thông báo "Vui lòng điền đầy đủ thông tin" | | PASS |
-| 137 | Khách hàng đánh giá sản phẩm | Customer01 đã mua sản phẩm, vào trang sản phẩm và đánh giá 5 sao | Đánh giá được tạo thành công | | FAIL |
-| 138 | Xem đánh giá sản phẩm | Vào trang chi tiết sản phẩm | Hiển thị danh sách đánh giá của sản phẩm đó | | FAIL |
-| 139 | Admin duyệt đánh giá | Admin vào trang quản lý đánh giá, phê duyệt đánh giá | Đánh giá được phê duyệt và hiển thị công khai | | FAIL |
-| 140 | Khách hàng cố gắng đánh giá sản phẩm chưa mua | Customer01 chưa mua sản phẩm ID=1, cố gắng đánh giá | Hiển thị thông báo "Bạn cần mua sản phẩm để đánh giá" | | FAIL |
-| 141 | Tìm kiếm sản phẩm với ký tự đặc biệt | Search = "Entremets@#$%" | Hiển thị kết quả tìm kiếm an toàn, không bị lỗi SQL injection | | PASS |
-| 142 | Tìm kiếm sản phẩm với SQL injection attempt | Search = "'; DROP TABLE Products; --" | Không bị lỗi, hiển thị "Không tìm thấy sản phẩm" hoặc kết quả an toàn | | PASS |
-| 143 | Upload ảnh sản phẩm với file quá lớn | Image file size > 5MB | Hiển thị thông báo "File quá lớn, vui lòng chọn file nhỏ hơn 5MB" | | FAIL |
-| 144 | Upload ảnh sản phẩm với định dạng không hợp lệ | Image file = document.pdf | Hiển thị thông báo "Định dạng file không hợp lệ, vui lòng chọn file ảnh" | | FAIL |
-| 145 | Đặt hàng với phương thức thanh toán "vnpay" | PaymentMethod = "vnpay" | Chuyển đến trang thanh toán VNPay hoặc hiển thị form thanh toán | | FAIL |
-| 146 | Đặt hàng với phương thức thanh toán "momo" | PaymentMethod = "momo" | Chuyển đến trang thanh toán MoMo hoặc hiển thị QR code | | FAIL |
-| 147 | Đặt hàng với phương thức thanh toán "zalopay" | PaymentMethod = "zalopay" | Chuyển đến trang thanh toán ZaloPay | | FAIL |
-| 148 | Xem trang "Về chúng tôi" | Truy cập /pages/about/about.html | Hiển thị trang giới thiệu về cửa hàng | | PASS |
-| 149 | Xem trang "Liên hệ" | Truy cập /pages/contact/contact.html | Hiển thị form liên hệ và thông tin liên hệ | | PASS |
-| 150 | Responsive: Xem trang home trên mobile | Mở trang home trên trình duyệt mobile (width < 480px) | Giao diện hiển thị đúng, menu collapse thành hamburger menu | | PASS |
+# BÁO CÁO ĐỒ ÁN CÔNG NGHỆ PHẦN MỀM
+## Xây dựng Website Bán Bánh Kem Cao Cấp "La Cuisine Ngọt"
 
 ---
 
-## GHI CHÚ
-- **Actual results**: Điền kết quả thực tế sau khi test (mô tả chi tiết kết quả)
-- **Status**: 
-  - **PASS**: Nếu tính năng hoạt động đúng như Expected result
-  - **FAIL**: Nếu tính năng không hoạt động hoặc không đạt Expected result
-- **Date**: Ngày kiểm thử: _______________
-- **Tester**: Tên người kiểm thử: _______________
+## MỤC LỤC
+
+1. **LỜI NÓI ĐẦU** ........................................................................... 4
+
+2. **PHÂN CÔNG THÀNH VIÊN TRONG NHÓM** ......................................... 5
+
+3. **DANH MỤC HÌNH ẢNH** ................................................................. 6
+
+4. **DANH MỤC BẢNG** ....................................................................... 7
+
+5. **CHƯƠNG 1. KHẢO SÁT BÀI TOÁN** ...................................................... 8
+   1.1. Mô tả yêu cầu bài toán ............................................................ 8
+   1.2. Khảo sát bài toán .................................................................. 8
+   1.3. Xác định thông tin cơ bản cho nghiệp vụ của bài toán ....................... 9
+   1.4. Xây dựng biểu đồ mô tả nghiệp vụ và phân cấp chức năng ................... 10
+   1.5. Xây dựng kế hoạch dự án đơn giản ............................................... 11
+
+6. **CHƯƠNG 2. ĐẶC TẢ YÊU CẦU BÀI TOÁN** ........................................... 13
+   2.1. Giới thiệu chung ................................................................... 13
+   2.2. Biểu đồ use case ................................................................... 14
+      2.2.1. Biểu đồ use case tổng quan ................................................. 14
+      2.2.2. Biểu đồ use case phân rã mức 2 ............................................ 15
+   2.3. Đặc tả use case .................................................................... 16
+   2.4. Các yêu cầu phi chức năng ........................................................ 18
+
+7. **CHƯƠNG 3. PHÂN TÍCH YÊU CẦU** ...................................................... 20
+   3.1. Xác định các lớp phân tích ........................................................ 20
+   3.2. Xây dựng biểu đồ trình tự ......................................................... 20
+   3.3. Xây dựng biểu đồ lớp phân tích ................................................... 21
+   3.4. Xây dựng biểu đồ thực thể liên kết (ERD) ....................................... 21
+
+8. **CHƯƠNG 4. THIẾT KẾ CHƯƠNG TRÌNH** ................................................. 22
+   4.1. Thiết kế kiến trúc .................................................................. 22
+   4.2. Thiết kế cơ sở dữ liệu ............................................................. 22
+   4.3. Thiết kế chi tiết các gói ........................................................... 24
+   4.4. Thiết kế chi tiết lớp ............................................................... 25
+   4.5. Sơ đồ lớp chi tiết .................................................................. 26
+   4.6. Thiết kế giao diện .................................................................. 26
+
+9. **CHƯƠNG 5. XÂY DỰNG CHƯƠNG TRÌNH MINH HỌA** .................................. 29
+   5.1. Thư viện và công cụ sử dụng ...................................................... 29
+   5.2. Kết quả chương trình minh họa .................................................... 29
+   5.3. Giao diện minh hoạ các chức năng của chương trình ............................ 29
+
+10. **CHƯƠNG 6. KIỂM THỬ CHƯƠNG TRÌNH** .............................................. 33
+    6.1. Kiểm thử các chức năng đã thực hiện ........................................... 33
+       6.1.1. Kiểm thử cho chức năng 1 ................................................... 33
+       6.1.2. Kiểm thử cho chức năng 2 ................................................... 34
+       6.1.3. Kiểm thử yêu cầu phi chức năng ............................................. 34
+
+11. **CHƯƠNG 7. HƯỚNG DẪN CÀI ĐẶT VÀ SỬ DỤNG** .................................... 35
+    7.1. Hướng dẫn cài đặt ................................................................. 35
+    7.2. Đối tượng, phạm vi sử dụng ....................................................... 35
+    7.3. Xác định các yêu cầu cài đặt ..................................................... 35
+    7.4. Hướng dẫn chi tiết các bước cài đặt ............................................ 35
+    7.5. Hướng dẫn sử dụng phần mềm ..................................................... 35
+
+12. **KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN** .................................................. 36
+
+13. **TÀI LIỆU THAM KHẢO** ................................................................ 37
+
+14. **PHỤ LỤC** .............................................................................. 38
 
 ---
 
-## KẾT QUẢ TỔNG HỢP
+## LỜI NÓI ĐẦU
 
-| Tổng số test | PASS | FAIL | Tỷ lệ Pass (%) |
-|--------------|------|------|----------------|
-| 150 | 142 | 8 | 94.67% |
+*[Nội dung lời nói đầu sẽ được bổ sung sau]*
 
 ---
 
-## TÀI KHOẢN TEST
+## PHÂN CÔNG THÀNH VIÊN TRONG NHÓM
 
-### Admin
-- Username: `admin`
-- Password: `password`
+*[Bảng phân công thành viên sẽ được bổ sung sau]*
 
-### Staff
-- Username: `staff01`, `staff02`, `staff03`, `staff04`, `staff05`, `staff06`
-- Password: `password` (tất cả)
-
-### Customer
-- Username: `customer01`, `customer02`
-- Password: `password` (tất cả)
+| STT | Họ và tên | MSSV | Nhiệm vụ | Ghi chú |
+|-----|-----------|------|----------|---------|
+| 1   |           |      |          |         |
+| 2   |           |      |          |         |
+| 3   |           |      |          |         |
+| 4   |           |      |          |         |
 
 ---
 
-## SẢN PHẨM MẪU
+## DANH MỤC HÌNH ẢNH
 
-1. **Entremets Rose** (ID: 1) - Entremet - 650,000 VNĐ
-2. **Lime and Basil Entremets** (ID: 2) - Entremet - 600,000 VNĐ
-3. **Blanche Figues & Framboises** (ID: 3) - Entremet - 650,000 VNĐ
-4. **Mousse Chanh Dây** (ID: 4) - Mousse - 550,000 VNĐ
-5. **Mousse Dưa Lưới** (ID: 5) - Mousse - 550,000 VNĐ
-6. **Mousse Việt Quất** (ID: 6) - Mousse - 550,000 VNĐ
+*[Danh mục hình ảnh sẽ được bổ sung sau]*
 
----
-
-## TRẠNG THÁI ĐƠN HÀNG
-
-- `pending` - Chờ xử lý
-- `confirmed` - Đã xác nhận
-- `preparing` - Đang chuẩn bị
-- `shipping` - Đang giao
-- `completed` - Hoàn thành
-- `cancelled` - Đã hủy
+| STT | Tên hình | Mô tả | Trang |
+|-----|----------|-------|-------|
+| 1   |          |       |       |
+| 2   |          |       |       |
 
 ---
 
-## LOẠI KHUYẾN MÃI
+## DANH MỤC BẢNG
 
-- `percent` - Giảm giá %
-- `fixed_amount` - Giảm giá cố định (VNĐ)
-- `free_shipping` - Miễn phí vận chuyển
-- `gift` - Quà tặng
+*[Danh mục bảng sẽ được bổ sung sau]*
+
+| STT | Tên bảng | Mô tả | Trang |
+|-----|----------|-------|-------|
+| 1   |          |       |       |
+| 2   |          |       |       |
+
+---
+
+## CHƯƠNG 1. KHẢO SÁT BÀI TOÁN
+
+### 1.1. Mô tả yêu cầu bài toán
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 1.2. Khảo sát bài toán
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 1.3. Xác định thông tin cơ bản cho nghiệp vụ của bài toán
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 1.4. Xây dựng biểu đồ mô tả nghiệp vụ và phân cấp chức năng
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 1.5. Xây dựng kế hoạch dự án đơn giản
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## CHƯƠNG 2. ĐẶC TẢ YÊU CẦU BÀI TOÁN
+
+### 2.1. Giới thiệu chung
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 2.2. Biểu đồ use case
+
+#### 2.2.1. Biểu đồ use case tổng quan
+
+*[Nội dung sẽ được bổ sung sau]*
+
+#### 2.2.2. Biểu đồ use case phân rã mức 2
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 2.3. Đặc tả use case
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 2.4. Các yêu cầu phi chức năng
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## CHƯƠNG 3. PHÂN TÍCH YÊU CẦU
+
+### 3.1. Xác định các lớp phân tích
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 3.2. Xây dựng biểu đồ trình tự
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 3.3. Xây dựng biểu đồ lớp phân tích
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 3.4. Xây dựng biểu đồ thực thể liên kết (ERD)
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## CHƯƠNG 4. THIẾT KẾ CHƯƠNG TRÌNH
+
+### 4.1. Thiết kế kiến trúc
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 4.2. Thiết kế cơ sở dữ liệu
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 4.3. Thiết kế chi tiết các gói
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 4.4. Thiết kế chi tiết lớp
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 4.5. Sơ đồ lớp chi tiết
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 4.6. Thiết kế giao diện
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## CHƯƠNG 5. XÂY DỰNG CHƯƠNG TRÌNH MINH HỌA
+
+### 5.1. Thư viện và công cụ sử dụng
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 5.2. Kết quả chương trình minh họa
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 5.3. Giao diện minh hoạ các chức năng của chương trình
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## CHƯƠNG 6. KIỂM THỬ CHƯƠNG TRÌNH
+
+### 6.1. Kiểm thử các chức năng đã thực hiện
+
+#### 6.1.1. Kiểm thử cho chức năng 1
+
+*[Nội dung sẽ được bổ sung sau]*
+
+#### 6.1.2. Kiểm thử cho chức năng 2
+
+*[Nội dung sẽ được bổ sung sau]*
+
+#### 6.1.3. Kiểm thử yêu cầu phi chức năng
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## CHƯƠNG 7. HƯỚNG DẪN CÀI ĐẶT VÀ SỬ DỤNG
+
+### 7.1. Hướng dẫn cài đặt
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 7.2. Đối tượng, phạm vi sử dụng
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 7.3. Xác định các yêu cầu cài đặt
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 7.4. Hướng dẫn chi tiết các bước cài đặt
+
+*[Nội dung sẽ được bổ sung sau]*
+
+### 7.5. Hướng dẫn sử dụng phần mềm
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+
+*[Nội dung sẽ được bổ sung sau]*
+
+---
+
+## TÀI LIỆU THAM KHẢO
+
+*[Danh sách tài liệu tham khảo sẽ được bổ sung sau]*
+
+---
+
+## PHỤ LỤC
+
+*[Nội dung phụ lục sẽ được bổ sung sau]*
+
+---
+
+**Made with ❤️ by Team Nhóm 1 - Ca 4 - CNPM**

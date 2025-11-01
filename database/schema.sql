@@ -108,9 +108,9 @@ CREATE TABLE Orders (
     DiscountAmount DECIMAL(10,2) DEFAULT 0,
     ShippingFee DECIMAL(10,2) DEFAULT 0,
     FinalAmount DECIMAL(12,2) NOT NULL,
-    PaymentMethod ENUM('cod', 'bank_transfer', 'momo', 'zalopay', 'vnpay') DEFAULT 'cod',
-    PaymentStatus ENUM('pending', 'paid', 'failed', 'refunded') DEFAULT 'pending',
-    OrderStatus ENUM('pending', 'confirmed', 'preparing', 'shipping', 'completed', 'cancelled') DEFAULT 'pending',
+    PaymentMethod ENUM('vnpay') DEFAULT 'vnpay',
+    PaymentStatus ENUM('pending', 'paid', 'failed', 'refunded') DEFAULT 'paid',
+    OrderStatus ENUM('pending', 'order_received', 'preparing', 'delivering', 'delivery_successful', 'delivery_failed') DEFAULT 'pending',
     Note TEXT,
     CancelReason TEXT NULL DEFAULT NULL,
     DeliveryDate DATE,
@@ -334,11 +334,11 @@ INSERT INTO Products (ProductID, ProductName, CategoryID, Description, Price, Or
 
 -- 5. Orders (Đơn hàng mẫu)
 INSERT INTO Orders (OrderID, OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, Note, CreatedAt, CompletedAt) VALUES
-(1, 'ORD001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1200000, 0, 30000, 1230000, 'cod', 'paid', 'completed', NULL, DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY)),
-(2, 'ORD002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1100000, 50000, 30000, 1080000, 'bank_transfer', 'paid', 'shipping', NULL, DATE_SUB(NOW(), INTERVAL 2 DAY), NULL),
-(3, 'ORD003', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'momo', 'paid', 'preparing', 'Giao sau 15h', DATE_SUB(NOW(), INTERVAL 1 DAY), NULL),
-(4, 'ORD004', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1000000, 0, 30000, 1030000, 'cod', 'pending', 'pending', NULL, NOW(), NULL),
-(5, 'ORD005', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'bank_transfer', 'paid', 'completed', NULL, DATE_SUB(NOW(), INTERVAL 25 DAY), DATE_SUB(NOW(), INTERVAL 22 DAY));
+(1, 'ORD001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1200000, 0, 30000, 1230000, 'vnpay', 'paid', 'delivery_successful', NULL, DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 'ORD002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1100000, 50000, 30000, 1080000, 'vnpay', 'paid', 'delivering', NULL, DATE_SUB(NOW(), INTERVAL 2 DAY), NULL),
+(3, 'ORD003', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'vnpay', 'paid', 'preparing', 'Giao sau 15h', DATE_SUB(NOW(), INTERVAL 1 DAY), NULL),
+(4, 'ORD004', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1000000, 0, 30000, 1030000, 'vnpay', 'paid', 'pending', NULL, NOW(), NULL),
+(5, 'ORD005', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'vnpay', 'paid', 'delivery_successful', NULL, DATE_SUB(NOW(), INTERVAL 25 DAY), DATE_SUB(NOW(), INTERVAL 22 DAY));
 
 -- 6. Order Items (Chi tiết đơn hàng)
 INSERT INTO OrderItems (OrderID, ProductID, ProductName, ProductPrice, Quantity, Subtotal, Note) VALUES
@@ -364,16 +364,16 @@ INSERT INTO OrderItems (OrderID, ProductID, ProductName, ProductPrice, Quantity,
 
 -- 7. Order Status History
 INSERT INTO OrderStatusHistory (OrderID, OldStatus, NewStatus, ChangedBy, Note, CreatedAt) VALUES
-(1, 'pending', 'confirmed', 1, 'Đơn hàng đã được xác nhận', DATE_SUB(NOW(), INTERVAL 5 DAY)),
-(1, 'confirmed', 'preparing', 1, 'Đang chuẩn bị bánh', DATE_SUB(NOW(), INTERVAL 4 DAY)),
-(1, 'preparing', 'shipping', 1, 'Đã giao cho shipper', DATE_SUB(NOW(), INTERVAL 3 DAY)),
-(1, 'shipping', 'completed', 1, 'Giao hàng thành công', DATE_SUB(NOW(), INTERVAL 2 DAY)),
-(2, 'pending', 'confirmed', 1, 'Đơn hàng đã được xác nhận', DATE_SUB(NOW(), INTERVAL 2 DAY)),
-(2, 'confirmed', 'preparing', 1, 'Đang chuẩn bị bánh', DATE_SUB(NOW(), INTERVAL 1 DAY)),
-(2, 'preparing', 'shipping', 1, 'Đang giao hàng', NOW()),
-(3, 'pending', 'confirmed', 1, 'Đơn hàng đã xác nhận', DATE_SUB(NOW(), INTERVAL 1 DAY)),
-(3, 'confirmed', 'preparing', 1, 'Đang chuẩn bị', NOW()),
-(5, 'pending', 'completed', 1, 'Đơn hàng hoàn thành', DATE_SUB(NOW(), INTERVAL 22 DAY));
+(1, 'pending', 'order_received', 1, 'Đã nhận đơn', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(1, 'order_received', 'preparing', 1, 'Đang chuẩn bị bánh', DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(1, 'preparing', 'delivering', 1, 'Đã giao cho shipper', DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(1, 'delivering', 'delivery_successful', 1, 'Giao hàng thành công', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 'pending', 'order_received', 1, 'Đã nhận đơn', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 'order_received', 'preparing', 1, 'Đang chuẩn bị bánh', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(2, 'preparing', 'delivering', 1, 'Đang giao hàng', NOW()),
+(3, 'pending', 'order_received', 1, 'Đã nhận đơn', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(3, 'order_received', 'preparing', 1, 'Đang chuẩn bị', NOW()),
+(5, 'pending', 'delivery_successful', 1, 'Đơn hàng hoàn thành', DATE_SUB(NOW(), INTERVAL 22 DAY));
 
 -- 8. Reviews (Đánh giá sản phẩm)
 INSERT INTO Reviews (ProductID, UserID, OrderID, Rating, Title, Content, IsVerifiedPurchase, Status, CreatedAt) VALUES
@@ -503,170 +503,170 @@ UPDATE Contacts SET RespondedBy = 2, RespondedAt = DATE_SUB(NOW(), INTERVAL 2 DA
 -- Năm 2024: 12 tháng với doanh thu mẫu
 INSERT INTO Orders (OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, ShippingAddress, Ward, District, City, TotalAmount, DiscountAmount, ShippingFee, FinalAmount, PaymentMethod, PaymentStatus, OrderStatus, CreatedAt, CompletedAt) VALUES
 -- Tháng 1/2024
-('ORD20240101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1500000, 0, 30000, 1530000, 'cod', 'paid', 'completed', '2024-01-15 10:00:00', '2024-01-17 14:00:00'),
-('ORD20240102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'bank_transfer', 'paid', 'completed', '2024-01-20 11:00:00', '2024-01-22 15:00:00'),
+('ORD20240101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1500000, 0, 30000, 1530000, 'vnpay', 'paid', 'delivery_successful', '2024-01-15 10:00:00', '2024-01-17 14:00:00'),
+('ORD20240102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'vnpay', 'paid', 'delivery_successful', '2024-01-20 11:00:00', '2024-01-22 15:00:00'),
 -- Tháng 2/2024
-('ORD20240201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'cod', 'paid', 'completed', '2024-02-10 09:00:00', '2024-02-12 13:00:00'),
-('ORD20240202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1300000, 0, 30000, 1330000, 'momo', 'paid', 'completed', '2024-02-25 14:00:00', '2024-02-27 16:00:00'),
+('ORD20240201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2024-02-10 09:00:00', '2024-02-12 13:00:00'),
+('ORD20240202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1300000, 0, 30000, 1330000, 'vnpay', 'paid', 'delivery_successful', '2024-02-25 14:00:00', '2024-02-27 16:00:00'),
 -- Tháng 3/2024
-('ORD20240301', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 0, 30000, 1980000, 'cod', 'paid', 'completed', '2024-03-05 10:00:00', '2024-03-07 14:00:00'),
-('ORD20240302', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2024-03-18 11:00:00', '2024-03-20 15:00:00'),
+('ORD20240301', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 0, 30000, 1980000, 'vnpay', 'paid', 'delivery_successful', '2024-03-05 10:00:00', '2024-03-07 14:00:00'),
+('ORD20240302', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-03-18 11:00:00', '2024-03-20 15:00:00'),
 -- Tháng 4/2024
-('ORD20240401', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'cod', 'paid', 'completed', '2024-04-12 09:00:00', '2024-04-14 13:00:00'),
-('ORD20240402', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1400000, 0, 30000, 1430000, 'momo', 'paid', 'completed', '2024-04-28 14:00:00', '2024-04-30 16:00:00'),
+('ORD20240401', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'vnpay', 'paid', 'delivery_successful', '2024-04-12 09:00:00', '2024-04-14 13:00:00'),
+('ORD20240402', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1400000, 0, 30000, 1430000, 'vnpay', 'paid', 'delivery_successful', '2024-04-28 14:00:00', '2024-04-30 16:00:00'),
 -- Tháng 5/2024
-('ORD20240501', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'cod', 'paid', 'completed', '2024-05-08 10:00:00', '2024-05-10 14:00:00'),
-('ORD20240502', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 50000, 30000, 1880000, 'bank_transfer', 'paid', 'completed', '2024-05-22 11:00:00', '2024-05-24 15:00:00'),
+('ORD20240501', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2024-05-08 10:00:00', '2024-05-10 14:00:00'),
+('ORD20240502', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 50000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2024-05-22 11:00:00', '2024-05-24 15:00:00'),
 -- Tháng 6/2024
-('ORD20240601', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'cod', 'paid', 'completed', '2024-06-03 09:00:00', '2024-06-05 13:00:00'),
-('ORD20240602', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1550000, 0, 30000, 1580000, 'momo', 'paid', 'completed', '2024-06-19 14:00:00', '2024-06-21 16:00:00'),
+('ORD20240601', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'vnpay', 'paid', 'delivery_successful', '2024-06-03 09:00:00', '2024-06-05 13:00:00'),
+('ORD20240602', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1550000, 0, 30000, 1580000, 'vnpay', 'paid', 'delivery_successful', '2024-06-19 14:00:00', '2024-06-21 16:00:00'),
 -- Tháng 7/2024
-('ORD20240701', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 50000, 30000, 1830000, 'cod', 'paid', 'completed', '2024-07-11 10:00:00', '2024-07-13 14:00:00'),
-('ORD20240702', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 0, 30000, 2030000, 'bank_transfer', 'paid', 'completed', '2024-07-26 11:00:00', '2024-07-28 15:00:00'),
+('ORD20240701', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 50000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-07-11 10:00:00', '2024-07-13 14:00:00'),
+('ORD20240702', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 0, 30000, 2030000, 'vnpay', 'paid', 'delivery_successful', '2024-07-26 11:00:00', '2024-07-28 15:00:00'),
 -- Tháng 8/2024
-('ORD20240801', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'cod', 'paid', 'completed', '2024-08-07 09:00:00', '2024-08-09 13:00:00'),
-('ORD20240802', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2150000, 100000, 30000, 2080000, 'momo', 'paid', 'completed', '2024-08-23 14:00:00', '2024-08-25 16:00:00'),
+('ORD20240801', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2024-08-07 09:00:00', '2024-08-09 13:00:00'),
+('ORD20240802', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2150000, 100000, 30000, 2080000, 'vnpay', 'paid', 'delivery_successful', '2024-08-23 14:00:00', '2024-08-25 16:00:00'),
 -- Tháng 9/2024
-('ORD20240901', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'cod', 'paid', 'completed', '2024-09-14 10:00:00', '2024-09-16 14:00:00'),
-('ORD20240902', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'bank_transfer', 'paid', 'completed', '2024-09-29 11:00:00', '2024-10-01 15:00:00'),
+('ORD20240901', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'vnpay', 'paid', 'delivery_successful', '2024-09-14 10:00:00', '2024-09-16 14:00:00'),
+('ORD20240902', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2024-09-29 11:00:00', '2024-10-01 15:00:00'),
 -- Tháng 10/2024
-('ORD20241001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2050000, 0, 30000, 2080000, 'cod', 'paid', 'completed', '2024-10-09 09:00:00', '2024-10-11 13:00:00'),
-('ORD20241002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'momo', 'paid', 'completed', '2024-10-24 14:00:00', '2024-10-26 16:00:00'),
+('ORD20241001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2050000, 0, 30000, 2080000, 'vnpay', 'paid', 'delivery_successful', '2024-10-09 09:00:00', '2024-10-11 13:00:00'),
+('ORD20241002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2024-10-24 14:00:00', '2024-10-26 16:00:00'),
 -- Tháng 11/2024
-('ORD20241101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'cod', 'paid', 'completed', '2024-11-05 10:00:00', '2024-11-07 14:00:00'),
-('ORD20241102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2024-11-20 11:00:00', '2024-11-22 15:00:00'),
+('ORD20241101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-11-05 10:00:00', '2024-11-07 14:00:00'),
+('ORD20241102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-11-20 11:00:00', '2024-11-22 15:00:00'),
 -- Tháng 12/2024
-('ORD20241201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2400000, 100000, 30000, 2330000, 'cod', 'paid', 'completed', '2024-12-12 09:00:00', '2024-12-14 13:00:00'),
-('ORD20241202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 0, 30000, 2230000, 'momo', 'paid', 'completed', '2024-12-28 14:00:00', '2024-12-30 16:00:00'),
+('ORD20241201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2400000, 100000, 30000, 2330000, 'vnpay', 'paid', 'delivery_successful', '2024-12-12 09:00:00', '2024-12-14 13:00:00'),
+('ORD20241202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 0, 30000, 2230000, 'vnpay', 'paid', 'delivery_successful', '2024-12-28 14:00:00', '2024-12-30 16:00:00'),
 -- Năm 2025: 10 tháng (tháng 1-10)
 -- Tháng 1/2025
-('ORD20250101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'cod', 'paid', 'completed', '2025-01-10 10:00:00', '2025-01-12 14:00:00'),
-('ORD20250102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'bank_transfer', 'paid', 'completed', '2025-01-25 11:00:00', '2025-01-27 15:00:00'),
+('ORD20250101', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2025-01-10 10:00:00', '2025-01-12 14:00:00'),
+('ORD20250102', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'vnpay', 'paid', 'delivery_successful', '2025-01-25 11:00:00', '2025-01-27 15:00:00'),
 -- Tháng 2/2025
-('ORD20250201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 0, 30000, 1880000, 'cod', 'paid', 'completed', '2025-02-08 09:00:00', '2025-02-10 13:00:00'),
-('ORD20250202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'momo', 'paid', 'completed', '2025-02-22 14:00:00', '2025-02-24 16:00:00'),
+('ORD20250201', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 0, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2025-02-08 09:00:00', '2025-02-10 13:00:00'),
+('ORD20250202', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'vnpay', 'paid', 'delivery_successful', '2025-02-22 14:00:00', '2025-02-24 16:00:00'),
 -- Tháng 3/2025
-('ORD20250301', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-03-15 10:00:00', '2025-03-17 14:00:00'),
-('ORD20250302', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 0, 30000, 2030000, 'bank_transfer', 'paid', 'completed', '2025-03-28 11:00:00', '2025-03-30 15:00:00'),
+('ORD20250301', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-03-15 10:00:00', '2025-03-17 14:00:00'),
+('ORD20250302', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 0, 30000, 2030000, 'vnpay', 'paid', 'delivery_successful', '2025-03-28 11:00:00', '2025-03-30 15:00:00'),
 -- Tháng 4/2025
-('ORD20250401', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 0, 30000, 1930000, 'cod', 'paid', 'completed', '2025-04-12 09:00:00', '2025-04-14 13:00:00'),
-('ORD20250402', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'momo', 'paid', 'completed', '2025-04-26 14:00:00', '2025-04-28 16:00:00'),
+('ORD20250401', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 0, 30000, 1930000, 'vnpay', 'paid', 'delivery_successful', '2025-04-12 09:00:00', '2025-04-14 13:00:00'),
+('ORD20250402', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'vnpay', 'paid', 'delivery_successful', '2025-04-26 14:00:00', '2025-04-28 16:00:00'),
 -- Tháng 5/2025
-('ORD20250501', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2025-05-09 10:00:00', '2025-05-11 14:00:00'),
-('ORD20250502', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2150000, 0, 30000, 2180000, 'bank_transfer', 'paid', 'completed', '2025-05-23 11:00:00', '2025-05-25 15:00:00'),
+('ORD20250501', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2025-05-09 10:00:00', '2025-05-11 14:00:00'),
+('ORD20250502', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2150000, 0, 30000, 2180000, 'vnpay', 'paid', 'delivery_successful', '2025-05-23 11:00:00', '2025-05-25 15:00:00'),
 -- Tháng 6/2025
-('ORD20250601', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'cod', 'paid', 'completed', '2025-06-06 09:00:00', '2025-06-08 13:00:00'),
-('ORD20250602', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'momo', 'paid', 'completed', '2025-06-20 14:00:00', '2025-06-22 16:00:00'),
+('ORD20250601', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-06-06 09:00:00', '2025-06-08 13:00:00'),
+('ORD20250602', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'vnpay', 'paid', 'delivery_successful', '2025-06-20 14:00:00', '2025-06-22 16:00:00'),
 -- Tháng 7/2025
-('ORD20250701', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2050000, 100000, 30000, 1980000, 'cod', 'paid', 'completed', '2025-07-13 10:00:00', '2025-07-15 14:00:00'),
-('ORD20250702', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'bank_transfer', 'paid', 'completed', '2025-07-27 11:00:00', '2025-07-29 15:00:00'),
+('ORD20250701', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2050000, 100000, 30000, 1980000, 'vnpay', 'paid', 'delivery_successful', '2025-07-13 10:00:00', '2025-07-15 14:00:00'),
+('ORD20250702', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-07-27 11:00:00', '2025-07-29 15:00:00'),
 -- Tháng 8/2025
-('ORD20250801', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 50000, 30000, 1830000, 'cod', 'paid', 'completed', '2025-08-10 09:00:00', '2025-08-12 13:00:00'),
-('ORD20250802', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 0, 30000, 2230000, 'momo', 'paid', 'completed', '2025-08-24 14:00:00', '2025-08-26 16:00:00'),
+('ORD20250801', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 50000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-08-10 09:00:00', '2025-08-12 13:00:00'),
+('ORD20250802', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 0, 30000, 2230000, 'vnpay', 'paid', 'delivery_successful', '2025-08-24 14:00:00', '2025-08-26 16:00:00'),
 -- Tháng 9/2025
-('ORD20250901', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'cod', 'paid', 'completed', '2025-09-07 10:00:00', '2025-09-09 14:00:00'),
-('ORD20250902', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-09-21 11:00:00', '2025-09-23 15:00:00'),
+('ORD20250901', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2025-09-07 10:00:00', '2025-09-09 14:00:00'),
+('ORD20250902', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2025-09-21 11:00:00', '2025-09-23 15:00:00'),
 -- Tháng 10/2025
-('ORD20251001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 0, 30000, 2130000, 'cod', 'paid', 'completed', '2025-10-14 09:00:00', '2025-10-16 13:00:00'),
-('ORD20251002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'momo', 'paid', 'completed', '2025-10-28 14:00:00', '2025-10-30 16:00:00'),
+('ORD20251001', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 0, 30000, 2130000, 'vnpay', 'paid', 'delivery_successful', '2025-10-14 09:00:00', '2025-10-16 13:00:00'),
+('ORD20251002', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2025-10-28 14:00:00', '2025-10-30 16:00:00'),
 -- Thêm đơn hàng cho mỗi tháng để đủ dữ liệu khớp với biểu đồ cột
 -- Tháng 1/2024 - thêm 3 đơn hàng
-('ORD20240103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'cod', 'paid', 'completed', '2024-01-08 14:00:00', '2024-01-10 16:00:00'),
-('ORD20240104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'momo', 'paid', 'completed', '2024-01-18 11:00:00', '2024-01-20 15:00:00'),
-('ORD20240105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2024-01-25 10:00:00', '2024-01-27 14:00:00'),
+('ORD20240103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'vnpay', 'paid', 'delivery_successful', '2024-01-08 14:00:00', '2024-01-10 16:00:00'),
+('ORD20240104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-01-18 11:00:00', '2024-01-20 15:00:00'),
+('ORD20240105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-01-25 10:00:00', '2024-01-27 14:00:00'),
 -- Tháng 2/2024 - thêm 3 đơn hàng
-('ORD20240203', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'cod', 'paid', 'completed', '2024-02-05 09:00:00', '2024-02-07 13:00:00'),
-('ORD20240204', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 50000, 30000, 1680000, 'momo', 'paid', 'completed', '2024-02-15 14:00:00', '2024-02-17 16:00:00'),
-('ORD20240205', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1550000, 50000, 30000, 1530000, 'bank_transfer', 'paid', 'completed', '2024-02-20 10:00:00', '2024-02-22 14:00:00'),
+('ORD20240203', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2024-02-05 09:00:00', '2024-02-07 13:00:00'),
+('ORD20240204', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 50000, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2024-02-15 14:00:00', '2024-02-17 16:00:00'),
+('ORD20240205', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1550000, 50000, 30000, 1530000, 'vnpay', 'paid', 'delivery_successful', '2024-02-20 10:00:00', '2024-02-22 14:00:00'),
 -- Tháng 3/2024 - thêm 3 đơn hàng
-('ORD20240303', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 100000, 30000, 1780000, 'cod', 'paid', 'completed', '2024-03-10 11:00:00', '2024-03-12 15:00:00'),
-('ORD20240304', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'momo', 'paid', 'completed', '2024-03-22 09:00:00', '2024-03-24 13:00:00'),
-('ORD20240305', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 50000, 30000, 1580000, 'bank_transfer', 'paid', 'completed', '2024-03-28 14:00:00', '2024-03-30 16:00:00'),
+('ORD20240303', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1850000, 100000, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2024-03-10 11:00:00', '2024-03-12 15:00:00'),
+('ORD20240304', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2024-03-22 09:00:00', '2024-03-24 13:00:00'),
+('ORD20240305', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 50000, 30000, 1580000, 'vnpay', 'paid', 'delivery_successful', '2024-03-28 14:00:00', '2024-03-30 16:00:00'),
 -- Tháng 4/2024 - thêm 3 đơn hàng
-('ORD20240403', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-04-05 10:00:00', '2024-04-07 14:00:00'),
-('ORD20240404', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2024-04-15 11:00:00', '2024-04-17 15:00:00'),
-('ORD20240405', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'bank_transfer', 'paid', 'completed', '2024-04-22 09:00:00', '2024-04-24 13:00:00'),
+('ORD20240403', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-04-05 10:00:00', '2024-04-07 14:00:00'),
+('ORD20240404', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-04-15 11:00:00', '2024-04-17 15:00:00'),
+('ORD20240405', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2024-04-22 09:00:00', '2024-04-24 13:00:00'),
 -- Tháng 5/2024 - thêm 5 đơn hàng (để có tổng Subtotal khớp với biểu đồ)
-('ORD20240503', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-05-03 09:00:00', '2024-05-05 13:00:00'),
-('ORD20240504', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-05-12 14:00:00', '2024-05-14 16:00:00'),
-('ORD20240505', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2024-05-17 10:00:00', '2024-05-19 14:00:00'),
-('ORD20240506', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'cod', 'paid', 'completed', '2024-05-26 11:00:00', '2024-05-28 15:00:00'),
-('ORD20240507', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 100000, 30000, 1680000, 'momo', 'paid', 'completed', '2024-05-29 09:00:00', '2024-05-31 13:00:00'),
+('ORD20240503', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-05-03 09:00:00', '2024-05-05 13:00:00'),
+('ORD20240504', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2024-05-12 14:00:00', '2024-05-14 16:00:00'),
+('ORD20240505', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-05-17 10:00:00', '2024-05-19 14:00:00'),
+('ORD20240506', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'vnpay', 'paid', 'delivery_successful', '2024-05-26 11:00:00', '2024-05-28 15:00:00'),
+('ORD20240507', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 100000, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2024-05-29 09:00:00', '2024-05-31 13:00:00'),
 -- Tháng 6/2024 - thêm 3 đơn hàng
-('ORD20240603', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'cod', 'paid', 'completed', '2024-06-10 14:00:00', '2024-06-12 16:00:00'),
-('ORD20240604', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 50000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-06-14 10:00:00', '2024-06-16 14:00:00'),
-('ORD20240605', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 50000, 30000, 1580000, 'bank_transfer', 'paid', 'completed', '2024-06-25 11:00:00', '2024-06-27 15:00:00'),
+('ORD20240603', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 0, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2024-06-10 14:00:00', '2024-06-12 16:00:00'),
+('ORD20240604', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 50000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2024-06-14 10:00:00', '2024-06-16 14:00:00'),
+('ORD20240605', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 50000, 30000, 1580000, 'vnpay', 'paid', 'delivery_successful', '2024-06-25 11:00:00', '2024-06-27 15:00:00'),
 -- Tháng 7/2024 - thêm 3 đơn hàng
-('ORD20240703', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-07-05 09:00:00', '2024-07-07 13:00:00'),
-('ORD20240704', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-07-16 14:00:00', '2024-07-18 16:00:00'),
-('ORD20240705', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2024-07-22 10:00:00', '2024-07-24 14:00:00'),
+('ORD20240703', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-07-05 09:00:00', '2024-07-07 13:00:00'),
+('ORD20240704', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2024-07-16 14:00:00', '2024-07-18 16:00:00'),
+('ORD20240705', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-07-22 10:00:00', '2024-07-24 14:00:00'),
 -- Tháng 8/2024 - thêm 3 đơn hàng
-('ORD20240803', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 50000, 30000, 1680000, 'cod', 'paid', 'completed', '2024-08-12 14:00:00', '2024-08-14 16:00:00'),
-('ORD20240804', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2024-08-18 09:00:00', '2024-08-20 13:00:00'),
-('ORD20240805', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2024-08-28 11:00:00', '2024-08-30 15:00:00'),
+('ORD20240803', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 50000, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2024-08-12 14:00:00', '2024-08-14 16:00:00'),
+('ORD20240804', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2024-08-18 09:00:00', '2024-08-20 13:00:00'),
+('ORD20240805', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-08-28 11:00:00', '2024-08-30 15:00:00'),
 -- Tháng 9/2024 - thêm 3 đơn hàng
-('ORD20240903', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'cod', 'paid', 'completed', '2024-09-08 10:00:00', '2024-09-10 14:00:00'),
-('ORD20240904', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2024-09-19 14:00:00', '2024-09-21 16:00:00'),
-('ORD20240905', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'bank_transfer', 'paid', 'completed', '2024-09-25 09:00:00', '2024-09-27 13:00:00'),
+('ORD20240903', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 50000, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2024-09-08 10:00:00', '2024-09-10 14:00:00'),
+('ORD20240904', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-09-19 14:00:00', '2024-09-21 16:00:00'),
+('ORD20240905', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2024-09-25 09:00:00', '2024-09-27 13:00:00'),
 -- Tháng 10/2024 - thêm 5 đơn hàng (tháng này có doanh thu cao)
-('ORD20241003', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'cod', 'paid', 'completed', '2024-10-03 11:00:00', '2024-10-05 15:00:00'),
-('ORD20241004', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2400000, 0, 30000, 2430000, 'momo', 'paid', 'completed', '2024-10-13 09:00:00', '2024-10-15 13:00:00'),
-('ORD20241005', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 50000, 30000, 2080000, 'bank_transfer', 'paid', 'completed', '2024-10-19 14:00:00', '2024-10-21 16:00:00'),
-('ORD20241006', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'cod', 'paid', 'completed', '2024-10-27 10:00:00', '2024-10-29 14:00:00'),
-('ORD20241007', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 50000, 30000, 2180000, 'momo', 'paid', 'completed', '2024-10-30 11:00:00', '2024-11-01 15:00:00'),
+('ORD20241003', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2250000, 100000, 30000, 2180000, 'vnpay', 'paid', 'delivery_successful', '2024-10-03 11:00:00', '2024-10-05 15:00:00'),
+('ORD20241004', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2400000, 0, 30000, 2430000, 'vnpay', 'paid', 'delivery_successful', '2024-10-13 09:00:00', '2024-10-15 13:00:00'),
+('ORD20241005', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 50000, 30000, 2080000, 'vnpay', 'paid', 'delivery_successful', '2024-10-19 14:00:00', '2024-10-21 16:00:00'),
+('ORD20241006', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2024-10-27 10:00:00', '2024-10-29 14:00:00'),
+('ORD20241007', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 50000, 30000, 2180000, 'vnpay', 'paid', 'delivery_successful', '2024-10-30 11:00:00', '2024-11-01 15:00:00'),
 -- Tháng 11/2024 - thêm 3 đơn hàng
-('ORD20241103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2024-11-10 09:00:00', '2024-11-12 13:00:00'),
-('ORD20241104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2024-11-15 14:00:00', '2024-11-17 16:00:00'),
-('ORD20241105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'bank_transfer', 'paid', 'completed', '2024-11-25 10:00:00', '2024-11-27 14:00:00'),
+('ORD20241103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2024-11-10 09:00:00', '2024-11-12 13:00:00'),
+('ORD20241104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2024-11-15 14:00:00', '2024-11-17 16:00:00'),
+('ORD20241105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2024-11-25 10:00:00', '2024-11-27 14:00:00'),
 -- Tháng 12/2024 - thêm 3 đơn hàng
-('ORD20241203', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'cod', 'paid', 'completed', '2024-12-05 11:00:00', '2024-12-07 15:00:00'),
-('ORD20241204', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2350000, 0, 30000, 2380000, 'momo', 'paid', 'completed', '2024-12-18 09:00:00', '2024-12-20 13:00:00'),
-('ORD20241205', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'bank_transfer', 'paid', 'completed', '2024-12-23 14:00:00', '2024-12-25 16:00:00'),
+('ORD20241203', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 100000, 30000, 2030000, 'vnpay', 'paid', 'delivery_successful', '2024-12-05 11:00:00', '2024-12-07 15:00:00'),
+('ORD20241204', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2350000, 0, 30000, 2380000, 'vnpay', 'paid', 'delivery_successful', '2024-12-18 09:00:00', '2024-12-20 13:00:00'),
+('ORD20241205', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 50000, 30000, 1930000, 'vnpay', 'paid', 'delivery_successful', '2024-12-23 14:00:00', '2024-12-25 16:00:00'),
 -- Năm 2025 - thêm đơn hàng cho mỗi tháng
 -- Tháng 1/2025 - thêm 3 đơn hàng
-('ORD20250103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'cod', 'paid', 'completed', '2025-01-05 09:00:00', '2025-01-07 13:00:00'),
-('ORD20250104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 100000, 30000, 1930000, 'momo', 'paid', 'completed', '2025-01-15 14:00:00', '2025-01-17 16:00:00'),
-('ORD20250105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'bank_transfer', 'paid', 'completed', '2025-01-28 10:00:00', '2025-01-30 14:00:00'),
+('ORD20250103', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2025-01-05 09:00:00', '2025-01-07 13:00:00'),
+('ORD20250104', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 100000, 30000, 1930000, 'vnpay', 'paid', 'delivery_successful', '2025-01-15 14:00:00', '2025-01-17 16:00:00'),
+('ORD20250105', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 0, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2025-01-28 10:00:00', '2025-01-30 14:00:00'),
 -- Tháng 2/2025 - thêm 3 đơn hàng
-('ORD20250203', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-02-03 11:00:00', '2025-02-05 15:00:00'),
-('ORD20250204', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-02-14 09:00:00', '2025-02-16 13:00:00'),
-('ORD20250205', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'bank_transfer', 'paid', 'completed', '2025-02-26 14:00:00', '2025-02-28 16:00:00'),
+('ORD20250203', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-02-03 11:00:00', '2025-02-05 15:00:00'),
+('ORD20250204', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2025-02-14 09:00:00', '2025-02-16 13:00:00'),
+('ORD20250205', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2025-02-26 14:00:00', '2025-02-28 16:00:00'),
 -- Tháng 3/2025 - thêm 3 đơn hàng
-('ORD20250303', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'cod', 'paid', 'completed', '2025-03-05 10:00:00', '2025-03-07 14:00:00'),
-('ORD20250304', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2025-03-12 11:00:00', '2025-03-14 15:00:00'),
-('ORD20250305', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-03-22 09:00:00', '2025-03-24 13:00:00'),
+('ORD20250303', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 50000, 30000, 1780000, 'vnpay', 'paid', 'delivery_successful', '2025-03-05 10:00:00', '2025-03-07 14:00:00'),
+('ORD20250304', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-03-12 11:00:00', '2025-03-14 15:00:00'),
+('ORD20250305', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2025-03-22 09:00:00', '2025-03-24 13:00:00'),
 -- Tháng 4/2025 - thêm 3 đơn hàng
-('ORD20250403', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-04-05 14:00:00', '2025-04-07 16:00:00'),
-('ORD20250404', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 100000, 30000, 1930000, 'momo', 'paid', 'completed', '2025-04-18 10:00:00', '2025-04-20 14:00:00'),
-('ORD20250405', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2025-04-29 11:00:00', '2025-05-01 15:00:00'),
+('ORD20250403', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-04-05 14:00:00', '2025-04-07 16:00:00'),
+('ORD20250404', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 100000, 30000, 1930000, 'vnpay', 'paid', 'delivery_successful', '2025-04-18 10:00:00', '2025-04-20 14:00:00'),
+('ORD20250405', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-04-29 11:00:00', '2025-05-01 15:00:00'),
 -- Tháng 5/2025 - thêm 5 đơn hàng
-('ORD20250503', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-05-04 09:00:00', '2025-05-06 13:00:00'),
-('ORD20250504', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-05-11 14:00:00', '2025-05-13 16:00:00'),
-('ORD20250505', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2025-05-17 10:00:00', '2025-05-19 14:00:00'),
-('ORD20250506', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'cod', 'paid', 'completed', '2025-05-26 11:00:00', '2025-05-28 15:00:00'),
-('ORD20250507', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 100000, 30000, 1630000, 'momo', 'paid', 'completed', '2025-05-30 09:00:00', '2025-06-01 13:00:00'),
+('ORD20250503', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-05-04 09:00:00', '2025-05-06 13:00:00'),
+('ORD20250504', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2025-05-11 14:00:00', '2025-05-13 16:00:00'),
+('ORD20250505', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-05-17 10:00:00', '2025-05-19 14:00:00'),
+('ORD20250506', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'vnpay', 'paid', 'delivery_successful', '2025-05-26 11:00:00', '2025-05-28 15:00:00'),
+('ORD20250507', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1700000, 100000, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2025-05-30 09:00:00', '2025-06-01 13:00:00'),
 -- Tháng 6/2025 - thêm 3 đơn hàng
-('ORD20250603', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-06-10 14:00:00', '2025-06-12 16:00:00'),
-('ORD20250604', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2025-06-14 10:00:00', '2025-06-16 14:00:00'),
-('ORD20250605', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-06-25 11:00:00', '2025-06-27 15:00:00'),
+('ORD20250603', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-06-10 14:00:00', '2025-06-12 16:00:00'),
+('ORD20250604', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-06-14 10:00:00', '2025-06-16 14:00:00'),
+('ORD20250605', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2025-06-25 11:00:00', '2025-06-27 15:00:00'),
 -- Tháng 7/2025 - thêm 3 đơn hàng
-('ORD20250703', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-07-05 09:00:00', '2025-07-07 13:00:00'),
-('ORD20250704', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-07-16 14:00:00', '2025-07-18 16:00:00'),
-('ORD20250705', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'bank_transfer', 'paid', 'completed', '2025-07-22 10:00:00', '2025-07-24 14:00:00'),
+('ORD20250703', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-07-05 09:00:00', '2025-07-07 13:00:00'),
+('ORD20250704', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2025-07-16 14:00:00', '2025-07-18 16:00:00'),
+('ORD20250705', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1800000, 0, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-07-22 10:00:00', '2025-07-24 14:00:00'),
 -- Tháng 8/2025 - thêm 3 đơn hàng
-('ORD20250803', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-08-12 14:00:00', '2025-08-14 16:00:00'),
-('ORD20250804', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'momo', 'paid', 'completed', '2025-08-18 09:00:00', '2025-08-20 13:00:00'),
-('ORD20250805', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'bank_transfer', 'paid', 'completed', '2025-08-28 11:00:00', '2025-08-30 15:00:00'),
+('ORD20250803', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-08-12 14:00:00', '2025-08-14 16:00:00'),
+('ORD20250804', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2025-08-18 09:00:00', '2025-08-20 13:00:00'),
+('ORD20250805', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1600000, 0, 30000, 1630000, 'vnpay', 'paid', 'delivery_successful', '2025-08-28 11:00:00', '2025-08-30 15:00:00'),
 -- Tháng 9/2025 - thêm 3 đơn hàng
-('ORD20250903', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'cod', 'paid', 'completed', '2025-09-08 10:00:00', '2025-09-10 14:00:00'),
-('ORD20250904', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'momo', 'paid', 'completed', '2025-09-19 14:00:00', '2025-09-21 16:00:00'),
-('ORD20250905', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'bank_transfer', 'paid', 'completed', '2025-09-25 09:00:00', '2025-09-27 13:00:00'),
+('ORD20250903', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1750000, 50000, 30000, 1730000, 'vnpay', 'paid', 'delivery_successful', '2025-09-08 10:00:00', '2025-09-10 14:00:00'),
+('ORD20250904', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 1900000, 100000, 30000, 1830000, 'vnpay', 'paid', 'delivery_successful', '2025-09-19 14:00:00', '2025-09-21 16:00:00'),
+('ORD20250905', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1650000, 0, 30000, 1680000, 'vnpay', 'paid', 'delivery_successful', '2025-09-25 09:00:00', '2025-09-27 13:00:00'),
 -- Tháng 10/2025 - thêm 5 đơn hàng (tháng này có doanh thu cao)
-('ORD20251003', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'cod', 'paid', 'completed', '2025-10-05 11:00:00', '2025-10-07 15:00:00'),
-('ORD20251004', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2350000, 0, 30000, 2380000, 'momo', 'paid', 'completed', '2025-10-12 09:00:00', '2025-10-14 13:00:00'),
-('ORD20251005', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 50000, 30000, 2080000, 'bank_transfer', 'paid', 'completed', '2025-10-19 14:00:00', '2025-10-21 16:00:00'),
-('ORD20251006', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'cod', 'paid', 'completed', '2025-10-22 10:00:00', '2025-10-24 14:00:00'),
-('ORD20251007', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'momo', 'paid', 'completed', '2025-10-29 11:00:00', '2025-10-31 15:00:00');
+('ORD20251003', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2200000, 100000, 30000, 2130000, 'vnpay', 'paid', 'delivery_successful', '2025-10-05 11:00:00', '2025-10-07 15:00:00'),
+('ORD20251004', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 2350000, 0, 30000, 2380000, 'vnpay', 'paid', 'delivery_successful', '2025-10-12 09:00:00', '2025-10-14 13:00:00'),
+('ORD20251005', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2100000, 50000, 30000, 2080000, 'vnpay', 'paid', 'delivery_successful', '2025-10-19 14:00:00', '2025-10-21 16:00:00'),
+('ORD20251006', 3, 'Nguyễn Văn A', '0903456789', 'customer01@email.com', '123 Nguyễn Huệ', 'Phường Bến Nghé', 'Quận 1', 'TP. Hồ Chí Minh', 1950000, 100000, 30000, 1880000, 'vnpay', 'paid', 'delivery_successful', '2025-10-22 10:00:00', '2025-10-24 14:00:00'),
+('ORD20251007', 4, 'Trần Thị B', '0904567890', 'customer02@email.com', '456 Lê Lợi', 'Phường Bến Thành', 'Quận 1', 'TP. Hồ Chí Minh', 2000000, 50000, 30000, 1980000, 'vnpay', 'paid', 'delivery_successful', '2025-10-29 11:00:00', '2025-10-31 15:00:00');
 -- Tháng 11-12/2025: Không có đơn hàng (sẽ hiển thị 0 trên biểu đồ)
 
 -- Thêm OrderItems cho các đơn hàng mẫu năm 2024-2025

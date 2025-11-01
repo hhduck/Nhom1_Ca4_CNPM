@@ -249,9 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
             currency: 'VND' 
           }).format(order.final_amount);
           
-          const paymentMethodText = order.payment_method === 'cod' ? 'Thanh toán khi nhận hàng' :
-                                    order.payment_method === 'bank_transfer' ? 'Chuyển khoản' :
-                                    order.payment_method === 'momo' ? 'Ví MoMo' : order.payment_method;
+          const paymentMethodText = order.payment_method === 'vnpay' ? 'Ví điện tử VNPay' : order.payment_method || 'VNPay';
           
           return `
             <tr>
@@ -274,11 +272,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function getVietnameseStatus(status) {
       switch(status) {
           case 'pending': return 'Đang chờ xác nhận';
-          case 'confirmed': return 'Đã xác nhận';
+          case 'order_received': return 'Đã nhận đơn';
           case 'preparing': return 'Đang chuẩn bị hàng';
-          case 'shipping': return 'Đang giao hàng';
-          case 'completed': return 'Đã hoàn thành';
-          case 'cancelled': return 'Đã hủy';
+          case 'delivering': return 'Đang giao hàng';
+          case 'delivery_successful': return 'Giao hàng thành công';
+          case 'delivery_failed': return 'Giao hàng thất bại';
           default: return status;
       }
   }
@@ -287,11 +285,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function getOrderStatusClass(status) {
       switch(status) {
           case 'pending': return 'bg-yellow-100 text-yellow-800';
-          case 'confirmed': return 'bg-blue-100 text-blue-800';
+          case 'order_received': return 'bg-blue-100 text-blue-800';
           case 'preparing': return 'bg-indigo-100 text-indigo-800';
-          case 'shipping': return 'bg-purple-100 text-purple-800';
-          case 'completed': return 'bg-green-100 text-green-800';
-          case 'cancelled': return 'bg-red-100 text-red-800';
+          case 'delivering': return 'bg-purple-100 text-purple-800';
+          case 'delivery_successful': return 'bg-green-100 text-green-800';
+          case 'delivery_failed': return 'bg-red-100 text-red-800';
           default: return 'bg-gray-100 text-gray-800';
       }
   }

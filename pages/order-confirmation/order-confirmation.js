@@ -56,7 +56,7 @@ function createDemoOrder(orderId) {
         shipping_phone: '0123456789',
         customer_name: 'Nguyễn Văn A',
         customer_email: 'nguyenvana@email.com',
-        payment_method: 'cod',
+        payment_method: 'vnpay',
         notes: 'Giao hàng vào buổi chiều',
         created_at: new Date().toLocaleString('vi-VN'),
         estimated_delivery: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleString('vi-VN')
@@ -181,13 +181,9 @@ function getStatusText(status) {
 
 function getPaymentMethodText(method) {
     const methodMap = {
-        'cod': 'Thanh toán khi nhận hàng (COD)',
-        'bank': 'Chuyển khoản ngân hàng',
-        'vnpay': 'VNPay',
-        'momo': 'MoMo',
-        'paypal': 'PayPal'
+        'vnpay': 'Ví điện tử VNPay'
     };
-    return methodMap[method] || 'Không xác định';
+    return methodMap[method] || 'Ví điện tử VNPay';
 }
 
 function formatPrice(price) {

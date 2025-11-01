@@ -64,10 +64,10 @@ function getReports($db) {
     $statsQuery = "SELECT 
                     COALESCE(SUM(oi.Subtotal), 0) as revenue,
                     COUNT(DISTINCT o.OrderID) as total_orders,
-                    COUNT(DISTINCT CASE WHEN o.OrderStatus = 'completed' THEN o.OrderID END) as delivered_orders,
+                    COUNT(DISTINCT CASE WHEN o.OrderStatus = 'delivery_successful' THEN o.OrderID END) as delivered_orders,
                     (SELECT COUNT(*) FROM Users WHERE Role = 'customer' AND CreatedAt >= :start_date1 AND CreatedAt <= :end_date1) as new_customers
                    FROM Orders o
-                   LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID AND o.OrderStatus = 'completed'
+                   LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID AND o.OrderStatus = 'delivery_successful'
                    WHERE o.CreatedAt >= :start_date2
                      AND o.CreatedAt <= :end_date2";
     $stmt = $db->prepare($statsQuery);
@@ -88,7 +88,7 @@ function getReports($db) {
                          FROM OrderItems oi
                          INNER JOIN Products p ON oi.ProductID = p.ProductID
                          INNER JOIN Orders o ON oi.OrderID = o.OrderID
-                         WHERE o.OrderStatus = 'completed' 
+                         WHERE o.OrderStatus = 'delivery_successful' 
                            AND o.CreatedAt >= :start_date
                            AND o.CreatedAt <= :end_date
                          GROUP BY p.ProductID, p.ProductName
@@ -114,7 +114,7 @@ function getReports($db) {
                               FROM Orders o
                               INNER JOIN OrderItems oi ON o.OrderID = oi.OrderID
                               WHERE YEAR(o.CreatedAt) = :year
-                                AND o.OrderStatus = 'completed'
+                                AND o.OrderStatus = 'delivery_successful'
                               GROUP BY MONTH(o.CreatedAt), DATE_FORMAT(o.CreatedAt, '%m')
                               ORDER BY MONTH(o.CreatedAt)";
         $stmt = $db->prepare($revenueChartQuery);
@@ -129,7 +129,7 @@ function getReports($db) {
                               FROM Orders o
                               INNER JOIN OrderItems oi ON o.OrderID = oi.OrderID
                               WHERE YEAR(o.CreatedAt) = :year
-                                AND o.OrderStatus = 'completed'
+                                AND o.OrderStatus = 'delivery_successful'
                               GROUP BY MONTH(o.CreatedAt), DATE_FORMAT(o.CreatedAt, '%m')
                               ORDER BY MONTH(o.CreatedAt)";
         $stmt = $db->prepare($revenueChartQuery);
@@ -182,7 +182,7 @@ function getReports($db) {
                       FROM Products p
                       LEFT JOIN OrderItems oi ON p.ProductID = oi.ProductID
                       LEFT JOIN Orders o ON oi.OrderID = o.OrderID 
-                        AND o.OrderStatus = 'completed' 
+                        AND o.OrderStatus = 'delivery_successful' 
                         AND YEAR(o.CreatedAt) = :year
                         AND MONTH(o.CreatedAt) = :month
                       WHERE p.Status = 'available'
@@ -235,7 +235,7 @@ function getReports($db) {
                           FROM Products p
                           LEFT JOIN OrderItems oi ON p.ProductID = oi.ProductID
                           LEFT JOIN Orders o ON oi.OrderID = o.OrderID 
-                            AND o.OrderStatus = 'completed' 
+                            AND o.OrderStatus = 'delivery_successful' 
                             AND YEAR(o.CreatedAt) = :year
                           WHERE p.Status = 'available'
                           GROUP BY p.ProductID, p.ProductName
