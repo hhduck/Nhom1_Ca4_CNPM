@@ -2181,3 +2181,15 @@ body.searching::before {
   gap: 15px;
   margin-top: 40px;
 }
+
+/* Ẩn vùng lọc rỗng */
+#filteredProducts.products-grid:empty {
+  display: none !important;
+}
+
+/* Nếu có nội dung thì hiển thị dạng lưới như cũ */
+#filteredProducts.products-grid {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
