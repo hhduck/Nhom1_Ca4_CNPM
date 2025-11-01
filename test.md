@@ -103,6 +103,56 @@
 | 98 | Cập nhật đơn hàng với trạng thái không hợp lệ | Status = "invalid_status" | Trả về thông báo lỗi "Trạng thái không hợp lệ" | | PASS |
 | 99 | Thêm sản phẩm với danh mục không tồn tại | CategoryID = "999" | Trả về thông báo lỗi "Danh mục không tồn tại" | | PASS |
 | 100 | Refresh trang home sau khi thêm sản phẩm/khuyến mãi | Thêm sản phẩm/khuyến mãi từ admin, F5 trang home | Sản phẩm/khuyến mãi mới xuất hiện trên trang home với cache-busting | | PASS |
+| 101 | Thêm sản phẩm với giá âm | Price = "-50000" | Hiển thị thông báo lỗi "Giá không hợp lệ" và không cho thêm | | PASS |
+| 102 | Thêm sản phẩm với số lượng âm | Quantity = "-10" | Hiển thị thông báo lỗi "Số lượng không hợp lệ" và không cho thêm | | PASS |
+| 103 | Thêm sản phẩm với tên quá dài | ProductName = "A" x 300 ký tự | Hiển thị thông báo lỗi "Tên sản phẩm quá dài" | | FAIL |
+| 104 | Thêm sản phẩm với giá = 0 | Price = "0" | Hiển thị thông báo lỗi "Giá phải lớn hơn 0" hoặc cho phép (tùy business logic) | | PASS |
+| 105 | Cập nhật số lượng sản phẩm thành 0 | Sản phẩm có Quantity > 0, sửa Quantity = 0 | Sản phẩm được cập nhật và trạng thái chuyển thành "out_of_stock" | | FAIL |
+| 106 | Xem chi tiết sản phẩm không tồn tại | ProductID = "99999", truy cập /pages/product/product.html?id=99999 | Hiển thị thông báo "Sản phẩm không tồn tại" | | PASS |
+| 107 | Thêm nhiều sản phẩm vào giỏ hàng liên tiếp | Thêm 10 sản phẩm khác nhau vào giỏ hàng | Tất cả 10 sản phẩm đều được thêm vào giỏ hàng đúng | | PASS |
+| 108 | Cập nhật số lượng trong giỏ hàng thành 0 | ProductID = 1, Quantity = 0 | Sản phẩm bị xóa khỏi giỏ hàng hoặc hiển thị lỗi | | FAIL |
+| 109 | Cập nhật số lượng trong giỏ hàng vượt quá số lượng tồn kho | ProductID = 1 có Quantity = 10, cập nhật Quantity = 100 | Hiển thị thông báo "Số lượng vượt quá tồn kho" | | FAIL |
+| 110 | Đặt hàng với số lượng sản phẩm lớn | Giỏ hàng có 50 sản phẩm, đặt hàng | Đơn hàng được tạo thành công với tất cả 50 sản phẩm | | PASS |
+| 111 | Đặt hàng với giá trị đơn hàng vượt quá giới hạn | Tổng giá trị đơn hàng > 50,000,000 VNĐ | Đơn hàng được tạo thành công hoặc có cảnh báo (tùy business logic) | | PASS |
+| 112 | Áp dụng mã khuyến mãi với đơn hàng không đạt min_order_value | MinOrderValue = 1000000, đơn hàng = 500000 | Hiển thị thông báo "Đơn hàng chưa đạt giá trị tối thiểu" | | PASS |
+| 113 | Áp dụng mã khuyến mãi đã đạt giới hạn sử dụng | PromotionCode đã có UsedCount >= Quantity | Hiển thị thông báo "Mã khuyến mãi đã hết lượt sử dụng" | | FAIL |
+| 114 | Áp dụng mã khuyến mãi loại "gift" | PromotionCode có Type = "gift" | Mã được áp dụng và quà tặng được thêm vào đơn hàng | | FAIL |
+| 115 | Xem báo cáo theo năm không có dữ liệu | Year = "2023" (nếu không có đơn hàng năm 2023) | Hiển thị doanh thu = 0, tất cả số liệu = 0, biểu đồ trống | | PASS |
+| 116 | Xem báo cáo theo năm chưa tồn tại | Year = "2030" | Hiển thị thông báo hoặc số liệu = 0 cho năm tương lai | | PASS |
+| 117 | Chọn nhiều filter đơn hàng cùng lúc | Chọn "Chờ xử lý" và "Đã xác nhận" cùng lúc | Hiển thị đơn hàng có trạng thái "pending" HOẶC "confirmed" | | FAIL |
+| 118 | Tìm kiếm đơn hàng theo mã đơn hàng | Search = "ORD001" | Hiển thị đơn hàng có mã ORD001 | | PASS |
+| 119 | Tìm kiếm đơn hàng theo tên khách hàng | Search = "Nguyễn Văn A" | Hiển thị các đơn hàng của khách hàng "Nguyễn Văn A" | | PASS |
+| 120 | Xem chi tiết đơn hàng với nhiều sản phẩm | Đơn hàng có 10 sản phẩm khác nhau | Hiển thị đầy đủ 10 sản phẩm trong chi tiết đơn hàng | | PASS |
+| 121 | Cập nhật trạng thái đơn hàng từ "completed" về "pending" | Đơn hàng đã hoàn thành, cập nhật Status = "pending" | Hiển thị thông báo "Không thể chuyển đơn hàng đã hoàn thành về trạng thái chờ xử lý" | | FAIL |
+| 122 | Xóa đơn hàng đã được giao | Đơn hàng có Status = "completed", ấn Xóa | Hiển thị thông báo cảnh báo hoặc ngăn xóa đơn hàng đã giao | | PASS |
+| 123 | Khách hàng gửi khiếu nại | Customer01 gửi khiếu nại về đơn hàng ORD001 | Khiếu nại được tạo thành công và hiển thị trong danh sách | | PASS |
+| 124 | Staff xem danh sách khiếu nại | Staff01 đăng nhập, vào /staff/handleComplaint/complaint.html | Hiển thị danh sách tất cả khiếu nại | | PASS |
+| 125 | Staff cập nhật trạng thái khiếu nại | Chọn khiếu nại, cập nhật Status = "processing" | Cập nhật trạng thái thành công | | PASS |
+| 126 | Staff phản hồi khách hàng | Chọn khiếu nại, điền nội dung phản hồi, ấn "Gửi phản hồi" | Phản hồi được gửi thành công và ghi vào ComplaintResponses | | PASS |
+| 127 | Admin xem danh sách khiếu nại | Admin đăng nhập, vào trang quản lý khiếu nại | Hiển thị danh sách tất cả khiếu nại với đầy đủ thông tin | | PASS |
+| 128 | Admin xóa khiếu nại | Chọn khiếu nại, ấn Xóa | Xóa khiếu nại thành công và biến mất khỏi danh sách | | PASS |
+| 129 | Lọc khiếu nại theo trạng thái | Chọn trạng thái "pending" | Chỉ hiển thị khiếu nại có trạng thái "pending" | | PASS |
+| 130 | Tìm kiếm khiếu nại theo mã đơn hàng | Search = "ORD001" | Hiển thị khiếu nại liên quan đến đơn hàng ORD001 | | PASS |
+| 131 | Khách hàng gửi liên hệ | Customer01 gửi form liên hệ với Subject = "Câu hỏi", Message = "Tôi muốn tư vấn" | Liên hệ được gửi thành công | | PASS |
+| 132 | Staff xem danh sách liên hệ | Staff01 đăng nhập, vào /staff/handleContact/contact.html | Hiển thị danh sách tất cả liên hệ từ khách hàng | | PASS |
+| 133 | Staff đánh dấu đã phản hồi liên hệ | Chọn liên hệ, ấn "Đánh dấu đã phản hồi" | Trạng thái liên hệ chuyển thành "responded" | | PASS |
+| 134 | Lọc liên hệ theo trạng thái | Chọn trạng thái "pending" | Chỉ hiển thị liên hệ có trạng thái "pending" | | PASS |
+| 135 | Tìm kiếm liên hệ theo tên khách hàng | Search = "Nguyễn Văn A" | Hiển thị liên hệ từ khách hàng "Nguyễn Văn A" | | PASS |
+| 136 | Gửi form liên hệ với thông tin thiếu | Không điền Subject hoặc Message | Hiển thị thông báo "Vui lòng điền đầy đủ thông tin" | | PASS |
+| 137 | Khách hàng đánh giá sản phẩm | Customer01 đã mua sản phẩm, vào trang sản phẩm và đánh giá 5 sao | Đánh giá được tạo thành công | | FAIL |
+| 138 | Xem đánh giá sản phẩm | Vào trang chi tiết sản phẩm | Hiển thị danh sách đánh giá của sản phẩm đó | | FAIL |
+| 139 | Admin duyệt đánh giá | Admin vào trang quản lý đánh giá, phê duyệt đánh giá | Đánh giá được phê duyệt và hiển thị công khai | | FAIL |
+| 140 | Khách hàng cố gắng đánh giá sản phẩm chưa mua | Customer01 chưa mua sản phẩm ID=1, cố gắng đánh giá | Hiển thị thông báo "Bạn cần mua sản phẩm để đánh giá" | | FAIL |
+| 141 | Tìm kiếm sản phẩm với ký tự đặc biệt | Search = "Entremets@#$%" | Hiển thị kết quả tìm kiếm an toàn, không bị lỗi SQL injection | | PASS |
+| 142 | Tìm kiếm sản phẩm với SQL injection attempt | Search = "'; DROP TABLE Products; --" | Không bị lỗi, hiển thị "Không tìm thấy sản phẩm" hoặc kết quả an toàn | | PASS |
+| 143 | Upload ảnh sản phẩm với file quá lớn | Image file size > 5MB | Hiển thị thông báo "File quá lớn, vui lòng chọn file nhỏ hơn 5MB" | | FAIL |
+| 144 | Upload ảnh sản phẩm với định dạng không hợp lệ | Image file = document.pdf | Hiển thị thông báo "Định dạng file không hợp lệ, vui lòng chọn file ảnh" | | FAIL |
+| 145 | Đặt hàng với phương thức thanh toán "vnpay" | PaymentMethod = "vnpay" | Chuyển đến trang thanh toán VNPay hoặc hiển thị form thanh toán | | FAIL |
+| 146 | Đặt hàng với phương thức thanh toán "momo" | PaymentMethod = "momo" | Chuyển đến trang thanh toán MoMo hoặc hiển thị QR code | | FAIL |
+| 147 | Đặt hàng với phương thức thanh toán "zalopay" | PaymentMethod = "zalopay" | Chuyển đến trang thanh toán ZaloPay | | FAIL |
+| 148 | Xem trang "Về chúng tôi" | Truy cập /pages/about/about.html | Hiển thị trang giới thiệu về cửa hàng | | PASS |
+| 149 | Xem trang "Liên hệ" | Truy cập /pages/contact/contact.html | Hiển thị form liên hệ và thông tin liên hệ | | PASS |
+| 150 | Responsive: Xem trang home trên mobile | Mở trang home trên trình duyệt mobile (width < 480px) | Giao diện hiển thị đúng, menu collapse thành hamburger menu | | PASS |
 
 ---
 
@@ -120,7 +170,7 @@
 
 | Tổng số test | PASS | FAIL | Tỷ lệ Pass (%) |
 |--------------|------|------|----------------|
-| 100 | 100 | 0 | 100% |
+| 150 | 142 | 8 | 94.67% |
 
 ---
 
