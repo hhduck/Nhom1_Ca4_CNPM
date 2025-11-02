@@ -164,8 +164,9 @@ function getReports($db) {
         'data' => $monthData
     ];
     
-    // Biểu đồ tròn: Số lượng sản phẩm bán được theo tháng (nếu có month)
+    // Biểu đồ tròn: Doanh thu sản phẩm theo tháng (nếu có month)
     // Lấy TẤT CẢ sản phẩm (kể cả không bán được = 0)
+    // QUAN TRỌNG: Dùng cùng startDate/endDate như topProductsQuery để đảm bảo khớp với dữ liệu đơn hàng
     if ($month && $year) {
         // Lấy tất cả sản phẩm
         $allProductsQuery = "SELECT ProductID, ProductName FROM Products WHERE Status = 'available' ORDER BY ProductName";
@@ -173,24 +174,31 @@ function getReports($db) {
         $stmt->execute();
         $allProducts = $stmt->fetchAll();
         
-        // Lấy số lượng bán được theo tháng
+        // Lấy doanh thu và số lượng bán được theo tháng - DÙNG startDate/endDate
+        // QUAN TRỌNG: Dùng subquery hoặc INNER JOIN để đảm bảo chỉ lấy đúng đơn hàng trong tháng
         $salesQuery = "SELECT 
                         p.ProductID,
                         p.ProductName as product_name,
-                        COALESCE(SUM(oi.Quantity), 0) as quantity,
-                        COALESCE(SUM(oi.Subtotal), 0) as revenue
+                        COALESCE(sales_data.quantity, 0) as quantity,
+                        COALESCE(sales_data.revenue, 0) as revenue
                       FROM Products p
-                      LEFT JOIN OrderItems oi ON p.ProductID = oi.ProductID
-                      LEFT JOIN Orders o ON oi.OrderID = o.OrderID 
-                        AND o.OrderStatus = 'delivery_successful' 
-                        AND YEAR(o.CreatedAt) = :year
-                        AND MONTH(o.CreatedAt) = :month
+                      LEFT JOIN (
+                          SELECT 
+                              oi.ProductID,
+                              SUM(oi.Quantity) as quantity,
+                              SUM(oi.Subtotal) as revenue
+                          FROM OrderItems oi
+                          INNER JOIN Orders o ON oi.OrderID = o.OrderID
+                          WHERE o.OrderStatus = 'delivery_successful'
+                            AND o.CreatedAt >= :start_date
+                            AND o.CreatedAt <= :end_date
+                          GROUP BY oi.ProductID
+                      ) sales_data ON p.ProductID = sales_data.ProductID
                       WHERE p.Status = 'available'
-                      GROUP BY p.ProductID, p.ProductName
-                      ORDER BY quantity DESC, p.ProductName";
+                      ORDER BY revenue DESC, p.ProductName";
         $stmt = $db->prepare($salesQuery);
-        $stmt->bindParam(':year', $year);
-        $stmt->bindParam(':month', $month);
+        $stmt->bindParam(':start_date', $startDate);
+        $stmt->bindParam(':end_date', $endDate);
         $stmt->execute();
         $productChart = $stmt->fetchAll();
         
@@ -210,38 +218,48 @@ function getReports($db) {
             }
         }
         
-        // Sắp xếp lại: sản phẩm bán được trước, không bán được sau
+        // Sắp xếp lại: sản phẩm có doanh thu cao trước, sau đó theo tên
         usort($productChart, function($a, $b) {
-            if ($b['quantity'] != $a['quantity']) {
-                return $b['quantity'] - $a['quantity'];
+            if ($b['revenue'] != $a['revenue']) {
+                return $b['revenue'] - $a['revenue'];
             }
             return strcmp($a['product_name'], $b['product_name']);
         });
     } else {
         // Khi không có month (chọn "Tất cả"): lấy dữ liệu tổng hợp theo năm
-        // Lấy tất cả sản phẩm với số lượng bán trong cả năm
+        // Lấy tất cả sản phẩm với doanh thu và số lượng bán trong cả năm
+        // QUAN TRỌNG: Dùng cùng startDate/endDate để đảm bảo khớp với dữ liệu đơn hàng
         if ($year) {
             $allProductsQuery = "SELECT ProductID, ProductName FROM Products WHERE Status = 'available' ORDER BY ProductName";
             $stmt = $db->prepare($allProductsQuery);
             $stmt->execute();
             $allProducts = $stmt->fetchAll();
             
-            // Lấy số lượng bán được trong cả năm
+            // Lấy doanh thu và số lượng bán được trong cả năm - DÙNG startDate/endDate
+            // QUAN TRỌNG: Dùng subquery để đảm bảo chỉ lấy đúng đơn hàng trong khoảng thời gian
             $salesQuery = "SELECT 
                             p.ProductID,
                             p.ProductName as product_name,
-                            COALESCE(SUM(oi.Quantity), 0) as quantity,
-                            COALESCE(SUM(oi.Subtotal), 0) as revenue
+                            COALESCE(sales_data.quantity, 0) as quantity,
+                            COALESCE(sales_data.revenue, 0) as revenue
                           FROM Products p
-                          LEFT JOIN OrderItems oi ON p.ProductID = oi.ProductID
-                          LEFT JOIN Orders o ON oi.OrderID = o.OrderID 
-                            AND o.OrderStatus = 'delivery_successful' 
-                            AND YEAR(o.CreatedAt) = :year
+                          LEFT JOIN (
+                              SELECT 
+                                  oi.ProductID,
+                                  SUM(oi.Quantity) as quantity,
+                                  SUM(oi.Subtotal) as revenue
+                              FROM OrderItems oi
+                              INNER JOIN Orders o ON oi.OrderID = o.OrderID
+                              WHERE o.OrderStatus = 'delivery_successful'
+                                AND o.CreatedAt >= :start_date
+                                AND o.CreatedAt <= :end_date
+                              GROUP BY oi.ProductID
+                          ) sales_data ON p.ProductID = sales_data.ProductID
                           WHERE p.Status = 'available'
-                          GROUP BY p.ProductID, p.ProductName
-                          ORDER BY quantity DESC, p.ProductName";
+                          ORDER BY revenue DESC, p.ProductName";
             $stmt = $db->prepare($salesQuery);
-            $stmt->bindParam(':year', $year);
+            $stmt->bindParam(':start_date', $startDate);
+            $stmt->bindParam(':end_date', $endDate);
             $stmt->execute();
             $productChart = $stmt->fetchAll();
             

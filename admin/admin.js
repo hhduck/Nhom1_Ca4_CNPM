@@ -1181,18 +1181,25 @@ async function loadReports(period, month, year) {
             // Update charts - truyền month và year để initCharts biết tháng nào được chọn
             initCharts(data.data.chart_data, month, year);
 
-            // Update top products table - luôn hiển thị và cập nhật liên tục
-            // Dùng product_chart_full nếu có (khi chọn tháng), nếu không dùng top_products
-            if (data.data.product_chart_full && data.data.product_chart_full.length > 0) {
-                // Cập nhật bảng với dữ liệu mới theo tháng/năm được chọn
+            // Update top products table - chỉ hiển thị khi có tháng được chọn và có dữ liệu từ biểu đồ tròn
+            const monthSelect = document.getElementById('report-month-select');
+            const selectedMonth = monthSelect?.value || '';
+            const hasMonthSelected = selectedMonth !== '' && selectedMonth !== null;
+            
+            if (hasMonthSelected && data.data.product_chart_full && data.data.product_chart_full.length > 0) {
+                // Có tháng được chọn và có dữ liệu từ biểu đồ tròn: hiển thị bảng chi tiết
                 loadTopProductsFromChart(data.data.product_chart_full);
-            } else if (data.data.top_products && data.data.top_products.length > 0) {
-            loadTopProducts(data.data.top_products);
             } else {
-                // Nếu không có dữ liệu, vẫn hiển thị bảng nhưng trống
+                // Không có tháng được chọn hoặc không có dữ liệu: không hiển thị gì
                 const tbody = document.getElementById('top-products-tbody');
                 if (tbody) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Chưa có dữ liệu bán hàng</td></tr>';
+                    if (hasMonthSelected) {
+                        // Có tháng được chọn nhưng không có dữ liệu
+                        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Tháng này không có doanh thu</td></tr>';
+                    } else {
+                        // Chưa chọn tháng
+                        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Vui lòng chọn tháng để xem chi tiết doanh thu theo sản phẩm</td></tr>';
+                    }
                 }
             }
         } else {
@@ -1400,7 +1407,7 @@ function clearChartsAndTable() {
         categoryChart = null;
     }
     
-    // Xóa canvas
+    // Xóa canvas - không hiển thị thông báo, chỉ xóa trắng
     const revenueCtx = document.getElementById('revenueChart');
     const categoryCtx = document.getElementById('categoryChart');
     if (revenueCtx) {
@@ -1410,10 +1417,7 @@ function clearChartsAndTable() {
     if (categoryCtx) {
         const ctx = categoryCtx.getContext('2d');
         ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
-        ctx.font = '16px Arial';
-        ctx.fillStyle = '#999';
-        ctx.textAlign = 'center';
-        ctx.fillText('Tháng tương lai không có dữ liệu', categoryCtx.width / 2, categoryCtx.height / 2);
+        // Không hiển thị thông báo, chỉ xóa trắng
     }
     
     // Xóa legend
@@ -1425,7 +1429,7 @@ function clearChartsAndTable() {
     // Xóa bảng doanh thu
     const tbody = document.getElementById('top-products-tbody');
     if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Tháng tương lai không có dữ liệu</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Tháng này không có doanh thu</td></tr>';
     }
     
     // Reset stats
@@ -1543,7 +1547,7 @@ function initCharts(chartData, selectedMonth = null, selectedYear = null) {
         ctx.clearRect(0, 0, revenueCtx.width, revenueCtx.height);
     }
 
-    // Category Chart (biểu đồ tròn) - luôn hiển thị khi có dữ liệu (theo tháng hoặc theo năm)
+    // Category Chart (biểu đồ tròn) - chỉ hiển thị khi có tháng được chọn và có dữ liệu
     const categoryCtx = document.getElementById('categoryChart');
     
     // Màu sắc cho biểu đồ (đủ cho nhiều sản phẩm)
@@ -1554,51 +1558,78 @@ function initCharts(chartData, selectedMonth = null, selectedYear = null) {
     ];
     
     if (categoryCtx) {
-        // Luôn hiển thị biểu đồ bên phải, cập nhật liên tục khi chọn tháng/năm
-        // Hiển thị dữ liệu theo tháng (nếu có month) hoặc theo năm (nếu chọn "Tất cả")
-        if (chartData.products && chartData.products.labels && chartData.products.labels.length > 0 && !isFutureMonth) {
-            // Có dữ liệu sản phẩm: hiển thị biểu đồ tròn (theo tháng hoặc theo năm)
-            if (categoryChart) categoryChart.destroy();
+        // Chỉ hiển thị biểu đồ tròn khi có tháng được chọn (không phải "Tất cả")
+        if (hasMonth && month && !isFutureMonth) {
+            // Kiểm tra xem có dữ liệu sản phẩm với doanh thu > 0 không (dùng revenues, không phải quantity)
+            const hasProductData = chartData.products && 
+                                   chartData.products.labels && 
+                                   chartData.products.labels.length > 0 &&
+                                   chartData.products.revenues && 
+                                   chartData.products.revenues.some(r => parseFloat(r) > 0);
             
-            // Tạo mảng màu cho từng sản phẩm
-            const colors = chartData.products.labels.map((_, index) => 
-                chartColors[index % chartColors.length]
-            );
-            
-        categoryChart = new Chart(categoryCtx.getContext('2d'), {
-            type: 'pie',
-            data: {
-                labels: chartData.products.labels,
-                datasets: [{
-                    data: chartData.products.data,
-                        backgroundColor: colors,
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
+            if (hasProductData) {
+                // Có dữ liệu sản phẩm với doanh thu: hiển thị biểu đồ tròn
+                if (categoryChart) categoryChart.destroy();
+                
+                // Lọc chỉ các sản phẩm có doanh thu (revenue) > 0
+                const filteredLabels = [];
+                const filteredRevenues = [];
+                
+                chartData.products.labels.forEach((label, index) => {
+                    const revenue = parseFloat(chartData.products.revenues[index] || 0);
+                    if (revenue > 0) {
+                        filteredLabels.push(label);
+                        filteredRevenues.push(revenue);
+                    }
+                });
+                
+                if (filteredLabels.length > 0) {
+                    // Tạo mảng màu cho từng sản phẩm có doanh thu
+                    const colors = filteredLabels.map((_, index) => 
+                        chartColors[index % chartColors.length]
+                    );
+                    
+                    categoryChart = new Chart(categoryCtx.getContext('2d'), {
+                        type: 'pie',
+                        data: {
+                            labels: filteredLabels,
+                            datasets: [{
+                                data: filteredRevenues, // Dùng doanh thu (revenue) thay vì số lượng (quantity)
+                                backgroundColor: colors,
+                                borderWidth: 2,
+                                borderColor: '#fff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                    
+                    // Cập nhật legend động từ revenues (doanh thu) với %
+                    updateChartLegend(filteredLabels, colors, filteredRevenues);
+                } else {
+                    // Không có sản phẩm nào có doanh thu > 0: không hiển thị gì
+                    if (categoryChart) categoryChart.destroy();
+                    const ctx = categoryCtx.getContext('2d');
+                    ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
+                    // Xóa legend
+                    updateChartLegend([], []);
+                }
+            } else {
+                // Không có dữ liệu: không hiển thị gì
+                if (categoryChart) categoryChart.destroy();
+                const ctx = categoryCtx.getContext('2d');
+                ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
+                // Xóa legend
+                updateChartLegend([], []);
             }
-        });
-            
-            // Cập nhật legend động từ data (với % nếu có revenues)
-            const revenues = chartData.products.revenues || chartData.products.data.map(() => 0);
-            updateChartLegend(chartData.products.labels, colors, revenues);
         } else {
-            // Không có dữ liệu hoặc tháng tương lai: hiển thị biểu đồ trống với thông báo
+            // Không chọn tháng hoặc tháng tương lai: không hiển thị gì
             if (categoryChart) categoryChart.destroy();
             const ctx = categoryCtx.getContext('2d');
             ctx.clearRect(0, 0, categoryCtx.width, categoryCtx.height);
-            ctx.font = '16px Arial';
-            ctx.fillStyle = '#999';
-            ctx.textAlign = 'center';
-            if (isFutureMonth) {
-                ctx.fillText('Tháng tương lai không có dữ liệu', categoryCtx.width / 2, categoryCtx.height / 2);
-            } else {
-                ctx.fillText('Chưa có dữ liệu bán hàng', categoryCtx.width / 2, categoryCtx.height / 2);
-            }
             // Xóa legend
             updateChartLegend([], []);
         }
