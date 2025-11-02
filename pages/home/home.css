@@ -835,7 +835,13 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
-
+.section-title {
+    border-bottom: none !important;
+  }
+  .section-title::after {
+    display: none !important;
+  }
+  
 /* Category Tabs */
 .category-tabs {
     display: flex;
@@ -1709,12 +1715,42 @@ body {
     color: #fff;
     padding: 40px 100px;
     font-family: 'Crimson Text', serif;
+    display: flex; /* Use flexbox for easier alignment */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: space-between; /* Push content to top/bottom if height allows */
+    min-height: 200px;
+
 }
 
 .footer-container {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+
+}
+.footer-below {
+    text-align: center; /* Center the text */
+    padding-top: 20px; /* Add some padding above it for spacing */
+    margin-top: 130px; /* Add margin-top to separate it from the content above */
+    font-size: 15px;
+
+}
+/* Responsive adjustments for footer */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .footer-right {
+        text-align: center;
+    }
+
+    .footer-below {
+        padding-top: 15px; /* Adjust padding for smaller screens */
+        margin-top: 15px; /* Adjust margin for smaller screens */
+    }
 }
 
 .footer-left {
