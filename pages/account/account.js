@@ -16,17 +16,18 @@ function performLogout(redirectUrl) {
 
 // --- HÀM XỬ LÝ NAVBAR (TÁCH RA ĐỂ DÙNG CHUNG) ---
 function handleUserDisplay() {
-  const loginLink = document.querySelector(".nav-login"); // Thẻ <a> chính
+  const navUserLi = document.querySelector(".nav-user"); // Chọn thẻ <li> cha
+  const login1Link = document.querySelector(".nav-login-1"); // ĐĂNG NHẬP
+  const login2Link = document.querySelector(".nav-login-2"); // ĐĂNG KÍ
+  const navSeparator = document.querySelector(".nav-separator"); // Dấu |
   const userMenu = document.querySelector(".user-menu"); // Menu thả xuống
+  const ttButton = document.getElementById("tt"); // Nút Thông tin tài khoản trong user-menu
+  const logoutBtnNav = document.getElementById("logoutBtnNav"); // Nút Đăng xuất trong user-menu
 
-  if (!loginLink || !userMenu) {
-    console.error("Thiếu .nav-login hoặc .user-menu trong account.html.");
+  if (!navUserLi || !login1Link || !login2Link || !navSeparator || !userMenu || !ttButton || !logoutBtnNav) {
+    console.error("Thiếu các element navbar quan trọng.");
     return;
   }
-
-  // Xóa listener cũ (nếu có) bằng cách clone
-  const newLoginLink = loginLink.cloneNode(true);
-  loginLink.parentNode.replaceChild(newLoginLink, loginLink);
 
   const staffDataString = localStorage.getItem("currentStaff");
   const customerDataString = localStorage.getItem("currentUser");
@@ -48,48 +49,71 @@ function handleUserDisplay() {
   if (loggedInUser && userType) {
     // ---- ĐÃ ĐĂNG NHẬP ----
     console.log(`Đã đăng nhập (account.js) với ${userType}. Hiển thị icon.`);
-    newLoginLink.innerHTML = `<i class="fas fa-user"></i>`;
-    newLoginLink.href = "#";
+    
+    // Ẩn link Đăng nhập/Đăng ký và dấu |
+    login1Link.style.display = 'none';
+    login2Link.style.display = 'none';
+    navSeparator.style.display = 'none';
 
-    const accountLink = userMenu.querySelector("a[href*='account.html'], a[href*='staff_profile.html']");
-    const logoutBtn = document.getElementById("logoutBtnNav"); // Dùng ID mới
-
-    if (accountLink) {
-      accountLink.href = (userType === 'staff') ? "../../staff/staffProfile/staff_profile.html" : "../account/account.html";
+    // Tạo hoặc cập nhật icon user
+    let userIconLink = navUserLi.querySelector(".nav-user-icon");
+    if (!userIconLink) {
+      userIconLink = document.createElement('a');
+      userIconLink.href = "#";
+      userIconLink.className = "nav-user-icon";
+      userIconLink.innerHTML = `<i class="fas fa-user"></i>`;
+      navUserLi.prepend(userIconLink); // Thêm vào đầu li.nav-user
+    } else {
+      userIconLink.style.display = 'block'; // Đảm bảo icon hiện
     }
 
-    // Hiện menu khi click icon
-    newLoginLink.addEventListener("click", (e) => {
+    // Cập nhật href cho nút "Thông tin tài khoản" trong user-menu
+    if (userType === 'staff') {
+      ttButton.onclick = () => window.location.href = "../../staff/staffProfile/staff_profile.html";
+    } else {
+      ttButton.onclick = () => window.location.href = "../account/account.html";
+    }
+
+    // Hiện/ẩn menu khi click icon
+    userIconLink.addEventListener("click", (e) => {
       e.preventDefault(); e.stopPropagation();
-      userMenu.classList.remove("hidden");
-      userMenu.style.display = (userMenu.style.display === "block") ? "none" : "block";
+      userMenu.classList.toggle("hidden"); // Dùng toggle để tiện ẩn hiện
+      userMenu.style.display = userMenu.classList.contains("hidden") ? "none" : "block";
     });
 
     // Đóng menu khi click ra ngoài
     document.addEventListener('click', (event) => {
-      if (userMenu && !newLoginLink.contains(event.target) && !userMenu.contains(event.target)) {
+      if (userMenu && userIconLink && !userIconLink.contains(event.target) && !userMenu.contains(event.target)) {
+        userMenu.classList.add("hidden");
         userMenu.style.display = "none";
       }
     });
 
     // Xử lý nút Đăng xuất (Navbar)
-    if (logoutBtn) {
-      const newLogoutBtn = logoutBtn.cloneNode(true);
-      logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
-      newLogoutBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        performLogout("../login/login.html"); // Về trang login
-      });
-    }
+    logoutBtnNav.addEventListener("click", (e) => {
+      e.preventDefault();
+      performLogout("../login/login.html"); // Về trang login
+    });
 
+    userMenu.classList.add("hidden"); // Mặc định ẩn menu khi mới tải trang
     userMenu.style.display = "none";
 
   } else {
     // ---- CHƯA ĐĂNG NHẬP ----
     console.log("Chưa đăng nhập (account.js). Hiển thị link login.");
-    newLoginLink.innerHTML = 'ĐĂNG NHẬP/ĐĂNG KÍ';
-    newLoginLink.href = "../login/login.html";
-    userMenu.classList.add("hidden");
+    
+    // Hiện link Đăng nhập/Đăng ký và dấu |
+    login1Link.style.display = 'inline';
+    login2Link.style.display = 'inline';
+    navSeparator.style.display = 'inline';
+
+    // Ẩn icon user nếu có
+    const userIconLink = navUserLi.querySelector(".nav-user-icon");
+    if (userIconLink) {
+      userIconLink.style.display = 'none';
+    }
+    
+    userMenu.classList.add("hidden"); // Đảm bảo menu ẩn
     userMenu.style.display = "none";
   }
 }
