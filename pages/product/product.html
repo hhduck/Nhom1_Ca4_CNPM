@@ -1,194 +1,872 @@
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chi tiết sản phẩm - La Cuisine Ngọt</title>
-  <link rel="stylesheet" href="../../assets/css/style.css">
+/* ===== NAVBAR ===== */
+.navbar {
+  background-color: #395542; /* xanh rêu đậm */
+  padding: 10px 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 70px;
+}
+
+.nav-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Logo */
+.nav-logo a {
+color: #fff;
+font-family: 'Inspiration', cursive;
+font-size: 52px;
+font-weight: 200; 
+text-decoration: none;
+letter-spacing: 1px;
+}
+
+/* Menu */
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  padding: 0;
+  margin-right: -70px;
+}
+
+.nav-menu a {
+  color: white;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase; /* Viết hoa toàn bộ */
+  transition: color 0.3s;
+
+}
+
+.nav-menu a:hover {
+  color: #e3c78d; /* vàng nhạt khi hover */
+}
+
+/* Icons bên phải */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-left: -155px;
+}
+
+.nav-icons a {
+  color: #fff;
+  font-size: 20px;
+  text-decoration: none;
+  transition: 0.3s;
+  left: 305px;
+}
+
+.nav-icons a:hover {
+  color: #e3c78d;
+}
+
+/* Giỏ hàng */
+.nav-cart {
+  position: relative;
+}
+
+.nav-login {
+ margin-left: 285px;
+ margin-right: 50px;
+}
+
+.nav-login:hover {
+  color: #e3c78d;
+}
+
+/* Responsive (mobile) */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  .nav-menu {
+    gap: 20px;
+  }
+  .nav-icons {
+    gap: 15px;
+  }
+}
+
+/* --- PRODUCT PAGE --- */
+.product-page {
+  max-width: 1300px;
+  margin: 60px auto;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- PHẦN TRÊN: HÌNH + THÔNG TIN BÊN PHẢI --- */
+.product-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 100px;
+  width: 100%;
+  margin-bottom: 80px;
+  position: relative;
+  z-index: 0;
+}
+
+.product-image {
+  position: relative;
+  width: 600px;
+  height: 600px;
+}
+
+.product-image::before,
+.product-image::after {
+  display: none !important;
+  content: none !important;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.product-info {
+  flex: 1;
+  max-width: 520px;
+  padding-top: 0px;
+}
+
+.product-info h2 {
+  font-family: 'Crimson Text', serif;
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #000000;
+}
+
+.price {
+  font-family: 'Crimson Text', serif;
+  color: #000000;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.short-desc {
+  margin: 10px 0 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 17px;
+  color: #000000;
+}
+
+/* --- ACTION SECTION --- */
+.action-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+  align-items: center;
+  width: 100%;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ô chọn số lượng */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid #395542;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 42px;
+}
+
+.quantity-control button {
+  background-color: #395542;
+  color: white;
+  border: none;
+  width: 38px;
+  height: 100%;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background 0.25s ease;
+}
+
+.quantity-control button:hover {
+  background-color: #395542;
+}
+
+.quantity-control input {
+  width: 50px;
+  text-align: center;
+  border: none;
+  outline: none;
+  font-weight: 600;
+  font-size: 16px;
+  background: #fff;
+}
+
+/* Nút Thêm vào giỏ & Mua ngay */
+.add-cart, .buy-now {
+  height: 48px;
+  width: 240px;
+  padding: 0 22px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #395542;
+  color: #fff;
+}
+
+.add-cart:hover, .buy-now:hover {
+  background-color: #1d251d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.buy-now {
+  width: 383px;
+}
+
+/* --- PHẦN THÔNG TIN SẢN PHẨM DƯỚI CÙNG --- */
+.product-details {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;   /* cho rộng ra toàn màn hình hơn */
+  margin-top: 40px;
+  margin-left: 0;       /* SÁT LỀ TRÁI */
+  margin-right: auto;
+  line-height: 1.7;
+  color: #000;
+  padding-left: 10px;   /* thêm nhẹ padding cho chữ không dính mép */
+  clear: both;
+}
+
+/* Tiêu đề lớn: THÔNG TIN SẢN PHẨM */
+.product-details h3 {
+  position: relative;
+  z-index: 1;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  color: #000;
+  border-bottom: 2px solid #b5c4a6;
+  display: inline-block;
+  padding-bottom: 4px;
+  margin-bottom: 20px;
+  text-align: left;
+  margin-left: 0;
+  background: transparent;
+}
+
+/* Tiêu đề nhỏ: MÔ TẢ, CẤU TRÚC BÁNH... */
+.product-details h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  margin-left: 0;
+}
+
+/* Đoạn mô tả & danh sách */
+.product-details p,
+.product-details li {
+  font-family: 'Inter', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #333;
+  margin-left: 0;
+  text-align: justify;
+}
+
+/* Danh sách các lớp bánh */
+.product-details ul {
+  list-style-type: none; 
+  margin: 10px 0;
+  padding-left: 0;     
+}
+/* --- FOOTER --- */
+.footer {
+    background-color: #395542;
+    color: #fff;
+    padding: 40px 100px;
+    font-family: 'Crimson Text', serif;
+    display: flex; /* Use flexbox for easier alignment */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: space-between; /* Push content to top/bottom if height allows */
+    min-height: 200px;
+
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+}
+.footer-below {
+    text-align: center; /* Center the text */
+    padding-top: 20px; /* Add some padding above it for spacing */
+    margin-top: 130px; /* Add margin-top to separate it from the content above */
+    font-size: 15px;
+
+}
+/* Responsive adjustments for footer */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .footer-right {
+        text-align: center;
+    }
+
+    .footer-below {
+        padding-top: 15px; /* Adjust padding for smaller screens */
+        margin-top: 15px; /* Adjust margin for smaller screens */
+    }
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.footer-logo {
+    font-family: 'Inspiration', cursive;
+    font-size: 52px;
+    color: #fff;
+    font-weight: 200;
+    text-decoration: none;
+    letter-spacing: 1px;
+
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+ width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2d5016;
+    transition: all 0.3s ease;
+    margin-top: -40px;
+}
+
+.social-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.footer-right {
+  text-align: right;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.footer-right b {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .footer-right {
+    text-align: center;
+  }
+}
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .product-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-image img {
+    width: 100%;
+  }
+
+  .action-section {
+    align-items: center;
+    width: 100%;
+  }
+
+  .action-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .add-cart, .buy-now {
+    width: 100%;
+  }
+
+  .product-details {
+    margin-left: 0;
+    padding: 0 24px;
+  }
+}
+.user-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: none;
+  right: 0;
+  top: 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.user-menu button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #333;
+}
+.nav-user {
+  position: relative;
+}
+.hidden { display: none; }
+
+/* CSS cho icon user */
+.fa-user {
+    font-size: 20px;     /* Kích thước icon */
+    color: #ffffff;         /* Màu xám đậm */
+    transition: color 0.3s ease;
+    margin-top: 6px;
+    margin-left: 20px;
+  }
   
-  <!-- Preload fonts để tránh FOUT -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@600&family=Crimson+Text:wght@400;600;700&family=Inspiration&display=block" rel="stylesheet" />
+  /* Khi rê chuột */
+  .fa-user:hover {
+    color: #e3c78d;      /* Đổi sang xanh khi hover */
+    cursor: pointer;
+  }
   
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="product.css">
-  
-  <!-- Auth check script -->
-  <script src="../../assets/js/auth-check.js"></script>
-</head>
-
-<body>
-
-  <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../home/home.html">La Cuisine Ngọt</a>
-            </div>
-
-            <ul class="nav-menu">
-                <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
-                <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
-                <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
-
-                <li>
-                    <a href="#" class="nav-search">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    
-                    <a href="../cart/cart.html" class="nav-cart" style="padding: 0 10px;">
-                        <i class="fas fa-shopping-cart"></i>
-                    </a>
-                </li>
-
-                <li class="nav-user">
-                    <a href="../login/login.html" class="nav-login-1">ĐĂNG NHẬP</a>
-                    <span class="nav-separator">|</span> <a href="../register/register.html" class="nav-login-2">ĐĂNG
-                        KÍ</a>
-
-                    <div class="user-menu hidden">
-                        <ul>
-                            <li><button id="tt">Thông tin tài khoản</button></li>
-                            <li><button id="logoutBtnNav">Đăng xuất</button></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="search-bar hidden">
-        <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm...">
-
-        <div class="filter-wrapper" style="position: relative; display: inline-block;">
-            <button class="filter-btn">Lọc</button>
-
-            <div class="filter-popup">
-                <div class="filter-content">
-                    <label for="categorySelect">Danh mục</label>
-                    <select id="categorySelect">
-                        <option value="">Tất cả danh mục</option>
-                    </select>
-
-                    <label for="priceSelect">Giá</label>
-                    <select id="priceSelect">
-                        <option value="">Tất cả giá</option>
-                        <option value="duoi500">Dưới 500.000</option>
-                        <option value="500-700">500.000 - 700.000</option>
-                        <option value="tren700">Trên 700.000</option>
-                    </select>
-
-                    <button id="filterButton">Lọc</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Vùng hiển thị sản phẩm sau khi lọc -->
-    <div id="filteredProducts" class="products-grid"></div>
 
 
-  <!-- MAIN -->
-  <main class="product-page">
-    <div class="product-wrapper">
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .product-container {
+    flex-direction: column;
+    align-items: center;
+  }
 
-      <!-- KHỐI TRÊN: HÌNH + THÔNG TIN BÁNH -->
-      <div class="product-container">
-        <!-- HÌNH ẢNH -->
-        <div class="product-image">
-          <img id="product-img" src="" alt="Hình sản phẩm" />
-        </div>
+  .product-image img {
+    width: 100%;
+  }
 
-        <!-- THÔNG TIN SẢN PHẨM -->
-        <div class="product-info">
-          <h2 id="product-name" class="product-name"></h2>
-          <p id="product-price" class="price"></p>
-          <p id="product-short1" class="short-desc"></p>
-          <p id="product-short2" class="short-desc"></p>
+  .action-section {
+    align-items: center;
+    width: 100%;
+  }
 
-          <!-- NÚT HÀNH ĐỘNG -->
-          <div class="action-section">
-            <div class="action-row">
-              <div class="quantity-control">
-                <button id="decrease">-</button>
-                <input type="text" id="quantity" value="1" />
-                <button id="increase">+</button>
-              </div>
-              <button class="add-cart">Thêm vào giỏ hàng</button>
-            </div>
-            <button class="buy-now">Mua ngay</button>
-          </div>
-        </div>
-      </div>
+  .action-row {
+    flex-direction: column;
+    width: 100%;
+  }
 
-      <!-- KHỐI DƯỚI: THÔNG TIN CHI TIẾT -->
-      <section class="product-details">
-        <h3>THÔNG TIN SẢN PHẨM</h3>
+  .add-cart, .buy-now {
+    width: 100%;
+  }
 
-        <div class="detail-block">
-          <h4>MÔ TẢ</h4>
-          <p id="desc1"></p>
-        </div>
+  .product-details {
+    margin-left: 0;
+    padding: 0 24px;
+  }
+}
+ul.no-dot {
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 0;
+}
 
-        <div class="detail-block">
-          <h4>CẤU TRÚC BÁNH</h4>
-          <div id="structure"></div>
-        </div>
+ul.no-dot li {
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
 
-        <div class="detail-block">
-          <h4>HƯỚNG DẪN SỬ DỤNG</h4>
-          <p id="usage"></p>
-        </div>
+/**/
+/* Search bar: fixed dưới navbar, nổi trên nội dung */
+.search-bar {
+  display: none;
+  position: fixed;      /* fixed để luôn nằm ngay dưới navbar hiện tại */
+  top: 70px;            /* mặc định; JS sẽ cập nhật chính xác khi bật */
+  left: 0;
+  width: 100%;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 9999;        /* nổi trên mọi thứ */
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
 
-        <div class="detail-block">
-          <h4>PHỤ KIỆN TẶNG KÈM</h4>
-          <p id="bonus"></p>
-        </div>
-      </section>
+/* Hiển thị khi bật */
+.search-bar.show {
+  display: flex !important;
+}
 
-    </div> <!-- đóng product-wrapper -->
-  </main>
-  <!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-container">
-      <div class="footer-left">
-          <h2 class="footer-logo">La Cuisine Ngọt</h2>
-          <div class="social-links">
-              <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
-                  <i class="fab fa-facebook"></i>
-              </a>
-              <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
-                  <i class="fab fa-instagram"></i>
-              </a>
-          </div>
-      </div>
-      <div class="footer-below">
-          © Nhóm 1 - Ca 4 - CNPM
-      </div>
-      <div class="footer-right">
-          <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, p.Chợ Quán, TP.HCM</p>
-          </br>
-          <p><b>Liên hệ với Ngọt </b><br />lacuisinengot@gmail.com <br/>
-              1010.0111.2025</p>
-      </div>
-      
-  </div>
-</footer>
+/* Ẩn bằng class hidden (nếu bạn vẫn dùng hidden) */
+.hidden { display: none; }
 
-  <script src="product.js"></script>
-      <!-- Overlay hiển thị kết quả lọc / tìm kiếm -->
-    <div id="overlay" class="hidden">
-        <div class="popup-container">
-            <button class="close-popup">&times;</button>
-            <div id="popupProducts" class="products-grid"></div>
-        </div>
-    </div>
+.search-bar input {
+  width: 400px;        
+  height: 40px;         
+  padding: 8px 12px;  
+  border: 1px solid #ccc;
+  border-radius: 6px;  
+  font-size: 16px;      
+  outline: none;        
+  transition: all 0.2s ease;
+}
 
-</body>
+.search-bar input:focus {
+  border-color: #395542;    
+  box-shadow: 0 0 5px rgba(255, 140, 148, 0.3);
+}
 
-</html>
+.search-bar .filter-btn {
+  height: 40px;             
+  padding: 0 20px;           
+  background-color: #395542; 
+  color: #fff;             
+  border: none;             
+  border-radius: 6px;      
+  font-size: 16px;           
+  cursor: pointer;           
+  transition: all 0.2s ease; 
+}
+
+.search-bar .filter-btn:hover {
+  background-color: #AC845C;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* ===== Ô LỌC NHỎ GỌN DÍNH NÚT LỌC ===== */
+/* Nút lọc + popup chung khối để canh dính nhau */
+.filter-btn {
+  position: relative;
+  z-index: 2;
+}
+
+/* Popup dính sát nút "Lọc" */
+.filter-popup {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #b77746;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  padding: 14px;
+  width: 220px;
+  display: none;
+  z-index: 9999;
+  animation: slideDown 0.25s ease-out;
+  color: #fff8f2;
+}
+
+/* Khi hiện */
+.filter-popup.show {
+  display: block;
+}
+
+/* Bên trong popup */
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-content label {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.filter-content select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+}
+
+.filter-content button {
+  margin-top: 8px;
+  background-color: #fff;
+  color: #b77746;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filter-content button:hover {
+  background-color: #f5e2d4;
+}
+
+
+/* Hiệu ứng trượt mượt */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-popup.show {
+  display: block;
+}
+
+/* Nội dung bên trong popup */
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-content label {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.filter-content select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+}
+
+.filter-content button {
+  margin-top: 8px;
+  background-color: #fff;
+  color: #b77746;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filter-content button:hover {
+  background-color: #f5e2d4;
+}
+
+/* Nền xám khi bật tìm kiếm */
+body.searching::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 800;
+}
+
+/* Ô kết quả tìm kiếm hiển thị dưới thanh */
+.search-results {
+  position: absolute;
+  top: 100%; /* ngay dưới thanh tìm kiếm */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  max-width: 800px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  z-index: 1000;
+  display: none;
+}
+
+.search-results.show {
+  display: block;
+}
+
+.search-results .product-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.search-results .product-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  margin-right: 15px;
+}
+
+#overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+#overlay.hidden {
+  display: none;
+}
+
+.popup-container {
+  background: #fff;
+  padding: 20px;
+  max-width: 900px;
+  width: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  position: relative;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+.close-popup {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#popupProducts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 40px;
+}
+
+/* Ẩn vùng lọc rỗng */
+#filteredProducts.products-grid:empty {
+  display: none !important;
+}
+
+/* Nếu có nội dung thì hiển thị dạng lưới như cũ */
+#filteredProducts.products-grid {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ===== USER MENU (ẨN MẶC ĐỊNH) ===== */
+.nav-user {
+  position: relative;
+}
+
+.user-menu {
+  position: absolute;
+  top: 45px; /* cách icon user một chút */
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  display: none; /* ẩn mặc định */
+  min-width: 180px;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.user-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.user-menu li {
+  border-bottom: 1px solid #eee;
+}
+
+.user-menu li:last-child {
+  border-bottom: none;
+}
+
+.user-menu button {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  color: #333;
+  font-family: 'Inter', sans-serif;
+}
+
+.user-menu button:hover {
+  background-color: #f3f3f3;
+}
+
+/* hiệu ứng mờ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ẩn/hiện bằng class JS */
+.user-menu.show {
+  display: block;
+}
