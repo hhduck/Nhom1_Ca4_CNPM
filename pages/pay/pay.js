@@ -5,8 +5,6 @@
 let globalCartItems = [];
 let globalPromotions = [];
 let globalCurrentUser = null;
-// BIẾN NÀY KHÔNG CẦN NỮA VÌ DÙNG LUỒNG THẬT
-// let currentOrderData = null; 
 
 // Dữ liệu địa chỉ TP.HCM theo yêu cầu
 const locationData = {
@@ -99,14 +97,9 @@ function handleUserDisplay() {
       const newAccountBtn = accountBtn.cloneNode(true);
       accountBtn.parentNode.replaceChild(newAccountBtn, accountBtn);
       newAccountBtn.addEventListener('click', (e) => {
-<<<<<<< Updated upstream
-        e.preventDefault(); e.stopPropagation();
-        const accountUrl = (userType === 'staff') ? "../../staff/staffProfile/staff_profile.html" : "../account/account.html";
-=======
         e.preventDefault();
         e.stopPropagation();
         const accountUrl = (userType === 'staff') ? "../staff/staffProfile/staff_profile.html" : "../account/account.html";
->>>>>>> Stashed changes
         window.location.href = accountUrl;
       });
     }
@@ -151,18 +144,19 @@ function handleUserDisplay() {
 document.addEventListener('DOMContentLoaded', () => {
   handleUserDisplay();
 
+  // Kiểm tra đăng nhập
   if (!globalCurrentUser || !globalCurrentUser.id) {
     alert("Vui lòng đăng nhập để tiến hành thanh toán.");
     window.location.href = "../login/login.html?redirect=pay";
     return;
   }
 
+  // Tải các dữ liệu cần thiết
   loadUserData(globalCurrentUser);
   loadCartFromAPI(globalCurrentUser.id);
   setupDeliveryOptions();
-  setupValidation(); // Hàm này đã được thay thế (ở dưới)
+  setupValidation(); // Hàm này chạy luồng ngrok
   loadPromotions();
-  // KHÔNG CẦN GỌI setupPaymentModal() nữa
 });
 
 function loadUserData(user) {
@@ -363,7 +357,7 @@ function setupDeliveryOptions() {
   });
 }
 
-// HÀM THAY THẾ: (Từ Bước 6)
+// HÀM QUAN TRỌNG: (Từ Bước 6)
 function setupValidation() {
   const checkoutForm = document.getElementById("checkoutForm");
   const placeOrderBtn = document.getElementById("placeOrder");
