@@ -82,17 +82,18 @@ function formatPrice(price) {
 
 // ========== HÀM XỬ LÝ HIỂN THỊ USER (COPY TỪ HOME.JS ĐÃ SỬA) ==========
 function handleUserDisplay() {
-  const loginLink = document.querySelector(".nav-login"); // Thẻ <a> chính
+  const navUserLi = document.querySelector(".nav-user"); // Chọn thẻ <li> cha
+  const login1Link = document.querySelector(".nav-login-1"); // ĐĂNG NHẬP
+  const login2Link = document.querySelector(".nav-login-2"); // ĐĂNG KÍ
+  const navSeparator = document.querySelector(".nav-separator"); // Dấu |
   const userMenu = document.querySelector(".user-menu"); // Menu thả xuống
+  const ttButton = document.getElementById("tt"); // Nút Thông tin tài khoản trong user-menu
+  const logoutBtnNav = document.getElementById("logoutBtnNav"); // Nút Đăng xuất trong user-menu
 
-  if (!loginLink || !userMenu) {
-    console.error("Thiếu phần tử .nav-login hoặc .user-menu trong product.html.");
+  if (!navUserLi || !login1Link || !login2Link || !navSeparator || !userMenu || !ttButton || !logoutBtnNav) {
+    console.error("Thiếu các element navbar quan trọng.");
     return;
   }
-
-  // Xóa listener cũ (nếu có) bằng cách clone
-  const newLoginLink = loginLink.cloneNode(true);
-  loginLink.parentNode.replaceChild(newLoginLink, loginLink);
 
   const staffDataString = localStorage.getItem("currentStaff");
   const customerDataString = localStorage.getItem("currentUser");
@@ -101,12 +102,10 @@ function handleUserDisplay() {
   let loggedInUser = null;
   let userType = null;
 
-  // Ưu tiên Staff/Admin
   if (staffDataString && jwtToken) {
     try { loggedInUser = JSON.parse(staffDataString); if (loggedInUser?.id) userType = 'staff'; else loggedInUser = null; }
     catch (e) { loggedInUser = null; }
   }
-  // Nếu không phải staff, kiểm tra Customer
   if (!loggedInUser && customerDataString && jwtToken) {
     try { loggedInUser = JSON.parse(customerDataString); if (loggedInUser?.id) userType = 'customer'; else loggedInUser = null; }
     catch (e) { loggedInUser = null; }
@@ -115,54 +114,72 @@ function handleUserDisplay() {
   // --- Cập nhật giao diện ---
   if (loggedInUser && userType) {
     // ---- ĐÃ ĐĂNG NHẬP ----
-    console.log(`Đã đăng nhập với ${userType}. Hiển thị icon user.`);
-    newLoginLink.innerHTML = `<i class="fas fa-user"></i>`; // Chỉ thay đổi nội dung thành icon
-    newLoginLink.href = "#"; // Bỏ link đến trang login
+    console.log(`Đã đăng nhập (account.js) với ${userType}. Hiển thị icon.`);
+    
+    // Ẩn link Đăng nhập/Đăng ký và dấu |
+    login1Link.style.display = 'none';
+    login2Link.style.display = 'none';
+    navSeparator.style.display = 'none';
 
-    const accountLink = userMenu.querySelector("a[href*='account.html'], a[href*='staff_profile.html']");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    // Điều chỉnh link "Thông tin tài khoản"
-    if (accountLink) {
-      accountLink.href = (userType === 'staff')
-        ? "../../staff/staffProfile/staff_profile.html" // Link cho Staff
-        : "../account/account.html";               // Link cho Customer
-      console.log("Updated account link to:", accountLink.href);
+    // Tạo hoặc cập nhật icon user
+    let userIconLink = navUserLi.querySelector(".nav-user-icon");
+    if (!userIconLink) {
+      userIconLink = document.createElement('a');
+      userIconLink.href = "#";
+      userIconLink.className = "nav-user-icon";
+      userIconLink.innerHTML = `<i class="fas fa-user"></i>`;
+      navUserLi.prepend(userIconLink); // Thêm vào đầu li.nav-user
+    } else {
+      userIconLink.style.display = 'block'; // Đảm bảo icon hiện
     }
 
-    // Hiện menu khi click icon
-    newLoginLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation(); // Ngăn sự kiện click lan ra document
-      userMenu.classList.remove("hidden"); // Bỏ class hidden
-      userMenu.style.display = (userMenu.style.display === "block") ? "none" : "block"; // Toggle
+    // Cập nhật href cho nút "Thông tin tài khoản" trong user-menu
+    if (userType === 'staff') {
+      ttButton.onclick = () => window.location.href = "../../staff/staffProfile/staff_profile.html";
+    } else {
+      ttButton.onclick = () => window.location.href = "../account/account.html";
+    }
+
+    // Hiện/ẩn menu khi click icon
+    userIconLink.addEventListener("click", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      userMenu.classList.toggle("hidden"); // Dùng toggle để tiện ẩn hiện
+      userMenu.style.display = userMenu.classList.contains("hidden") ? "none" : "block";
     });
 
     // Đóng menu khi click ra ngoài
     document.addEventListener('click', (event) => {
-      if (userMenu && !newLoginLink.contains(event.target) && !userMenu.contains(event.target)) {
+      if (userMenu && userIconLink && !userIconLink.contains(event.target) && !userMenu.contains(event.target)) {
+        userMenu.classList.add("hidden");
         userMenu.style.display = "none";
       }
     });
 
-    // Xử lý nút Đăng xuất
-    if (logoutBtn) {
-      const newLogoutBtn = logoutBtn.cloneNode(true);
-      logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
-      newLogoutBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        performLogout("../login/login.html"); // Gọi hàm logout mới
-      });
-    }
+    // Xử lý nút Đăng xuất (Navbar)
+    logoutBtnNav.addEventListener("click", (e) => {
+      e.preventDefault();
+      performLogout("../login/login.html"); // Về trang login
+    });
 
-    userMenu.style.display = "none"; // Đảm bảo menu ẩn ban đầu
+    userMenu.classList.add("hidden"); // Mặc định ẩn menu khi mới tải trang
+    userMenu.style.display = "none";
 
   } else {
     // ---- CHƯA ĐĂNG NHẬP ----
-    console.log("Chưa đăng nhập. Hiển thị nút Đăng nhập/Đăng ký.");
-    newLoginLink.innerHTML = 'ĐĂNG NHẬP/ĐĂNG KÍ'; // Khôi phục text
-    newLoginLink.href = "../login/login.html"; // Khôi phục link
-    userMenu.classList.add("hidden");
+    console.log("Chưa đăng nhập (account.js). Hiển thị link login.");
+    
+    // Hiện link Đăng nhập/Đăng ký và dấu |
+    login1Link.style.display = 'inline';
+    login2Link.style.display = 'inline';
+    navSeparator.style.display = 'inline';
+
+    // Ẩn icon user nếu có
+    const userIconLink = navUserLi.querySelector(".nav-user-icon");
+    if (userIconLink) {
+      userIconLink.style.display = 'none';
+    }
+    
+    userMenu.classList.add("hidden"); // Đảm bảo menu ẩn
     userMenu.style.display = "none";
   }
 }
@@ -333,3 +350,283 @@ function setupActionButtons(product) {
   }
 }
 
+// ====== API & LỌC SẢN PHẨM ======
+const API_BASE = "../../api/products_c.php";
+
+function initProductFilter() {
+  const categorySelect = document.getElementById("categorySelect");
+  const priceSelect = document.getElementById("priceSelect");
+  const filterButton = document.getElementById("filterButton");
+  const grid = document.getElementById("filteredProducts"); // ✅ chỉ render vào vùng mới
+  if (!categorySelect || !priceSelect || !filterButton || !grid) return;
+
+  // 🔹 Lấy danh mục từ API
+  fetch(`${API_BASE}?categories=1`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.categories) {
+        data.categories.forEach(cat => {
+          const opt = document.createElement("option");
+          opt.value = cat.CategoryName;
+          opt.textContent = cat.CategoryName;
+          categorySelect.appendChild(opt);
+        });
+      }
+    });
+
+  // 🔹 Hàm tải và lọc sản phẩm
+  async function loadProducts() {
+    const res = await fetch(API_BASE);
+    const data = await res.json();
+    if (!data.success) return;
+
+    let filtered = data.products;
+    const category = categorySelect.value;
+    const price = priceSelect.value;
+
+    if (category) filtered = filtered.filter(p => p.CategoryName === category);
+
+    filtered = filtered.filter(p => {
+      const priceNum = parseFloat(p.Price);
+      if (price === "duoi500") return priceNum < 500000;
+      if (price === "500-700") return priceNum >= 500000 && priceNum <= 700000;
+      if (price === "tren700") return priceNum > 700000;
+      return true;
+    });
+
+    grid.innerHTML = "";
+    if (!filtered.length) {
+      grid.innerHTML = "<p>Không có sản phẩm phù hợp.</p>";
+      return;
+    }
+
+    filtered.forEach(p => {
+      const card = `
+        <div class="product-card" data-id="${p.ProductID}">
+          <div class="product-image-container">
+            <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+              <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+            </a>
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">${p.ProductName}</h3>
+            <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+          </div>
+        </div>`;
+      grid.insertAdjacentHTML("beforeend", card);
+    });
+    
+    // Re-bind navigation sau khi render
+    bindProductCardNavigation();
+  }
+}
+
+// ===== HIỆN/ẨN Ô LỌC NHỎ =====
+document.addEventListener("DOMContentLoaded", () => {
+  const filterToggleBtn = document.querySelector(".filter-btn"); // nút "Lọc" trên thanh tìm kiếm
+  const filterPopup = document.querySelector(".filter-popup");
+
+  if (filterToggleBtn && filterPopup) {
+    filterToggleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      filterPopup.classList.toggle("show");
+    });
+
+    // Ẩn khi click ra ngoài
+    document.addEventListener("click", (e) => {
+      if (!filterPopup.contains(e.target) && !filterToggleBtn.contains(e.target)) {
+        filterPopup.classList.remove("show");
+      }
+    });
+  }
+});
+
+// ===== HIỂN THỊ POPUP =====
+function showPopup(products) {
+  const overlay = document.getElementById("overlay");
+  const popupProducts = document.getElementById("popupProducts");
+  if (!overlay || !popupProducts) return;
+
+  popupProducts.innerHTML = "";
+
+  if (!products || !products.length) {
+    popupProducts.innerHTML = "<p>Không tìm thấy sản phẩm phù hợp.</p>";
+  } else {
+    products.forEach(p => {
+      popupProducts.insertAdjacentHTML("beforeend", `
+        <div class="product-card" data-id="${p.ProductID}">
+          <div class="product-image-container">
+            <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+              <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+            </a>
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">${p.ProductName}</h3>
+            <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+          </div>
+        </div>
+      `);
+    });
+  }
+
+  overlay.classList.remove("hidden");
+  
+  // Re-bind navigation sau khi render popup
+  bindProductCardNavigation();
+}
+
+// ===== HIỂN THỊ KẾT QUẢ TRÊN NỀN MỜ =====
+
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("overlay");
+  const popupProducts = document.getElementById("popupProducts");
+  const closePopupBtn = document.querySelector(".close-popup");
+
+  const categorySelect = document.getElementById("categorySelect");
+  const priceSelect = document.getElementById("priceSelect");
+  const applyFilterBtn = document.getElementById("filterButton");
+
+  // ===== ẨN POPUP =====
+  function hidePopup() {
+    overlay.classList.add("hidden");
+  }
+
+  // Nút đóng popup
+  closePopupBtn.addEventListener("click", hidePopup);
+
+  // Click ra ngoài cũng tắt
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) hidePopup();
+  });
+
+  // ===== SỰ KIỆN LỌC =====
+  if (applyFilterBtn) {
+    applyFilterBtn.addEventListener("click", async () => {
+      const category = categorySelect.value;
+      const price = priceSelect.value;
+      let min = 0, max = 99999999;
+
+      if (price === "duoi500") max = 500000;
+      if (price === "500-700") { min = 500000; max = 700000; }
+      if (price === "tren700") min = 700000;
+
+      const res = await fetch(`${API_BASE}?category=${encodeURIComponent(category)}&min=${min}&max=${max}`);
+      const data = await res.json();
+      showPopup(data.products);
+    });
+  }
+});
+
+// ====== TÌM KIẾM & HIỂN THỊ KẾT QUẢ TRÊN NỀN MỜ ======
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("overlay");
+  const popupProducts = document.getElementById("popupProducts");
+  const closePopupBtn = document.querySelector(".close-popup");
+  const searchIcon = document.querySelector(".nav-search");
+  const searchBar = document.querySelector(".search-bar");
+  const searchInput = document.getElementById("searchInput");
+
+  // ===== Hiện/ẩn thanh tìm kiếm =====
+  if (searchIcon && searchBar) {
+    searchIcon.addEventListener("click", (e) => {
+      e.preventDefault();
+      searchBar.classList.toggle("show");
+      document.body.classList.toggle("searching");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!searchBar.contains(e.target) && !searchIcon.contains(e.target)) {
+        searchBar.classList.remove("show");
+        document.body.classList.remove("searching");
+      }
+    });
+  }
+
+  // ===== Hiển thị popup sản phẩm =====
+  function showPopup(products) {
+    popupProducts.innerHTML = "";
+
+    if (!products || !products.length) {
+      popupProducts.innerHTML = "<p>Không tìm thấy sản phẩm phù hợp.</p>";
+    } else {
+      products.forEach(p => {
+        const card = `
+          <div class="product-card">
+            <div class="product-image-container">
+              <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+                <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+              </a>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">${p.ProductName}</h3>
+              <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+            </div>
+          </div>`;
+        popupProducts.insertAdjacentHTML("beforeend", card);
+      });
+    }
+    overlay.classList.remove("hidden");
+  }
+
+  // ===== Đóng popup =====
+  function hidePopup() { overlay.classList.add("hidden"); }
+  closePopupBtn.addEventListener("click", hidePopup);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) hidePopup(); });
+
+  // ===== Gọi API khi nhấn Enter trong ô tìm kiếm =====
+  if (searchInput) {
+    searchInput.addEventListener("keypress", async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // ✅ Ngăn hành vi mặc định chuyển trang
+        e.stopPropagation(); // ✅ Ngăn chồng sự kiện khác
+
+        const keyword = e.target.value.trim();
+        if (!keyword) return;
+
+        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          showPopup(data.products);
+        } catch (err) {
+          console.error("❌ Lỗi tìm kiếm:", err);
+        }
+      }
+    });
+  }
+});
+
+// ✅ Ghi đè hành vi tìm kiếm của main.js chỉ trên trang Home
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.querySelector(".search-bar input");
+
+  if (searchInput) {
+    // Xóa toàn bộ sự kiện keypress cũ mà main.js đã gắn
+    const newInput = searchInput.cloneNode(true);
+    searchInput.parentNode.replaceChild(newInput, searchInput);
+
+    // Gắn lại sự kiện tìm kiếm theo logic của bạn
+    newInput.addEventListener("keypress", async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // ❌ chặn chuyển hướng từ main.js
+        const keyword = e.target.value.trim();
+        if (!keyword) return;
+
+        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+
+          // Hiện kết quả trên popup (hàm showPopup bạn đã có)
+          if (typeof showPopup === "function") {
+            showPopup(data.products);
+          } else {
+            alert("Không tìm thấy sản phẩm hoặc showPopup chưa được định nghĩa.");
+          }
+        } catch (err) {
+          console.error("❌ Lỗi tìm kiếm:", err);
+        }
+      }
+    });
+  }
+});
