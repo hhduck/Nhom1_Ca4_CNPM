@@ -1,922 +1,883 @@
-/* ===== NAVBAR ===== */
-.navbar {
-  background-color: #395542;
-  /* xanh rêu đậm */
-  padding: 10px 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  height: 70px;
-}
-
-.nav-container {
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Logo */
-.nav-logo a {
-  color: #fff;
-  font-family: 'Inspiration', cursive;
-  font-size: 52px;
-  font-weight: 200;
-  text-decoration: none;
-  letter-spacing: 1px;
-}
-
-/* Menu */
-.nav-menu {
-  list-style: none;
-  display: flex;
-  gap: 40px;
-  padding: 0;
-  margin-right: -70px;
-}
-
-.nav-menu a {
-  color: #fff;
-  text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  text-transform: uppercase;
-  /* Viết hoa toàn bộ */
-  transition: color 0.3s;
-}
-
-.nav-menu a:hover {
-  color: #EDDECD;
-  /* vàng nhạt khi hover */
-}
-
-/* Icons bên phải */
-.nav-icons {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-
-.nav-icons a {
-  color: #fff;
-  font-size: 20px;
-  text-decoration: none;
-  transition: 0.3s;
-  left: 150px;
-}
-
-.nav-icons a:hover {
-  color: #EDDECD;
-}
-
-/* Giỏ hàng */
-.nav-cart {
-  position: relative;
-}
-
-.cart-count {
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  background-color: #EDDECD;
-  color: #395542;
-  font-size: 20px;
-  font-weight: bold;
-  padding: 2px 5px;
-  border-radius: 50%;
-}
-
-.nav-login {
-  margin-left: 130px;
-  margin-right: 50px;
-}
-
-.nav-login:hover {
-  color: #EDDECD;
-}
-
-/* Responsive (mobile) */
-@media (max-width: 768px) {
-  .nav-container {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-  }
-
-  .nav-menu {
-      gap: 20px;
-  }
-
-  .nav-icons {
-      gap: 15px;
-  }
-}
-
-/* Login Page Styles */
-.form-container {
-  max-width: 500px;
-  margin: 120px auto 80px;
-  padding: 40px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-
-
-.form-title {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2d5016;
-  margin-bottom: 30px;
-  position: relative;
-}
-
-
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
-  font-size: 14px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="password"],
-.form-group input[type="email"] {
-  width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  background: #fafbfc;
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="password"]:focus,
-.form-group input[type="email"]:focus {
-  outline: none;
-  border-color: #2d5016;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
-}
-
-.form-group input[type="checkbox"] {
-  margin-right: 8px;
-  transform: scale(1.4);
-  accent-color: #2d5016;
-}
-
-.form-group label {
-  align-items: center;
-  font-size: 14px;
-  color: #666;
-  cursor: pointer;
-  display: inline-flex;
-  white-space: nowrap;
-}
-
-.btn-submit {
-  width: 100%;
-  background: linear-gradient(135deg, #2d5016, #4a7c59);
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-submit::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.btn-submit:hover::before {
-  left: 100%;
-}
-
-.btn-submit:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(45, 80, 22, 0.3);
-}
-
-.btn-submit:active {
-  transform: translateY(0);
-}
-
-.form-links {
-  text-align: center;
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px solid #e1e5e9;
-}
-
-.form-links a {
-  color: #2d5016;
-  text-decoration: none;
-  margin: 0 15px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.form-links a::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #2d5016;
-  transition: width 0.3s ease;
-}
-
-.form-links a:hover::after {
-  width: 100%;
-}
-
-.form-links a:hover {
-  color: #1e3a0f;
-}
-
-/* ✅ FIX: Style cho link "Đăng nhập với tài khoản khác" */
-.force-login-link {
-  color: #c92a2a !important;
-  font-weight: 600 !important;
-  border: 1px solid #c92a2a;
-  padding: 8px 16px !important;
-  border-radius: 6px;
-  margin: 10px 0 !important;
-  display: inline-block;
-  transition: all 0.3s ease;
-}
-
-.force-login-link:hover {
-  background-color: #c92a2a;
-  color: white !important;
-}
-
-.force-login-link::after {
-  display: none !important;
-}
-
-/* Loading state */
-.btn-submit.loading {
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.btn-submit.loading::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-/* Error states */
-.form-group.error input {
-  border-color: #e74c3c;
-  background: #fdf2f2;
-}
-
-.form-group.error label {
-  color: #e74c3c;
-}
-
-.error-message {
-  color: #e74c3c;
-  font-size: 12px;
-  margin-top: 5px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.error-message i {
-  font-size: 14px;
-}
-
-/* Success states */
-.form-group.success input {
-  border-color: #27ae60;
-  background: #f0f9f0;
-}
-
-.form-group.success label {
-  color: #27ae60;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .form-container {
-    margin: 100px 20px 60px;
-    padding: 30px 25px;
-  }
-
-  .form-title {
-    font-size: 1.8rem;
-  }
-
-  .form-links a {
-    display: block;
-    margin: 10px 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .form-container {
-    margin: 80px 15px 40px;
-    padding: 25px 20px;
-  }
-
-  .form-title {
-    font-size: 1.6rem;
-  }
-
-  .form-group input[type="text"],
-  .form-group input[type="password"],
-  .form-group input[type="email"] {
-    font-size: 16px;
-    /* Prevent zoom on iOS */
-  }
-}
-
-/* Animation for form appearance */
-.form-container {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Focus management for accessibility */
-.form-group input:focus {
-  outline: 2px solid #2d5016;
-  outline-offset: 2px;
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .form-container {
-    border: 2px solid #000;
-  }
-
-  .form-group input {
-    border-width: 2px;
-  }
-
-  .btn-submit {
-    border: 2px solid #000;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .form-container {
-    animation: none;
-  }
-
-  .btn-submit::before {
-    display: none;
-  }
-
-  .btn-submit:hover {
-    transform: none;
-  }
-}
-
-/* --- FOOTER --- */
-.footer {
-  background-color: #395542;
-  color: #ffffff;
-  padding: 40px 100px;
-  font-family: 'Crimson Text', serif;
-}
-
-.footer-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.footer-left {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.footer-logo {
-  font-family: 'Inspiration', cursive;
-  font-size: 52px;
-  color: #fff;
-  font-weight: 200;
-  text-decoration: none;
-  letter-spacing: 1px;
-
-}
-
-.social-links {
-  display: flex;
-  gap: 15px;
-}
-
-.social-links a {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #2d5016;
-  transition: all 0.3s ease;
-  margin-top: -40px;
-}
-
-.social-links a:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px);
-}
-
-.footer-right {
-  text-align: right;
-  line-height: 1.8;
-  font-size: 15px;
-}
-
-.footer-right b {
-  font-weight: 600;
-  font-size: 16px;
-}
-
-@media (max-width: 768px) {
-  .footer-container {
-    flex-direction: column;
-    text-align: center;
-    gap: 30px;
-  }
-
-  .footer-right {
-    text-align: center;
-  }
-}
-
-
-/* --- RESPONSIVE --- */
-@media (max-width: 768px) {
-  .product-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .product-image img {
-    width: 100%;
-  }
-
-  .action-section {
-    align-items: center;
-    width: 100%;
-  }
-
-  .action-row {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .add-cart,
-  .buy-now {
-    width: 100%;
-  }
-
-  .product-details {
-    margin-left: 0;
-    padding: 0 24px;
-  }
-}
-
-.user-menu {
-  position: absolute;
-  background: white;
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  border-radius: 8px;
-  display: none;
-  right: 0;
-  top: 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.user-menu button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #333;
-}
-
-.nav-user {
-  position: relative;
-}
-
-.hidden {
-  display: none;
-}
-
-/* CSS cho icon user */
-.fa-user {
-  font-size: 20px;
-  /* Kích thước icon */
-  color: #ffffff;
-  /* Màu xám đậm */
-  transition: color 0.3s ease;
-  margin-top: 6px;
-  margin-left: 20px;
-}
-
-/* Khi rê chuột */
-.fa-user:hover {
-  color: #e3c78d;
-  /* Đổi sang xanh khi hover */
-  cursor: pointer;
-}
-
-.password-wrapper {
-  position: relative;
-}
-
-.password-wrapper .toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #999;
-  transition: color 0.2s;
-}
-
-.password-wrapper .toggle-password:hover {
-  color: #333;
-}
-
-/* === DÁN VÀO CUỐI TỆP LOGIN.CSS === */
-
-/* CSS cho vòng tròn đếm số giỏ hàng */
-.cart-count {
-  position: absolute;
-  top: -5px;
-  /* Nâng lên cao hơn một chút */
-  right: 0px;
-  /* Dịch vào gần icon hơn (do icon có padding 10px) */
-
-  background-color: #EDDECD;
-  /* Màu nền vàng nhạt */
-  color: #395542;
-  /* Màu chữ xanh rêu */
-
-  font-size: 13px;
-  /* Cỡ chữ nhỏ lại */
-  font-weight: bold;
-  border-radius: 50%;
-  /* Bo tròn */
-
-  /* Dùng flex để căn số 2 ra giữa vòng tròn */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  /* Kích thước */
-  min-width: 18px;
-  /* Đảm bảo nó tròn dù chỉ có 1 số */
-  height: 18px;
-  padding: 2px;
-  box-sizing: border-box;
-  /* Quan trọng để padding không làm vỡ size */
-}
-/*TIM KIEM*/
-/* Search bar: fixed dưới navbar, nổi trên nội dung */
-.search-bar {
-  display: none;
-  position: fixed;      /* fixed để luôn nằm ngay dưới navbar hiện tại */
-  top: 70px;            /* mặc định; JS sẽ cập nhật chính xác khi bật */
-  left: 0;
-  width: 100%;
-  background: white;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  z-index: 9999;        /* nổi trên mọi thứ */
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
- 
-/* Hiển thị khi bật */
-.search-bar.show {
-  display: flex !important;
-}
- 
-/* Ẩn bằng class hidden (nếu bạn vẫn dùng hidden) */
-.hidden { display: none; }
- 
-.search-bar input {
-  width: 400px;        
-  height: 40px;        
-  padding: 8px 12px;  
-  border: 1px solid #ccc;
-  border-radius: 6px;  
-  font-size: 16px;      
-  outline: none;        
-  transition: all 0.2s ease;
-}
- 
-.search-bar input:focus {
-  border-color: #395542;    
-  box-shadow: 0 0 5px rgba(255, 140, 148, 0.3);
-}
- 
-.search-bar .filter-btn {
-  height: 40px;            
-  padding: 0 20px;          
-  background-color: #395542;
-  color: #fff;            
-  border: none;            
-  border-radius: 6px;      
-  font-size: 16px;          
-  cursor: pointer;          
-  transition: all 0.2s ease;
-}
- 
-.search-bar .filter-btn:hover {
-  background-color: #AC845C;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
- 
-/* ===== Ô LỌC NHỎ GỌN DÍNH NÚT LỌC ===== */
-/* Nút lọc + popup chung khối để canh dính nhau */
-.filter-btn {
-  position: relative;
-  z-index: 2;
-}
- 
-/* Popup dính sát nút "Lọc" */
-.filter-popup {
-  position: absolute;
-  top: 110%;
-  left: 0;
-  background-color: #b77746;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  padding: 14px;
-  width: 220px;
-  display: none;
-  z-index: 9999;
-  animation: slideDown 0.25s ease-out;
-  color: #fff8f2;
-}
- 
-/* Khi hiện */
-.filter-popup.show {
-  display: block;
-}
- 
-/* Bên trong popup */
-.filter-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
- 
-.filter-content label {
-  font-size: 14px;
-  color: #fff;
-  font-weight: 500;
-}
- 
-.filter-content select {
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: none;
-  background-color: #fff;
-  color: #333;
-  font-size: 14px;
-  outline: none;
-}
- 
-.filter-content button {
-  margin-top: 8px;
-  background-color: #fff;
-  color: #b77746;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
- 
-.filter-content button:hover {
-  background-color: #f5e2d4;
-}
- 
- 
-/* Hiệu ứng trượt mượt */
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+/**
+ * Login Page JavaScript
+ * Handles login functionality for LA CUISINE NGỌT
+ */
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Check if user is already logged in - Cải thiện logic
+    const userData = localStorage.getItem('currentUser');
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    if (userData && jwtToken) {
+        try {
+            const currentUser = JSON.parse(userData);
+            if (currentUser && currentUser.id) {
+                // Kiểm tra xem có parameter ?force_login trong URL không
+                const urlParams = new URLSearchParams(window.location.search);
+                const forceLogin = urlParams.get('force_login');
+
+                if (forceLogin === 'true') {
+                    // Nếu có force_login=true, cho phép đăng nhập lại
+                    console.log('Force login được yêu cầu, cho phép đăng nhập lại');
+                    setupLoginForm();
+                    return;
+                }
+
+                // Nếu không có force_login, redirect về home
+                showMessage('Bạn đã đăng nhập! Đang chuyển hướng...', 'info');
+                setTimeout(() => {
+                    window.location.href = '../home/home.html';
+                }, 1500);
+                return;
+            }
+        } catch (error) {
+            console.error('Lỗi parse user data:', error);
+            // Xóa data lỗi
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('jwtToken');
+        }
+    }
+
+    // Setup form login nếu chưa đăng nhập
+    setupLoginForm();
+    handleUserDisplay(); // Dòng này bạn đã có
+    bindCartNavigation(); // <-- THÊM DÒNG NÀY
+
+});
+
+function setupLoginForm() {
+    const loginForm = document.getElementById('loginForm');
+
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        handleLogin(e);
+    });
+
+    // Add real-time validation
+    const inputs = loginForm.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function () {
+            validateField(this);
+        });
+
+        input.addEventListener('input', function () {
+            clearFieldError(this);
+
+        });
+    });
+}
+
+function handleLogin(e) {
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const username = formData.get('username').trim();
+    const password = formData.get('password');
+    const rememberMe = formData.get('rememberMe');
+
+    // Validate form
+    if (!validateLoginForm(username, password)) {
+        return;
+    }
+
+    // Show loading state
+    const submitBtn = form.querySelector('.btn-submit');
+    submitBtn.classList.add('loading');
+    submitBtn.textContent = 'Đang đăng nhập...';
+
+    // ✅ FIX: Gọi API ngay lập tức thay vì setTimeout
+    performLogin(username, password, rememberMe);
+}
+
+
+
+function validateLoginForm(username, password) {
+    let isValid = true;
+
+    // Clear previous errors
+    clearAllErrors();
+
+    // Validate username
+    if (!username) {
+        showFieldError('username', 'Vui lòng nhập tên đăng nhập hoặc email');
+        isValid = false;
+    } else if (username.length < 3) {
+        showFieldError('username', 'Tên đăng nhập phải có ít nhất 3 ký tự');
+        isValid = false;
+    }
+
+    // Validate password
+    if (!password) {
+        showFieldError('password', 'Vui lòng nhập mật khẩu');
+        isValid = false;
+    } else if (password.length < 6) {
+        showFieldError('password', 'Mật khẩu phải có ít nhất 6 ký tự');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+    const fieldName = field.name;
+
+    clearFieldError(field);
+
+    switch (fieldName) {
+        case 'username':
+            if (!value) {
+                showFieldError(fieldName, 'Vui lòng nhập tên đăng nhập hoặc email');
+            } else if (value.length < 3) {
+                showFieldError(fieldName, 'Tên đăng nhập phải có ít nhất 3 ký tự');
+            } else {
+                showFieldSuccess(fieldName);
+            }
+            break;
+
+        case 'password':
+            if (!value) {
+                showFieldError(fieldName, 'Vui lòng nhập mật khẩu');
+            } else if (value.length < 6) {
+                showFieldError(fieldName, 'Mật khẩu phải có ít nhất 6 ký tự');
+            } else {
+                showFieldSuccess(fieldName);
+            }
+            break;
+    }
+}
+
+function showFieldError(fieldName, message) {
+    const field = document.querySelector(`[name="${fieldName}"]`);
+    const formGroup = field.closest('.form-group');
+
+    formGroup.classList.add('error');
+    formGroup.classList.remove('success');
+
+    // Remove existing error message
+    const existingError = formGroup.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+
+    // Add new error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    formGroup.appendChild(errorDiv);
+}
+
+function showFieldSuccess(fieldName) {
+    const field = document.querySelector(`[name="${fieldName}"]`);
+    const formGroup = field.closest('.form-group');
+
+    formGroup.classList.add('success');
+    formGroup.classList.remove('error');
+
+    // Remove error message if exists
+    const existingError = formGroup.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+}
+
+function clearFieldError(field) {
+    const formGroup = field.closest('.form-group');
+    formGroup.classList.remove('error', 'success');
+
+    const errorMessage = formGroup.querySelector('.error-message');
+    if (errorMessage) {
+        errorMessage.remove();
+    }
+}
+
+function clearAllErrors() {
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach(group => {
+        group.classList.remove('error', 'success');
+        const errorMessage = group.querySelector('.error-message');
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    });
+}
+
+async function performLogin(username, password, rememberMe) {
+    try {
+        const response = await fetch('../../api/auth/login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        const submitBtn = document.querySelector('.btn-submit');
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Đăng nhập';
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error('Server trả về HTML thay vì JSON:', text.substring(0, 300));
+            throw new Error("Server không trả về JSON");
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            const user = data.data.user;
+            const token = data.data.token;
+
+            // ✅ FIX: LƯU ĐÚNG CHO TỪNG VAI TRÒ
+            if (user.role === 'admin') {
+                // Admin cần cả 2 keys để tương thích với cả admin panel và các trang khác
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('currentStaff', JSON.stringify(user));
+            } else if (user.role === 'staff') {
+                localStorage.setItem('currentStaff', JSON.stringify(user));
+                // Staff cũng cần currentUser để một số trang dùng chung
+                localStorage.setItem('currentUser', JSON.stringify(user));
+            } else {
+                // Customer chỉ cần currentUser
+                localStorage.setItem('currentUser', JSON.stringify(user));
+            }
+
+            localStorage.setItem('jwtToken', token);
+
+            if (rememberMe) {
+                localStorage.setItem('rememberMe', 'true');
+            }
+            
+            // Xóa giỏ hàng cũ trong localStorage khi đăng nhập để đảm bảo load từ database
+            localStorage.removeItem('cart');
+
+            showMessage(`Đăng nhập thành công! Chào mừng ${data.data.user.full_name}!`, 'success');
+
+            // Redirect based on role
+            setTimeout(() => {
+                if (data.data.user.role === 'admin') {
+                    window.location.href = '../../admin/admin.html';
+                } else if (data.data.user.role === 'staff') {
+                    window.location.href = '../../staff/ViewOders/order.html';
+                } else {
+                    window.location.href = '../home/home.html';
+                }
+            }, 1500);
+
+        } else {
+            showMessage(data.message || 'Đăng nhập thất bại!', 'error');
+        }
+
+    } catch (error) {
+        console.error('Login error:', error);
+
+        const submitBtn = document.querySelector('.btn-submit');
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Đăng nhập';
+
+        console.log('API không hoạt động, sử dụng mock data...');
+        performLoginWithMockData(username, password, rememberMe);
+    }
+}
+
+// Fallback function với mock data
+function performLoginWithMockData(username, password, rememberMe) {
+    const mockUsers = [
+        {
+            id: 1,
+            username: 'admin',
+            email: 'admin@lacuisine.vn',
+            password: 'password', // ✅ FIX: Sử dụng password đúng từ database
+            role: 'admin',
+            full_name: 'Quản trị viên'
+        },
+        {
+            id: 2,
+            username: 'staff01',
+            email: 'staff01@lacuisine.vn',
+            password: 'password', // ✅ FIX: Sử dụng password đúng từ database
+            role: 'staff',
+            full_name: 'Nhân viên 1'
+        },
+        {
+            id: 3,
+            username: 'customer01',
+            email: 'customer01@email.com',
+            password: 'password', // ✅ FIX: Sử dụng password đúng từ database
+            role: 'customer',
+            full_name: 'Nguyễn Văn A'
+        }
+    ];
+
+    // Find user
+    const user = mockUsers.find(u =>
+        (u.username === username || u.email === username) &&
+        u.password === password
+    );
+
+    if (user) {
+        // Remove password from user object
+        const { password, ...userWithoutPassword } = user;
+
+        // ✅ SỬA LỖI: KIỂM TRA VAI TRÒ MOCK
+        if (user.role === 'staff' || user.role === 'admin') {
+            localStorage.setItem('currentStaff', JSON.stringify(userWithoutPassword));
+        } else {
+            localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+        }
+
+        localStorage.setItem('jwtToken', 'demo');
+
+        if (rememberMe) {
+            localStorage.setItem('rememberMe', 'true');
+        }
+
+        showMessage(`Đăng nhập thành công! (Mock data) Chào mừng ${user.full_name}!`, 'success');
+
+        // Redirect based on role
+        setTimeout(() => {
+            if (user.role === 'admin') {
+                window.location.href = '../../admin/admin.html';
+            } else if (user.role === 'staff') {
+                window.location.href = '../../staff/ViewOders/order.html';
+            } else {
+                window.location.href = '../home/home.html';
+            }
+        }, 1500);
+
+    } else {
+        showMessage('Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
+    }
+}
+
+async function forgotPassword() {
+    const email = prompt('Nhập email của bạn để đặt lại mật khẩu:');
+    if (email) {
+        if (validateEmail(email)) {
+            try {
+                const response = await fetch('../../api/auth/forgot-password.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showMessage(result.message || 'Mật khẩu mới đã được gửi đến email của bạn! Mật khẩu mặc định: ' + result.data.default_password, 'info');
+                } else {
+                    showMessage(result.message || 'Không thể đặt lại mật khẩu. Vui lòng thử lại.', 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi đặt lại mật khẩu:', error);
+                showMessage('Lỗi kết nối. Vui lòng thử lại sau.', 'error');
+            }
+        } else {
+            showMessage('Email không hợp lệ!', 'error');
+        }
+    }
+}
+// 👁️ Toggle show/hide password
+document.addEventListener('DOMContentLoaded', function () {
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordField = document.getElementById('password');
+
+    if (togglePassword && passwordField) {
+        togglePassword.addEventListener('click', function () {
+            const isHidden = passwordField.type === 'password';
+            passwordField.type = isHidden ? 'text' : 'password';
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
+});
+
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Utility function for showing messages
+function showMessage(message, type = 'info') {
+    // Remove existing messages
+    const existingMessages = document.querySelectorAll('.message');
+    existingMessages.forEach(msg => msg.remove());
+
+    // Create new message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = message;
+
+    // Insert at top of form container
+    const formContainer = document.querySelector('.form-container');
+    formContainer.insertBefore(messageDiv, formContainer.firstChild);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (messageDiv.parentNode) {
+            messageDiv.remove();
+        }
+    }, 5000);
+}
+
+// Handle Enter key in form
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        const form = document.getElementById('loginForm');
+        if (form) {
+            form.dispatchEvent(new Event('submit'));
+        }
+    }
+});
+
+// Auto-focus on username field
+window.addEventListener('load', function () {
+    const usernameField = document.getElementById('username');
+    if (usernameField) {
+        usernameField.focus();
+    }
+});
+
+// ===== HÀM XỬ LÝ NAVBAR (Dán vào register.js) =====
+function handleUserDisplay() {
+    const loginLink_1 = document.querySelector(".nav-login-1");
+    const loginLink_2 = document.querySelector(".nav-login-2");
+    const navSeparator = document.querySelector(".nav-separator");
+    const userMenu = document.querySelector(".user-menu");
+    const navUserLi = document.querySelector(".nav-user");
+
+    if (!loginLink_1 || !loginLink_2 || !navSeparator || !userMenu || !navUserLi) {
+        console.error("Lỗi: Thiếu các thành phần navbar để JS hoạt động.");
+        return;
+    }
+
+    // Kiểm tra CẢ Staff VÀ Customer
+    const staffData = localStorage.getItem("currentStaff");
+    const customerData = localStorage.getItem("currentUser");
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    let currentUser = null;
+    let userType = null;
+
+    if (staffData && jwtToken) {
+        try {
+            currentUser = JSON.parse(staffData);
+            if (currentUser && currentUser.id) userType = 'staff';
+        } catch (e) { console.error("Lỗi parse staff data:", e); }
+    }
+
+    if (!currentUser && customerData && jwtToken) {
+        try {
+            currentUser = JSON.parse(customerData);
+            if (currentUser && currentUser.id) userType = 'customer';
+        } catch (e) { console.error("Lỗi parse customer data:", e); }
+    }
+
+    if (currentUser && currentUser.id) {
+        // ---- ĐÃ ĐĂNG NHẬP ----
+        loginLink_1.style.display = "none";
+        loginLink_2.style.display = "none";
+        navSeparator.style.display = "none";
+
+        userMenu.style.display = "none";
+        userMenu.classList.remove("hidden");
+
+        let userIcon = navUserLi.querySelector(".user-icon-link");
+        if (!userIcon) {
+            userIcon = document.createElement('a');
+            userIcon.href = "#";
+            userIcon.className = "user-icon-link";
+            userIcon.innerHTML = `<i class="fas fa-user"></i>`;
+            navUserLi.prepend(userIcon);
+        }
+        userIcon.style.display = 'inline-block';
+
+        const accountBtn = document.getElementById("tt");
+        if (accountBtn) {
+            accountBtn.onclick = null;
+            accountBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const accountUrl = (userType === 'staff')
+                    ? "../staff/staffProfile/staff_profile.html"
+                    // SỬA: Trang register/login không biết user là ai, mặc định về account.html
+                    : "../account/account.html";
+                window.location.href = accountUrl;
+            });
+        }
+
+        const newUserIcon = userIcon.cloneNode(true);
+        userIcon.parentNode.replaceChild(newUserIcon, userIcon);
+
+        newUserIcon.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const isVisible = userMenu.style.display === "block";
+            userMenu.style.display = isVisible ? "none" : "block";
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!newUserIcon.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.style.display = "none";
+            }
+        });
+
+        const logoutBtn = document.getElementById("logoutBtnNav");
+        if (logoutBtn) {
+            const newLogoutBtn = logoutBtn.cloneNode(true);
+            logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+
+            newLogoutBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                localStorage.removeItem("currentStaff");
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("jwtToken");
+                localStorage.removeItem("rememberMe");
+                localStorage.removeItem("cart"); // Xóa giỏ hàng khi logout
+                window.location.href = "../login/login.html"; // Luôn về login khi logout
+            });
+        }
+
+    } else {
+        // ---- CHƯA ĐĂNG NHẬP ----
+        loginLink_1.style.display = "inline-block";
+        loginLink_2.style.display = "inline-block";
+        navSeparator.style.display = "inline-block";
+
+        userMenu.classList.add("hidden");
+        userMenu.style.display = "none";
+
+        let userIcon = navUserLi.querySelector(".user-icon-link");
+        if (userIcon) {
+            userIcon.style.display = 'none';
+        }
+    }
+}
+// ===== HẾT HÀM NAVBAR ===== 
+
+// ===== DÁN VÀO CUỐI TỆP LOGIN.JS VÀ REGISTER.JS =====
+
+/**
+ * Cập nhật số lượng hiển thị trên icon giỏ hàng
+ * (Lấy từ cart.js và sửa 'flex' cho nhất quán)
+ */
+/**
+ * Chặn click giỏ hàng và kiểm tra đăng nhập
+ * (Hàm này bị thiếu trong login.js và register.js)
+ */
+function bindCartNavigation() {
+    const cartIcon = document.querySelector('.nav-cart');
+    if (!cartIcon) return;
+
+    cartIcon.addEventListener('click', (e) => {
+        // Chặn hành vi <a href> mặc định
+        e.preventDefault();
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentStaff = JSON.parse(localStorage.getItem('currentStaff'));
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        // Nếu chưa đăng nhập -> Cảnh báo
+        if ((!currentUser && !currentStaff) || !jwtToken) {
+            alert("Vui lòng đăng nhập để xem giỏ hàng.");
+            window.location.href = "../login/login.html"; // Chuyển về trang login
+            return;
+        }
+
+        // Nếu đã đăng nhập -> Đi đến giỏ hàng
+        const userId = currentUser?.id || currentStaff?.id || 1;
+        window.location.href = `../cart/cart.html?user_id=${userId}`;
+    });
+}
+
+// ====== API & LỌC SẢN PHẨM ======
+const API_BASE = "../../api/products_c.php";
+
+function initProductFilter() {
+  const categorySelect = document.getElementById("categorySelect");
+  const priceSelect = document.getElementById("priceSelect");
+  const filterButton = document.getElementById("filterButton");
+  const grid = document.getElementById("filteredProducts"); // ✅ chỉ render vào vùng mới
+  if (!categorySelect || !priceSelect || !filterButton || !grid) return;
+
+  // 🔹 Lấy danh mục từ API
+  fetch(`${API_BASE}?categories=1`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.categories) {
+        data.categories.forEach(cat => {
+          const opt = document.createElement("option");
+          opt.value = cat.CategoryName;
+          opt.textContent = cat.CategoryName;
+          categorySelect.appendChild(opt);
+        });
+      }
+    });
+
+  // 🔹 Hàm tải và lọc sản phẩm
+  async function loadProducts() {
+    const res = await fetch(API_BASE);
+    const data = await res.json();
+    if (!data.success) return;
+
+    let filtered = data.products;
+    const category = categorySelect.value;
+    const price = priceSelect.value;
+
+    if (category) filtered = filtered.filter(p => p.CategoryName === category);
+
+    filtered = filtered.filter(p => {
+      const priceNum = parseFloat(p.Price);
+      if (price === "duoi500") return priceNum < 500000;
+      if (price === "500-700") return priceNum >= 500000 && priceNum <= 700000;
+      if (price === "tren700") return priceNum > 700000;
+      return true;
+    });
+
+    grid.innerHTML = "";
+    if (!filtered.length) {
+      grid.innerHTML = "<p>Không có sản phẩm phù hợp.</p>";
+      return;
+    }
+
+    filtered.forEach(p => {
+      const card = `
+        <div class="product-card" data-id="${p.ProductID}">
+          <div class="product-image-container">
+            <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+              <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+            </a>
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">${p.ProductName}</h3>
+            <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+          </div>
+        </div>`;
+      grid.insertAdjacentHTML("beforeend", card);
+    });
+    
+    // Re-bind navigation sau khi render
+    bindProductCardNavigation();
   }
 }
- 
-.filter-popup.show {
-  display: block;
+
+// ===== HIỆN/ẨN Ô LỌC NHỎ =====
+document.addEventListener("DOMContentLoaded", () => {
+  const filterToggleBtn = document.querySelector(".filter-btn"); // nút "Lọc" trên thanh tìm kiếm
+  const filterPopup = document.querySelector(".filter-popup");
+
+  if (filterToggleBtn && filterPopup) {
+    filterToggleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      filterPopup.classList.toggle("show");
+    });
+
+    // Ẩn khi click ra ngoài
+    document.addEventListener("click", (e) => {
+      if (!filterPopup.contains(e.target) && !filterToggleBtn.contains(e.target)) {
+        filterPopup.classList.remove("show");
+      }
+    });
+  }
+});
+
+// ===== HIỂN THỊ POPUP =====
+function showPopup(products) {
+  const overlay = document.getElementById("overlay");
+  const popupProducts = document.getElementById("popupProducts");
+  if (!overlay || !popupProducts) return;
+
+  popupProducts.innerHTML = "";
+
+  if (!products || !products.length) {
+    popupProducts.innerHTML = "<p>Không tìm thấy sản phẩm phù hợp.</p>";
+  } else {
+    products.forEach(p => {
+      popupProducts.insertAdjacentHTML("beforeend", `
+        <div class="product-card" data-id="${p.ProductID}">
+          <div class="product-image-container">
+            <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+              <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+            </a>
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">${p.ProductName}</h3>
+            <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+          </div>
+        </div>
+      `);
+    });
+  }
+
+  overlay.classList.remove("hidden");
+  
+  // Re-bind navigation sau khi render popup
+  bindProductCardNavigation();
 }
- 
-/* Nội dung bên trong popup */
-.filter-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
- 
-.filter-content label {
-  font-size: 14px;
-  color: #fff;
-  font-weight: 500;
-}
- 
-.filter-content select {
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: none;
-  background-color: #fff;
-  color: #333;
-  font-size: 14px;
-  outline: none;
-}
- 
-.filter-content button {
-  margin-top: 8px;
-  background-color: #fff;
-  color: #b77746;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
- 
-.filter-content button:hover {
-  background-color: #f5e2d4;
-}
- 
-/* Nền xám khi bật tìm kiếm */
-body.searching::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 800;
-}
- 
-/* Ô kết quả tìm kiếm hiển thị dưới thanh */
-.search-results {
-  position: absolute;
-  top: 100%; /* ngay dưới thanh tìm kiếm */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  max-width: 800px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  z-index: 1000;
-  display: none;
-}
- 
-.search-results.show {
-  display: block;
-}
- 
-.search-results .product-card {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
- 
-.search-results .product-card img {
-  width: 80px;
-  height: 80px;
-  border-radius: 6px;
-  margin-right: 15px;
-}
- 
-#overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
- 
-#overlay.hidden {
-  display: none;
-}
- 
-.popup-container {
-  background: #fff;
-  padding: 20px;
-  max-width: 900px;
-  width: 90%;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  position: relative;
-  overflow-y: auto;
-  max-height: 80vh;
-}
- 
-.close-popup {
-  position: absolute;
-  top: 10px; right: 15px;
-  font-size: 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
- 
-#popupProducts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-top: 40px;
-}
- 
-/* Ẩn vùng lọc rỗng */
-#filteredProducts.products-grid:empty {
-  display: none !important;
-}
- 
-/* Nếu có nội dung thì hiển thị dạng lưới như cũ */
-#filteredProducts.products-grid {
-  background: transparent !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
+
+// ===== HIỂN THỊ KẾT QUẢ TRÊN NỀN MỜ =====
+
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("overlay");
+  const popupProducts = document.getElementById("popupProducts");
+  const closePopupBtn = document.querySelector(".close-popup");
+
+  const categorySelect = document.getElementById("categorySelect");
+  const priceSelect = document.getElementById("priceSelect");
+  const applyFilterBtn = document.getElementById("filterButton");
+
+  // ===== ẨN POPUP =====
+  function hidePopup() {
+    overlay.classList.add("hidden");
+  }
+
+  // Nút đóng popup
+  closePopupBtn.addEventListener("click", hidePopup);
+
+  // Click ra ngoài cũng tắt
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) hidePopup();
+  });
+
+  // ===== SỰ KIỆN LỌC =====
+  if (applyFilterBtn) {
+    applyFilterBtn.addEventListener("click", async () => {
+      const category = categorySelect.value;
+      const price = priceSelect.value;
+      let min = 0, max = 99999999;
+
+      if (price === "duoi500") max = 500000;
+      if (price === "500-700") { min = 500000; max = 700000; }
+      if (price === "tren700") min = 700000;
+
+      const res = await fetch(`${API_BASE}?category=${encodeURIComponent(category)}&min=${min}&max=${max}`);
+      const data = await res.json();
+      showPopup(data.products);
+    });
+  }
+});
+
+// ====== TÌM KIẾM & HIỂN THỊ KẾT QUẢ TRÊN NỀN MỜ ======
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("overlay");
+  const popupProducts = document.getElementById("popupProducts");
+  const closePopupBtn = document.querySelector(".close-popup");
+  const searchIcon = document.querySelector(".nav-search");
+  const searchBar = document.querySelector(".search-bar");
+  const searchInput = document.getElementById("searchInput");
+
+  // ===== Hiện/ẩn thanh tìm kiếm =====
+  if (searchIcon && searchBar) {
+    searchIcon.addEventListener("click", (e) => {
+      e.preventDefault();
+      searchBar.classList.toggle("show");
+      document.body.classList.toggle("searching");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!searchBar.contains(e.target) && !searchIcon.contains(e.target)) {
+        searchBar.classList.remove("show");
+        document.body.classList.remove("searching");
+      }
+    });
+  }
+
+  // ===== Hiển thị popup sản phẩm =====
+  function showPopup(products) {
+    popupProducts.innerHTML = "";
+
+    if (!products || !products.length) {
+      popupProducts.innerHTML = "<p>Không tìm thấy sản phẩm phù hợp.</p>";
+    } else {
+      products.forEach(p => {
+        const card = `
+          <div class="product-card">
+            <div class="product-image-container">
+              <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+                <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+              </a>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">${p.ProductName}</h3>
+              <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+            </div>
+          </div>`;
+        popupProducts.insertAdjacentHTML("beforeend", card);
+      });
+    }
+    overlay.classList.remove("hidden");
+  }
+
+  // ===== Đóng popup =====
+  function hidePopup() { overlay.classList.add("hidden"); }
+  closePopupBtn.addEventListener("click", hidePopup);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) hidePopup(); });
+
+  // ===== Gọi API khi nhấn Enter trong ô tìm kiếm =====
+  if (searchInput) {
+    searchInput.addEventListener("keypress", async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // ✅ Ngăn hành vi mặc định chuyển trang
+        e.stopPropagation(); // ✅ Ngăn chồng sự kiện khác
+
+        const keyword = e.target.value.trim();
+        if (!keyword) return;
+
+        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          showPopup(data.products);
+        } catch (err) {
+          console.error("❌ Lỗi tìm kiếm:", err);
+        }
+      }
+    });
+  }
+});
+
+// ✅ Ghi đè hành vi tìm kiếm của main.js chỉ trên trang Home
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.querySelector(".search-bar input");
+
+  if (searchInput) {
+    // Xóa toàn bộ sự kiện keypress cũ mà main.js đã gắn
+    const newInput = searchInput.cloneNode(true);
+    searchInput.parentNode.replaceChild(newInput, searchInput);
+
+    // Gắn lại sự kiện tìm kiếm theo logic của bạn
+    newInput.addEventListener("keypress", async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault(); // ❌ chặn chuyển hướng từ main.js
+        const keyword = e.target.value.trim();
+        if (!keyword) return;
+
+        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+
+          // Hiện kết quả trên popup (hàm showPopup bạn đã có)
+          if (typeof showPopup === "function") {
+            showPopup(data.products);
+          } else {
+            alert("Không tìm thấy sản phẩm hoặc showPopup chưa được định nghĩa.");
+          }
+        } catch (err) {
+          console.error("❌ Lỗi tìm kiếm:", err);
+        }
+      }
+    });
+  }
+});
