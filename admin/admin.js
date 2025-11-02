@@ -2442,3 +2442,346 @@ function logout() {
         window.location.href = '../pages/home/home.html';
     }, 1000);
 }
+
+// ============================================
+// EXPORT REPORT TO PDF
+// ============================================
+
+async function exportReportToPDF() {
+    try {
+        // Hiển thị loading
+        const exportBtn = document.getElementById('export-pdf-btn');
+        const originalText = exportBtn.innerHTML;
+        exportBtn.disabled = true;
+        exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xuất PDF...';
+
+        // Kiểm tra xem jsPDF và html2canvas đã được load chưa
+        if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+            throw new Error('Thư viện PDF chưa được tải. Vui lòng tải lại trang.');
+        }
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 15;
+        let yPosition = margin;
+
+        // Tạo container ẩn cho tiêu đề và ngày xuất
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('vi-VN', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        const headerDiv = document.createElement('div');
+        headerDiv.style.position = 'absolute';
+        headerDiv.style.left = '-9999px';
+        headerDiv.style.width = '210mm';
+        headerDiv.style.padding = '20px';
+        headerDiv.style.backgroundColor = '#ffffff';
+        headerDiv.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        headerDiv.innerHTML = `
+            <h1 style="font-size: 24px; font-weight: bold; text-align: center; margin: 0 0 10px 0; color: #333;">BÁO CÁO DOANH THU</h1>
+            <p style="font-size: 12px; text-align: center; margin: 0; color: #666;">Ngày xuất: ${dateStr}</p>
+        `;
+        document.body.appendChild(headerDiv);
+        
+        try {
+            const headerCanvas = await html2canvas(headerDiv, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                logging: false,
+                width: headerDiv.offsetWidth,
+                height: headerDiv.offsetHeight
+            });
+            const headerImgData = headerCanvas.toDataURL('image/png');
+            const headerHeight = (headerCanvas.height * (pageWidth - 2 * margin)) / headerCanvas.width;
+            pdf.addImage(headerImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, headerHeight);
+            yPosition += headerHeight + 10;
+        } catch (error) {
+            console.error('Lỗi khi xuất tiêu đề:', error);
+        }
+        document.body.removeChild(headerDiv);
+
+        // 2. Chụp phần thống kê tổng quan bằng html2canvas
+        const statsGrid = document.querySelector('.stats-grid');
+        if (statsGrid) {
+            try {
+                const statsCanvas = await html2canvas(statsGrid, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
+                });
+                const statsImgData = statsCanvas.toDataURL('image/png');
+                const statsHeight = (statsCanvas.height * (pageWidth - 2 * margin)) / statsCanvas.width;
+                
+                if (yPosition + statsHeight > pageHeight - margin) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+                
+                // Thêm tiêu đề cho phần thống kê
+                const statsTitleDiv = document.createElement('div');
+                statsTitleDiv.style.position = 'absolute';
+                statsTitleDiv.style.left = '-9999px';
+                statsTitleDiv.style.width = '210mm';
+                statsTitleDiv.style.padding = '10px 20px';
+                statsTitleDiv.style.backgroundColor = '#ffffff';
+                statsTitleDiv.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                statsTitleDiv.innerHTML = '<h2 style="font-size: 16px; font-weight: bold; margin: 0; color: #333;">THỐNG KÊ TỔNG QUAN</h2>';
+                document.body.appendChild(statsTitleDiv);
+                
+                const titleCanvas = await html2canvas(statsTitleDiv, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
+                });
+                const titleImgData = titleCanvas.toDataURL('image/png');
+                const titleHeight = (titleCanvas.height * (pageWidth - 2 * margin)) / titleCanvas.width;
+                
+                pdf.addImage(titleImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, titleHeight);
+                yPosition += titleHeight + 5;
+                
+                document.body.removeChild(statsTitleDiv);
+                
+                pdf.addImage(statsImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, statsHeight);
+                yPosition += statsHeight + 10;
+            } catch (error) {
+                console.error('Lỗi khi xuất thống kê:', error);
+            }
+        }
+
+        // 3. Chuyển đổi và thêm biểu đồ doanh thu
+        const revenueChart = document.getElementById('revenueChart');
+        if (revenueChart) {
+            try {
+                const revenueCanvas = await html2canvas(revenueChart, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
+                });
+                const revenueImgData = revenueCanvas.toDataURL('image/png');
+                
+                // Kiểm tra chiều cao của biểu đồ
+                const imgHeight = (revenueCanvas.height * (pageWidth - 2 * margin)) / revenueCanvas.width;
+                
+                if (yPosition + imgHeight > pageHeight - margin) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+                
+                // Thêm tiêu đề cho biểu đồ bằng html2canvas
+                const chartTitle1Div = document.createElement('div');
+                chartTitle1Div.style.position = 'absolute';
+                chartTitle1Div.style.left = '-9999px';
+                chartTitle1Div.style.width = '210mm';
+                chartTitle1Div.style.padding = '10px 20px';
+                chartTitle1Div.style.backgroundColor = '#ffffff';
+                chartTitle1Div.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                chartTitle1Div.innerHTML = '<h2 style="font-size: 14px; font-weight: bold; margin: 0; color: #333;">BIỂU ĐỒ DOANH THU THEO THÁNG</h2>';
+                document.body.appendChild(chartTitle1Div);
+                
+                const chartTitle1Canvas = await html2canvas(chartTitle1Div, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
+                });
+                const chartTitle1ImgData = chartTitle1Canvas.toDataURL('image/png');
+                const chartTitle1Height = (chartTitle1Canvas.height * (pageWidth - 2 * margin)) / chartTitle1Canvas.width;
+                
+                pdf.addImage(chartTitle1ImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, chartTitle1Height);
+                yPosition += chartTitle1Height + 5;
+                
+                document.body.removeChild(chartTitle1Div);
+                
+                pdf.addImage(revenueImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, imgHeight);
+                yPosition += imgHeight + 10;
+            } catch (error) {
+                console.error('Lỗi khi xuất biểu đồ doanh thu:', error);
+            }
+        }
+
+        // 4. Chuyển đổi và thêm biểu đồ sản phẩm
+        const categoryChart = document.getElementById('categoryChart');
+        if (categoryChart) {
+            try {
+                if (yPosition > pageHeight - 100) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+                
+                const categoryCanvas = await html2canvas(categoryChart, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
+                });
+                const categoryImgData = categoryCanvas.toDataURL('image/png');
+                
+                const imgHeight = (categoryCanvas.height * (pageWidth - 2 * margin)) / categoryCanvas.width;
+                
+                if (yPosition + imgHeight > pageHeight - margin) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+                
+                // Thêm tiêu đề cho biểu đồ bằng html2canvas
+                const chartTitle2Div = document.createElement('div');
+                chartTitle2Div.style.position = 'absolute';
+                chartTitle2Div.style.left = '-9999px';
+                chartTitle2Div.style.width = '210mm';
+                chartTitle2Div.style.padding = '10px 20px';
+                chartTitle2Div.style.backgroundColor = '#ffffff';
+                chartTitle2Div.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                chartTitle2Div.innerHTML = '<h2 style="font-size: 14px; font-weight: bold; margin: 0; color: #333;">BIỂU ĐỒ DOANH THU THEO SẢN PHẨM</h2>';
+                document.body.appendChild(chartTitle2Div);
+                
+                const chartTitle2Canvas = await html2canvas(chartTitle2Div, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
+                });
+                const chartTitle2ImgData = chartTitle2Canvas.toDataURL('image/png');
+                const chartTitle2Height = (chartTitle2Canvas.height * (pageWidth - 2 * margin)) / chartTitle2Canvas.width;
+                
+                pdf.addImage(chartTitle2ImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, chartTitle2Height);
+                yPosition += chartTitle2Height + 5;
+                
+                document.body.removeChild(chartTitle2Div);
+                
+                pdf.addImage(categoryImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, imgHeight);
+                yPosition += imgHeight + 10;
+            } catch (error) {
+                console.error('Lỗi khi xuất biểu đồ sản phẩm:', error);
+            }
+        }
+
+        // 5. Chụp bảng chi tiết sản phẩm bằng html2canvas
+        const topProductsTable = document.querySelector('.products-report-table');
+        if (topProductsTable && topProductsTable.querySelector('tbody')) {
+            const tbody = topProductsTable.querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr:not(.empty-state)');
+            
+            if (rows.length > 0) {
+                try {
+                    if (yPosition > pageHeight - 80) {
+                        pdf.addPage();
+                        yPosition = margin;
+                    }
+                    
+                    // Thêm tiêu đề cho bảng bằng html2canvas
+                    const tableTitleDiv = document.createElement('div');
+                    tableTitleDiv.style.position = 'absolute';
+                    tableTitleDiv.style.left = '-9999px';
+                    tableTitleDiv.style.width = '210mm';
+                    tableTitleDiv.style.padding = '10px 20px';
+                    tableTitleDiv.style.backgroundColor = '#ffffff';
+                    tableTitleDiv.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                    tableTitleDiv.innerHTML = '<h2 style="font-size: 14px; font-weight: bold; margin: 0; color: #333;">CHI TIẾT DOANH THU THEO SẢN PHẨM</h2>';
+                    document.body.appendChild(tableTitleDiv);
+                    
+                    const tableTitleCanvas = await html2canvas(tableTitleDiv, {
+                        backgroundColor: '#ffffff',
+                        scale: 2,
+                        logging: false
+                    });
+                    const tableTitleImgData = tableTitleCanvas.toDataURL('image/png');
+                    const tableTitleHeight = (tableTitleCanvas.height * (pageWidth - 2 * margin)) / tableTitleCanvas.width;
+                    
+                    pdf.addImage(tableTitleImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, tableTitleHeight);
+                    yPosition += tableTitleHeight + 5;
+                    
+                    document.body.removeChild(tableTitleDiv);
+                    
+                    // Chụp toàn bộ bảng
+                    const tableCanvas = await html2canvas(topProductsTable, {
+                        backgroundColor: '#ffffff',
+                        scale: 2,
+                        logging: false
+                    });
+                    const tableImgData = tableCanvas.toDataURL('image/png');
+                    const tableHeight = (tableCanvas.height * (pageWidth - 2 * margin)) / tableCanvas.width;
+                    
+                    if (yPosition + tableHeight > pageHeight - margin) {
+                        pdf.addPage();
+                        yPosition = margin;
+                    }
+                    
+                    pdf.addImage(tableImgData, 'PNG', margin, yPosition, pageWidth - 2 * margin, tableHeight);
+                    yPosition += tableHeight + 10;
+                } catch (error) {
+                    console.error('Lỗi khi xuất bảng:', error);
+                }
+            }
+        }
+
+        // 6. Thêm chân trang bằng html2canvas
+        const totalPages = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            pdf.setPage(i);
+            
+            // Tạo chân trang bằng html2canvas để hỗ trợ tiếng Việt
+            const footerDiv = document.createElement('div');
+            footerDiv.style.position = 'absolute';
+            footerDiv.style.left = '-9999px';
+            footerDiv.style.width = '210mm';
+            footerDiv.style.padding = '5px';
+            footerDiv.style.backgroundColor = '#ffffff';
+            footerDiv.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            footerDiv.style.textAlign = 'center';
+            footerDiv.innerHTML = `<p style="font-size: 10px; margin: 0; color: #666;">Trang ${i} / ${totalPages}</p>`;
+            document.body.appendChild(footerDiv);
+            
+            try {
+                const footerCanvas = await html2canvas(footerDiv, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
+                });
+                const footerImgData = footerCanvas.toDataURL('image/png');
+                const footerHeight = (footerCanvas.height * (pageWidth - 2 * margin)) / footerCanvas.width;
+                const footerY = pageHeight - footerHeight - 5;
+                
+                pdf.addImage(footerImgData, 'PNG', margin, footerY, pageWidth - 2 * margin, footerHeight);
+            } catch (error) {
+                console.error('Lỗi khi xuất chân trang:', error);
+            }
+            
+            document.body.removeChild(footerDiv);
+        }
+
+        // 7. Xuất file PDF
+        const year = document.getElementById('report-year-select')?.value || new Date().getFullYear();
+        const month = document.getElementById('report-month-select')?.value;
+        let fileName = `BaoCao_${year}`;
+        if (month) {
+            fileName += `_Thang${month}`;
+        }
+        fileName += `_${now.toISOString().split('T')[0]}.pdf`;
+        
+        pdf.save(fileName);
+
+        // Hiển thị thông báo thành công
+        showSuccess('Đã xuất báo cáo PDF thành công!');
+        
+        // Khôi phục nút
+        exportBtn.disabled = false;
+        exportBtn.innerHTML = originalText;
+    } catch (error) {
+        console.error('Lỗi khi xuất PDF:', error);
+        showError('Không thể xuất PDF: ' + error.message);
+        
+        // Khôi phục nút
+        const exportBtn = document.getElementById('export-pdf-btn');
+        if (exportBtn) {
+            exportBtn.disabled = false;
+            exportBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Xuất PDF';
+        }
+    }
+}
+
+// Expose function to global scope
+window.exportReportToPDF = exportReportToPDF;
