@@ -1,7 +1,7 @@
 /* ===== NAVBAR ===== */
-/* ===== NAVBAR SẠCH (Đồng bộ) ===== */
 .navbar {
   background-color: #395542;
+  /* xanh rêu đậm */
   padding: 10px 60px;
   display: flex;
   justify-content: center;
@@ -30,140 +30,17 @@
   letter-spacing: 1px;
 }
 
-/* Menu chính */
+/* Menu */
 .nav-menu {
   list-style: none;
   display: flex;
-  align-items: center;
-  /* Căn giữa các mục menu */
   gap: 40px;
   padding: 0;
-  margin: 0;
-  /* Bỏ hết margin lỗi */
+  margin-right: -70px;
 }
 
 .nav-menu a {
   color: #fff;
-  text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  text-transform: uppercase;
-  transition: color 0.3s;
-}
-
-.nav-menu a:hover {
-  color: #EDDECD;
-}
-
-/* Giỏ hàng (nằm trong <li>) */
-.nav-cart {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-/* Thẻ <li> chứa thông tin user */
-.nav-user {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-/* Dấu | phân cách */
-.nav-separator {
-  color: #fff;
-  margin: 0 8px;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-/* Icon User (khi JS thêm vào) */
-.user-icon-link {
-  color: #fff;
-  font-size: 20px;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.user-icon-link:hover {
-  color: #e3c78d;
-}
-
-/* Menu thả xuống */
-.user-menu {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  padding: 10px 0;
-  min-width: 150px;
-  z-index: 1010;
-
-  display: none;
-  /* JS sẽ bật/tắt */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.user-menu[style*="display: block"] {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.user-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.user-menu li button {
-  display: block;
-  width: 100%;
-  padding: 10px 20px;
-  white-space: nowrap;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  color: #333;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-}
-
-.user-menu li button:hover {
-  background-color: #f4f1ec;
-  color: #395542;
-}
-
-/* CSS Responsive cho Navbar (Chỉ phần navbar) */
-@media (max-width: 768px) {
-  .nav-container {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-  }
-
-  .nav-menu {
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-}
-
-/* ===== HẾT CSS NAVBAR SẠCH ===== */
-
-.nav-menu a {
-  color: white;
   text-decoration: none;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
@@ -171,11 +48,10 @@
   text-transform: uppercase;
   /* Viết hoa toàn bộ */
   transition: color 0.3s;
-
 }
 
 .nav-menu a:hover {
-  color: #e3c78d;
+  color: #EDDECD;
   /* vàng nhạt khi hover */
 }
 
@@ -184,7 +60,6 @@
   display: flex;
   align-items: center;
   gap: 25px;
-  margin-left: -155px;
 }
 
 .nav-icons a {
@@ -192,11 +67,11 @@
   font-size: 20px;
   text-decoration: none;
   transition: 0.3s;
-  left: 305px;
+  left: 150px;
 }
 
 .nav-icons a:hover {
-  color: #e3c78d;
+  color: #EDDECD;
 }
 
 /* Giỏ hàng */
@@ -204,29 +79,41 @@
   position: relative;
 }
 
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: #EDDECD;
+  color: #395542;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 2px 5px;
+  border-radius: 50%;
+}
+
 .nav-login {
-  margin-left: 285px;
+  margin-left: 130px;
   margin-right: 50px;
 }
 
 .nav-login:hover {
-  color: #e3c78d;
+  color: #EDDECD;
 }
 
 /* Responsive (mobile) */
 @media (max-width: 768px) {
   .nav-container {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
   }
 
   .nav-menu {
-    gap: 20px;
+      gap: 20px;
   }
 
   .nav-icons {
-    gap: 15px;
+      gap: 15px;
   }
 }
 
@@ -755,4 +642,281 @@
   padding: 2px;
   box-sizing: border-box;
   /* Quan trọng để padding không làm vỡ size */
+}
+/*TIM KIEM*/
+/* Search bar: fixed dưới navbar, nổi trên nội dung */
+.search-bar {
+  display: none;
+  position: fixed;      /* fixed để luôn nằm ngay dưới navbar hiện tại */
+  top: 70px;            /* mặc định; JS sẽ cập nhật chính xác khi bật */
+  left: 0;
+  width: 100%;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 9999;        /* nổi trên mọi thứ */
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+ 
+/* Hiển thị khi bật */
+.search-bar.show {
+  display: flex !important;
+}
+ 
+/* Ẩn bằng class hidden (nếu bạn vẫn dùng hidden) */
+.hidden { display: none; }
+ 
+.search-bar input {
+  width: 400px;        
+  height: 40px;        
+  padding: 8px 12px;  
+  border: 1px solid #ccc;
+  border-radius: 6px;  
+  font-size: 16px;      
+  outline: none;        
+  transition: all 0.2s ease;
+}
+ 
+.search-bar input:focus {
+  border-color: #395542;    
+  box-shadow: 0 0 5px rgba(255, 140, 148, 0.3);
+}
+ 
+.search-bar .filter-btn {
+  height: 40px;            
+  padding: 0 20px;          
+  background-color: #395542;
+  color: #fff;            
+  border: none;            
+  border-radius: 6px;      
+  font-size: 16px;          
+  cursor: pointer;          
+  transition: all 0.2s ease;
+}
+ 
+.search-bar .filter-btn:hover {
+  background-color: #AC845C;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+ 
+/* ===== Ô LỌC NHỎ GỌN DÍNH NÚT LỌC ===== */
+/* Nút lọc + popup chung khối để canh dính nhau */
+.filter-btn {
+  position: relative;
+  z-index: 2;
+}
+ 
+/* Popup dính sát nút "Lọc" */
+.filter-popup {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #b77746;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  padding: 14px;
+  width: 220px;
+  display: none;
+  z-index: 9999;
+  animation: slideDown 0.25s ease-out;
+  color: #fff8f2;
+}
+ 
+/* Khi hiện */
+.filter-popup.show {
+  display: block;
+}
+ 
+/* Bên trong popup */
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+ 
+.filter-content label {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+}
+ 
+.filter-content select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+}
+ 
+.filter-content button {
+  margin-top: 8px;
+  background-color: #fff;
+  color: #b77746;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+ 
+.filter-content button:hover {
+  background-color: #f5e2d4;
+}
+ 
+ 
+/* Hiệu ứng trượt mượt */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+ 
+.filter-popup.show {
+  display: block;
+}
+ 
+/* Nội dung bên trong popup */
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+ 
+.filter-content label {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+}
+ 
+.filter-content select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+}
+ 
+.filter-content button {
+  margin-top: 8px;
+  background-color: #fff;
+  color: #b77746;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+ 
+.filter-content button:hover {
+  background-color: #f5e2d4;
+}
+ 
+/* Nền xám khi bật tìm kiếm */
+body.searching::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 800;
+}
+ 
+/* Ô kết quả tìm kiếm hiển thị dưới thanh */
+.search-results {
+  position: absolute;
+  top: 100%; /* ngay dưới thanh tìm kiếm */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  max-width: 800px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  z-index: 1000;
+  display: none;
+}
+ 
+.search-results.show {
+  display: block;
+}
+ 
+.search-results .product-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+ 
+.search-results .product-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  margin-right: 15px;
+}
+ 
+#overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+ 
+#overlay.hidden {
+  display: none;
+}
+ 
+.popup-container {
+  background: #fff;
+  padding: 20px;
+  max-width: 900px;
+  width: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  position: relative;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+ 
+.close-popup {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+ 
+#popupProducts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 40px;
+}
+ 
+/* Ẩn vùng lọc rỗng */
+#filteredProducts.products-grid:empty {
+  display: none !important;
+}
+ 
+/* Nếu có nội dung thì hiển thị dạng lưới như cũ */
+#filteredProducts.products-grid {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
