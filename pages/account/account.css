@@ -906,3 +906,65 @@ body.searching::before {
   margin: 0 !important;
   padding: 0 !important;
 }
+/* ================================ */
+/* ✨ NÂNG CẤP GIAO DIỆN KẾT QUẢ TÌM KIẾM */
+/* ================================ */
+
+#popupProducts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 25px;
+  padding: 10px;
+}
+
+#popupProducts .product-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+#popupProducts .product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+#popupProducts .product-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+  transition: transform 0.3s ease;
+}
+
+#popupProducts .product-card:hover img {
+  transform: scale(1.05);
+}
+
+#popupProducts .product-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d4739;
+  font-family: 'Inter', sans-serif;
+  margin: 14px 0 6px;
+}
+
+#popupProducts .product-card p {
+  color: #3a5a40;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 12px;
+  font-family: 'Crimson Text', serif;
+}
+
+/* Hiệu ứng mở popup */
+.popup-container {
+  animation: fadeInUp 0.35s ease;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
