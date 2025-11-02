@@ -1,632 +1,194 @@
-// ==========================
-// product.js - PHIÊN BẢN ĐÃ SỬA LỖI MENU USER (ĐỒNG BỘ VỚI HOME.JS)
-// ==========================
+<!DOCTYPE html>
+<html lang="vi">
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // 1. Xử lý hiển thị User (SỬ DỤNG LOGIC ĐÚNG CỦA HOME.JS)
-  handleUserDisplay();
-
-  // 2. Lấy ID và tải sản phẩm từ API
-  const params = new URLSearchParams(window.location.search);
-  const productId = parseInt(params.get("id"));
-
-  if (!productId) {
-    const main = document.querySelector(".product-page");
-    if (main) main.innerHTML = "<h2 style='text-align:center; padding: 50px;'>Không tìm thấy ID sản phẩm.</h2>";
-    return;
-  }
-
-  try {
-    // Load product từ API
-    const response = await fetch(`../../api/products.php/${productId}`);
-    if (!response.ok) {
-      throw new Error('HTTP ' + response.status);
-    }
-    const result = await response.json();
-    
-    if (!result.success || !result.data) {
-      throw new Error(result.message || 'Không tìm thấy sản phẩm');
-    }
-
-    const product = result.data;
-
-    // 3. Điền thông tin sản phẩm
-// Chuẩn hóa đường dẫn ảnh trước khi gán
-let imagePath = product.image_url || 'assets/images/default.jpg';
-
-// Nếu trong đường dẫn có "assets/assets/" thì sửa lại cho đúng
-if (imagePath.startsWith("assets/assets/")) {
-  imagePath = imagePath.replace("assets/assets/", "assets/");
-}
-
-// Nếu chưa có "../../" ở đầu thì thêm vào (vì file product.js nằm trong /pages/product)
-if (!imagePath.startsWith("../../")) {
-  imagePath = "../../" + imagePath;
-}
-
-document.getElementById("product-img").src = imagePath;
-    document.getElementById("product-img").alt = product.product_name;
-    document.getElementById("product-name").textContent = product.product_name;
-    document.getElementById("product-price").textContent = formatPrice(product.price);
-    document.getElementById("product-short1").innerHTML = product.short_intro || '';
-    document.getElementById("product-short2").innerHTML = product.short_paragraph || '';
-    document.getElementById("desc1").innerHTML = product.description || '';
-    document.getElementById("structure").innerHTML = product.structure || '';
-    document.getElementById("usage").innerHTML = product.product_usage || product.usage || '';
-    document.getElementById("bonus").innerHTML = product.bonus || '';
-
-    // 3.5. Ẩn phần "THÔNG TIN SẢN PHẨM" nếu sản phẩm thuộc danh mục "Phụ kiện"
-    const productDetailsSection = document.querySelector(".product-details");
-    if (productDetailsSection && product.category_name === "Phụ kiện") {
-      productDetailsSection.style.display = "none";
-    }
-
-    // 4. Cập nhật số lượng giỏ hàng
-    updateCartCount();
-
-    // 5. Gắn listener cho các nút (Thêm vào giỏ, Mua ngay)
-    setupActionButtons(product);
-  } catch (error) {
-    console.error('Lỗi load sản phẩm:', error);
-    const main = document.querySelector(".product-page");
-    if (main) main.innerHTML = "<h2 style='text-align:center; padding: 50px;'>Không thể tải thông tin sản phẩm.</h2>";
-  }
-});
-
-function formatPrice(price) {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND'
-  }).format(price);
-}
-
-// ========== HÀM XỬ LÝ HIỂN THỊ USER (COPY TỪ HOME.JS ĐÃ SỬA) ==========
-function handleUserDisplay() {
-  const navUserLi = document.querySelector(".nav-user"); // Chọn thẻ <li> cha
-  const login1Link = document.querySelector(".nav-login-1"); // ĐĂNG NHẬP
-  const login2Link = document.querySelector(".nav-login-2"); // ĐĂNG KÍ
-  const navSeparator = document.querySelector(".nav-separator"); // Dấu |
-  const userMenu = document.querySelector(".user-menu"); // Menu thả xuống
-  const ttButton = document.getElementById("tt"); // Nút Thông tin tài khoản trong user-menu
-  const logoutBtnNav = document.getElementById("logoutBtnNav"); // Nút Đăng xuất trong user-menu
-
-  if (!navUserLi || !login1Link || !login2Link || !navSeparator || !userMenu || !ttButton || !logoutBtnNav) {
-    console.error("Thiếu các element navbar quan trọng.");
-    return;
-  }
-
-  const staffDataString = localStorage.getItem("currentStaff");
-  const customerDataString = localStorage.getItem("currentUser");
-  const jwtToken = localStorage.getItem("jwtToken");
-
-  let loggedInUser = null;
-  let userType = null;
-
-  if (staffDataString && jwtToken) {
-    try { loggedInUser = JSON.parse(staffDataString); if (loggedInUser?.id) userType = 'staff'; else loggedInUser = null; }
-    catch (e) { loggedInUser = null; }
-  }
-  if (!loggedInUser && customerDataString && jwtToken) {
-    try { loggedInUser = JSON.parse(customerDataString); if (loggedInUser?.id) userType = 'customer'; else loggedInUser = null; }
-    catch (e) { loggedInUser = null; }
-  }
-
-  // --- Cập nhật giao diện ---
-  if (loggedInUser && userType) {
-    // ---- ĐÃ ĐĂNG NHẬP ----
-    console.log(`Đã đăng nhập (account.js) với ${userType}. Hiển thị icon.`);
-    
-    // Ẩn link Đăng nhập/Đăng ký và dấu |
-    login1Link.style.display = 'none';
-    login2Link.style.display = 'none';
-    navSeparator.style.display = 'none';
-
-    // Tạo hoặc cập nhật icon user
-    let userIconLink = navUserLi.querySelector(".nav-user-icon");
-    if (!userIconLink) {
-      userIconLink = document.createElement('a');
-      userIconLink.href = "#";
-      userIconLink.className = "nav-user-icon";
-      userIconLink.innerHTML = `<i class="fas fa-user"></i>`;
-      navUserLi.prepend(userIconLink); // Thêm vào đầu li.nav-user
-    } else {
-      userIconLink.style.display = 'block'; // Đảm bảo icon hiện
-    }
-
-    // Cập nhật href cho nút "Thông tin tài khoản" trong user-menu
-    if (userType === 'staff') {
-      ttButton.onclick = () => window.location.href = "../../staff/staffProfile/staff_profile.html";
-    } else {
-      ttButton.onclick = () => window.location.href = "../account/account.html";
-    }
-
-    // Hiện/ẩn menu khi click icon
-    userIconLink.addEventListener("click", (e) => {
-      e.preventDefault(); e.stopPropagation();
-      userMenu.classList.toggle("hidden"); // Dùng toggle để tiện ẩn hiện
-      userMenu.style.display = userMenu.classList.contains("hidden") ? "none" : "block";
-    });
-
-    // Đóng menu khi click ra ngoài
-    document.addEventListener('click', (event) => {
-      if (userMenu && userIconLink && !userIconLink.contains(event.target) && !userMenu.contains(event.target)) {
-        userMenu.classList.add("hidden");
-        userMenu.style.display = "none";
-      }
-    });
-
-    // Xử lý nút Đăng xuất (Navbar)
-    logoutBtnNav.addEventListener("click", (e) => {
-      e.preventDefault();
-      performLogout("../login/login.html"); // Về trang login
-    });
-
-    userMenu.classList.add("hidden"); // Mặc định ẩn menu khi mới tải trang
-    userMenu.style.display = "none";
-
-  } else {
-    // ---- CHƯA ĐĂNG NHẬP ----
-    console.log("Chưa đăng nhập (account.js). Hiển thị link login.");
-    
-    // Hiện link Đăng nhập/Đăng ký và dấu |
-    login1Link.style.display = 'inline';
-    login2Link.style.display = 'inline';
-    navSeparator.style.display = 'inline';
-
-    // Ẩn icon user nếu có
-    const userIconLink = navUserLi.querySelector(".nav-user-icon");
-    if (userIconLink) {
-      userIconLink.style.display = 'none';
-    }
-    
-    userMenu.classList.add("hidden"); // Đảm bảo menu ẩn
-    userMenu.style.display = "none";
-  }
-}
-
-// ========== HÀM ĐĂNG XUẤT (CẦN THÊM VÀO) ==========
-function performLogout(redirectUrl) {
-  console.log(`Đang đăng xuất và chuyển đến: ${redirectUrl}...`);
-  // Xóa tất cả các key để đảm bảo sạch
-  localStorage.removeItem('currentStaff');
-  localStorage.removeItem('currentUser');
-  localStorage.removeItem('jwtToken');
-  localStorage.removeItem('rememberMe');
-  localStorage.removeItem('cart'); // Xóa giỏ hàng khi logout
-  window.location.href = redirectUrl; // Chuyển hướng
-}
-
-
-// ========== CÁC HÀM KHÁC (GIỮ NGUYÊN TỪ FILE CŨ CỦA BẠN) ==========
-
-async function updateCartCount() {
-  try {
-    // Kiểm tra xem có user đăng nhập không
-    const customerData = localStorage.getItem("currentUser");
-    const jwtToken = localStorage.getItem("jwtToken");
-    
-    if (customerData && jwtToken) {
-      try {
-        const currentUser = JSON.parse(customerData);
-        const userId = currentUser?.id;
-        
-        if (userId) {
-          // Lấy từ database nếu đã đăng nhập - CHỈ dùng database, không fallback localStorage
-          try {
-            const res = await fetch(`../../api/cart.php?user_id=${userId}`);
-            const data = await res.json();
-            
-            const cartCount = document.querySelector('.cart-count');
-            if (cartCount) {
-              if (data.success && data.data.total_items > 0) {
-                cartCount.textContent = data.data.total_items;
-                cartCount.style.display = 'inline-block';
-              } else {
-                cartCount.style.display = 'none';
-              }
-            }
-            return;
-          } catch (e) {
-            console.error("Lỗi khi lấy giỏ hàng từ API:", e);
-            // Nếu API lỗi khi đã đăng nhập, hiển thị 0 thay vì dùng localStorage
-            const cartCount = document.querySelector('.cart-count');
-            if (cartCount) {
-              cartCount.style.display = 'none';
-            }
-            return;
-          }
-        }
-      } catch (e) {
-        console.error("Lỗi parse user data:", e);
-      }
-    }
-    
-    // Chỉ dùng localStorage nếu CHƯA đăng nhập
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const totalItems = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
-    const cartCount = document.querySelector('.cart-count');
-    if (cartCount) {
-      cartCount.textContent = totalItems;
-      cartCount.style.display = totalItems > 0 ? 'inline-block' : 'none';
-    }
-  } catch (e) { 
-    console.error("Lỗi cập nhật giỏ hàng:", e); 
-  }
-}
-
-async function addToCart(product, quantity) {
-  if (!product || !product.product_id) { 
-    alert("Lỗi: Không tìm thấy thông tin sản phẩm."); 
-    return; 
-  }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chi tiết sản phẩm - La Cuisine Ngọt</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
   
-  // Lấy userId từ localStorage
-  const customerData = localStorage.getItem("currentUser");
-  const jwtToken = localStorage.getItem("jwtToken");
+  <!-- Preload fonts để tránh FOUT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@600&family=Crimson+Text:wght@400;600;700&family=Inspiration&display=block" rel="stylesheet" />
   
-  if (!customerData || !jwtToken) {
-    alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
-    window.location.href = "../login/login.html";
-    return;
-  }
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="product.css">
   
-  let userId = null;
-  try {
-    const currentUser = JSON.parse(customerData);
-    userId = currentUser?.id;
-  } catch (e) {
-    console.error("Lỗi parse user data:", e);
-    alert("Lỗi: Không thể xác định người dùng.");
-    return;
-  }
-  
-  if (!userId) {
-    alert("Lỗi: Không tìm thấy thông tin người dùng.");
-    return;
-  }
-  
-  // Gọi API để thêm vào giỏ hàng trong database
-  try {
-    const response = await fetch("../../api/cart.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${jwtToken}`
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        product_id: product.product_id,
-        quantity: quantity
-      })
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      alert("Đã thêm sản phẩm vào giỏ hàng!");
-      updateCartCount();
-    } else {
-      alert(result.message || "Không thể thêm sản phẩm vào giỏ hàng.");
-    }
-  } catch (error) {
-    console.error("Lỗi khi thêm vào giỏ hàng:", error);
-    // KHÔNG fallback vào localStorage khi đã đăng nhập - chỉ báo lỗi
-    alert("Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau.");
-  }
-}
+  <!-- Auth check script -->
+  <script src="../../assets/js/auth-check.js"></script>
+</head>
 
-function setupActionButtons(product) {
-  const decreaseBtn = document.getElementById("decrease");
-  const increaseBtn = document.getElementById("increase");
-  const quantityInput = document.getElementById("quantity");
-  const addCartBtn = document.querySelector(".add-cart");
-  const buyNowBtn = document.querySelector(".buy-now");
+<body>
 
-  if (decreaseBtn && increaseBtn && quantityInput) {
-    decreaseBtn.addEventListener("click", () => { let val = parseInt(quantityInput.value); if (val > 1) quantityInput.value = val - 1; });
-    increaseBtn.addEventListener("click", () => { let val = parseInt(quantityInput.value); quantityInput.value = val + 1; });
-  }
+  <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../home/home.html">La Cuisine Ngọt</a>
+            </div>
 
-  if (addCartBtn) {
-    addCartBtn.addEventListener("click", () => {
-      const isCustomer = localStorage.getItem("currentUser") && localStorage.getItem("jwtToken");
-      const isStaff = localStorage.getItem("currentStaff") && localStorage.getItem("jwtToken");
-      if (!isCustomer && !isStaff) { alert("Vui lòng đăng nhập để thêm sản phẩm."); window.location.href = "../login/login.html"; return; }
-      if (product) { const quantity = parseInt(quantityInput.value) || 1; addToCart(product, quantity); }
-      else { alert("Lỗi: Không thể thêm sản phẩm."); }
-    });
-  }
+            <ul class="nav-menu">
+                <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
+                <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
+                <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
 
-  if (buyNowBtn) {
-    buyNowBtn.addEventListener("click", () => {
-      const isCustomer = localStorage.getItem("currentUser") && localStorage.getItem("jwtToken");
-      const isStaff = localStorage.getItem("currentStaff") && localStorage.getItem("jwtToken");
-      if (!isCustomer && !isStaff) { alert("Vui lòng đăng nhập để mua hàng."); window.location.href = "../login/login.html"; }
-      else {
-        if (product) { const quantity = parseInt(quantityInput.value) || 1; addToCart(product, quantity); }
-        window.location.href = "../pay/pay.html";
-      }
-    });
-  }
-}
+                <li>
+                    <a href="#" class="nav-search">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    
+                    <a href="../cart/cart.html" class="nav-cart" style="padding: 0 10px;">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                </li>
 
-// ====== API & LỌC SẢN PHẨM ======
-const API_BASE = "../../api/products_c.php";
+                <li class="nav-user">
+                    <a href="../login/login.html" class="nav-login-1">ĐĂNG NHẬP</a>
+                    <span class="nav-separator">|</span> <a href="../register/register.html" class="nav-login-2">ĐĂNG
+                        KÍ</a>
 
-function initProductFilter() {
-  const categorySelect = document.getElementById("categorySelect");
-  const priceSelect = document.getElementById("priceSelect");
-  const filterButton = document.getElementById("filterButton");
-  const grid = document.getElementById("filteredProducts"); // ✅ chỉ render vào vùng mới
-  if (!categorySelect || !priceSelect || !filterButton || !grid) return;
+                    <div class="user-menu hidden">
+                        <ul>
+                            <li><button id="tt">Thông tin tài khoản</button></li>
+                            <li><button id="logoutBtnNav">Đăng xuất</button></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-  // 🔹 Lấy danh mục từ API
-  fetch(`${API_BASE}?categories=1`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.success && data.categories) {
-        data.categories.forEach(cat => {
-          const opt = document.createElement("option");
-          opt.value = cat.CategoryName;
-          opt.textContent = cat.CategoryName;
-          categorySelect.appendChild(opt);
-        });
-      }
-    });
+    <div class="search-bar hidden">
+        <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm...">
 
-  // 🔹 Hàm tải và lọc sản phẩm
-  async function loadProducts() {
-    const res = await fetch(API_BASE);
-    const data = await res.json();
-    if (!data.success) return;
+        <div class="filter-wrapper" style="position: relative; display: inline-block;">
+            <button class="filter-btn">Lọc</button>
 
-    let filtered = data.products;
-    const category = categorySelect.value;
-    const price = priceSelect.value;
+            <div class="filter-popup">
+                <div class="filter-content">
+                    <label for="categorySelect">Danh mục</label>
+                    <select id="categorySelect">
+                        <option value="">Tất cả danh mục</option>
+                    </select>
 
-    if (category) filtered = filtered.filter(p => p.CategoryName === category);
+                    <label for="priceSelect">Giá</label>
+                    <select id="priceSelect">
+                        <option value="">Tất cả giá</option>
+                        <option value="duoi500">Dưới 500.000</option>
+                        <option value="500-700">500.000 - 700.000</option>
+                        <option value="tren700">Trên 700.000</option>
+                    </select>
 
-    filtered = filtered.filter(p => {
-      const priceNum = parseFloat(p.Price);
-      if (price === "duoi500") return priceNum < 500000;
-      if (price === "500-700") return priceNum >= 500000 && priceNum <= 700000;
-      if (price === "tren700") return priceNum > 700000;
-      return true;
-    });
+                    <button id="filterButton">Lọc</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    grid.innerHTML = "";
-    if (!filtered.length) {
-      grid.innerHTML = "<p>Không có sản phẩm phù hợp.</p>";
-      return;
-    }
+    <!-- Vùng hiển thị sản phẩm sau khi lọc -->
+    <div id="filteredProducts" class="products-grid"></div>
 
-    filtered.forEach(p => {
-      const card = `
-        <div class="product-card" data-id="${p.ProductID}">
-          <div class="product-image-container">
-            <a href="../product/product.html?id=${p.ProductID}" class="product-item">
-              <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
-            </a>
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">${p.ProductName}</h3>
-            <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
-          </div>
-        </div>`;
-      grid.insertAdjacentHTML("beforeend", card);
-    });
-    
-    // Re-bind navigation sau khi render
-    bindProductCardNavigation();
-  }
-}
 
-// ===== HIỆN/ẨN Ô LỌC NHỎ =====
-document.addEventListener("DOMContentLoaded", () => {
-  const filterToggleBtn = document.querySelector(".filter-btn"); // nút "Lọc" trên thanh tìm kiếm
-  const filterPopup = document.querySelector(".filter-popup");
+  <!-- MAIN -->
+  <main class="product-page">
+    <div class="product-wrapper">
 
-  if (filterToggleBtn && filterPopup) {
-    filterToggleBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      filterPopup.classList.toggle("show");
-    });
+      <!-- KHỐI TRÊN: HÌNH + THÔNG TIN BÁNH -->
+      <div class="product-container">
+        <!-- HÌNH ẢNH -->
+        <div class="product-image">
+          <img id="product-img" src="" alt="Hình sản phẩm" />
+        </div>
 
-    // Ẩn khi click ra ngoài
-    document.addEventListener("click", (e) => {
-      if (!filterPopup.contains(e.target) && !filterToggleBtn.contains(e.target)) {
-        filterPopup.classList.remove("show");
-      }
-    });
-  }
-});
+        <!-- THÔNG TIN SẢN PHẨM -->
+        <div class="product-info">
+          <h2 id="product-name" class="product-name"></h2>
+          <p id="product-price" class="price"></p>
+          <p id="product-short1" class="short-desc"></p>
+          <p id="product-short2" class="short-desc"></p>
 
-// ===== HIỂN THỊ POPUP =====
-function showPopup(products) {
-  const overlay = document.getElementById("overlay");
-  const popupProducts = document.getElementById("popupProducts");
-  if (!overlay || !popupProducts) return;
-
-  popupProducts.innerHTML = "";
-
-  if (!products || !products.length) {
-    popupProducts.innerHTML = "<p>Không tìm thấy sản phẩm phù hợp.</p>";
-  } else {
-    products.forEach(p => {
-      popupProducts.insertAdjacentHTML("beforeend", `
-        <div class="product-card" data-id="${p.ProductID}">
-          <div class="product-image-container">
-            <a href="../product/product.html?id=${p.ProductID}" class="product-item">
-              <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
-            </a>
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">${p.ProductName}</h3>
-            <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+          <!-- NÚT HÀNH ĐỘNG -->
+          <div class="action-section">
+            <div class="action-row">
+              <div class="quantity-control">
+                <button id="decrease">-</button>
+                <input type="text" id="quantity" value="1" />
+                <button id="increase">+</button>
+              </div>
+              <button class="add-cart">Thêm vào giỏ hàng</button>
+            </div>
+            <button class="buy-now">Mua ngay</button>
           </div>
         </div>
-      `);
-    });
-  }
+      </div>
 
-  overlay.classList.remove("hidden");
-  
-  // Re-bind navigation sau khi render popup
-  bindProductCardNavigation();
-}
+      <!-- KHỐI DƯỚI: THÔNG TIN CHI TIẾT -->
+      <section class="product-details">
+        <h3>THÔNG TIN SẢN PHẨM</h3>
 
-// ===== HIỂN THỊ KẾT QUẢ TRÊN NỀN MỜ =====
+        <div class="detail-block">
+          <h4>MÔ TẢ</h4>
+          <p id="desc1"></p>
+        </div>
 
-document.addEventListener("DOMContentLoaded", () => {
-  const overlay = document.getElementById("overlay");
-  const popupProducts = document.getElementById("popupProducts");
-  const closePopupBtn = document.querySelector(".close-popup");
+        <div class="detail-block">
+          <h4>CẤU TRÚC BÁNH</h4>
+          <div id="structure"></div>
+        </div>
 
-  const categorySelect = document.getElementById("categorySelect");
-  const priceSelect = document.getElementById("priceSelect");
-  const applyFilterBtn = document.getElementById("filterButton");
+        <div class="detail-block">
+          <h4>HƯỚNG DẪN SỬ DỤNG</h4>
+          <p id="usage"></p>
+        </div>
 
-  // ===== ẨN POPUP =====
-  function hidePopup() {
-    overlay.classList.add("hidden");
-  }
+        <div class="detail-block">
+          <h4>PHỤ KIỆN TẶNG KÈM</h4>
+          <p id="bonus"></p>
+        </div>
+      </section>
 
-  // Nút đóng popup
-  closePopupBtn.addEventListener("click", hidePopup);
-
-  // Click ra ngoài cũng tắt
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) hidePopup();
-  });
-
-  // ===== SỰ KIỆN LỌC =====
-  if (applyFilterBtn) {
-    applyFilterBtn.addEventListener("click", async () => {
-      const category = categorySelect.value;
-      const price = priceSelect.value;
-      let min = 0, max = 99999999;
-
-      if (price === "duoi500") max = 500000;
-      if (price === "500-700") { min = 500000; max = 700000; }
-      if (price === "tren700") min = 700000;
-
-      const res = await fetch(`${API_BASE}?category=${encodeURIComponent(category)}&min=${min}&max=${max}`);
-      const data = await res.json();
-      showPopup(data.products);
-    });
-  }
-});
-
-// ====== TÌM KIẾM & HIỂN THỊ KẾT QUẢ TRÊN NỀN MỜ ======
-document.addEventListener("DOMContentLoaded", () => {
-  const overlay = document.getElementById("overlay");
-  const popupProducts = document.getElementById("popupProducts");
-  const closePopupBtn = document.querySelector(".close-popup");
-  const searchIcon = document.querySelector(".nav-search");
-  const searchBar = document.querySelector(".search-bar");
-  const searchInput = document.getElementById("searchInput");
-
-  // ===== Hiện/ẩn thanh tìm kiếm =====
-  if (searchIcon && searchBar) {
-    searchIcon.addEventListener("click", (e) => {
-      e.preventDefault();
-      searchBar.classList.toggle("show");
-      document.body.classList.toggle("searching");
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!searchBar.contains(e.target) && !searchIcon.contains(e.target)) {
-        searchBar.classList.remove("show");
-        document.body.classList.remove("searching");
-      }
-    });
-  }
-
-  // ===== Hiển thị popup sản phẩm =====
-  function showPopup(products) {
-    popupProducts.innerHTML = "";
-
-    if (!products || !products.length) {
-      popupProducts.innerHTML = "<p>Không tìm thấy sản phẩm phù hợp.</p>";
-    } else {
-      products.forEach(p => {
-        const card = `
-          <div class="product-card">
-            <div class="product-image-container">
-              <a href="../product/product.html?id=${p.ProductID}" class="product-item">
-                <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+    </div> <!-- đóng product-wrapper -->
+  </main>
+  <!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+      <div class="footer-left">
+          <h2 class="footer-logo">La Cuisine Ngọt</h2>
+          <div class="social-links">
+              <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
+                  <i class="fab fa-facebook"></i>
               </a>
-            </div>
-            <div class="product-info">
-              <h3 class="product-name">${p.ProductName}</h3>
-              <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
-            </div>
-          </div>`;
-        popupProducts.insertAdjacentHTML("beforeend", card);
-      });
-    }
-    overlay.classList.remove("hidden");
-  }
+              <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
+                  <i class="fab fa-instagram"></i>
+              </a>
+          </div>
+      </div>
+      <div class="footer-below">
+          © Nhóm 1 - Ca 4 - CNPM
+      </div>
+      <div class="footer-right">
+          <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, p.Chợ Quán, TP.HCM</p>
+          </br>
+          <p><b>Liên hệ với Ngọt </b><br />lacuisinengot@gmail.com <br/>
+              1010.0111.2025</p>
+      </div>
+      
+  </div>
+</footer>
 
-  // ===== Đóng popup =====
-  function hidePopup() { overlay.classList.add("hidden"); }
-  closePopupBtn.addEventListener("click", hidePopup);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) hidePopup(); });
+  <script src="product.js"></script>
+      <!-- Overlay hiển thị kết quả lọc / tìm kiếm -->
+    <div id="overlay" class="hidden">
+        <div class="popup-container">
+            <button class="close-popup">&times;</button>
+            <div id="popupProducts" class="products-grid"></div>
+        </div>
+    </div>
 
-  // ===== Gọi API khi nhấn Enter trong ô tìm kiếm =====
-  if (searchInput) {
-    searchInput.addEventListener("keypress", async (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault(); // ✅ Ngăn hành vi mặc định chuyển trang
-        e.stopPropagation(); // ✅ Ngăn chồng sự kiện khác
+</body>
 
-        const keyword = e.target.value.trim();
-        if (!keyword) return;
-
-        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
-        try {
-          const res = await fetch(url);
-          const data = await res.json();
-          showPopup(data.products);
-        } catch (err) {
-          console.error("❌ Lỗi tìm kiếm:", err);
-        }
-      }
-    });
-  }
-});
-
-// ✅ Ghi đè hành vi tìm kiếm của main.js chỉ trên trang Home
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.querySelector(".search-bar input");
-
-  if (searchInput) {
-    // Xóa toàn bộ sự kiện keypress cũ mà main.js đã gắn
-    const newInput = searchInput.cloneNode(true);
-    searchInput.parentNode.replaceChild(newInput, searchInput);
-
-    // Gắn lại sự kiện tìm kiếm theo logic của bạn
-    newInput.addEventListener("keypress", async (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault(); // ❌ chặn chuyển hướng từ main.js
-        const keyword = e.target.value.trim();
-        if (!keyword) return;
-
-        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
-        try {
-          const res = await fetch(url);
-          const data = await res.json();
-
-          // Hiện kết quả trên popup (hàm showPopup bạn đã có)
-          if (typeof showPopup === "function") {
-            showPopup(data.products);
-          } else {
-            alert("Không tìm thấy sản phẩm hoặc showPopup chưa được định nghĩa.");
-          }
-        } catch (err) {
-          console.error("❌ Lỗi tìm kiếm:", err);
-        }
-      }
-    });
-  }
-});
+</html>
