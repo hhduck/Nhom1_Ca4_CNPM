@@ -392,6 +392,7 @@ body {
     height: 100vh;
     /* toàn màn hình */
     overflow: hidden;
+
 }
 
 /* --- Hình nền nằm trong section --- */
@@ -416,25 +417,21 @@ body {
 
 /* --- Chữ nổi trên cùng --- */
 .why-choose-us .content {
-    margin-top: 80px;
     position: absolute;
-    top: 40px;
-    /* khoảng cách từ viền trên */
-    right: 60px;
-    /* khoảng cách từ viền phải */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 2;
-    /* nằm trên overlay */
-    display: flex;
-    /* nếu sau này có thêm chữ sẽ nằm hàng ngang */
-    align-items: center;
-    gap: 20px;
+    text-align: center;
+    font-family: 'Inspiration', cursive;
 
 }
+
 
 /* --- Tiêu đề --- */
 .why-choose-us h2 {
     color: #fff;
-    font-size: 2rem;
+    font-size: 80px;
     font-weight: 500;
     margin: 0;
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
