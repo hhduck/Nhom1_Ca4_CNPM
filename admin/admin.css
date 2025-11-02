@@ -224,6 +224,24 @@ body {
     border-radius: 4px;
 }
 
+.quantity-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quantity-warning-icon {
+    color: #f59e0b;
+    font-size: 18px;
+    cursor: help;
+}
+
+.quantity-error-icon {
+    color: #dc2626;
+    font-size: 18px;
+    cursor: help;
+}
+
 .action-btns {
     display: flex;
     gap: 8px;

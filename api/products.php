@@ -4,9 +4,15 @@
  * LA CUISINE NGỌT
  * FILE: api/products.php
  */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Bật output buffering để chặn bất kỳ output nào trước JSON
+ob_start();
+
+// Tắt display_errors để tránh HTML error làm hỏng JSON response
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL); // Vẫn log errors vào error_log
+ini_set('log_errors', 1);
+
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/config/database.php';
@@ -232,15 +238,32 @@ function createProduct($db) {
 }
 
 function updateProduct($db) {
+    // Lấy ID từ URL path
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $pathParts = explode('/', trim($path, '/'));
     $id = end($pathParts);
     
-    $data = json_decode(file_get_contents("php://input"), true);
+    // Validate ID
+    if (!$id || !is_numeric($id)) {
+        sendJsonResponse(false, null, "ID sản phẩm không hợp lệ", 400);
+    }
+    
+    $id = (int)$id;
+    
+    // Parse JSON input
+    $input = file_get_contents("php://input");
+    if (empty($input)) {
+        sendJsonResponse(false, null, "Dữ liệu không hợp lệ", 400);
+    }
+    
+    $data = json_decode($input, true);
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+        sendJsonResponse(false, null, "JSON không hợp lệ: " . json_last_error_msg(), 400);
+    }
     
     // Convert category_id to integer if it's a string
     $categoryId = null;
-    if (isset($data['category_id'])) {
+    if (isset($data['category_id']) && $data['category_id'] !== null && $data['category_id'] !== '') {
         $categoryId = is_numeric($data['category_id']) ? (int)$data['category_id'] : null;
         
         // If category_id is not a number, try to find by category name
@@ -259,43 +282,107 @@ function updateProduct($db) {
         }
     }
     
-    $query = "UPDATE Products SET 
-              ProductName = :name,
-              CategoryID = :category,
-              Description = :desc,
-              Price = :price,
-              Quantity = :quantity,
-              Status = :status,
-              ImageURL = :image_url,
-              ShortIntro = :short_intro,
-              ShortParagraph = :short_paragraph,
-              Structure = :structure,
-              `Usage` = :usage,
-              Bonus = :bonus,
-              UpdatedAt = CURRENT_TIMESTAMP
-              WHERE ProductID = :id";
+    // Build UPDATE query dynamically để chỉ update các field có trong $data
+    $updateFields = [];
+    $params = [':id' => $id];
+    
+    if (isset($data['product_name'])) {
+        $updateFields[] = "ProductName = :name";
+        $params[':name'] = sanitizeInput($data['product_name']);
+    }
+    
+    if ($categoryId !== null) {
+        $updateFields[] = "CategoryID = :category";
+        $params[':category'] = $categoryId;
+    }
+    
+    if (isset($data['description'])) {
+        $updateFields[] = "Description = :desc";
+        $params[':desc'] = sanitizeInput($data['description']);
+    }
+    
+    if (isset($data['price'])) {
+        $updateFields[] = "Price = :price";
+        $params[':price'] = $data['price'];
+    }
+    
+    if (isset($data['quantity'])) {
+        $updateFields[] = "Quantity = :quantity";
+        $params[':quantity'] = (int)$data['quantity'];
+    }
+    
+    if (isset($data['status'])) {
+        $updateFields[] = "Status = :status";
+        $params[':status'] = sanitizeInput($data['status']);
+    }
+    
+    if (isset($data['image_url'])) {
+        $updateFields[] = "ImageURL = :image_url";
+        $params[':image_url'] = sanitizeInput($data['image_url']);
+    }
+    
+    if (isset($data['short_intro'])) {
+        $updateFields[] = "ShortIntro = :short_intro";
+        $params[':short_intro'] = sanitizeInput($data['short_intro']);
+    }
+    
+    if (isset($data['short_paragraph'])) {
+        $updateFields[] = "ShortParagraph = :short_paragraph";
+        $params[':short_paragraph'] = sanitizeInput($data['short_paragraph']);
+    }
+    
+    if (isset($data['structure'])) {
+        $updateFields[] = "Structure = :structure";
+        $params[':structure'] = sanitizeInput($data['structure']);
+    }
+    
+    if (isset($data['usage'])) {
+        $updateFields[] = "`Usage` = :usage";
+        $params[':usage'] = sanitizeInput($data['usage']);
+    }
+    
+    if (isset($data['bonus'])) {
+        $updateFields[] = "Bonus = :bonus";
+        $params[':bonus'] = sanitizeInput($data['bonus']);
+    }
+    
+    if (empty($updateFields)) {
+        sendJsonResponse(false, null, "Không có dữ liệu để cập nhật", 400);
+    }
+    
+    $updateFields[] = "UpdatedAt = CURRENT_TIMESTAMP";
+    
+    $query = "UPDATE Products SET " . implode(', ', $updateFields) . " WHERE ProductID = :id";
     
     $stmt = $db->prepare($query);
     
-    $stmt->bindParam(':id', $id);
-    $stmt->bindParam(':name', sanitizeInput($data['product_name']));
-    $stmt->bindParam(':category', $categoryId, PDO::PARAM_INT);
-    $stmt->bindParam(':desc', sanitizeInput($data['description'] ?? ''));
-    $stmt->bindParam(':price', $data['price']);
-    $stmt->bindParam(':quantity', $data['quantity'] ?? 0);
-    $stmt->bindParam(':status', $data['status'] ?? 'available');
-    $stmt->bindParam(':image_url', sanitizeInput($data['image_url'] ?? ''));
-    $stmt->bindParam(':short_intro', sanitizeInput($data['short_intro'] ?? ''));
-    $stmt->bindParam(':short_paragraph', sanitizeInput($data['short_paragraph'] ?? ''));
-    $stmt->bindParam(':structure', sanitizeInput($data['structure'] ?? ''));
-    $stmt->bindParam(':usage', sanitizeInput($data['usage'] ?? ''));
-    $stmt->bindParam(':bonus', sanitizeInput($data['bonus'] ?? ''));
+    // Bind all parameters
+    foreach ($params as $key => $value) {
+        if ($key === ':category') {
+            $stmt->bindValue($key, $value, PDO::PARAM_INT);
+        } else if ($key === ':id' || $key === ':quantity') {
+            $stmt->bindValue($key, $value, PDO::PARAM_INT);
+        } else {
+            $stmt->bindValue($key, $value);
+        }
+    }
     
-    if ($stmt->execute()) {
-        sendJsonResponse(true, null, "Cập nhật sản phẩm thành công");
-    } else {
-        $errorInfo = $stmt->errorInfo();
-        sendJsonResponse(false, null, "Không thể cập nhật sản phẩm: " . ($errorInfo[2] ?? 'Unknown error'), 500);
+    try {
+        if ($stmt->execute()) {
+            $rowCount = $stmt->rowCount();
+            if ($rowCount > 0) {
+                sendJsonResponse(true, null, "Cập nhật sản phẩm thành công");
+            } else {
+                sendJsonResponse(false, null, "Không tìm thấy sản phẩm để cập nhật", 404);
+            }
+        } else {
+            $errorInfo = $stmt->errorInfo();
+            error_log("Update Product Error: " . print_r($errorInfo, true));
+            sendJsonResponse(false, null, "Không thể cập nhật sản phẩm: " . ($errorInfo[2] ?? 'Unknown error'), 500);
+        }
+    } catch (PDOException $e) {
+        error_log("Update Product PDO Error: " . $e->getMessage());
+        sendJsonResponse(false, null, "Lỗi database: " . $e->getMessage(), 500);
     }
 }
 

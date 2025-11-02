@@ -371,7 +371,17 @@ async function loadProducts(filters = {}) {
                     <td>${product.product_name}</td>
                     <td>${product.category_name || 'N/A'}</td>
                     <td>${formatCurrency(product.price)}</td>
-                    <td>${product.quantity}</td>
+                    <td>
+                        <div class="quantity-cell">
+                            <span>${product.quantity}</span>
+                            ${product.quantity === 0 
+                                ? '<i class="fas fa-times-circle quantity-error-icon" title="Hết sản phẩm"></i>'
+                                : product.quantity < 10 
+                                ? '<i class="fas fa-exclamation-triangle quantity-warning-icon" title="Sắp hết (dưới 10)"></i>'
+                                : ''
+                            }
+                        </div>
+                    </td>
                     <td>
                         <span class="status-badge status-${product.status}">
                             ${getStatusText(product.status)}
@@ -521,6 +531,14 @@ async function saveProduct() {
         return;
     }
 
+    // Validate quantity >= 0
+    const quantity = parseInt(productData.quantity) || 0;
+    if (quantity < 0) {
+        showError('Số lượng không thể nhỏ hơn 0');
+        return;
+    }
+    productData.quantity = quantity;
+
     try {
         const url = productId
             ? `${API_BASE_URL}/products.php/${productId}`
@@ -536,7 +554,18 @@ async function saveProduct() {
             body: JSON.stringify(productData)
         });
 
-        const data = await response.json();
+        // Lấy response text trước để kiểm tra
+        const responseText = await response.text();
+        
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            // Nếu không parse được JSON, có thể là lỗi PHP/HTML
+            console.error('Response không phải JSON:', responseText);
+            console.error('Parse error:', parseError);
+            throw new Error('Server trả về lỗi không hợp lệ. Vui lòng kiểm tra console để biết thêm chi tiết.');
+        }
 
         if (data.success) {
             showSuccess(productId ? 'Cập nhật sản phẩm thành công' : 'Thêm sản phẩm thành công');
@@ -547,7 +576,7 @@ async function saveProduct() {
         }
     } catch (error) {
         console.error('Error saving product:', error);
-        showError('Không thể lưu sản phẩm');
+        showError(error.message || 'Không thể lưu sản phẩm');
     }
 }
 
