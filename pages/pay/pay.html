@@ -1,69 +1,69 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Thanh toán và giao hàng | La Cuisine Ngọt</title>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&family=Inspiration&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/style.css">
   <link rel="stylesheet" href="../../assets/css/animations.css">
-  <link rel="stylesheet" href="home.css">
   <link rel="stylesheet" href="pay.css">
-
-  <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
 
-  <!-- NAVIGATION -->
   <nav class="navbar">
     <div class="nav-container">
       <div class="nav-logo">
         <a href="../home/home.html">La Cuisine Ngọt</a>
       </div>
-
       <ul class="nav-menu">
         <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
         <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
         <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
-        <div class="nav-icons">
-          <a href="../cart/cart.html" class="nav-cart" aria-label="Giỏ hàng">
+        <li>
+          <a href="../cart/cart.html" class="nav-cart" style="padding: 0 10px;">
             <i class="fas fa-shopping-cart"></i>
           </a>
-        </div>
-        <li><a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a></li>
+        </li>
+        <li class="nav-user">
+          <a href="../login/login.html" class="nav-login-1">ĐĂNG NHẬP</a>
+          <span class="nav-separator">|</span>
+          <a href="../register/register.html" class="nav-login-2">ĐĂNG KÍ</a>
+          <div class="user-menu hidden">
+            <ul>
+              <li><button id="accountBtn">Thông tin tài khoản</button></li>
+              <li><button id="logoutBtnNav">Đăng xuất</button></li>
+            </ul>
+          </div>
+        </li>
       </ul>
     </div>
   </nav>
 
-  <!-- MAIN CONTENT -->
   <main class="container page">
     <section class="box checkout">
       <h1 class="page-title">Thanh toán và giao hàng</h1>
-      
+
       <form id="checkoutForm" class="checkout-form" autocomplete="off" novalidate>
         <div class="form-grid">
-          
-          <!-- CỘT 1 - THÔNG TIN NGƯỜI DÙNG -->
+
           <div class="form-col">
             <h3 class="form-title">Thông tin người dùng</h3>
-
             <div class="form-group">
               <label>Họ và tên <span class="required">*</span></label>
               <input name="fullname" required type="text" placeholder="Nguyễn Văn A">
               <span class="error-msg" id="nameError"></span>
             </div>
-
             <div class="form-group">
               <label>Số điện thoại <span class="required">*</span></label>
               <input name="phone" required type="tel" placeholder="09x xxx xxxx">
               <span class="error-msg" id="phoneError"></span>
             </div>
-
             <div class="form-group">
               <label>Địa chỉ mail <span class="required">*</span></label>
               <input name="email" required type="text" placeholder="email@domain.com">
@@ -71,107 +71,96 @@
             </div>
           </div>
 
-          <!-- CỘT 2 - THÔNG TIN GIAO HÀNG -->
           <div class="form-col">
             <h3 class="form-title">Thông tin giao hàng</h3>
-
             <div class="form-group delivery-method">
               <label for="delivery">Phương thức nhận hàng <span class="required">*</span></label>
               <div class="delivery-options">
-                <label><input type="radio" name="delivery" value="store"> Nhận trực tiếp tại cửa hàng</label>
+                <label><input type="radio" name="delivery" value="store" checked> Nhận trực tiếp tại cửa hàng</label>
                 <label><input type="radio" name="delivery" value="delivery"> Giao hàng tận nơi</label>
               </div>
             </div>
-
-            <div class="delivery-info">
-              <div class="form-group">
-                <label for="city">Tỉnh / Thành phố</label>
-                <select id="city" name="city">
-                  <option value="">-- Chọn tỉnh / thành phố --</option>
-                  <option value="hcm">TP.HCM</option>
-                  <option value="ld">Lâm Đồng</option>
-                  <option value="kh">Khánh Hòa</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="ward">Phường / Xã</label>
-                <select id="ward" name="ward">
-                  <option value="">-- Chọn phường / xã --</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="address">Địa chỉ cụ thể</label>
-                <input type="text" id="address" name="address" placeholder="Số nhà, tên đường...">
-              </div>
-            </div>
-          </div>
-
-          <!-- CỘT 3 - THỜI GIAN VÀ GHI CHÚ -->
-          <div class="form-col">
             <div class="form-group">
-              <h3 class="form-title">Thời gian nhận bánh</h3>
-              <label for="deliveryTime">Ngày - giờ nhận bánh <span class="required">*</span></label>
-              <input name="deliveryTime" id="deliveryTime" required type="datetime-local">
-              <span class="error-msg" id="timeError"></span>
+              <label for="city">Tỉnh / Thành phố</label>
+              <select id="city" name="city">
+                <option value="hcm" selected>TP.HCM</option>
+              </select>
             </div>
 
             <div class="form-group">
-              <h3 class="form-title">Ghi chú cho Ngọt</h3>
-              <textarea id="note" name="note" placeholder="Ví dụ: Ghi 'Happy Birthday Mẹ' màu vàng"></textarea>
+              <label for="district">Quận / Huyện <span class="required">*</span></label>
+              <select id="district" name="district">
+                <option value="">-- Chọn quận / huyện --</option>
+              </select>
+              <span class="error-msg" id="districtError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="ward">Phường / Xã <span class="required">*</span></label>
+              <select id="ward" name="ward" disabled>
+                <option value="">-- Chọn phường / xã --</option>
+              </select>
+              <span class="error-msg" id="wardError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="address">Địa chỉ cụ thể <span class="required">*</span></label>
+              <input type="text" id="address" name="address" placeholder="Số nhà, tên đường...">
+              <span class="error-msg" id="addressError"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="deliveryTime">Thời gian nhận bánh (sau ít nhất 2 giờ) <span class="required">*</span></label>
+              <input type="datetime-local" id="deliveryTime" name="deliveryTime">
+              <span class="error-msg" id="deliveryTimeError"></span>
             </div>
           </div>
         </div>
+        <h3 class="form-title">Đơn hàng của bạn</h3>
+        <div class="order-table-wrap">
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Tạm tính</th>
+              </tr>
+            </thead>
+            <tbody id="cartTableBody">
+              <tr>
+                <td colspan="2" style="text-align: center;">Đang tải giỏ hàng...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-<!-- ĐƠN HÀNG -->
-<h3 class="form-title">Đơn hàng của bạn</h3>
+        <div class="form-group promo-wrap">
+          <label for="promotionSelect">Mã khuyến mãi</label>
+          <select id="promotionSelect" class="promo-select">
+            <option value="">-- Chọn mã khuyến mãi --</option>
+          </select>
+          <span id="promoMessage" class="promo-message"></span>
+        </div>
 
-
-<!-- TỔNG TIỀN & NÚT -->
-<!-- KHUYẾN MÃI -->
-<div class="form-group promo-wrap">
-  <label for="promotionSelect">Mã khuyến mãi</label>
-  <select id="promotionSelect" class="promo-select">
-    <option value="">-- Chọn mã khuyến mãi --</option>
-  </select>
-  <span id="promoMessage" class="promo-message"></span>
-</div>
-
-<div class="order-footer">
-  <div class="totals">
-    <div><span>Tạm tính</span><strong id="subtotal">1.150.000</strong></div>
-    <div><span>Phí vận chuyển</span><strong id="shipping">Miễn phí</strong></div>
-    <div><span>VAT (8%)</span><strong id="vat">92.000</strong></div>
-    <div class="total-line"><span>Tổng tiền</span><strong id="grandtotal">1.242.000</strong></div>
-  </div>
-
-  <button id="placeOrder" class="btn">Đặt hàng</button>
-</div>
-</form>
-
+        <div class="order-footer">
+          <div class="totals">
+            <div><span>Tạm tính</span><strong id="subtotal">0₫</strong></div>
+            <div><span>VAT (8%)</span><strong id="vat">0₫</strong></div>
+            <div><span>Phí vận chuyển</span><strong id="shipping">30 000đ</strong></div>
+            <div id="discountRow" style="display: none; color: #e74c3c;">
+              <span>Giảm giá</span><strong id="discount">0₫</strong>
+            </div>
+            <div class="total-line"><span>Tổng tiền</span><strong id="grandtotal">0₫</strong></div>
+          </div>
+          <button id="placeOrder" type="submit" class="btn">Đặt hàng</button>
+        </div>
+      </form>
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-left">
-        <h2 class="footer-logo">La Cuisine Ngọt</h2>
-        <div class="social-links">
-          <a href="https://www.facebook.com/LaCuisineNgot" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-          <a href="https://www.instagram.com/LaCuisineNgot" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        </div>
-      </div>
-
-      <div class="footer-right">
-        <p><b>Ngọt GO TO (TP.HCM)</b><br>123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
-        <p><b>Ngọt INSIDE (Phan Rang)</b><br>85 Ngô Gia Tự, p. Phan Rang, Khánh Hòa</p>
-        <p><b>Ngọt AROUND (Phan Thiết)</b><br>86 Nguyễn Tất Thành, p. Phan Thiết, Lâm Đồng</p>
-      </div>
-    </div>
   </footer>
 
   <script src="pay.js"></script>
 </body>
+
 </html>
