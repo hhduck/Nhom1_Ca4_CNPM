@@ -1,7 +1,7 @@
-/* Register Page Styles */
-/* ===== NAVBAR SẠCH (Đồng bộ) ===== */
+/* ===== NAVBAR ===== */
 .navbar {
     background-color: #395542;
+    /* xanh rêu đậm */
     padding: 10px 60px;
     display: flex;
     justify-content: center;
@@ -30,16 +30,13 @@
     letter-spacing: 1px;
 }
 
-/* Menu chính */
+/* Menu */
 .nav-menu {
     list-style: none;
     display: flex;
-    align-items: center;
-    /* Căn giữa các mục menu */
     gap: 40px;
     padding: 0;
-    margin: 0;
-    /* Bỏ hết margin lỗi */
+    margin-right: -70px;
 }
 
 .nav-menu a {
@@ -49,119 +46,59 @@
     font-weight: 700;
     font-size: 15px;
     text-transform: uppercase;
+    /* Viết hoa toàn bộ */
     transition: color 0.3s;
 }
 
 .nav-menu a:hover {
     color: #EDDECD;
+    /* vàng nhạt khi hover */
 }
 
-/* Giỏ hàng (nằm trong <li>) */
-.nav-cart {
-    position: relative;
+/* Icons bên phải */
+.nav-icons {
     display: flex;
     align-items: center;
+    gap: 25px;
 }
 
-/* Thẻ <li> chứa thông tin user */
-.nav-user {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-/* Dấu | phân cách */
-.nav-separator {
-    color: #fff;
-    margin: 0 8px;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-/* Icon User (khi JS thêm vào) */
-.user-icon-link {
+.nav-icons a {
     color: #fff;
     font-size: 20px;
     text-decoration: none;
     transition: 0.3s;
+    left: 150px;
 }
 
-.user-icon-link:hover {
-    color: #e3c78d;
+.nav-icons a:hover {
+    color: #EDDECD;
 }
 
-/* Menu thả xuống */
-.user-menu {
+/* Giỏ hàng */
+.nav-cart {
+    position: relative;
+}
+
+.cart-count {
     position: absolute;
-    top: 55px;
-    right: 0;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    padding: 10px 0;
-    min-width: 150px;
-    z-index: 1010;
-
-    display: none;
-    /* JS sẽ bật/tắt */
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.user-menu[style*="display: block"] {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.user-menu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.user-menu li button {
-    display: block;
-    width: 100%;
-    padding: 10px 20px;
-    white-space: nowrap;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    color: #333;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-}
-
-.user-menu li button:hover {
-    background-color: #f4f1ec;
+    top: -8px;
+    right: -10px;
+    background-color: #EDDECD;
     color: #395542;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 50%;
 }
 
-/* CSS Responsive cho Navbar (Chỉ phần navbar) */
-@media (max-width: 768px) {
-    .nav-container {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 15px;
-    }
-
-    .nav-menu {
-        gap: 20px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+.nav-login {
+    margin-left: 130px;
+    margin-right: 50px;
 }
 
-/* ===== HẾT CSS NAVBAR SẠCH ===== */
-
+.nav-login:hover {
+    color: #EDDECD;
+}
 
 /* Responsive (mobile) */
 @media (max-width: 768px) {
@@ -179,7 +116,6 @@
         gap: 15px;
     }
 }
-
 .form-container {
     max-width: 600px;
     margin: 120px auto 80px;
