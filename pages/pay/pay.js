@@ -1,17 +1,39 @@
 // ======================================================
-// pay.js - PHIÊN BẢN HOÀN CHỈNH (SỬA LỖI DATA + CSS + SHIPPING)
+// pay.js - PHIÊN BẢN HOÀN CHỈNH (CHO LUỒNG NGROK THẬT)
 // ======================================================
 
-// Biến toàn cục để lưu giỏ hàng, tránh gọi API liên tục
 let globalCartItems = [];
 let globalPromotions = [];
 let globalCurrentUser = null;
+// BIẾN NÀY KHÔNG CẦN NỮA VÌ DÙNG LUỒNG THẬT
+// let currentOrderData = null; 
 
-// --- CÁC HÀM XỬ LÝ NAVBAR CHUẨN ---
+// Dữ liệu địa chỉ TP.HCM theo yêu cầu
+const locationData = {
+  "TP. Thủ Đức": ["An Khánh", "An Lợi Đông", "An Phú", "Bình Chiểu", "Bình Thọ", "Bình Trưng Đông", "Bình Trưng Tây", "Cát Lái", "Hiệp Bình Chánh", "Hiệp Bình Phước", "Hiệp Phú", "Linh Chiểu", "Linh Đông", "Linh Tây", "Linh Trung", "Linh Xuân", "Long Bình", "Long Phước", "Long Thạnh Mỹ", "Long Trường", "Phú Hữu", "Phước Bình", "Phước Long A", "Phước Long B", "Tam Bình", "Tam Phú", "Tăng Nhơn Phú A", "Tăng Nhơn Phú B", "Thạnh Mỹ Lợi", "Thảo Điền", "Thủ Thiêm", "Trường Thạnh", "Trường Thọ"],
+  "Quận 1": ["Bến Nghé", "Bến Thành", "Cầu Kho", "Cầu Ông Lãnh", "Cô Giang", "Đa Kao", "Nguyễn Cư Trinh", "Nguyễn Thái Bình", "Phạm Ngũ Lão", "Tân Định"],
+  "Quận 3": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Võ Thị Sáu", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14"],
+  "Quận 4": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 08", "Phường 09", "Phường 10", "Phường 13", "Phường 14", "Phường 15", "Phường 16", "Phường 18"],
+  "Quận 5": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14", "Phường 15"],
+  "Quận 6": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14"],
+  "Quận 7": ["Bình Thuận", "Phú Mỹ", "Phú Thuận", "Tân Hưng", "Tân Kiểng", "Tân Phong", "Tân Phú", "Tân Quy", "Tân Thuận Đông", "Tân Thuận Tây"],
+  "Quận 8": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14", "Phường 15", "Phường 16"],
+  "Quận 10": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14", "Phường 15"],
+  "Quận 11": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14", "Phường 15", "Phường 16"],
+  "Quận 12": ["An Phú Đông", "Đông Hưng Thuận", "Hiệp Thành", "Tân Chánh Hiệp", "Tân Hưng Thuận", "Tân Thới Hiệp", "Tân Thới Nhất", "Thạnh Lộc", "Thạnh Xuân", "Thới An", "Trung Mỹ Tây"],
+  "Quận Bình Thạnh": ["Phường 01", "Phường 02", "Phường 03", "Phường 05", "Phường 06", "Phường 07", "Phường 11", "Phường 12", "Phường 13", "Phường 14", "Phường 15", "Phường 17", "Phường 19", "Phường 21", "Phường 22", "Phường 24", "Phường 25", "Phường 26", "Phường 27", "Phường 28"],
+  "Quận Phú Nhuận": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 15", "Phường 17"],
+  "Quận Tân Bình": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14", "Phường 15"],
+  "Quận Tân Phú": ["Hiệp Tân", "Hòa Thạnh", "Phú Thạnh", "Phú Thọ Hòa", "Phú Trung", "Sơn Kỳ", "Tân Quý", "Tân Sơn Nhì", "Tân Thành", "Tân Thới Hòa", "Tây Thạnh"],
+  "Quận Bình Tân": ["An Lạc", "An Lạc A", "Bình Hưng Hòa", "Bình Hưng Hòa A", "Bình Hưng Hòa B", "Bình Trị Đông", "Bình Trị Đông A", "Bình Trị Đông B", "Tân Tạo", "Tân Tạo A"],
+  "Huyện Bình Chánh": ["An Phú Tây", "Bình Chánh", "Bình Hưng", "Bình Lợi", "Đa Phước", "Hưng Long", "Lê Minh Xuân", "Phạm Văn Hai", "Phong Phú", "Quy Đức", "Tân Kiên", "Tân Nhựt", "Tân Quý Tây", "Tân Túc", "Vĩnh Lộc A", "Vĩnh Lộc B"],
+  "Huyện Cần Giờ": ["An Thới Đông", "Bình Khánh", "Cần Thạnh", "Long Hòa", "Lý Nhơn", "Tam Thôn Hiệp", "Thạnh An"],
+  "Huyện Củ Chi": ["An Nhơn Tây", "An Phú", "Bình Mỹ", "Hòa Phú", "Nhuận Đức", "Phạm Văn Cội", "Phú Hòa Đông", "Phú Mỹ Hưng", "Phước Hiệp", "Phước Thạnh", "Phước Vĩnh An", "Tân An Hội", "Tân Phú Trung", "Tân Thạnh Đông", "Tân Thạnh Tây", "Tân Thông Hội", "Thái Mỹ", "Trung An", "Trung Lập Hạ", "Trung Lập Thượng"],
+  "Huyện Hóc Môn": ["Bà Điểm", "Đông Thạnh", "Nhị Bình", "Tân Hiệp", "Tân Thới Nhì", "Tân Xuân", "Thới Tam Thôn", "Trung Chánh", "Xuân Thới Đông", "Xuân Thới Sơn", "Xuân Thới Thượng"],
+  "Huyện Nhà Bè": ["Hiệp Phước", "Long Thới", "Nhơn Đức", "Phú Xuân", "Phước Kiển", "Phước Lộc"]
+};
 
-/**
- * Đăng xuất người dùng
- */
+// --- HÀM NAVBAR ---
 function performLogout(redirectUrl = "../login/login.html") {
   localStorage.removeItem("currentStaff");
   localStorage.removeItem("currentUser");
@@ -20,9 +42,6 @@ function performLogout(redirectUrl = "../login/login.html") {
   window.location.href = redirectUrl;
 }
 
-/**
- * Xử lý hiển thị Navbar dựa trên trạng thái đăng nhập
- */
 function handleUserDisplay() {
   const loginLink_1 = document.querySelector(".nav-login-1");
   const loginLink_2 = document.querySelector(".nav-login-2");
@@ -56,16 +75,15 @@ function handleUserDisplay() {
     } catch (e) { console.error("Lỗi parse customer data:", e); }
   }
 
-  // Lưu user vào biến toàn cục để các hàm khác sử dụng
   globalCurrentUser = currentUser;
 
   if (currentUser && currentUser.id) {
-    // ---- ĐÃ ĐĂNG NHẬP ----
     loginLink_1.style.display = "none";
     loginLink_2.style.display = "none";
     navSeparator.style.display = "none";
     userMenu.style.display = "none";
     userMenu.classList.remove("hidden");
+
     let userIcon = navUserLi.querySelector(".user-icon-link");
     if (!userIcon) {
       userIcon = document.createElement('a');
@@ -75,23 +93,33 @@ function handleUserDisplay() {
       navUserLi.prepend(userIcon);
     }
     userIcon.style.display = 'inline-block';
+
     const accountBtn = document.getElementById("accountBtn");
     if (accountBtn) {
       const newAccountBtn = accountBtn.cloneNode(true);
       accountBtn.parentNode.replaceChild(newAccountBtn, accountBtn);
       newAccountBtn.addEventListener('click', (e) => {
+<<<<<<< Updated upstream
         e.preventDefault(); e.stopPropagation();
         const accountUrl = (userType === 'staff') ? "../../staff/staffProfile/staff_profile.html" : "../account/account.html";
+=======
+        e.preventDefault();
+        e.stopPropagation();
+        const accountUrl = (userType === 'staff') ? "../staff/staffProfile/staff_profile.html" : "../account/account.html";
+>>>>>>> Stashed changes
         window.location.href = accountUrl;
       });
     }
+
     const newUserIcon = userIcon.cloneNode(true);
     userIcon.parentNode.replaceChild(newUserIcon, userIcon);
     newUserIcon.addEventListener("click", (e) => {
-      e.preventDefault(); e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
       const isVisible = userMenu.style.display === "block";
       userMenu.style.display = isVisible ? "none" : "block";
     });
+
     const logoutBtn = document.getElementById("logoutBtnNav");
     if (logoutBtn) {
       const newLogoutBtn = logoutBtn.cloneNode(true);
@@ -102,7 +130,6 @@ function handleUserDisplay() {
       });
     }
   } else {
-    // ---- CHƯA ĐĂNG NHẬP ----
     loginLink_1.style.display = "inline-block";
     loginLink_2.style.display = "inline-block";
     navSeparator.style.display = "inline-block";
@@ -111,6 +138,7 @@ function handleUserDisplay() {
     let userIcon = navUserLi.querySelector(".user-icon-link");
     if (userIcon) { userIcon.style.display = 'none'; }
   }
+
   document.addEventListener('click', (event) => {
     const userIcon = navUserLi.querySelector(".user-icon-link");
     if (userMenu && userIcon && !userIcon.contains(event.target) && !userMenu.contains(event.target)) {
@@ -118,34 +146,25 @@ function handleUserDisplay() {
     }
   });
 }
-// --- KẾT THÚC HÀM NAVBAR ---
 
-
-// --- HÀM CHÍNH CỦA TRANG THANH TOÁN ---
-
+// --- HÀM CHÍNH ---
 document.addEventListener('DOMContentLoaded', () => {
-
-  // 1. Chạy hàm Navbar (sẽ set globalCurrentUser)
   handleUserDisplay();
 
-  // 2. Kiểm tra đăng nhập
   if (!globalCurrentUser || !globalCurrentUser.id) {
     alert("Vui lòng đăng nhập để tiến hành thanh toán.");
     window.location.href = "../login/login.html?redirect=pay";
-    return; // Dừng thực thi nếu chưa đăng nhập
+    return;
   }
 
-  // 3. Khởi chạy các hàm
-  loadUserData(globalCurrentUser); // Tải thông tin user vào form
-  loadCartFromAPI(globalCurrentUser.id); // Tải giỏ hàng từ CSDL
-  setupDeliveryOptions(); // Cài đặt logic giao hàng (HCM)
-  setupValidation(); // Cài đặt logic kiểm tra form
-  loadPromotions(); // Tải khuyến mãi
+  loadUserData(globalCurrentUser);
+  loadCartFromAPI(globalCurrentUser.id);
+  setupDeliveryOptions();
+  setupValidation(); // Hàm này đã được thay thế (ở dưới)
+  loadPromotions();
+  // KHÔNG CẦN GỌI setupPaymentModal() nữa
 });
 
-/**
- * Tự động điền thông tin người dùng đã đăng nhập
- */
 function loadUserData(user) {
   const form = document.getElementById("checkoutForm");
   if (!form) return;
@@ -153,12 +172,8 @@ function loadUserData(user) {
   form.fullname.value = user.full_name || '';
   form.phone.value = user.phone || '';
   form.email.value = user.email || '';
-  form.address.value = user.address || '';
 }
 
-/**
- * Tải giỏ hàng từ CSDL (API GET)
- */
 async function loadCartFromAPI(userId) {
   const cartTableBody = document.getElementById("cartTableBody");
   try {
@@ -166,13 +181,13 @@ async function loadCartFromAPI(userId) {
     const data = await response.json();
 
     if (data.success && data.data.items.length > 0) {
-      globalCartItems = data.data.items; // Lưu vào biến toàn cục
+      globalCartItems = data.data.items;
       renderCartTable(globalCartItems);
-      calculateTotals(); // Tính tổng tiền lần đầu
+      calculateTotals();
     } else {
       globalCartItems = [];
       cartTableBody.innerHTML = `<tr><td colspan="2" style="text-align: center; padding: 20px;">Giỏ hàng của bạn đang trống.</td></tr>`;
-      calculateTotals(); // Tính tổng tiền (sẽ là 0)
+      calculateTotals();
     }
   } catch (err) {
     console.error("Lỗi tải giỏ hàng CSDL:", err);
@@ -180,47 +195,40 @@ async function loadCartFromAPI(userId) {
   }
 }
 
-/**
- * Vẽ lại bảng giỏ hàng
- */
 function renderCartTable(items) {
   const cartTableBody = document.getElementById("cartTableBody");
-  cartTableBody.innerHTML = ''; // Xóa nội dung "Đang tải..."
+  cartTableBody.innerHTML = '';
   items.forEach(item => {
     const subtotal = (item.price || 0) * (item.quantity || 1);
     const row = document.createElement('tr');
     row.innerHTML = `
-            <td>
-                ${item.product_name} <strong>&times; ${item.quantity}</strong>
-                ${item.note ? `<div class_="prod-note" style="font-size: 0.9em; color: #777;">Ghi chú: ${item.note}</div>` : ''}
-            </td>
-            <td style="text-align: right; font-weight: 500;">${formatCurrency(subtotal)}</td>
-        `;
+      <td>
+        ${item.product_name} <strong>&times; ${item.quantity}</strong>
+        ${item.note ? `<div style="font-size: 0.9em; color: #777;">Ghi chú: ${item.note}</div>` : ''}
+      </td>
+      <td style="text-align: right; font-weight: 500;">${formatCurrency(subtotal)}</td>
+    `;
     cartTableBody.appendChild(row);
   });
 }
 
-/**
- * Tính toán lại toàn bộ tổng tiền
- */
-function calculateTotals() {
+// HÀM SỬA ĐỔI: (Từ Bước 7)
+function calculateTotals(returnOnly = false) {
   const subtotal = globalCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-  // Lấy phương thức vận chuyển
-  const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
-
-  // SỬA LỖI SHIPPING: 30.000 nếu là 'delivery', 0 nếu là 'store'
-  const shipping = (deliveryMethod === 'delivery') ? 30000 : 0;
-
-  const vat = Math.round(subtotal * 0.08); // Giả sử VAT 8%
-
-  // Tính giảm giá
+  const deliveryMethodEl = document.querySelector('input[name="delivery"]:checked');
+  const deliveryMethod = deliveryMethodEl ? deliveryMethodEl.value : 'store'; // Mặc định là 'store'
+  const shipping = (deliveryMethod === 'delivery' && subtotal > 0) ? 30000 : 0;
+  const vat = Math.round(subtotal * 0.08);
   const discountInfo = applyPromotion();
   const discount = discountInfo.discount;
-
   const grand = subtotal + shipping + vat - discount;
 
-  // Cập nhật DOM
+  // Nếu chỉ gọi để lấy giá trị (khi submit)
+  if (returnOnly) {
+    return { subtotal, shipping, vat, discount, grand };
+  }
+
+  // Nếu gọi để cập nhật UI
   document.getElementById("subtotal").textContent = formatCurrency(subtotal);
   document.getElementById("vat").textContent = formatCurrency(vat);
   document.getElementById("shipping").textContent = (shipping === 0) ? 'Miễn phí' : formatCurrency(shipping);
@@ -229,15 +237,12 @@ function calculateTotals() {
   const discountRow = document.getElementById("discountRow");
   if (discount > 0) {
     document.getElementById("discount").textContent = `- ${formatCurrency(discount)}`;
-    discountRow.style.display = 'flex'; // Hiện hàng giảm giá
+    discountRow.style.display = 'flex';
   } else {
-    discountRow.style.display = 'none'; // Ẩn hàng giảm giá
+    discountRow.style.display = 'none';
   }
 }
 
-/**
- * Tải danh sách khuyến mãi
- */
 async function loadPromotions() {
   const promoSelect = document.getElementById("promotionSelect");
   const promoMessage = document.getElementById("promoMessage");
@@ -246,7 +251,7 @@ async function loadPromotions() {
     const data = await response.json();
 
     if (data.success && data.data?.promotions?.length) {
-      globalPromotions = data.data.promotions; // Lưu vào biến toàn cục
+      globalPromotions = data.data.promotions;
       promoSelect.innerHTML = '<option value="">-- Chọn mã khuyến mãi --</option>';
 
       globalPromotions.forEach(promo => {
@@ -254,19 +259,16 @@ async function loadPromotions() {
         const start = new Date(promo.start_date);
         const end = new Date(promo.end_date);
 
-        // Chỉ hiển thị mã còn hạn và active
-        if (/*promo.status === 'active' &&*/ now >= start && now <= end) {
+        if (now >= start && now <= end) {
           const opt = document.createElement("option");
           opt.value = promo.promotion_code;
-          opt.dataset.promo = JSON.stringify(promo); // Gắn dữ liệu vào option
+          opt.dataset.promo = JSON.stringify(promo);
           opt.textContent = `${promo.promotion_name} (${promo.promotion_code})`;
           promoSelect.appendChild(opt);
         }
       });
 
-      // Gắn sự kiện: khi thay đổi khuyến mãi -> tính lại tổng tiền
       promoSelect.addEventListener("change", calculateTotals);
-
     } else {
       promoMessage.textContent = "Hiện chưa có khuyến mãi khả dụng.";
     }
@@ -276,10 +278,6 @@ async function loadPromotions() {
   }
 }
 
-/**
- * Kiểm tra và áp dụng khuyến mãi
- * (Hàm này chỉ trả về số tiền giảm, không cập nhật DOM)
- */
 function applyPromotion() {
   const promoSelect = document.getElementById("promotionSelect");
   const promoMessage = document.getElementById("promoMessage");
@@ -312,33 +310,13 @@ function applyPromotion() {
   return { discount: Math.round(discount) };
 }
 
-/**
- * Cài đặt logic cho ô Giao Hàng
- */
-// Dán vào pay.js, thay thế hàm setupDeliveryOptions cũ
-
-/**
- * Cài đặt logic cho ô Giao Hàng (Hỗ trợ Phường/Xã)
- */
 function setupDeliveryOptions() {
-
-  // (DỮ LIỆU GIẢ LẬP) 
-  // Bạn cần thay thế khối này bằng CSDL/API về địa chỉ của bạn
-  const locationData = {
-    "TP. Thủ Đức": ["An Khánh", "An Lợi Đông", "An Phú", "Bình Chiểu", "Bình Thọ", "Bình Trưng Đông", "Bình Trưng Tây", "Cát Lái", "Hiệp Bình Chánh", "Hiệp Bình Phước", "Hiệp Phú", "Linh Chiểu", "Linh Đông", "Linh Tây", "Linh Trung", "Linh Xuân", "Long Bình", "Long Phước", "Long Thạnh Mỹ", "Long Trường", "Phú Hữu", "Phước Bình", "Phước Long A", "Phước Long B", "Tam Bình", "Tam Phú", "Tăng Nhơn Phú A", "Tăng Nhơn Phú B", "Thạnh Mỹ Lợi", "Thảo Điền", "Thủ Thiêm", "Trường Thạnh", "Trường Thọ"],
-    "Quận 1": ["Bến Nghé", "Bến Thành", "Cầu Kho", "Cầu Ông Lãnh", "Cô Giang", "Đa Kao", "Nguyễn Cư Trinh", "Nguyễn Thái Bình", "Phạm Ngũ Lão", "Tân Định"],
-    "Quận 3": ["Phường 01", "Phường 02", "Phường 03", "Phường 04", "Phường 05", "Võ Thị Sáu", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14"],
-    "Quận Gò Vấp": ["Phường 01", "Phường 03", "Phường 04", "Phường 05", "Phường 06", "Phường 07", "Phường 08", "Phường 09", "Phường 10", "Phường 11", "Phường 12", "Phường 13", "Phường 14", "Phường 15", "Phường 16", "Phường 17"],
-    // (Thêm các quận/huyện khác vào đây)
-  };
-  // (KẾT THÚC DỮ LIỆU GIẢ LẬP)
-
-  const districtSelect = document.getElementById('district'); // Đổi tên từ 'ward'
+  const districtSelect = document.getElementById('district');
   const wardSelect = document.getElementById('ward');
   const deliveryOptions = document.querySelectorAll('input[name="delivery"]');
-  const deliveryInfo = document.querySelector('.delivery-info');
+  const deliveryAddressBlock = document.getElementById('deliveryAddressBlock');
 
-  // Tự động điền Quận/Huyện từ key của locationData
+  // Tự động điền Quận/Huyện từ locationData
   districtSelect.innerHTML = '<option value="">-- Chọn quận / huyện --</option>';
   for (const districtName in locationData) {
     const opt = document.createElement('option');
@@ -347,7 +325,7 @@ function setupDeliveryOptions() {
     districtSelect.appendChild(opt);
   }
 
-  // Gắn sự kiện: Khi chọn Quận/Huyện...
+  // Gắn sự kiện: Khi chọn Quận/Huyện thì load Phường/Xã
   districtSelect.addEventListener('change', function () {
     const selectedDistrict = this.value;
     const wards = locationData[selectedDistrict] || [];
@@ -355,7 +333,7 @@ function setupDeliveryOptions() {
     wardSelect.innerHTML = '<option value="">-- Chọn phường / xã --</option>';
 
     if (wards.length > 0) {
-      wardSelect.disabled = false; // Mở khóa dropdown Phường/Xã
+      wardSelect.disabled = false;
       wards.forEach(wardName => {
         const opt = document.createElement('option');
         opt.value = wardName;
@@ -363,23 +341,29 @@ function setupDeliveryOptions() {
         wardSelect.appendChild(opt);
       });
     } else {
-      wardSelect.disabled = true; // Khóa lại nếu không có dữ liệu
+      wardSelect.disabled = true;
     }
   });
 
-  // Ẩn/hiện khối giao hàng và TÍNH LẠI TỔNG TIỀN
+  // Ẩn/hiện khối địa chỉ giao hàng và TÍNH LẠI TỔNG TIỀN
   deliveryOptions.forEach(option => {
     option.addEventListener("change", function () {
-      deliveryInfo.style.display = this.value === 'delivery' ? 'block' : 'none';
-      // Tính lại tổng tiền (vì phí ship thay đổi)
-      calculateTotals();
+      if (this.value === 'delivery') {
+        deliveryAddressBlock.style.display = 'block';
+      } else {
+        deliveryAddressBlock.style.display = 'none';
+        // Reset các trường địa chỉ khi chọn nhận tại cửa hàng
+        districtSelect.value = '';
+        wardSelect.value = '';
+        wardSelect.disabled = true;
+        document.getElementById('address').value = '';
+      }
+      calculateTotals(); // Tính lại vì phí ship thay đổi
     });
   });
 }
 
-/**
- * Cài đặt kiểm tra lỗi form
- */
+// HÀM THAY THẾ: (Từ Bước 6)
 function setupValidation() {
   const checkoutForm = document.getElementById("checkoutForm");
   const placeOrderBtn = document.getElementById("placeOrder");
@@ -393,7 +377,7 @@ function setupValidation() {
 
     let isValid = true;
 
-    // --- Kiểm tra các trường ---
+    // --- Kiểm tra các trường bắt buộc ---
     if (!validateField(this.fullname, "Vui lòng nhập họ và tên.")) isValid = false;
     if (!validateField(this.phone, "Số điện thoại phải có 10 số.", /^\d{10}$/)) isValid = false;
     if (!validateField(this.email, "Email không hợp lệ.", /^[^\s@]+@[^\s@]+\.[^\s@]+$/)) isValid = false;
@@ -416,10 +400,11 @@ function setupValidation() {
       }
     }
 
-    // Kiểm tra địa chỉ nếu giao hàng
+    // Kiểm tra địa chỉ nếu chọn giao hàng
     const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
     if (deliveryMethod === 'delivery') {
-      if (!validateField(this.ward, "Vui lòng chọn quận/huyện.")) isValid = false;
+      if (!validateField(this.district, "Vui lòng chọn quận/huyện.")) isValid = false;
+      if (!validateField(this.ward, "Vui lòng chọn phường/xã.")) isValid = false;
       if (!validateField(this.address, "Vui lòng nhập địa chỉ cụ thể.")) isValid = false;
     }
 
@@ -430,28 +415,94 @@ function setupValidation() {
 
     // --- Nếu hợp lệ, tiến hành đặt hàng ---
     placeOrderBtn.disabled = true;
-    placeOrderBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
+    placeOrderBtn.innerHTML = '<span class="loading-spinner"></span> Đang tạo đơn hàng...';
 
-    // (Đây là nơi bạn sẽ gọi API 'orders.php' để lưu đơn hàng)
-    // ...
+    // Lấy giá trị tổng cuối cùng
+    const finalTotals = calculateTotals(true); // true = chỉ trả về giá trị
 
-    // Giả lập thành công
-    setTimeout(() => {
-      alert("Đặt hàng thành công! (Đây là thông báo giả lập)");
+    // Chuẩn bị dữ liệu đơn hàng
+    const orderData = {
+      user_id: globalCurrentUser.id,
+      customer_name: this.fullname.value.trim(),
+      customer_phone: this.phone.value.trim(),
+      customer_email: this.email.value.trim(),
+      delivery_method: deliveryMethod,
+      shipping_address: deliveryMethod === 'delivery'
+        ? this.address.value.trim()
+        : '123 An Dương Vương, phường Chợ Quán, TP.HCM', // Địa chỉ cửa hàng
+      ward: deliveryMethod === 'delivery' ? this.ward.value : '',
+      district: deliveryMethod === 'delivery' ? this.district.value : '',
+      city: 'TP. Hồ Chí Minh',
+      delivery_time: deliveryTimeInput.value,
+      items: globalCartItems,
+      promotion_code: document.getElementById('promotionSelect').value || null,
 
-      // Xóa giỏ hàng (Tạm thời là localStorage)
-      // Bạn cần gọi API để xóa giỏ hàng trong CSDL tại đây
-      // clearCartOnDatabase(globalCurrentUser.id);
+      // Thêm các giá trị tổng tiền
+      total_amount: finalTotals.subtotal,
+      shipping_fee: finalTotals.shipping,
+      vat_amount: finalTotals.vat,
+      discount_amount: finalTotals.discount,
+      final_amount: finalTotals.grand
+    };
 
-      localStorage.removeItem("cart"); // Vẫn xóa local để dự phòng
+    try {
+      // BƯỚC A: TẠO ĐƠN HÀNG (POST api/orders.php)
+      const responseOrder = await fetch('../../api/orders.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+        },
+        body: JSON.stringify(orderData)
+      });
 
-      window.location.href = "../home/home.html"; // Chuyển về trang chủ
+      const resultOrder = await responseOrder.json();
 
-    }, 2000);
+      if (!resultOrder.success || !resultOrder.data) {
+        throw new Error(resultOrder.message || "Không thể tạo đơn hàng.");
+      }
+
+      placeOrderBtn.innerHTML = '<span class="loading-spinner"></span> Đang tạo link thanh toán...';
+
+      // BƯỚC B: TẠO LINK VNPAY (POST api/vnpay_checkout.php)
+      const checkoutData = {
+        order_code: resultOrder.data.order_code,
+        final_amount: finalTotals.grand
+      };
+
+      const responseCheckout = await fetch('../../api/vnpay_checkout.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+        },
+        body: JSON.stringify(checkoutData)
+      });
+
+      const resultCheckout = await responseCheckout.json();
+
+      if (resultCheckout.success && resultCheckout.data.paymentURL) {
+        // BƯỚC C: CHUYỂN HƯỚNG SANG CỔNG VNPAY
+        // Xóa giỏ hàng TRƯỚC khi chuyển hướng
+        await clearCartInDatabase(globalCurrentUser.id);
+        window.location.href = resultCheckout.data.paymentURL;
+      } else {
+        throw new Error(resultCheckout.message || "Không thể tạo link thanh toán VNPay.");
+      }
+
+    } catch (error) {
+      console.error("Lỗi khi đặt hàng:", error);
+      alert("Có lỗi xảy ra: " + error.message);
+      placeOrderBtn.disabled = false;
+      placeOrderBtn.innerHTML = 'Đặt hàng';
+    }
   });
 
-  // Hàm tiện ích kiểm tra lỗi
   function validateField(input, message, regex = null) {
+    if (!input) {
+      console.error("Lỗi: Input không tồn tại");
+      return false;
+    }
     const value = input.value.trim();
     if (!value) {
       showError(input, message);
@@ -466,6 +517,7 @@ function setupValidation() {
 
   function showError(input, message) {
     const formGroup = input.closest('.form-group');
+    if (!formGroup) return;
     const errorEl = formGroup.querySelector('.error-msg');
     if (errorEl) {
       errorEl.textContent = message;
@@ -475,7 +527,27 @@ function setupValidation() {
   }
 }
 
-// --- HÀM TIỆN ÍCH ---
+// Hàm xóa giỏ hàng trong database sau khi đặt hàng thành công
+async function clearCartInDatabase(userId) {
+  try {
+    const response = await fetch(`../../api/cart.php?user_id=${userId}`);
+    const data = await response.json();
+
+    if (data.success && data.data.items.length > 0) {
+      for (const item of data.data.items) {
+        // Dùng API DELETE /api/cart.php/{cart_id}
+        await fetch(`../../api/cart.php/${item.cart_id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+          }
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Lỗi khi xóa giỏ hàng:", error);
+  }
+}
 
 function formatCurrency(amount) {
   if (isNaN(amount)) return "0 ₫";

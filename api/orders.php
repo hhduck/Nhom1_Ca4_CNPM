@@ -42,7 +42,7 @@ try {
         case 'GET':
             // Kiểm tra xem có user_id trong query string không (cho customer xem đơn hàng của chính họ)
             $requestedUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : null;
-            
+
             if ($requestedUserId) {
                 // Nếu có user_id, cho phép customer xem đơn hàng của chính họ hoặc admin/staff xem tất cả
                 $currentUser = requireAuth();
@@ -78,6 +78,9 @@ try {
             } else {
                 throw new Exception("Thiếu ID đơn hàng để xóa", 400);
             }
+            break;
+        case 'POST':
+            createOrder($db);
             break;
 
         default:
@@ -169,7 +172,7 @@ function getAllOrders($db, $customerId = null)
                        FROM OrderItems oi
                        LEFT JOIN Products p ON oi.ProductID = p.ProductID
                        WHERE oi.OrderID = :order_id";
-        
+
         $itemsStmt = $db->prepare($itemsQuery);
         $itemsStmt->bindParam(':order_id', $order['order_id'], PDO::PARAM_INT);
         $itemsStmt->execute();
@@ -258,7 +261,8 @@ function getOrderById($db, $id)
 /**
  * Cập nhật trạng thái hoặc ghi chú
  */
-function updateOrderData($db, $orderId, $staffUserId) {
+function updateOrderData($db, $orderId, $staffUserId)
+{
     $data = json_decode(file_get_contents("php://input"), true);
 
     if (empty($data)) throw new Exception("Không có dữ liệu để cập nhật", 400);
@@ -278,10 +282,10 @@ function updateOrderData($db, $orderId, $staffUserId) {
 
     if (isset($data['order_status'])) {
         $newStatus = sanitizeInput($data['order_status']);
-        
+
         // *** SỬA LỖI: Thống nhất với Database Schema ***
         $validStatuses = ['pending', 'order_received', 'preparing', 'delivering', 'delivery_successful', 'delivery_failed'];
-        
+
         if (!in_array($newStatus, $validStatuses)) {
             throw new Exception("Trạng thái không hợp lệ: " . $newStatus, 400);
         }
@@ -289,7 +293,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $fieldsToUpdate[] = "OrderStatus = :status";
             $params[':status'] = $newStatus;
             $isStatusUpdate = true;
-            
+
             if ($newStatus === 'delivery_successful') {
                 $fieldsToUpdate[] = "CompletedAt = NOW()";
             }
@@ -347,7 +351,7 @@ function updateOrderData($db, $orderId, $staffUserId) {
             $updateStmt->bindParam(':order_id', $orderId, PDO::PARAM_INT);
             $updateStmt->execute();
         }
-        
+
         if ($isStatusUpdate && $newStatus === 'delivery_failed' && $oldStatus !== 'delivery_failed') {
             $restoreQuery = "UPDATE Products p
                             INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
@@ -360,7 +364,6 @@ function updateOrderData($db, $orderId, $staffUserId) {
 
         $db->commit();
         sendJsonResponse(true, null, "Cập nhật thành công");
-
     } catch (Exception $e) {
         $db->rollBack();
         throw new Exception("Lỗi khi cập nhật đơn hàng: " . $e->getMessage(), 500);
@@ -381,7 +384,7 @@ function deleteOrder($db, $orderId)
         $stmtHistory = $db->prepare("DELETE FROM OrderStatusHistory WHERE OrderID = :id");
         $stmtHistory->bindParam(':id', $orderId, PDO::PARAM_INT);
         $stmtHistory->execute();
-        
+
         $stmtPromo = $db->prepare("DELETE FROM PromotionUsage WHERE OrderID = :id");
         $stmtPromo->bindParam(':id', $orderId, PDO::PARAM_INT);
         $stmtPromo->execute();
@@ -391,16 +394,116 @@ function deleteOrder($db, $orderId)
         $stmtOrder->execute();
 
         if ($stmtOrder->rowCount() === 0) {
-             throw new Exception("Không tìm thấy đơn hàng để xóa", 404);
+            throw new Exception("Không tìm thấy đơn hàng để xóa", 404);
         }
 
         $db->commit();
         sendJsonResponse(true, null, "Xóa đơn hàng thành công");
-
     } catch (Exception $e) {
         $db->rollBack();
-        throw new Exception("Lỗi khi xóa đơn hàng: " . $e->getMessage(), 500); 
+        throw new Exception("Lỗi khi xóa đơn hàng: " . $e->getMessage(), 500);
     }
 }
 
-?>
+
+function createOrder($db)
+{
+    try {
+        $currentUser = requireAuth(); // Kiểm tra đăng nhập
+
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        // Kiểm tra dữ liệu đầu vào (lấy từ pay.js)
+        if (empty($data['items']) || !is_array($data['items']) || count($data['items']) === 0) {
+            throw new Exception("Giỏ hàng trống", 400);
+        }
+        if (empty($data['final_amount'])) {
+            throw new Exception("Thiếu tổng tiền", 400);
+        }
+
+        // Tạo mã đơn hàng (logic này của bạn đã tốt)
+        $orderCode = 'ORD' . date('Ymd') . rand(1000, 9999);
+
+        $db->beginTransaction();
+
+        // Insert Orders
+        $insertOrder = "INSERT INTO Orders 
+            (OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, 
+             ShippingAddress, Ward, District, City, 
+             TotalAmount, DiscountAmount, ShippingFee, FinalAmount, 
+             PaymentMethod, PaymentStatus, OrderStatus, 
+             DeliveryTime, CreatedAt) 
+            VALUES 
+            (:order_code, :customer_id, :customer_name, :customer_phone, :customer_email, 
+             :shipping_address, :ward, :district, :city, 
+             :total_amount, :discount_amount, :shipping_fee, :final_amount, 
+             'vnpay', 'pending', 'pending',  -- SỬA LỖI: Trạng thái phải là 'pending'
+             :delivery_time, NOW())";
+
+        $stmt = $db->prepare($insertOrder);
+        $stmt->execute([
+            ':order_code' => $orderCode,
+            ':customer_id' => $currentUser['id'],
+            ':customer_name' => sanitizeInput($data['customer_name']),
+            ':customer_phone' => sanitizeInput($data['customer_phone']),
+            ':customer_email' => sanitizeInput($data['customer_email']),
+            ':shipping_address' => sanitizeInput($data['shipping_address']),
+            ':ward' => sanitizeInput($data['ward'] ?? ''),
+            ':district' => sanitizeInput($data['district'] ?? ''),
+            ':city' => sanitizeInput($data['city']),
+
+            // Lấy giá trị đã tính toán từ pay.js
+            ':total_amount' => $data['total_amount'],
+            ':discount_amount' => $data['discount_amount'],
+            ':shipping_fee' => $data['shipping_fee'],
+            ':final_amount' => $data['final_amount'],
+
+            ':delivery_time' => $data['delivery_time']
+        ]);
+
+        $orderId = $db->lastInsertId();
+
+        // Insert OrderItems
+        $insertItem = "INSERT INTO OrderItems 
+            (OrderID, ProductID, ProductName, ProductPrice, Quantity, Subtotal, Note) 
+            VALUES 
+            (:order_id, :product_id, :product_name, :product_price, :quantity, :subtotal, :note)";
+
+        $stmtItem = $db->prepare($insertItem);
+
+        foreach ($data['items'] as $item) {
+            $subtotal = $item['price'] * $item['quantity'];
+            $stmtItem->execute([
+                ':order_id' => $orderId,
+                ':product_id' => $item['product_id'],
+                ':product_name' => sanitizeInput($item['product_name']),
+                ':product_price' => $item['price'],
+                ':quantity' => $item['quantity'],
+                ':subtotal' => $subtotal,
+                ':note' => sanitizeInput($item['note'] ?? '')
+            ]);
+
+            // SỬA LỖI: KHÔNG TRỪ KHO Ở ĐÂY
+            // Tệp vnpay_ipn.php hoặc hàm updateOrderData sẽ trừ kho
+            // khi trạng thái chuyển sang 'order_received' hoặc 'delivery_successful'
+        }
+
+        // SỬA LỖI: Tệp api/orders.php của bạn không tự động xóa giỏ hàng
+        // pay.js đã làm việc này (dòng 509)
+
+        $db->commit();
+
+        sendJsonResponse(true, [
+            'order_id' => $orderId,
+            'order_code' => $orderCode
+        ], "Tạo đơn hàng thành công", 201);
+
+    } catch (Exception $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+        error_log("Create Order Error: " . $e->getMessage());
+        $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
+        sendJsonResponse(false, null, $e->getMessage(), $statusCode);
+    }
+}
