@@ -243,45 +243,75 @@ letter-spacing: 1px;
       text-align: center;
     }
   }
-  /* --- MENU USER (đơn giản, tinh tế, không hover màu) --- */
+/* --- User Icon Dropdown Menu (Đã sửa) --- */
 .nav-user {
   position: relative;
 }
 
 .user-menu {
   position: absolute;
-  background: #fff;
-  border: 1px solid #ddd;
-  padding: 10px 18px;
-  border-radius: 10px;
-  display: none;
+  top: 55px;
+  /* Vị trí ngay dưới icon */
   right: 0;
-  top: 45px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 1000;
-  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  padding: 10px 0;
+  min-width: 150px;
+  /* Đặt độ rộng tối thiểu */
+  z-index: 1010;
+
+  /* cart.js điều khiển hiển thị bằng 'display: none/block' */
+  display: none;
+
+  /* Thêm hiệu ứng mờ (giống trang home) */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
 }
 
-.user-menu a,
-.user-menu button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #333;
-  font-size: 13px;
-  font-weight: 400;
-  text-decoration: none;
+/* Khi cart.js làm nó hiện (display: block), CSS sẽ kích hoạt hiệu ứng */
+.user-menu[style*="display: block"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-menu ul {
+  list-style: none;
+  /* Bỏ dấu chấm đầu dòng */
+  padding: 0;
+  margin: 0;
+}
+
+/* Đây là phần quan trọng nhất */
+.user-menu li button {
   display: block;
+  /* 👈 Yêu cầu 1: Hiển thị dạng khối (block) */
   width: 100%;
+  /* 👈 Yêu cầu 2: Chiếm 100% chiều rộng */
+  padding: 10px 20px;
+  /* 👈 Giống trang home */
+  white-space: nowrap;
+  /* 👈 Đảm bảo chữ không bị xuống hàng */
+
+  /* Reset style của button */
+  background: none;
+  border: none;
+  cursor: pointer;
   text-align: left;
-  padding: 6px 0;
-  text-transform: none; /* Không viết hoa */
+  /* Căn chữ về bên trái */
+
+  /* Font chữ */
+  color: #333;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
 }
 
-/* Không hiệu ứng hover đổi màu */
-.user-menu a:hover,
-.user-menu button:hover {
-  color: #333;
+.user-menu li button:hover {
+  background-color: #f4f1ec;
+  color: #395542;
 }
 
 .hidden {
@@ -511,4 +541,221 @@ input[type=number]::-webkit-outer-spin-button {
 
 .quantity-control button:hover {
   background-color: #3a5a38;
+}
+
+/* ===== POPUP TÌM KIẾM ===== */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  margin: 0;
+  padding: 0;
+}
+
+#overlay.hidden {
+  display: none;
+}
+
+.popup-container {
+  background: #fff;
+  padding: 20px;
+  max-width: 900px;
+  width: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  position: relative;
+  overflow-y: auto;
+  max-height: 80vh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.close-popup {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#popupProducts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* ===== SEARCH BAR ===== */
+/* Search bar: fixed dưới navbar, nổi trên nội dung */
+.search-bar {
+  display: none;
+  position: fixed;      /* fixed để luôn nằm ngay dưới navbar hiện tại */
+  top: 70px;            /* mặc định; JS sẽ cập nhật chính xác khi bật */
+  left: 0;
+  width: 100%;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 9999;        /* nổi trên mọi thứ */
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Hiển thị khi bật */
+.search-bar.show {
+  display: flex !important;
+}
+
+/* Ẩn bằng class hidden (nếu bạn vẫn dùng hidden) */
+.hidden { display: none; }
+
+.search-bar input {
+  width: 400px;        
+  height: 40px;         
+  padding: 8px 12px;  
+  border: 1px solid #ccc;
+  border-radius: 6px;  
+  font-size: 16px;      
+  outline: none;        
+  transition: all 0.2s ease;
+}
+
+.search-bar input:focus {
+  border-color: #395542;    
+  box-shadow: 0 0 5px rgba(255, 140, 148, 0.3);
+}
+
+.search-bar .filter-btn {
+  height: 40px;             
+  padding: 0 20px;           
+  background-color: #395542; 
+  color: #fff;             
+  border: none;             
+  border-radius: 6px;      
+  font-size: 16px;           
+  cursor: pointer;           
+  transition: all 0.2s ease; 
+}
+
+.search-bar .filter-btn:hover {
+  background-color: #AC845C;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* Nút dấu tích trong search bar */
+.search-submit-btn {
+  background-color: #395542;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.search-submit-btn:hover {
+  background-color: #AC845C;
+  transform: scale(1.05);
+}
+
+.search-submit-btn i {
+  font-size: 16px;
+}
+
+/* ===== Ô LỌC NHỎ GỌN DÍNH NÚT LỌC ===== */
+/* Nút lọc + popup chung khối để canh dính nhau */
+.filter-btn {
+  position: relative;
+  z-index: 2;
+}
+
+/* Popup dính sát nút "Lọc" */
+.filter-popup {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #b77746;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  padding: 14px;
+  width: 220px;
+  display: none;
+  z-index: 9999;
+  animation: slideDown 0.25s ease-out;
+  color: #fff8f2;
+}
+
+/* Khi hiện */
+.filter-popup.show {
+  display: block;
+}
+
+/* Bên trong popup */
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-content label {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.filter-content select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+}
+
+.filter-content button {
+  margin-top: 8px;
+  background-color: #fff;
+  color: #b77746;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filter-content button:hover {
+  background-color: #f5e2d4;
+}
+
+/* Hiệu ứng trượt mượt */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

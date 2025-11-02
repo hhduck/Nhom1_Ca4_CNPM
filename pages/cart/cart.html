@@ -55,6 +55,36 @@
 </div>
     </nav>
 
+    <div class="search-bar hidden">
+        <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm...">
+        <button class="search-submit-btn" type="button" id="searchSubmitBtn">
+            <i class="fas fa-check"></i>
+        </button>
+
+        <div class="filter-wrapper" style="position: relative; display: inline-block;">
+            <button class="filter-btn">Lọc</button>
+
+            <div class="filter-popup">
+                <div class="filter-content">
+                    <label for="categorySelect">Danh mục</label>
+                    <select id="categorySelect">
+                        <option value="">Tất cả danh mục</option>
+                    </select>
+
+                    <label for="priceSelect">Giá</label>
+                    <select id="priceSelect">
+                        <option value="">Tất cả giá</option>
+                        <option value="duoi500">Dưới 500.000</option>
+                        <option value="500-700">500.000 - 700.000</option>
+                        <option value="tren700">Trên 700.000</option>
+                    </select>
+
+                    <button id="filterButton">Lọc</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Cart Section -->
     <section class="cart-container" id="cartContainer">
         <div class="empty-cart">
@@ -90,6 +120,14 @@
       
   </div>
 </footer>
+
+    <!-- Overlay hiển thị kết quả lọc / tìm kiếm -->
+    <div id="overlay" class="hidden">
+        <div class="popup-container">
+            <button class="close-popup">&times;</button>
+            <div id="popupProducts" class="products-grid"></div>
+        </div>
+    </div>
 
     <script src="cart.js"></script>
 </body>

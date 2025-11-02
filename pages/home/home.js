@@ -828,6 +828,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchIcon = document.querySelector(".nav-search");
   const searchBar = document.querySelector(".search-bar");
   const searchInput = document.getElementById("searchInput");
+  
+  // Reset popup và thanh tìm kiếm khi load trang mới
+  if (overlay) {
+    overlay.classList.add("hidden");
+  }
+  if (searchBar) {
+    searchBar.classList.remove("show");
+    document.body.classList.remove("searching");
+  }
 
   // ===== Hiện/ẩn thanh tìm kiếm =====
   if (searchIcon && searchBar) {
@@ -847,6 +856,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ===== Hiển thị popup sản phẩm =====
   function showPopup(products) {
+    if (!overlay || !popupProducts) return;
+    
     popupProducts.innerHTML = "";
 
     if (!products || !products.length) {
@@ -869,12 +880,79 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
     overlay.classList.remove("hidden");
+    
+    // Đảm bảo popup luôn căn giữa
+    const popupContainer = document.querySelector(".popup-container");
+    if (popupContainer) {
+      popupContainer.style.margin = "auto";
+    }
   }
 
   // ===== Đóng popup =====
-  function hidePopup() { overlay.classList.add("hidden"); }
-  closePopupBtn.addEventListener("click", hidePopup);
+  function hidePopup() { 
+    overlay.classList.add("hidden");
+    // Ẩn thanh tìm kiếm khi đóng popup
+    if (searchBar) {
+      searchBar.classList.remove("show");
+      document.body.classList.remove("searching");
+    }
+  }
+  if (closePopupBtn) {
+    closePopupBtn.addEventListener("click", hidePopup);
+  }
   overlay.addEventListener("click", (e) => { if (e.target === overlay) hidePopup(); });
+  
+  // Đóng popup khi click vào link sản phẩm trong popup
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".product-item")) {
+      hidePopup();
+    }
+  });
+
+  // Hàm tìm kiếm
+  async function performSearch() {
+    // Lấy lại searchInput để đảm bảo có giá trị mới nhất
+    const currentSearchInput = document.getElementById("searchInput");
+    const keyword = currentSearchInput ? currentSearchInput.value.trim() : "";
+    
+    if (!keyword) {
+      alert("Vui lòng nhập từ khóa tìm kiếm");
+      return;
+    }
+
+    const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      console.log("Search response:", data); // Debug log
+      
+      // Xử lý response từ products_c.php (format: {success: true, products: [...]})
+      let products = [];
+      if (data.success && data.products) {
+        products = data.products;
+      } else if (Array.isArray(data)) {
+        products = data;
+      } else if (data.data && data.data.products) {
+        products = data.data.products;
+      }
+      
+      // Chuyển đổi snake_case thành PascalCase nếu cần
+      products = products.map(p => ({
+        ProductID: p.ProductID || p.product_id,
+        ProductName: p.ProductName || p.product_name,
+        Price: p.Price || p.price,
+        ImageURL: p.ImageURL || p.image_url
+      }));
+      
+      showPopup(products);
+    } catch (err) {
+      console.error("❌ Lỗi tìm kiếm:", err);
+      alert("Không thể tìm kiếm. Vui lòng thử lại sau.\n" + err.message);
+    }
+  }
 
   // ===== Gọi API khi nhấn Enter trong ô tìm kiếm =====
   if (searchInput) {
@@ -882,54 +960,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Enter") {
         e.preventDefault(); // ✅ Ngăn hành vi mặc định chuyển trang
         e.stopPropagation(); // ✅ Ngăn chồng sự kiện khác
-
-        const keyword = e.target.value.trim();
-        if (!keyword) return;
-
-        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
-        try {
-          const res = await fetch(url);
-          const data = await res.json();
-          showPopup(data.products);
-        } catch (err) {
-          console.error("❌ Lỗi tìm kiếm:", err);
-        }
+        await performSearch();
       }
+    });
+  }
+
+  // ===== Gọi API khi nhấn nút dấu tích =====
+  const searchSubmitBtn = document.getElementById("searchSubmitBtn");
+  if (searchSubmitBtn) {
+    searchSubmitBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await performSearch();
     });
   }
 });
 
 // ✅ Ghi đè hành vi tìm kiếm của main.js chỉ trên trang Home
-document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.querySelector(".search-bar input");
-
-  if (searchInput) {
-    // Xóa toàn bộ sự kiện keypress cũ mà main.js đã gắn
-    const newInput = searchInput.cloneNode(true);
-    searchInput.parentNode.replaceChild(newInput, searchInput);
-
-    // Gắn lại sự kiện tìm kiếm theo logic của bạn
-    newInput.addEventListener("keypress", async (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault(); // ❌ chặn chuyển hướng từ main.js
-        const keyword = e.target.value.trim();
-        if (!keyword) return;
-
-        const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
-        try {
-          const res = await fetch(url);
-          const data = await res.json();
-
-          // Hiện kết quả trên popup (hàm showPopup bạn đã có)
-          if (typeof showPopup === "function") {
-            showPopup(data.products);
-          } else {
-            alert("Không tìm thấy sản phẩm hoặc showPopup chưa được định nghĩa.");
-          }
-        } catch (err) {
-          console.error("❌ Lỗi tìm kiếm:", err);
-        }
-      }
-    });
-  }
-});
+// Note: Logic tìm kiếm chính đã được xử lý trong DOMContentLoaded ở trên
+// Đoạn code này có thể được xóa nếu không cần thiết

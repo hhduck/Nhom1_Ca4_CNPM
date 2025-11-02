@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   handleUserDisplay();
   loadCart();
   updateCartCount();
+  initSearch(); // Khởi tạo tìm kiếm
 });
 
 // ========== HIỂN THỊ MENU USER ==========
@@ -81,48 +82,70 @@ function handleUserDisplay() {
     login2Link.style.display = 'none';
     navSeparator.style.display = 'none';
 
-    // Tạo hoặc cập nhật icon user
-    let userIconLink = navUserLi.querySelector(".nav-user-icon");
-    if (!userIconLink) {
-      userIconLink = document.createElement('a');
-      userIconLink.href = "#";
-      userIconLink.className = "nav-user-icon";
-      userIconLink.innerHTML = `<i class="fas fa-user"></i>`;
-      navUserLi.prepend(userIconLink); // Thêm vào đầu li.nav-user
-    } else {
-      userIconLink.style.display = 'block'; // Đảm bảo icon hiện
+    // Tạo và hiển thị icon user
+    let userIcon = navUserLi.querySelector(".user-icon-link");
+    if (!userIcon) { // Nếu icon chưa có thì tạo
+      userIcon = document.createElement('a');
+      userIcon.href = "#";
+      userIcon.className = "user-icon-link";
+      userIcon.innerHTML = `<i class="fas fa-user"></i>`;
+      navUserLi.prepend(userIcon); // Thêm icon vào đầu thẻ <li>
+    }
+    userIcon.style.display = 'inline-block'; // Đảm bảo nó hiện
+
+    // Cập nhật link "Thông tin tài khoản"
+    const accountBtn = document.getElementById("tt");
+    if (accountBtn) {
+      accountBtn.onclick = null; // Xóa onclick cũ
+      accountBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const accountUrl = (userType === 'staff')
+          ? "../../staff/staffProfile/staff_profile.html"
+          : "../account/account.html";
+        window.location.href = accountUrl;
+      });
     }
 
-    // Cập nhật href cho nút "Thông tin tài khoản" trong user-menu
-    if (userType === 'staff') {
-      ttButton.onclick = () => window.location.href = "../../staff/staffProfile/staff_profile.html";
-    } else {
-      ttButton.onclick = () => window.location.href = "../account/account.html";
-    }
+    // Gắn event listener MỚI cho icon user (dùng clone để xóa listener cũ)
+    const newUserIcon = userIcon.cloneNode(true);
+    userIcon.parentNode.replaceChild(newUserIcon, userIcon);
 
-    // Hiện/ẩn menu khi click icon
-    userIconLink.addEventListener("click", (e) => {
-      e.preventDefault(); e.stopPropagation();
-      userMenu.classList.toggle("hidden"); // Dùng toggle để tiện ẩn hiện
-      userMenu.style.display = userMenu.classList.contains("hidden") ? "none" : "block";
+    newUserIcon.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const isVisible = userMenu.style.display === "block";
+      userMenu.style.display = isVisible ? "none" : "block";
     });
 
     // Đóng menu khi click ra ngoài
     document.addEventListener('click', (event) => {
-      if (userMenu && userIconLink && !userIconLink.contains(event.target) && !userMenu.contains(event.target)) {
-        userMenu.classList.add("hidden");
+      if (!newUserIcon.contains(event.target) && !userMenu.contains(event.target)) {
         userMenu.style.display = "none";
       }
     });
 
-    // Xử lý nút Đăng xuất (Navbar)
-    logoutBtnNav.addEventListener("click", (e) => {
-      e.preventDefault();
-      performLogout("../login/login.html"); // Về trang login
-    });
+    // Xử lý nút ĐĂNG XUẤT (dùng clone để xóa listener cũ)
+    const logoutBtn = document.getElementById("logoutBtnNav");
+    if (logoutBtn) {
+      const newLogoutBtn = logoutBtn.cloneNode(true);
+      logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
 
-    userMenu.classList.add("hidden"); // Mặc định ẩn menu khi mới tải trang
+      newLogoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        localStorage.removeItem("currentStaff");
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("jwtToken");
+        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("rememberMe");
+        localStorage.removeItem("cart"); // Xóa giỏ hàng khi logout
+        window.location.href = "../login/login.html";
+      });
+    }
+
+    // Menu ban đầu ẩn
     userMenu.style.display = "none";
+    userMenu.classList.remove("hidden");
 
   } else {
     // ---- CHƯA ĐĂNG NHẬP ----
@@ -133,13 +156,14 @@ function handleUserDisplay() {
     login2Link.style.display = 'inline';
     navSeparator.style.display = 'inline';
 
-    // Ẩn icon user nếu có
-    const userIconLink = navUserLi.querySelector(".nav-user-icon");
-    if (userIconLink) {
-      userIconLink.style.display = 'none';
+    // Ẩn icon user (nếu nó tồn tại)
+    let userIcon = navUserLi.querySelector(".user-icon-link");
+    if (userIcon) {
+      userIcon.style.display = 'none';
     }
     
-    userMenu.classList.add("hidden"); // Đảm bảo menu ẩn
+    // Ẩn menu user
+    userMenu.classList.add("hidden");
     userMenu.style.display = "none";
   }
 }
@@ -568,6 +592,170 @@ function normalizeImagePath(path) {
   if (path.startsWith("assets/assets/")) path = path.replace("assets/assets/", "assets/");
   if (!path.startsWith("../../")) path = "../../" + path;
   return path;
+}
+
+// ========== TÌM KIẾM ==========
+const API_BASE = "../../api/products_c.php";
+
+function initSearch() {
+  const searchIcon = document.querySelector(".nav-search");
+  const searchBar = document.querySelector(".search-bar");
+  const searchInput = document.getElementById("searchInput");
+  const searchSubmitBtn = document.getElementById("searchSubmitBtn");
+  const overlay = document.getElementById("overlay");
+  const popupProducts = document.getElementById("popupProducts");
+  const closePopupBtn = document.querySelector(".close-popup");
+  
+  // Reset popup và thanh tìm kiếm khi load trang mới
+  if (overlay) {
+    overlay.classList.add("hidden");
+  }
+  if (searchBar) {
+    searchBar.classList.remove("show");
+    document.body.classList.remove("searching");
+  }
+
+  // Hiện/ẩn thanh tìm kiếm
+  if (searchIcon && searchBar) {
+    searchIcon.addEventListener("click", (e) => {
+      e.preventDefault();
+      searchBar.classList.toggle("show");
+      document.body.classList.toggle("searching");
+      if (searchBar.classList.contains("show")) {
+        searchInput.focus();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!searchBar.contains(e.target) && !searchIcon.contains(e.target)) {
+        searchBar.classList.remove("show");
+        document.body.classList.remove("searching");
+      }
+    });
+  }
+
+  // Hàm hiển thị popup kết quả
+  function showPopup(products) {
+    if (!overlay || !popupProducts) return;
+    
+    popupProducts.innerHTML = "";
+
+    if (!products || !products.length) {
+      popupProducts.innerHTML = "<p>Không tìm thấy sản phẩm phù hợp.</p>";
+    } else {
+      products.forEach(p => {
+        const card = `
+          <div class="product-card">
+            <div class="product-image-container">
+              <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+                <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+              </a>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">${p.ProductName}</h3>
+              <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+            </div>
+          </div>`;
+        popupProducts.insertAdjacentHTML("beforeend", card);
+      });
+    }
+    overlay.classList.remove("hidden");
+    
+    // Đảm bảo popup luôn căn giữa
+    const popupContainer = document.querySelector(".popup-container");
+    if (popupContainer) {
+      popupContainer.style.margin = "auto";
+    }
+  }
+
+  // Hàm đóng popup
+  function hidePopup() {
+    if (overlay) overlay.classList.add("hidden");
+    // Ẩn thanh tìm kiếm khi đóng popup
+    if (searchBar) {
+      searchBar.classList.remove("show");
+      document.body.classList.remove("searching");
+    }
+  }
+
+  if (closePopupBtn) {
+    closePopupBtn.addEventListener("click", hidePopup);
+  }
+  if (overlay) {
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) hidePopup();
+    });
+  }
+  
+  // Đóng popup khi click vào link sản phẩm trong popup
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".product-item")) {
+      hidePopup();
+    }
+  });
+
+  // Hàm tìm kiếm
+  async function performSearch() {
+    // Lấy lại searchInput để đảm bảo có giá trị mới nhất
+    const currentSearchInput = document.getElementById("searchInput");
+    const keyword = currentSearchInput ? currentSearchInput.value.trim() : "";
+    
+    if (!keyword) {
+      alert("Vui lòng nhập từ khóa tìm kiếm");
+      return;
+    }
+
+    const url = `${API_BASE}?search=${encodeURIComponent(keyword)}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      console.log("Search response:", data); // Debug log
+      
+      // Xử lý response từ products_c.php (format: {success: true, products: [...]})
+      let products = [];
+      if (data.success && data.products) {
+        products = data.products;
+      } else if (Array.isArray(data)) {
+        products = data;
+      } else if (data.data && data.data.products) {
+        products = data.data.products;
+      }
+      
+      // Chuyển đổi snake_case thành PascalCase nếu cần
+      products = products.map(p => ({
+        ProductID: p.ProductID || p.product_id,
+        ProductName: p.ProductName || p.product_name,
+        Price: p.Price || p.price,
+        ImageURL: p.ImageURL || p.image_url
+      }));
+      
+      showPopup(products);
+    } catch (err) {
+      console.error("❌ Lỗi tìm kiếm:", err);
+      alert("Không thể tìm kiếm. Vui lòng thử lại sau.\n" + err.message);
+    }
+  }
+
+  // Tìm kiếm khi nhấn Enter
+  if (searchInput) {
+    searchInput.addEventListener("keypress", async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        await performSearch();
+      }
+    });
+  }
+
+  // Tìm kiếm khi nhấn nút dấu tích
+  if (searchSubmitBtn) {
+    searchSubmitBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await performSearch();
+    });
+  }
 }
 
 

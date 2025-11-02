@@ -592,6 +592,32 @@ ul.no-dot li {
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 
+/* Nút dấu tích trong search bar */
+.search-submit-btn {
+  background-color: #395542;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.search-submit-btn:hover {
+  background-color: #AC845C;
+  transform: scale(1.05);
+}
+
+.search-submit-btn i {
+  font-size: 16px;
+}
+
 /* ===== Ô LỌC NHỎ GỌN DÍNH NÚT LỌC ===== */
 /* Nút lọc + popup chung khối để canh dính nhau */
 .filter-btn {
@@ -758,13 +784,17 @@ body.searching::before {
 
 #overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
+  margin: 0;
+  padding: 0;
 }
 
 #overlay.hidden {
@@ -781,6 +811,9 @@ body.searching::before {
   position: relative;
   overflow-y: auto;
   max-height: 80vh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .close-popup {
@@ -796,7 +829,8 @@ body.searching::before {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
-  margin-top: 40px;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 /* Ẩn vùng lọc rỗng */

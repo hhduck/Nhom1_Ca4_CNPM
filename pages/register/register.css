@@ -12,6 +12,11 @@
     height: 70px;
 }
 
+/* Ẩn icon tìm kiếm ở trang register */
+.nav-search {
+    display: none !important;
+}
+
 .nav-container {
     width: 100%;
     max-width: 1200px;
