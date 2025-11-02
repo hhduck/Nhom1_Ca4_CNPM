@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <!-- CSS -->
+  <link rel="stylesheet" href="../home/home.css">
   <link rel="stylesheet" href="product.css">
   
   <!-- Auth check script -->
@@ -26,16 +27,15 @@
 
   <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../home/home.html">La Cuisine Ngọt</a>
-            </div>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <a href="../home/home.html">La Cuisine Ngọt</a>
+        </div>
 
-            <ul class="nav-menu">
-                <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
-                <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
-                <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
-
+        <ul class="nav-menu">
+          <li><a href="../home/home.html#products">SẢN PHẨM</a></li>
+          <li><a href="../home/home.html#khuyenmai">KHUYẾN MÃI</a></li>
+          <li><a href="../home/home.html#contact">LIÊN HỆ</a></li>
                 <li>
                     <a href="#" class="nav-search">
                         <i class="fas fa-search"></i>
@@ -46,51 +46,44 @@
                     </a>
                 </li>
 
-                <li class="nav-user">
-                    <a href="../login/login.html" class="nav-login-1">ĐĂNG NHẬP</a>
-                    <span class="nav-separator">|</span> <a href="../register/register.html" class="nav-login-2">ĐĂNG
-                        KÍ</a>
-
-                    <div class="user-menu hidden">
-                        <ul>
-                            <li><button id="tt">Thông tin tài khoản</button></li>
-                            <li><button id="logoutBtnNav">Đăng xuất</button></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
+          <li class="nav-user">
+            <a href="../login/login.html" class="nav-login">ĐĂNG NHẬP/ĐĂNG KÍ</a>
+            <div class="user-menu hidden">
+              <a href="../account/account.html"><button id="tt">Thông tin tài khoản</button></a>
+              <br>
+              <button id="logoutBtn">Đăng xuất</button>
+            </div>
+          </li>
+        </ul>
+      </div>
     </nav>
 
     <div class="search-bar hidden">
-        <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm...">
+      <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm...">
 
-        <div class="filter-wrapper" style="position: relative; display: inline-block;">
-            <button class="filter-btn">Lọc</button>
+      <div class="filter-wrapper" style="position: relative; display: inline-block;">
+        <button class="filter-btn">Lọc</button>
 
-            <div class="filter-popup">
-                <div class="filter-content">
-                    <label for="categorySelect">Danh mục</label>
-                    <select id="categorySelect">
-                        <option value="">Tất cả danh mục</option>
-                    </select>
+        <div class="filter-popup">
+          <div class="filter-content">
+            <label for="categorySelect">Danh mục</label>
+            <select id="categorySelect">
+              <option value="">Tất cả danh mục</option>
+            </select>
 
-                    <label for="priceSelect">Giá</label>
-                    <select id="priceSelect">
-                        <option value="">Tất cả giá</option>
-                        <option value="duoi500">Dưới 500.000</option>
-                        <option value="500-700">500.000 - 700.000</option>
-                        <option value="tren700">Trên 700.000</option>
-                    </select>
+            <label for="priceSelect">Giá</label>
+            <select id="priceSelect">
+              <option value="">Tất cả giá</option>
+              <option value="duoi500">Dưới 500.000</option>
+              <option value="500-700">500.000 - 700.000</option>
+              <option value="tren700">Trên 700.000</option>
+            </select>
 
-                    <button id="filterButton">Lọc</button>
-                </div>
-            </div>
+            <button id="filterButton">Lọc</button>
+          </div>
         </div>
+      </div>
     </div>
-
-    <!-- Vùng hiển thị sản phẩm sau khi lọc -->
-    <div id="filteredProducts" class="products-grid"></div>
 
 
   <!-- MAIN -->
@@ -154,40 +147,40 @@
     </div> <!-- đóng product-wrapper -->
   </main>
   <!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-container">
+  <footer class="footer">
+    <div class="footer-container">
       <div class="footer-left">
-          <h2 class="footer-logo">La Cuisine Ngọt</h2>
-          <div class="social-links">
-              <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
-                  <i class="fab fa-facebook"></i>
-              </a>
-              <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
-                  <i class="fab fa-instagram"></i>
-              </a>
-          </div>
+        <h2 class="footer-logo">La Cuisine Ngọt</h2>
+        <div class="social-links">
+          <a href="https://www.facebook.com/LaCuisineNgot" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="https://www.instagram.com/LaCuisineNgot" target="_blank">
+            <i class="fab fa-instagram"></i>
+          </a>
+        </div>
       </div>
-      <div class="footer-below">
-          © Nhóm 1 - Ca 4 - CNPM
-      </div>
+
       <div class="footer-right">
-          <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, p.Chợ Quán, TP.HCM</p>
-          </br>
-          <p><b>Liên hệ với Ngọt </b><br />lacuisinengot@gmail.com <br/>
-              1010.0111.2025</p>
+        <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, phường Chợ Quán, TP.HCM</p>
       </div>
-      
-  </div>
-</footer>
+    </div>
+  </footer>
 
   <script src="product.js"></script>
-      <!-- Overlay hiển thị kết quả lọc / tìm kiếm -->
-    <div id="overlay" class="hidden">
-        <div class="popup-container">
-            <button class="close-popup">&times;</button>
-            <div id="popupProducts" class="products-grid"></div>
-        </div>
+
+  <div id="overlay" class="hidden">
+    <div class="popup-container">
+      <button class="close-popup">&times;</button>
+      <section class="products-section">
+        <div id="popupProducts" class="products-grid"></div>
+      </section>
     </div>
+  </div>
+  
+  <script src="../../assets/js/main.js"></script>
+  <script src="../home/home.js"></script>
+  <script src="product.js"></script>
 
 </body>
 
