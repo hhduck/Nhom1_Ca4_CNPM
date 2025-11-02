@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # PHP Apache Service
+  web:
+    build: .
+    container_name: lacuisine-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME:-lacuisinengot}
+      - DB_USER=${DB_USER:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-}
+    networks:
+      - lacuisine-network
+    restart: unless-stopped
+
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: lacuisine-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-lacuisinengot}
+      MYSQL_USER: ${DB_USER:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    networks:
+      - lacuisine-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # phpMyAdmin (Optional - để quản lý database dễ dàng)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: lacuisine-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USER:-root}
+      PMA_PASSWORD: ${DB_PASSWORD:-}
+      UPLOAD_LIMIT: 300M
+    depends_on:
+      - db
+    networks:
+      - lacuisine-network
+    restart: unless-stopped
+
+networks:
+  lacuisine-network:
+    driver: bridge
+
+volumes:
+  db_data:
+

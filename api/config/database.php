@@ -8,11 +8,18 @@
 
 class Database {
     // Thông tin kết nối database
-    private $host = "localhost";
+    // Tự động phát hiện môi trường Docker hoặc local
+    private $host;
     private $database_name = "lacuisinengot"; // <-- XÁC NHẬN TÊN NÀY LÀ ĐÚNG
     private $username = "root"; // Thay đổi nếu cần
     private $password = ""; // Thay đổi nếu cần
     private $charset = "utf8mb4";
+    
+    public function __construct() {
+        // Kiểm tra xem có biến môi trường DB_HOST không (Docker)
+        $this->host = getenv('DB_HOST') ?: 
+                      (file_exists('/.dockerenv') ? 'db' : 'localhost');
+    }
     
     public $conn;
     

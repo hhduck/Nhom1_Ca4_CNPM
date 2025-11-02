@@ -94,7 +94,10 @@ Nhom1_Ca4_CNPM/
 │   ├── search.php                 # API tìm kiếm
 │   ├── staff_profile.php          # API hồ sơ nhân viên
 │   ├── staff_search.php           # API tìm kiếm nhân viên
-│   └── upload.php                 # API upload file
+│   ├── upload.php                 # API upload file
+│   ├── vnpay_checkout.php         # API thanh toán VNPay
+│   ├── vnpay_config.php           # Cấu hình VNPay
+│   └── vnpay_ipn.php              # API xác nhận thanh toán VNPay (IPN)
 │
 ├── assets/                         # 🎨 TÀI NGUYÊN
 │   ├── css/
@@ -109,6 +112,9 @@ Nhom1_Ca4_CNPM/
 ├── database/                       # 🗄️ DATABASE
 │   └── schema.sql                 # Cấu trúc database + Dữ liệu mẫu
 │
+├── docker/                         # 🐳 DOCKER SCRIPTS
+│   └── init-db.sh                 # Script khởi tạo database cho Docker
+│
 ├── pages/                          # 📄 CÁC TRANG
 │   ├── home/                      # Trang chủ
 │   │   ├── home.html
@@ -117,7 +123,8 @@ Nhom1_Ca4_CNPM/
 │   ├── login/                     # Đăng nhập
 │   │   ├── login.html
 │   │   ├── login.css
-│   │   └── login.js               # Đăng nhập, quên mật khẩu
+│   │   ├── login.js               # Đăng nhập, quên mật khẩu
+│   │   └── forgot_password.html   # Trang quên mật khẩu
 │   ├── register/                  # Đăng ký
 │   │   ├── register.html
 │   │   ├── register.css
@@ -130,10 +137,6 @@ Nhom1_Ca4_CNPM/
 │   │   ├── cart.html
 │   │   ├── cart.css
 │   │   └── cart.js
-│   ├── checkout/                  # Thanh toán
-│   │   ├── checkout.html
-│   │   ├── checkout.css
-│   │   └── checkout.js
 │   ├── order-confirmation/        # Xác nhận đơn
 │   │   ├── order-confirmation.html
 │   │   ├── order-confirmation.css
@@ -146,14 +149,12 @@ Nhom1_Ca4_CNPM/
 │   │   ├── contact.html
 │   │   ├── contact.css
 │   │   └── contact.js
-│   ├── about/                     # Về chúng tôi
-│   │   ├── about.html
-│   │   ├── about.css
-│   │   └── about.js
-│   └── pay/                       # Thanh toán
-│       ├── pay.html
-│       ├── pay.css
-│       └── pay.js
+│   ├── pay/                       # Thanh toán
+│   │   ├── pay.html
+│   │   ├── pay.css
+│   │   ├── pay.js
+│   │   └── pay-success.html       # Trang thanh toán thành công
+│   └── xuatfigma.html             # Trang xuất Figma
 │
 ├── staff/                          # 👨‍💼 NHÂN VIÊN
 │   ├── handleComplaint/          # Xử lý khiếu nại
@@ -174,13 +175,42 @@ Nhom1_Ca4_CNPM/
 │       └── order.js
 │
 ├── .htaccess                      # Apache URL Rewrite rules
-├── test.md                        # Bảng kiểm thử phần mềm (150 test cases)
+├── api/.htaccess                  # Apache URL Rewrite rules cho API
+├── Dockerfile                      # 🐳 Docker image configuration
+├── docker-compose.yml             # 🐳 Docker Compose configuration
+├── .dockerignore                  # 🐳 Docker ignore file
+├── docker-run.bat                 # 🐳 Script chạy Docker (Windows)
+├── docker-run.sh                  # 🐳 Script chạy Docker (Linux/Mac)
+├── DOCKER.md                      # 🐳 Hướng dẫn Docker chi tiết
+├── QUICKSTART_DOCKER.md           # 🐳 Hướng dẫn Docker nhanh
 └── README.md                      # 📖 Tài liệu này
 ```
 
 ---
 
 ## 🚀 Cài đặt & Chạy
+
+### 🐳 Cách 1: Sử dụng Docker (Khuyên dùng)
+
+**Yêu cầu:**
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+
+**Cài đặt nhanh:**
+```bash
+# Khởi động containers
+docker-compose up -d --build
+
+# Truy cập ứng dụng
+# Website: http://localhost:8080
+# phpMyAdmin: http://localhost:8081
+```
+
+**Xem hướng dẫn chi tiết:** [DOCKER.md](DOCKER.md) hoặc [QUICKSTART_DOCKER.md](QUICKSTART_DOCKER.md)
+
+---
+
+### 💻 Cách 2: Cài đặt thủ công (XAMPP/WAMP)
 
 ### 📋 Yêu cầu hệ thống
 
@@ -322,6 +352,7 @@ Hoặc: customer02
 - ✅ **Ẩn "THÔNG TIN SẢN PHẨM"** nếu sản phẩm là "Phụ kiện"
 - ✅ **Giỏ hàng** thông minh (thêm, sửa, xóa)
 - ✅ **Đặt hàng** với form đầy đủ thông tin
+- ✅ **Thanh toán online** qua VNPay (tích hợp đầy đủ IPN)
 - ✅ **Theo dõi đơn hàng** của mình (xem dạng bảng với chi tiết sản phẩm)
 - ✅ **Xem khuyến mãi** trên trang home
 - ✅ **Cập nhật thông tin** cá nhân (tên, số điện thoại, địa chỉ)
@@ -510,6 +541,13 @@ GET    /api/search.php?keyword=staff&type=users   - Tìm kiếm users (Admin)
 GET    /api/staff_profile.php/{id}      - Lấy thông tin nhân viên (Owner/Staff)
 PUT    /api/staff_profile.php/{id}      - Cập nhật thông tin nhân viên (Owner/Staff)
 POST   /api/staff_profile.php           - Đổi mật khẩu nhân viên (Owner/Staff)
+```
+
+### 💳 VNPay Payment
+```
+POST   /api/vnpay_checkout.php          - Tạo URL thanh toán VNPay
+POST   /api/vnpay_ipn.php               - Xác nhận thanh toán VNPay (IPN)
+GET    /api/vnpay_config.php            - Cấu hình VNPay (secure_hash, etc.)
 ```
 
 ---
