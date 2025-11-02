@@ -630,3 +630,95 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+// ====== GỌI VÀ HIỂN THỊ DANH MỤC SẢN PHẨM (THIẾT LẬP VÀ GỌI HÀM) ======
+async function fetchAndRenderCategories() {
+  try {
+    const res = await fetch(`${API_BASE}?categories=1`);
+    const data = await res.json();
+    if (!data.success || !data.categories) return;
+
+    // 1) Điền vào select (ô lọc)
+    const categorySelect = document.getElementById("categorySelect");
+    if (categorySelect) {
+      // để 1 option mặc định (tất cả)
+      categorySelect.innerHTML = '<option value="">Tất cả</option>';
+      data.categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat.CategoryName || cat.Category; // tùy API trả về key
+        opt.textContent = cat.CategoryName || cat.CategoryName;
+        categorySelect.appendChild(opt);
+      });
+    }
+
+    // 2) Hiển thị ở sidebar / danh mục (nếu có element .category-list)
+    const categoryList = document.querySelector(".category-list");
+    if (categoryList) {
+      categoryList.innerHTML = ''; // clear trước khi render
+      // thêm item "Tất cả"
+      categoryList.insertAdjacentHTML('beforeend', `<li><a href="#" data-cat="">Tất cả</a></li>`);
+      data.categories.forEach(cat => {
+        const name = cat.CategoryName || cat.Category;
+        const item = `<li><a href="#" data-cat="${encodeURIComponent(name)}">${name}</a></li>`;
+        categoryList.insertAdjacentHTML('beforeend', item);
+      });
+
+      // bind click cho các link category (lọc ngay khi click)
+      categoryList.querySelectorAll('a[data-cat]').forEach(a => {
+        a.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const cat = decodeURIComponent(a.dataset.cat || '');
+          // nếu bạn muốn chuyển tới trang lọc riêng, thay đổi href ở trên thành link phù hợp
+          // Ở đây sẽ gọi API và show kết quả popup hoặc render vào khu vực filteredProducts nếu có
+          try {
+            const min = 0, max = 99999999;
+            const url = `${API_BASE}?category=${encodeURIComponent(cat)}&min=${min}&max=${max}`;
+            const r = await fetch(url);
+            const json = await r.json();
+            // nếu bạn có vùng filteredProducts: render trực tiếp
+            const grid = document.getElementById("filteredProducts");
+            if (grid) {
+              grid.innerHTML = "";
+              const list = json.products || [];
+              if (!list.length) { grid.innerHTML = "<p>Không có sản phẩm phù hợp.</p>"; return; }
+              list.forEach(p => {
+                const card = `
+                  <div class="product-card" data-id="${p.ProductID}">
+                    <div class="product-image-container">
+                      <a href="../product/product.html?id=${p.ProductID}" class="product-item">
+                        <img src="../../${p.ImageURL}" alt="${p.ProductName}" class="product-image">
+                      </a>
+                    </div>
+                    <div class="product-info">
+                      <h3 class="product-name">${p.ProductName}</h3>
+                      <p class="product-price">${Number(p.Price).toLocaleString()} VNĐ</p>
+                    </div>
+                  </div>`;
+                grid.insertAdjacentHTML("beforeend", card);
+              });
+              // rebind navigation nếu cần
+              if (typeof bindProductCardNavigation === "function") bindProductCardNavigation();
+            } else {
+              // nếu không có grid, show popup (nếu bạn muốn)
+              if (typeof showPopup === "function") {
+                showPopup(json.products || []);
+              }
+            }
+          } catch (err) {
+            console.error("Lỗi khi lọc theo category:", err);
+          }
+        });
+      });
+    }
+  } catch (err) {
+    console.error("Lỗi fetch categories:", err);
+  }
+}
+
+// ====== KHỞI TẠO KHI DOM CONTENT LOADED: gọi các hàm cần thiết ======
+document.addEventListener("DOMContentLoaded", () => {
+  // Gọi initProductFilter (nếu bạn muốn khởi tạo phần lọc đã viết)
+  if (typeof initProductFilter === "function") initProductFilter();
+
+  // Gọi fetchAndRenderCategories để load danh mục vào select + sidebar
+  fetchAndRenderCategories();
+});
