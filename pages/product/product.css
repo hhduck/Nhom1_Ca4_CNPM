@@ -318,31 +318,61 @@ letter-spacing: 1px;
 }
 /* --- FOOTER --- */
 .footer {
-  background-color: #395542;
-  color: #ffffff;
-  padding: 40px 100px;
-  font-family: 'Crimson Text', serif;
+    background-color: #395542;
+    color: #fff;
+    padding: 40px 100px;
+    font-family: 'Crimson Text', serif;
+    display: flex; /* Use flexbox for easier alignment */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: space-between; /* Push content to top/bottom if height allows */
+    min-height: 200px;
+
 }
 
 .footer-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+}
+.footer-below {
+    text-align: center; /* Center the text */
+    padding-top: 20px; /* Add some padding above it for spacing */
+    margin-top: 130px; /* Add margin-top to separate it from the content above */
+    font-size: 15px;
+
+}
+/* Responsive adjustments for footer */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .footer-right {
+        text-align: center;
+    }
+
+    .footer-below {
+        padding-top: 15px; /* Adjust padding for smaller screens */
+        margin-top: 15px; /* Adjust margin for smaller screens */
+    }
 }
 
 .footer-left {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .footer-logo {
-  font-family: 'Inspiration', cursive;
-  font-size: 52px;
-  color: #fff;
-  font-weight: 200; 
-  text-decoration: none;
-  letter-spacing: 1px;
+    font-family: 'Inspiration', cursive;
+    font-size: 52px;
+    color: #fff;
+    font-weight: 200;
+    text-decoration: none;
+    letter-spacing: 1px;
 
 }
 
