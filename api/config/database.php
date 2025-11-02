@@ -61,6 +61,11 @@ class Database {
 
 // Gửi response JSON
 function sendJsonResponse($success, $data = null, $message = "", $statusCode = 200) {
+    // Xóa output buffer để đảm bảo không có warning/notice làm JSON không hợp lệ
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
+    
     http_response_code($statusCode);
     header('Content-Type: application/json; charset=utf-8');
     

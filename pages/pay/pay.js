@@ -142,6 +142,22 @@ function handleUserDisplay() {
 
 // --- HÀM CHÍNH ---
 document.addEventListener('DOMContentLoaded', () => {
+  // Xử lý lỗi timer từ VNPay sandbox (nếu có)
+  if (typeof window.timer === 'undefined') {
+    // Định nghĩa timer để tránh lỗi ReferenceError từ VNPay script
+    window.timer = null;
+  }
+
+  // Suppress lỗi timer từ VNPay sandbox khi redirect
+  window.addEventListener('error', (event) => {
+    if (event.message && event.message.includes('timer is not defined')) {
+      // Suppress lỗi timer từ VNPay - không ảnh hưởng đến functionality
+      event.preventDefault();
+      console.warn('VNPay timer warning (có thể bỏ qua):', event.message);
+      return true;
+    }
+  }, true);
+
   handleUserDisplay();
 
   // Kiểm tra đăng nhập

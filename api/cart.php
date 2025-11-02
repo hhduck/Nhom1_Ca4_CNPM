@@ -5,6 +5,9 @@
  * FILE: api/cart.php
  */
 
+// Bật output buffering để tránh warning/notice làm JSON không hợp lệ
+ob_start();
+
 require_once __DIR__ . '/config/database.php';
 
 enableCORS();

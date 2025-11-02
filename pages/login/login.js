@@ -23,7 +23,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
-                // Nếu không có force_login, redirect về home
+                // Nếu không có force_login, kiểm tra redirectAfterLogin trước
+                const redirectAfterLogin = localStorage.getItem("redirectAfterLogin");
+                if (redirectAfterLogin) {
+                    // Xóa URL redirect đã lưu
+                    localStorage.removeItem("redirectAfterLogin");
+                    // Redirect về trang đã lưu
+                    showMessage('Bạn đã đăng nhập! Đang chuyển hướng...', 'info');
+                    setTimeout(() => {
+                        window.location.href = redirectAfterLogin;
+                    }, 1500);
+                    return;
+                }
+
+                // Nếu không có redirectAfterLogin, redirect về home
                 showMessage('Bạn đã đăng nhập! Đang chuyển hướng...', 'info');
                 setTimeout(() => {
                     window.location.href = '../home/home.html';
@@ -261,14 +274,25 @@ async function performLogin(username, password, rememberMe) {
 
             showMessage(`Đăng nhập thành công! Chào mừng ${data.data.user.full_name}!`, 'success');
 
-            // Redirect based on role
+            // Redirect based on role hoặc về trang đã lưu trước đó
             setTimeout(() => {
-                if (data.data.user.role === 'admin') {
-                    window.location.href = '../../admin/admin.html';
-                } else if (data.data.user.role === 'staff') {
-                    window.location.href = '../../staff/ViewOders/order.html';
+                // Kiểm tra xem có URL redirect đã lưu không
+                const redirectAfterLogin = localStorage.getItem("redirectAfterLogin");
+                
+                if (redirectAfterLogin) {
+                    // Xóa URL redirect đã lưu
+                    localStorage.removeItem("redirectAfterLogin");
+                    // Redirect về trang đã lưu
+                    window.location.href = redirectAfterLogin;
                 } else {
-                    window.location.href = '../home/home.html';
+                    // Redirect mặc định theo role
+                    if (data.data.user.role === 'admin') {
+                        window.location.href = '../../admin/admin.html';
+                    } else if (data.data.user.role === 'staff') {
+                        window.location.href = '../../staff/ViewOders/order.html';
+                    } else {
+                        window.location.href = '../home/home.html';
+                    }
                 }
             }, 1500);
 
@@ -342,14 +366,25 @@ function performLoginWithMockData(username, password, rememberMe) {
 
         showMessage(`Đăng nhập thành công! (Mock data) Chào mừng ${user.full_name}!`, 'success');
 
-        // Redirect based on role
+        // Redirect based on role hoặc về trang đã lưu trước đó
         setTimeout(() => {
-            if (user.role === 'admin') {
-                window.location.href = '../../admin/admin.html';
-            } else if (user.role === 'staff') {
-                window.location.href = '../../staff/ViewOders/order.html';
+            // Kiểm tra xem có URL redirect đã lưu không
+            const redirectAfterLogin = localStorage.getItem("redirectAfterLogin");
+            
+            if (redirectAfterLogin) {
+                // Xóa URL redirect đã lưu
+                localStorage.removeItem("redirectAfterLogin");
+                // Redirect về trang đã lưu
+                window.location.href = redirectAfterLogin;
             } else {
-                window.location.href = '../home/home.html';
+                // Redirect mặc định theo role
+                if (user.role === 'admin') {
+                    window.location.href = '../../admin/admin.html';
+                } else if (user.role === 'staff') {
+                    window.location.href = '../../staff/ViewOders/order.html';
+                } else {
+                    window.location.href = '../home/home.html';
+                }
             }
         }, 1500);
 
