@@ -510,7 +510,7 @@ function handleUserDisplay() {
                 e.preventDefault();
                 e.stopPropagation();
                 const accountUrl = (userType === 'staff')
-                    ? "../staff/staffProfile/staff_profile.html"
+                    ? "../../staff/staffProfile/staff_profile.html"
                     // SỬA: Trang register/login không biết user là ai, mặc định về account.html
                     : "../account/account.html";
                 window.location.href = accountUrl;

@@ -81,7 +81,7 @@ function handleUserDisplay() {
       accountBtn.parentNode.replaceChild(newAccountBtn, accountBtn);
       newAccountBtn.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
-        const accountUrl = (userType === 'staff') ? "../staff/staffProfile/staff_profile.html" : "../account/account.html";
+        const accountUrl = (userType === 'staff') ? "../../staff/staffProfile/staff_profile.html" : "../account/account.html";
         window.location.href = accountUrl;
       });
     }

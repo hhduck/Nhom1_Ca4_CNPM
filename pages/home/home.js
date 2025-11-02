@@ -173,7 +173,7 @@ function handleUserDisplay() {
         e.preventDefault();
         e.stopPropagation();
         const accountUrl = (userType === 'staff')
-          ? "../staff/staffProfile/staff_profile.html"
+          ? "../../staff/staffProfile/staff_profile.html"
           : "../account/account.html";
         window.location.href = accountUrl;
       });

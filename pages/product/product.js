@@ -125,7 +125,7 @@ function handleUserDisplay() {
     // Điều chỉnh link "Thông tin tài khoản"
     if (accountLink) {
       accountLink.href = (userType === 'staff')
-        ? "../staff/staffProfile/staff_profile.html" // Link cho Staff
+        ? "../../staff/staffProfile/staff_profile.html" // Link cho Staff
         : "../account/account.html";               // Link cho Customer
       console.log("Updated account link to:", accountLink.href);
     }

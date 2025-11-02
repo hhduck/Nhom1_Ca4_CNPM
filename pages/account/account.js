@@ -55,7 +55,7 @@ function handleUserDisplay() {
     const logoutBtn = document.getElementById("logoutBtnNav"); // Dùng ID mới
 
     if (accountLink) {
-      accountLink.href = (userType === 'staff') ? "../staff/staffProfile/staff_profile.html" : "../account/account.html";
+      accountLink.href = (userType === 'staff') ? "../../staff/staffProfile/staff_profile.html" : "../account/account.html";
     }
 
     // Hiện menu khi click icon
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Nếu nhân viên vô tình vào trang này
     if (localStorage.getItem("currentStaff") && jwtToken) {
       alert("Đây là trang tài khoản khách hàng. Bạn đang đăng nhập với tư cách nhân viên.");
-      window.location.href = "../staff/staffProfile/staff_profile.html"; // Điều hướng về profile nhân viên
+      window.location.href = "../../staff/staffProfile/staff_profile.html"; // Điều hướng về profile nhân viên
     } else {
       // Nếu không ai đăng nhập
       console.log("Chưa đăng nhập, chuyển về trang login.");
