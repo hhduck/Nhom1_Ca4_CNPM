@@ -2,28 +2,28 @@
 <html lang="vi">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tài khoản khách hàng - La Cuisine Ngọt</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài khoản khách hàng - La Cuisine Ngọt</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="../../assets/css/style.css">
-  <link rel="stylesheet" href="../../assets/css/animations.css">
-  <link rel="stylesheet" href="account.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap"
-    rel="stylesheet">
-  
-  <!-- Auth check script -->
-  <script src="../../assets/js/auth-check.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/animations.css">
+    <link rel="stylesheet" href="account.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inspiration&display=swap"
+        rel="stylesheet">
+
+    <!-- Auth check script -->
+    <script src="../../assets/js/auth-check.js"></script>
 </head>
 
 <body>
-  <!-- Navigation -->
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
@@ -39,7 +39,7 @@
                     <a href="#" class="nav-search">
                         <i class="fas fa-search"></i>
                     </a>
-                    
+
                     <a href="../cart/cart.html" class="nav-cart" style="padding: 0 10px;">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
@@ -95,107 +95,152 @@
     <div id="filteredProducts" class="products-grid"></div>
 
 
-  <!-- Account Section -->
-  <section class="account-section">
-    <div class="account-container">
-      <!-- Sidebar -->
+    <!-- Account Section -->
+    <section class="account-section">
+        <div class="account-container">
+            <!-- Sidebar -->
 
-      <div class="sidebar">
-        <p class="customer-name">(Tên khách hàng)</p>
-        <ul class="sidebar-menu">
-          <li id="infoBtn">Thông tin</li>
-          <li id="ordersBtn">Đơn hàng</li>
-          <li id="logoutBtn">Đăng xuất</li>
-        </ul>
-      </div>
-
-      <!-- Main Content Area - Chứa cả thông tin cá nhân và đơn hàng, ẩn/hiện bằng JS -->
-      <div class="account-info">
-        <h2 class="account-title">TÀI KHOẢN</h2> <!-- Tiêu đề chung cho trang tài khoản -->
-
-        <!-- Phần thông tin cá nhân -->
-        <div id="personalInfoSection" class="info-content">
-          <h3>Thông tin cá nhân</h3>
-          <form id="accountForm">
-            <label>Họ và Tên</label>
-            <input type="text" id="nameInput" placeholder="">
-
-            <label>Email</label>
-            <input type="email" id="emailInput" placeholder="">
-
-            <label>Số điện thoại</label>
-            <input type="tel" id="phoneInput" placeholder="">
-
-            <label>Địa chỉ</label>
-            <input type="text" id="addressInput" placeholder="">
-
-            <h3>Thay đổi mật khẩu</h3>
-
-            <label>Mật khẩu hiện tại (bỏ trống nếu không đổi)</label>
-            <div class="password-field">
-              <input type="password" id="oldPassword">
-              <i class="fa-solid fa-eye-slash toggle-password" data-target="oldPassword"></i>
+            <div class="sidebar">
+                <p class="customer-name">(Tên khách hàng)</p>
+                <ul class="sidebar-menu">
+                    <li id="infoBtn">Thông tin</li>
+                    <li id="ordersBtn">Đơn hàng</li>
+                    <li id="logoutBtn">Đăng xuất</li>
+                </ul>
             </div>
 
-            <label>Mật khẩu mới (bỏ trống nếu không đổi)</label>
-            <div class="password-field">
-              <input type="password" id="newPassword">
-              <i class="fa-solid fa-eye-slash toggle-password" data-target="newPassword"></i>
-            </div>
+            <!-- Main Content Area - Chứa cả thông tin cá nhân và đơn hàng, ẩn/hiện bằng JS -->
+            <div class="account-info">
+                <h2 class="account-title">TÀI KHOẢN</h2> <!-- Tiêu đề chung cho trang tài khoản -->
 
-            <label>Xác nhận mật khẩu mới</label>
-            <div class="password-field">
-              <input type="password" id="confirmPassword">
-              <i class="fa-solid fa-eye-slash toggle-password" data-target="confirmPassword"></i>
-            </div>
+                <!-- Phần thông tin cá nhân -->
+                <div id="personalInfoSection" class="info-content">
+                    <h3>Thông tin cá nhân</h3>
+                    <form id="accountForm">
+                        <label>Họ và Tên</label>
+                        <input type="text" id="nameInput" placeholder="">
 
-            <button type="submit" class="save-btn">Lưu thay đổi</button>
-          </form>
-        </div>
+                        <label>Email</label>
+                        <input type="email" id="emailInput" placeholder="">
 
-        <!-- Phần lịch sử đơn hàng -->
-        <!-- Ban đầu ẩn, sẽ hiển thị khi click vào "Đơn hàng" trên sidebar -->
-        <div id="orderHistorySection" class="info-content hidden">
-            <h3>Đơn hàng của bạn</h3>
-            <div id="orderList" class="orders-container">
-                <!-- Đơn hàng sẽ được tải và hiển thị ở đây bằng JavaScript -->
-                <p>Đang tải đơn hàng...</p>
-            </div>
-        </div>
-<!-- Complaint Popup -->
-<div id="complaintOverlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
-    <!-- Thêm popup-content-wrapper ở đây -->
-    <div class="popup-content-wrapper"> 
-        <h2 class="text-2xl font-bold mb-4 text-center">Gửi Khiếu Nại Đơn Hàng</h2>
-        <form id="complaintForm">
-            <input type="hidden" id="complaintOrderId">
-            
-            <div class="mb-4">
-                <label for="complaintTitle" class="block text-gray-700 text-sm font-bold mb-2">Tiêu đề:</label>
-                <input type="text" id="complaintTitle" placeholder="Ví dụ: Giao sai sản phẩm, Chất lượng kém..." required>
-            </div>
-            
-            <div class="mb-6">
-                <label for="complaintContent" class="block text-gray-700 text-sm font-bold mb-2">Nội dung:</label>
-                <textarea id="complaintContent" rows="5" placeholder="Mô tả chi tiết vấn đề bạn gặp phải với đơn hàng..." required></textarea>
-            </div>
-            
-            <div class="complaint-actions"> <!-- Thay đổi class div này -->
-                <button type="button" id="closeComplaintPopup">
-                    Hủy
-                </button>
-                <button type="submit">
-                    Gửi Khiếu Nại
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-      </div> <!-- End .account-info -->
-    </div> <!-- End .account-container -->
-  </section>
-  
-      <!-- FOOTER -->
+                        <label>Số điện thoại</label>
+                        <input type="tel" id="phoneInput" placeholder="">
+
+                        <label>Địa chỉ</label>
+                        <input type="text" id="addressInput" placeholder="">
+
+                        <h3>Thay đổi mật khẩu</h3>
+
+                        <label>Mật khẩu hiện tại (bỏ trống nếu không đổi)</label>
+                        <div class="password-field">
+                            <input type="password" id="oldPassword">
+                            <i class="fa-solid fa-eye-slash toggle-password" data-target="oldPassword"></i>
+                        </div>
+
+                        <label>Mật khẩu mới (bỏ trống nếu không đổi)</label>
+                        <div class="password-field">
+                            <input type="password" id="newPassword">
+                            <i class="fa-solid fa-eye-slash toggle-password" data-target="newPassword"></i>
+                        </div>
+
+                        <label>Xác nhận mật khẩu mới</label>
+                        <div class="password-field">
+                            <input type="password" id="confirmPassword">
+                            <i class="fa-solid fa-eye-slash toggle-password" data-target="confirmPassword"></i>
+                        </div>
+
+                        <button type="submit" class="save-btn">Lưu thay đổi</button>
+                    </form>
+                </div>
+
+                <!-- Phần lịch sử đơn hàng -->
+                <!-- Ban đầu ẩn, sẽ hiển thị khi click vào "Đơn hàng" trên sidebar -->
+                <div id="orderHistorySection" class="info-content hidden">
+                    <h3>Đơn hàng của bạn</h3>
+                    <div id="orderList" class="orders-container">
+                        <!-- Đơn hàng sẽ được tải và hiển thị ở đây bằng JavaScript -->
+                        <p>Đang tải đơn hàng...</p>
+                    </div>
+                </div>
+                <!-- Complaint Popup -->
+                <div id="complaintOverlay"
+                    class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <!-- Thêm popup-content-wrapper ở đây -->
+                    <div class="popup-content-wrapper">
+                        <h2 class="text-2xl font-bold mb-4 text-center">Gửi Khiếu Nại Đơn Hàng</h2>
+                        <form id="complaintForm">
+                            <input type="hidden" id="complaintOrderId">
+
+                            <div class="mb-4">
+                                <label for="complaintTitle" class="block text-gray-700 text-sm font-bold mb-2">Tiêu
+                                    đề:</label>
+                                <input type="text" id="complaintTitle"
+                                    placeholder="Ví dụ: Giao sai sản phẩm, Chất lượng kém..." required>
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="complaintContent" class="block text-gray-700 text-sm font-bold mb-2">Nội
+                                    dung:</label>
+                                <textarea id="complaintContent" rows="5"
+                                    placeholder="Mô tả chi tiết vấn đề bạn gặp phải với đơn hàng..."
+                                    required></textarea>
+                            </div>
+
+                            <div class="complaint-actions"> <!-- Thay đổi class div này -->
+                                <button type="button" id="closeComplaintPopup">
+                                    Hủy
+                                </button>
+                                <button type="submit">
+                                    Gửi Khiếu Nại
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="viewComplaintOverlay"
+                    class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="popup-content-wrapper" style="max-width: 600px;">
+                        <h2 class="text-2xl font-bold mb-4 text-center" style="color: #2d5016;">Chi Tiết Khiếu Nại</h2>
+
+                        <div class="complaint-details-content">
+                            <div class="detail-row" style="text-align: center; margin-bottom: 20px;">
+                                <span id="viewComplaintStatus" class="status-badge"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-1">Tiêu đề:</label>
+                                <div id="viewComplaintTitle" class="p-3 bg-gray-100 rounded border"
+                                    style="padding: 10px; background: #f9f9f9; border-radius: 6px;"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-1">Nội dung bạn gửi:</label>
+                                <div id="viewComplaintContent" class="p-3 bg-gray-100 rounded border"
+                                    style="min-height: 60px; padding: 10px; background: #f9f9f9; border-radius: 6px;">
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-gray-700 text-sm font-bold mb-1" style="color: #2d5016;">Phản
+                                    hồi từ cửa hàng:</label>
+                                <div id="viewComplaintResolution"
+                                    class="p-3 bg-green-50 rounded border border-green-200"
+                                    style="min-height: 80px; padding: 15px; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 6px; color: #333;">
+                                    <em>Chưa có phản hồi...</em>
+                                </div>
+                            </div>
+
+                            <div class="complaint-actions" style="justify-content: center;">
+                                <button type="button" id="closeViewComplaintPopup">Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End .account-info -->
+        </div> <!-- End .account-container -->
+    </section>
+
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-left">
@@ -215,14 +260,14 @@
             <div class="footer-right">
                 <p><b>Ngọt GO TO (TP.HCM)</b><br />123 An Dương Vương, p.Chợ Quán, TP.HCM</p>
                 </br>
-                <p><b>Liên hệ với Ngọt </b><br />lacuisinengot@gmail.com <br/>
+                <p><b>Liên hệ với Ngọt </b><br />lacuisinengot@gmail.com <br />
                     1010.0111.2025</p>
             </div>
-            
+
         </div>
     </footer>
-  <script src="account.js"></script>
-      <!-- Overlay hiển thị kết quả lọc / tìm kiếm -->
+    <script src="account.js"></script>
+    <!-- Overlay hiển thị kết quả lọc / tìm kiếm -->
     <div id="overlay" class="hidden">
         <div class="popup-container">
             <button class="close-popup">&times;</button>

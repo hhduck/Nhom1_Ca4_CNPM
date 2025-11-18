@@ -1,29 +1,36 @@
 <?php
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit();
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 /**
- * Orders API - PHIÊN BẢN ĐƠN GIẢN HÓA
+ * Orders API - PHIÊN BẢN HỖ TRỢ THANH TOÁN GIẢ
  * LA CUISINE NGỌT
- * *** ĐÃ SỬA LỖI HTTP 400 KHI CẬP NHẬT TRẠNG THÁI 'pending' ***
  */
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/auth/middleware.php';
 
-// Bật CORS
 enableCORS();
+header("Access-Control-Allow-Origin: http://localhost");
+header("Access-Control-Allow-Credentials: true");
 
 $database = new Database();
 $db = $database->getConnection();
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// XỬ LÝ ROUTING
 $orderId = null;
-
-// Lấy từ URL path
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $pathParts = explode('/', trim($path, '/'));
 $apiIndex = array_search('api', $pathParts);
@@ -32,7 +39,6 @@ if ($apiIndex !== false && isset($pathParts[$apiIndex + 2]) && is_numeric($pathP
     $orderId = (int)$pathParts[$apiIndex + 2];
 }
 
-// Fallback: Lấy từ query string
 if (!$orderId && isset($_GET['id']) && is_numeric($_GET['id'])) {
     $orderId = (int)$_GET['id'];
 }
@@ -40,11 +46,16 @@ if (!$orderId && isset($_GET['id']) && is_numeric($_GET['id'])) {
 try {
     switch ($method) {
         case 'GET':
-            // Kiểm tra xem có user_id trong query string không (cho customer xem đơn hàng của chính họ)
+            if (isset($_GET['check_first_order']) && $_GET['check_first_order'] == '1') {
+                $currentUser = requireAuth();
+                $isFirst = checkFirstOrderOfTheYear($db, $currentUser['id']);
+                sendJsonResponse(true, ['isFirstOrder' => $isFirst], "Kiểm tra đơn hàng đầu tiên thành công");
+                exit();
+            }
+
             $requestedUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : null;
 
             if ($requestedUserId) {
-                // Nếu có user_id, cho phép customer xem đơn hàng của chính họ hoặc admin/staff xem tất cả
                 $currentUser = requireAuth();
                 if ($currentUser['role'] !== 'admin' && $currentUser['role'] !== 'staff' && $currentUser['id'] != $requestedUserId) {
                     sendJsonResponse(false, null, "Bạn không có quyền truy cập đơn hàng của người dùng khác", 403);
@@ -52,11 +63,9 @@ try {
                 }
                 getAllOrders($db, $requestedUserId);
             } elseif ($orderId) {
-                // Xem chi tiết 1 đơn hàng - chỉ admin/staff
                 $currentUser = requireStaff();
                 getOrderById($db, $orderId);
             } else {
-                // Xem tất cả đơn hàng - chỉ admin/staff
                 $currentUser = requireStaff();
                 getAllOrders($db);
             }
@@ -79,6 +88,7 @@ try {
                 throw new Exception("Thiếu ID đơn hàng để xóa", 400);
             }
             break;
+
         case 'POST':
             createOrder($db);
             break;
@@ -92,11 +102,6 @@ try {
     sendJsonResponse(false, ['error_details' => $e->getMessage()], "Có lỗi xảy ra", $statusCode);
 }
 
-/**
- * Lấy tất cả đơn hàng
- * @param PDO $db Database connection
- * @param int|null $customerId Nếu có, chỉ lấy đơn hàng của customer này (cho customer xem đơn hàng của chính họ)
- */
 function getAllOrders($db, $customerId = null)
 {
     $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
@@ -110,8 +115,7 @@ function getAllOrders($db, $customerId = null)
                 o.CustomerPhone as customer_phone,
                 o.CustomerEmail as customer_email,
                 o.ShippingAddress as shipping_address,
-                o.Ward as ward,
-                o.District as district,
+                o.Ward as ward,  o.District as district,
                 o.City as city,
                 o.TotalAmount as total_amount,
                 o.DiscountAmount as discount_amount,
@@ -124,14 +128,19 @@ function getAllOrders($db, $customerId = null)
                 o.CancelReason as cancel_reason, 
                 o.CreatedAt as created_at,
                 o.UpdatedAt as updated_at,
-                u.FullName as customer_full_name 
+                u.FullName as customer_full_name,
+                c.ComplaintID as complaint_id,
+                c.Status as complaint_status,
+                c.Title as complaint_title,
+                c.Content as complaint_content,
+                c.Resolution as complaint_resolution 
               FROM Orders o
               LEFT JOIN Users u ON o.CustomerID = u.UserID
+              LEFT JOIN Complaints c ON o.OrderID = c.OrderID
               WHERE 1=1";
 
     $params = [];
 
-    // Nếu có customerId, chỉ lấy đơn hàng của customer đó (cho customer xem đơn hàng của chính họ)
     if ($customerId) {
         $query .= " AND o.CustomerID = :customer_id";
         $params[':customer_id'] = $customerId;
@@ -145,7 +154,6 @@ function getAllOrders($db, $customerId = null)
     }
 
     if ($status) {
-        // *** SỬA LỖI: Thống nhất với Database Schema ***
         $validStatuses = ['pending', 'order_received', 'preparing', 'delivering', 'delivery_successful', 'delivery_failed'];
         if (in_array($status, $validStatuses)) {
             $query .= " AND o.OrderStatus = :status";
@@ -159,7 +167,6 @@ function getAllOrders($db, $customerId = null)
     $stmt->execute($params);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Lấy items cho mỗi đơn hàng
     foreach ($orders as &$order) {
         $itemsQuery = "SELECT 
                          oi.OrderItemID as order_item_id,
@@ -168,6 +175,7 @@ function getAllOrders($db, $customerId = null)
                          oi.ProductPrice as product_price,
                          oi.Quantity as quantity,
                          oi.Subtotal as subtotal,
+                         oi.Note as item_note,
                          p.ImageURL as image_url 
                        FROM OrderItems oi
                        LEFT JOIN Products p ON oi.ProductID = p.ProductID
@@ -178,13 +186,11 @@ function getAllOrders($db, $customerId = null)
         $itemsStmt->execute();
         $order['items'] = $itemsStmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    unset($order); // Xóa reference
+    unset($order);
 
-    // *** THÊM 3 DÒNG NÀY VÀO ĐỂ CHỐNG CACHE TỪ SERVER ***
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
     header('Pragma: no-cache');
     header('Expires: 0');
-    // *** KẾT THÚC PHẦN THÊM ***
 
     sendJsonResponse(true, [
         "orders" => $orders,
@@ -192,9 +198,6 @@ function getAllOrders($db, $customerId = null)
     ], "Lấy danh sách đơn hàng thành công");
 }
 
-/**
- * Lấy chi tiết một đơn hàng
- */
 function getOrderById($db, $id)
 {
     $queryOrder = "SELECT 
@@ -242,7 +245,7 @@ function getOrderById($db, $id)
                      oi.ProductPrice as product_price,
                      oi.Quantity as quantity,
                      oi.Subtotal as subtotal,
-                     oi.Note as note,
+                     oi.Note as item_note,
                      p.ImageURL as image_url 
                    FROM OrderItems oi
                    LEFT JOIN Products p ON oi.ProductID = p.ProductID
@@ -258,9 +261,6 @@ function getOrderById($db, $id)
     sendJsonResponse(true, $order, "Lấy chi tiết đơn hàng thành công");
 }
 
-/**
- * Cập nhật trạng thái hoặc ghi chú
- */
 function updateOrderData($db, $orderId, $staffUserId)
 {
     $data = json_decode(file_get_contents("php://input"), true);
@@ -282,8 +282,6 @@ function updateOrderData($db, $orderId, $staffUserId)
 
     if (isset($data['order_status'])) {
         $newStatus = sanitizeInput($data['order_status']);
-
-        // *** SỬA LỖI: Thống nhất với Database Schema ***
         $validStatuses = ['pending', 'order_received', 'preparing', 'delivering', 'delivery_successful', 'delivery_failed'];
 
         if (!in_array($newStatus, $validStatuses)) {
@@ -362,25 +360,23 @@ function updateOrderData($db, $orderId, $staffUserId)
             $restoreStmt->execute();
         }
 
-        // CẬP NHẬT NOTE CHO ORDER ITEMS (NẾU CÓ)
-if (!empty($data['items']) && is_array($data['items'])) {
-    $updateItemStmt = $db->prepare("
-        UPDATE OrderItems 
-        SET Note = :note 
-        WHERE OrderItemID = :item_id AND OrderID = :order_id
-    ");
+        if (!empty($data['items']) && is_array($data['items'])) {
+            $updateItemStmt = $db->prepare("
+                UPDATE OrderItems 
+                SET Note = :note 
+                WHERE OrderItemID = :item_id AND OrderID = :order_id
+            ");
 
-    foreach ($data['items'] as $item) {
-        if (isset($item['order_item_id']) && isset($item['note'])) {
-            $updateItemStmt->execute([
-                ':note' => sanitizeInput($item['note']),
-                ':item_id' => $item['order_item_id'],
-                ':order_id' => $orderId
-            ]);
+            foreach ($data['items'] as $item) {
+                if (isset($item['order_item_id']) && isset($item['note'])) {
+                    $updateItemStmt->execute([
+                        ':note' => sanitizeInput($item['note']),
+                        ':item_id' => $item['order_item_id'],
+                        ':order_id' => $orderId
+                    ]);
+                }
+            }
         }
-    }
-}
-
 
         $db->commit();
         sendJsonResponse(true, null, "Cập nhật thành công");
@@ -390,9 +386,6 @@ if (!empty($data['items']) && is_array($data['items'])) {
     }
 }
 
-/**
- * Xóa đơn hàng
- */
 function deleteOrder($db, $orderId)
 {
     $db->beginTransaction();
@@ -425,15 +418,13 @@ function deleteOrder($db, $orderId)
     }
 }
 
-
+// *** HÀM TẠO ĐƠN HÀNG - ĐÃ CHỈNH SỬA HỖ TRỢ THANH TOÁN GIẢ ***
 function createOrder($db)
 {
     try {
-        $currentUser = requireAuth(); // Kiểm tra đăng nhập
-
+        $currentUser = requireAuth();
         $data = json_decode(file_get_contents("php://input"), true);
 
-        // Kiểm tra dữ liệu đầu vào (lấy từ pay.js)
         if (empty($data['items']) || !is_array($data['items']) || count($data['items']) === 0) {
             throw new Exception("Giỏ hàng trống", 400);
         }
@@ -441,24 +432,37 @@ function createOrder($db)
             throw new Exception("Thiếu tổng tiền", 400);
         }
 
-        // Tạo mã đơn hàng (logic này của bạn đã tốt)
-        $orderCode = 'ORD' . date('Ymd') . rand(1000, 9999);
+        $uniquePart = uniqid(mt_rand(), true);
+        $randomHash = strtoupper(substr(md5($uniquePart), 0, 8));
+        $orderCode = 'ORD' . date('Ymd') . $randomHash;
 
         $db->beginTransaction();
 
-        // Insert Orders
+        $orderNote = isset($data['order_note']) ? sanitizeInput($data['order_note']) : null;
+
+        // *** XỬ LÝ THANH TOÁN GIẢ ***
+        $paymentMethod = isset($data['payment_method']) ? sanitizeInput($data['payment_method']) : 'vnpay';
+        $paymentStatus = isset($data['payment_status']) ? sanitizeInput($data['payment_status']) : 'pending';
+        $orderStatus = isset($data['order_status']) ? sanitizeInput($data['order_status']) : 'pending';
+
+        // Nếu là thanh toán giả, tự động cập nhật trạng thái
+        if ($paymentMethod === 'fake') {
+            $paymentStatus = 'completed';
+            $orderStatus = 'order_received';
+        }
+
         $insertOrder = "INSERT INTO Orders 
             (OrderCode, CustomerID, CustomerName, CustomerPhone, CustomerEmail, 
              ShippingAddress, Ward, District, City, 
              TotalAmount, DiscountAmount, ShippingFee, FinalAmount, 
              PaymentMethod, PaymentStatus, OrderStatus, 
-             DeliveryTime, CreatedAt) 
+             DeliveryTime, Note, CreatedAt) 
             VALUES 
             (:order_code, :customer_id, :customer_name, :customer_phone, :customer_email, 
              :shipping_address, :ward, :district, :city, 
              :total_amount, :discount_amount, :shipping_fee, :final_amount, 
-             'vnpay', 'pending', 'pending',  -- SỬA LỖI: Trạng thái phải là 'pending'
-             :delivery_time, NOW())";
+             :payment_method, :payment_status, :order_status,  
+             :delivery_time, :order_note, NOW())";
 
         $stmt = $db->prepare($insertOrder);
         $stmt->execute([
@@ -471,14 +475,15 @@ function createOrder($db)
             ':ward' => sanitizeInput($data['ward'] ?? ''),
             ':district' => sanitizeInput($data['district'] ?? ''),
             ':city' => sanitizeInput($data['city']),
-
-            // Lấy giá trị đã tính toán từ pay.js
             ':total_amount' => $data['total_amount'],
             ':discount_amount' => $data['discount_amount'],
             ':shipping_fee' => $data['shipping_fee'],
             ':final_amount' => $data['final_amount'],
-
-            ':delivery_time' => $data['delivery_time']
+            ':payment_method' => $paymentMethod,
+            ':payment_status' => $paymentStatus,
+            ':order_status' => $orderStatus,
+            ':delivery_time' => $data['delivery_time'],
+            ':order_note' => $orderNote
         ]);
 
         $orderId = $db->lastInsertId();
@@ -503,13 +508,16 @@ function createOrder($db)
                 ':note' => sanitizeInput($item['note'] ?? '')
             ]);
 
-            // SỬA LỖI: KHÔNG TRỪ KHO Ở ĐÂY
-            // Tệp vnpay_ipn.php hoặc hàm updateOrderData sẽ trừ kho
-            // khi trạng thái chuyển sang 'order_received' hoặc 'delivery_successful'
+            // *** TRỪKHO NGAY NẾU LÀ THANH TOÁN GIẢ ***
+            if ($paymentMethod === 'fake') {
+                $updateStock = "UPDATE Products SET Quantity = Quantity - :quantity WHERE ProductID = :product_id";
+                $stockStmt = $db->prepare($updateStock);
+                $stockStmt->execute([
+                    ':quantity' => $item['quantity'],
+                    ':product_id' => $item['product_id']
+                ]);
+            }
         }
-
-        // SỬA LỖI: Tệp api/orders.php của bạn không tự động xóa giỏ hàng
-        // pay.js đã làm việc này (dòng 509)
 
         $db->commit();
 
@@ -517,7 +525,6 @@ function createOrder($db)
             'order_id' => $orderId,
             'order_code' => $orderCode
         ], "Tạo đơn hàng thành công", 201);
-
     } catch (Exception $e) {
         if ($db->inTransaction()) {
             $db->rollBack();
@@ -526,4 +533,26 @@ function createOrder($db)
         $statusCode = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 500;
         sendJsonResponse(false, null, $e->getMessage(), $statusCode);
     }
+}
+
+function checkFirstOrderOfTheYear($db, $userId)
+{
+    $currentYear = date('Y');
+
+    $query = "SELECT COUNT(OrderID) as order_count 
+              FROM Orders 
+              WHERE CustomerID = :user_id 
+                AND OrderStatus = 'delivery_successful'
+                AND YEAR(CreatedAt) = :current_year";
+
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+    $stmt->bindParam(':current_year', $currentYear, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    error_log("CHECK FIRST ORDER - UserID: $userId, Year: $currentYear, Count: " . $result['order_count']);
+
+    return $result['order_count'] == 0;
 }

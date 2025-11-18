@@ -4,8 +4,9 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 /**
- * API Xử lý Khiếu nại (Complaints) - PHIÊN BẢN ĐÃ SỬA
- * SỬA: Bỏ tính năng "Chuyển tiếp Admin" và sửa lỗi HY093
+ * API Xử lý Khiếu nại (Complaints) - ĐÃ THÊM ENDPOINT CHO KHÁCH HÀNG
+ * - Staff: Xem, cập nhật, trả lời khiếu nại
+ * - Customer: Gửi khiếu nại mới
  */
 
 require_once __DIR__ . '/config/database.php';
@@ -31,34 +32,44 @@ if ($apiIndex !== false && isset($pathParts[$apiIndex + 2]) && is_numeric($pathP
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 
 try {
-    $currentUser = requireStaff(); 
-    
     switch ($method) {
         case 'GET':
+            // Chỉ staff mới xem được danh sách/chi tiết khiếu nại
+            $currentUser = requireStaff();
+            
             if ($complaintId) {
                 getComplaintById($db, $complaintId);
             } else {
-                getAllComplaints($db); // Sẽ được gọi khi tải danh sách
+                getAllComplaints($db);
+            }
+            break;
+
+        case 'POST':
+            // PHÂN BIỆT: Tạo mới (customer) vs Reply (staff)
+            if (!$complaintId) {
+                // ✅ KHÁCH HÀNG GỬI KHIẾU NẠI MỚI (không cần staff permission)
+                createComplaint($db);
+            } else {
+                // Staff trả lời khiếu nại
+                $currentUser = requireStaff();
+                if ($action === 'reply') {
+                    sendReplyToCustomer($db, $complaintId, $currentUser['id']);
+                } else {
+                    throw new Exception("Hành động POST không hợp lệ", 400);
+                }
             }
             break;
 
         case 'PUT':
+            // Chỉ staff mới cập nhật được
+            $currentUser = requireStaff();
             if (!$complaintId) throw new Exception("Thiếu ID khiếu nại", 400);
-            // Luôn gọi hàm update (logic "Lưu")
             updateComplaint($db, $complaintId, $currentUser['id']);
             break;
 
-        case 'POST':
-            if (!$complaintId) throw new Exception("Thiếu ID khiếu nại", 400);
-            
-            if ($action === 'reply') {
-                sendReplyToCustomer($db, $complaintId, $currentUser['id']);
-            } else {
-                throw new Exception("Hành động POST không hợp lệ", 400);
-            }
-            break;
-
         case 'DELETE':
+            // Chỉ admin mới xóa được
+            $currentUser = requireAdmin();
             if (!$complaintId) throw new Exception("Thiếu ID khiếu nại", 400);
             deleteComplaint($db, $complaintId);
             break;
@@ -73,7 +84,73 @@ try {
 }
 
 /**
- * Lấy danh sách khiếu nại
+ * ✅ HÀM MỚI: KHÁCH HÀNG GỬI KHIẾU NẠI
+ */
+function createComplaint($db) {
+    // Xác thực người dùng (chỉ cần đăng nhập, không cần staff)
+    $currentUser = requireAuth();
+    
+    // Chỉ cho phép customer gửi khiếu nại
+    if ($currentUser['role'] !== 'customer') {
+        throw new Exception("Chỉ khách hàng mới có thể gửi khiếu nại", 403);
+    }
+    
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    // Validate dữ liệu
+    if (empty($data['order_id']) || empty($data['title']) || empty($data['content'])) {
+        throw new Exception("Thiếu thông tin bắt buộc (order_id, title, content)", 400);
+    }
+    
+    $orderId = (int)$data['order_id'];
+    $title = sanitizeInput($data['title']);
+    $content = sanitizeInput($data['content']);
+    
+    // Kiểm tra đơn hàng có tồn tại và thuộc về khách hàng này không
+    $checkOrderQuery = "SELECT OrderID, OrderCode FROM Orders 
+                        WHERE OrderID = :order_id AND CustomerID = :customer_id";
+    $checkStmt = $db->prepare($checkOrderQuery);
+    $checkStmt->bindParam(':order_id', $orderId, PDO::PARAM_INT);
+    $checkStmt->bindParam(':customer_id', $currentUser['id'], PDO::PARAM_INT);
+    $checkStmt->execute();
+    
+    $order = $checkStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$order) {
+        throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về bạn", 404);
+    }
+    
+    // Tạo mã khiếu nại (COM + timestamp)
+    $complaintCode = 'COM' . date('YmdHis') . rand(100, 999);
+    
+    // Insert khiếu nại vào database
+    $insertQuery = "INSERT INTO Complaints 
+                    (ComplaintCode, OrderID, CustomerID, ComplaintType, Title, Content, 
+                     Status, Priority, CreatedAt, UpdatedAt)
+                    VALUES 
+                    (:code, :order_id, :customer_id, 'product', :title, :content, 
+                     'pending', 'medium', NOW(), NOW())";
+    
+    $insertStmt = $db->prepare($insertQuery);
+    $insertStmt->bindParam(':code', $complaintCode);
+    $insertStmt->bindParam(':order_id', $orderId, PDO::PARAM_INT);
+    $insertStmt->bindParam(':customer_id', $currentUser['id'], PDO::PARAM_INT);
+    $insertStmt->bindParam(':title', $title);
+    $insertStmt->bindParam(':content', $content);
+    
+    if ($insertStmt->execute()) {
+        $newComplaintId = $db->lastInsertId();
+        sendJsonResponse(true, [
+            'complaint_id' => $newComplaintId,
+            'complaint_code' => $complaintCode,
+            'message' => 'Khiếu nại đã được gửi thành công. Chúng tôi sẽ xem xét và phản hồi sớm nhất.'
+        ], "Gửi khiếu nại thành công", 201);
+    } else {
+        throw new Exception("Không thể tạo khiếu nại do lỗi máy chủ", 500);
+    }
+}
+
+/**
+ * Lấy danh sách khiếu nại (CHỈ STAFF)
  */
 function getAllComplaints($db) {
     $search = isset($_GET['search']) ? sanitizeInput($_GET['search']) : null;
@@ -112,7 +189,7 @@ function getAllComplaints($db) {
 }
 
 /**
- * Lấy chi tiết 1 khiếu nại
+ * Lấy chi tiết 1 khiếu nại (CHỈ STAFF)
  */
 function getComplaintById($db, $complaintId) {
     $query = "SELECT 
@@ -169,24 +246,16 @@ function getComplaintById($db, $complaintId) {
     sendJsonResponse(true, $complaint, "Lấy chi tiết khiếu nại thành công");
 }
 
-
 /**
- * Cập nhật (Chỉ còn chức năng "Lưu")
- * *** HÀM ĐÃ ĐƯỢC SỬA (FIX LỖI HY093) ***
+ * Cập nhật khiếu nại (CHỈ STAFF - đã fix lỗi HY093)
  */
 function updateComplaint($db, $complaintId, $staffUserId) {
     $data = json_decode(file_get_contents("php://input"), true);
     if (empty($data)) throw new Exception("Không có dữ liệu cập nhật", 400);
 
     $fieldsToUpdate = [];
-    
-    // *** ĐÂY LÀ DÒNG SỬA LỖI ***
-    // Chỉ khởi tạo $params với :id, không thêm :staff_id
     $params = [':id' => $complaintId];
 
-    // (Đã xóa) Logic "if action == 'forward_admin'"
-    
-    // Chỉ còn logic "Lưu"
     if (isset($data['status'])) {
         $status = sanitizeInput($data['status']);
         $validStatuses = ['pending', 'resolved'];
@@ -194,47 +263,41 @@ function updateComplaint($db, $complaintId, $staffUserId) {
             throw new Exception("Trạng thái không hợp lệ", 400);
         }
         $fieldsToUpdate[] = "Status = :status";
-        $params[':status'] = $status; // Thêm :status vào $params
+        $params[':status'] = $status;
         
         if ($status === 'resolved') $fieldsToUpdate[] = "ResolvedAt = NOW()";
     }
     
     if (isset($data['resolutionText'])) {
         $fieldsToUpdate[] = "Resolution = :resolution";
-        $params[':resolution'] = sanitizeInput($data['resolutionText']); // Thêm :resolution
+        $params[':resolution'] = sanitizeInput($data['resolutionText']);
     }
     
     if (array_key_exists('assignedStaffId', $data)) {
         if ($data['assignedStaffId'] !== null && is_numeric($data['assignedStaffId'])) {
             $fieldsToUpdate[] = "AssignedTo = :assigned_id";
-            $params[':assigned_id'] = $data['assignedStaffId']; // Thêm :assigned_id
+            $params[':assigned_id'] = $data['assignedStaffId'];
         } else {
-            // Nếu $data['assignedStaffId'] là null, ta chỉ thêm "AssignedTo = NULL"
-            // vào câu query, KHÔNG thêm gì vào $params.
-            $fieldsToUpdate[] = "AssignedTo = NULL"; 
+            $fieldsToUpdate[] = "AssignedTo = NULL";
         }
     }
-    
 
     if (empty($fieldsToUpdate)) {
         sendJsonResponse(true, null, "Không có gì thay đổi");
         return;
     }
 
-    // Xây dựng câu query chung
     $fieldsToUpdate[] = "UpdatedAt = NOW()";
     $query = "UPDATE Complaints SET " . implode(", ", $fieldsToUpdate) . " WHERE ComplaintID = :id";
     
     $stmt = $db->prepare($query);
-    
-    // Giờ đây, $params sẽ khớp 100% với các placeholder trong $query
-    $stmt->execute($params); 
+    $stmt->execute($params);
     
     sendJsonResponse(true, null, "Cập nhật khiếu nại thành công");
 }
 
 /**
- * "Trả lời khách hàng" (Gửi email)
+ * Staff trả lời khiếu nại (gửi email cho khách hàng)
  */
 function sendReplyToCustomer($db, $complaintId, $staffUserId) {
     $data = json_decode(file_get_contents("php://input"), true);
@@ -269,9 +332,6 @@ function sendReplyToCustomer($db, $complaintId, $staffUserId) {
                "X-Mailer: PHP/" . phpversion();
 
     $isSent = true; // Giả lập gửi thành công
-    if (!$isSent) {
-        throw new Exception("Lỗi máy chủ: Không thể gửi email", 500);
-    }
 
     $respQuery = "INSERT INTO ComplaintResponses (ComplaintID, UserID, UserType, Content, CreatedAt)
                   VALUES (:complaint_id, :user_id, 'staff', :content, NOW())";
@@ -282,7 +342,6 @@ function sendReplyToCustomer($db, $complaintId, $staffUserId) {
         ':content' => $responseText
     ]);
 
-    // Tự động chuyển trạng thái sang "Đã giải quyết" khi gửi mail
     $updateQuery = "UPDATE Complaints SET Status = 'resolved', Resolution = :content, ResolvedAt = NOW(), UpdatedAt = NOW() 
                     WHERE ComplaintID = :id";
     $updateStmt = $db->prepare($updateQuery);
@@ -295,20 +354,15 @@ function sendReplyToCustomer($db, $complaintId, $staffUserId) {
 }
 
 /**
- * Xóa khiếu nại (Admin only)
+ * Xóa khiếu nại (CHỈ ADMIN)
  */
 function deleteComplaint($db, $complaintId) {
-    // Kiểm tra quyền admin
-    $currentUser = requireAdmin();
-    
     $db->beginTransaction();
     try {
-        // Xóa responses trước
         $stmtResponses = $db->prepare("DELETE FROM ComplaintResponses WHERE ComplaintID = :id");
         $stmtResponses->bindParam(':id', $complaintId, PDO::PARAM_INT);
         $stmtResponses->execute();
 
-        // Xóa complaint
         $stmtComplaint = $db->prepare("DELETE FROM Complaints WHERE ComplaintID = :id");
         $stmtComplaint->bindParam(':id', $complaintId, PDO::PARAM_INT);
         $stmtComplaint->execute();

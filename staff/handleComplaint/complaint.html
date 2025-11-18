@@ -8,8 +8,10 @@
     <!-- Preload fonts để tránh FOUT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&family=Inspiration&display=block" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700&family=Inspiration&display=block"
+        rel="stylesheet">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/animations.css">
@@ -111,13 +113,14 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="assignedStaffIdInput">Nhân viên phụ trách (Nhập ID)</label>
+                            <label for="assignedStaffIdInput">Nhân viên phụ trách (ID)</label>
 
-                            <input type="text" id="assignedStaffIdInput" placeholder="ID nhân viên (ví dụ: 2)" disabled
-                                style="margin-bottom: 10px;">
+                            <input type="text" id="assignedStaffIdInput" placeholder="ID nhân viên" disabled readonly
+                                style="margin-bottom: 10px; background-color: #e9ecef; cursor: not-allowed;">
 
                             <input type="text" id="assignedStaffNameDisplay" placeholder="Hiển thị tên nhân viên"
-                                readonly disabled style="font-weight: 600; color: #555; font-style: normal;">
+                                readonly disabled
+                                style="font-weight: 600; color: #555; font-style: normal; background-color: #e9ecef;">
                         </div>
                         <div class="form-group">
                             <label for="responseText">Nội dung phản hồi</label>

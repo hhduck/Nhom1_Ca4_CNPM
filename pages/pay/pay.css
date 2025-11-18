@@ -237,6 +237,26 @@ textarea {
   border-radius: 6px;
   font-size: 0.95rem;
   transition: border-color 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+textarea {
+  min-height: 80px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+textarea::placeholder {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.note-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 4px;
+  font-style: italic;
 }
 
 input:focus,
@@ -244,6 +264,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: #2b7a0b;
+  box-shadow: 0 0 0 3px rgba(43, 122, 11, 0.1);
 }
 
 .delivery-options {
@@ -419,7 +440,8 @@ textarea:focus {
   display: none;
 }
 
-input.error {
+input.error,
+textarea.error {
   border-color: red;
 }
 
@@ -527,7 +549,3 @@ input.error {
     text-align: center;
   }
 }
-
-/* CÁC PHẦN CSS CHO .payment-modal, .bill-modal-content, v.v.
-   ĐÃ ĐƯỢC XÓA BỎ VÌ CHÚNG TA KHÔNG DÙNG NỮA
-*/

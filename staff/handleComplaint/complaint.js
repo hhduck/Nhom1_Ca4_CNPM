@@ -61,6 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormEventListeners();
     setupUserIconMenu(); // Setup menu user
     setupLogoLogout();   // <<< GỌI HÀM LOGOUT CHO LOGO >>>
+    if (assignedStaffIdInput) {
+        assignedStaffIdInput.disabled = true;
+        assignedStaffIdInput.style.backgroundColor = "#e9ecef"; // Màu xám báo hiệu không sửa được
+    }
+    if (assignedStaffNameDisplay) {
+        assignedStaffNameDisplay.disabled = true;
+    }
 });
 
 // Setup bộ lọc checkboxes
@@ -205,37 +212,94 @@ async function loadComplaintDetails(id) {
 
 // Điền dữ liệu vào form
 function fillFormWithData(data) {
-    console.log("Điền form:", data);
-    const getEl = (id) => document.getElementById(id); // Helper
+    console.log("--- ĐIỀN FORM DỮ LIỆU ---");
+    const getEl = (id) => document.getElementById(id);
+
+    // 1. Điền thông tin khách hàng
     if (getEl('customerName')) getEl('customerName').value = data.customer_name || '';
     if (getEl('phoneNumber')) getEl('phoneNumber').value = data.customer_phone || '';
     if (getEl('complaintDetails')) getEl('complaintDetails').value = data.Content || data.content || '';
+
     if (statusSelect) statusSelect.value = data.Status || 'pending';
     if (responseText) responseText.value = data.Resolution || data.resolutionText || '';
-    if (assignedStaffIdInput) assignedStaffIdInput.value = data.AssignedTo || '';
-    if (assignedStaffNameDisplay) {
-        assignedStaffNameDisplay.value = data.assigned_staff_name || '';
-        assignedStaffNameDisplay.classList.remove('error-placeholder');
-        assignedStaffNameDisplay.placeholder = 'Tên NV';
+
+    // 2. --- XỬ LÝ NHÂN VIÊN (AUTO FILL & KHÓA) ---
+
+    // Lấy thông tin nhân viên ĐANG ĐĂNG NHẬP
+    let currentStaff = null;
+    try {
+        currentStaff = JSON.parse(localStorage.getItem("currentStaff"));
+    } catch (e) { }
+
+    // Reset lỗi hiển thị
+    if (assignedStaffNameDisplay) assignedStaffNameDisplay.classList.remove('error-placeholder');
+
+    // LOGIC QUAN TRỌNG:
+    if (data.AssignedTo) {
+        // TRƯỜNG HỢP 1: Đơn hàng ĐÃ CÓ người phụ trách (Lấy từ DB)
+        // Dù bạn là ai, cũng phải hiện tên người đang phụ trách đơn này
+        if (assignedStaffIdInput) assignedStaffIdInput.value = data.AssignedTo;
+        if (assignedStaffNameDisplay) assignedStaffNameDisplay.value = data.assigned_staff_name || `NV #${data.AssignedTo}`;
+        validatedStaffId = data.AssignedTo;
     }
-    validatedStaffId = data.AssignedTo || null;
+    else {
+        // TRƯỜNG HỢP 2: Đơn hàng CHƯA CÓ người phụ trách -> Tự động gán cho BẠN
+        if (currentStaff) {
+            const myId = currentStaff.id || currentStaff.UserID;
+            const myName = currentStaff.full_name || currentStaff.FullName;
+
+            if (assignedStaffIdInput) assignedStaffIdInput.value = myId;
+            if (assignedStaffNameDisplay) assignedStaffNameDisplay.value = myName;
+
+            validatedStaffId = myId; // Lưu ID để lát gửi lên API
+        }
+    }
+
+    // 3. KHÓA CHẶT Ô NHẬP (Không cho sửa trong mọi trường hợp)
+    if (assignedStaffIdInput) {
+        assignedStaffIdInput.disabled = true; // Vô hiệu hóa nhập liệu
+        assignedStaffIdInput.style.backgroundColor = "#e9ecef"; // Màu nền xám
+    }
+
     updateButtonStates(data.Status || 'pending');
 }
-
 // Xóa trắng form
+// Trong file complaint.js
 function clearForm() {
-    console.log("Xóa form"); currentComplaintId = null;
-    const form = document.getElementById('complaint-form'); if (form) form.reset(); // Dùng reset tiện hơn
+    console.log("--- RESET FORM ---");
+    currentComplaintId = null;
+    const form = document.getElementById('complaint-form');
+    if (form) form.reset();
+
     const customerNameInput = document.getElementById('customerName');
-    if (customerNameInput) customerNameInput.value = '(Chọn khiếu nại)'; // Đặt lại placeholder
-    // Reset assigned staff display
-    validatedStaffId = null;
-    if (assignedStaffNameDisplay) {
-        assignedStaffNameDisplay.value = '';
-        assignedStaffNameDisplay.classList.remove('error-placeholder');
-        assignedStaffNameDisplay.placeholder = 'Tên NV';
+    if (customerNameInput) customerNameInput.value = '';
+
+    // --- TỰ ĐỘNG ĐIỀN BẠN VÀO KHI FORM TRỐNG ---
+    let currentStaff = null;
+    try {
+        currentStaff = JSON.parse(localStorage.getItem("currentStaff"));
+    } catch (e) { }
+
+    if (currentStaff) {
+        const myId = currentStaff.id || currentStaff.UserID;
+        const myName = currentStaff.full_name || currentStaff.FullName;
+
+        if (assignedStaffIdInput) {
+            assignedStaffIdInput.value = myId;
+            assignedStaffIdInput.disabled = true; // KHÓA LUÔN
+            assignedStaffIdInput.style.backgroundColor = "#e9ecef";
+            assignedStaffIdInput.classList.remove('error-placeholder');
+        }
+        if (assignedStaffNameDisplay) {
+            assignedStaffNameDisplay.value = myName;
+            assignedStaffNameDisplay.classList.remove('error-placeholder');
+        }
+        validatedStaffId = myId;
+    } else {
+        validatedStaffId = null;
     }
-    if (statusSelect) statusSelect.value = 'pending'; // Đặt lại status về pending
+
+    if (statusSelect) statusSelect.value = 'pending';
     updateButtonStates(null);
 }
 
@@ -243,14 +307,27 @@ function clearForm() {
 // Cập nhật trạng thái các nút bấm
 function updateButtonStates(currentStatus) {
     const hasComplaint = currentComplaintId !== null;
+    
     if (statusSelect) statusSelect.disabled = !hasComplaint;
     if (responseText) responseText.disabled = !hasComplaint;
-    if (assignedStaffIdInput) assignedStaffIdInput.disabled = !hasComplaint;
+    
+    // --- SỬA ĐOẠN NÀY: LUÔN LUÔN KHÓA Ô ID NHÂN VIÊN ---
+    if (assignedStaffIdInput) {
+        assignedStaffIdInput.disabled = true; // Luôn khóa
+        assignedStaffIdInput.style.backgroundColor = "#e9ecef"; // Màu xám
+    }
+    if (assignedStaffNameDisplay) {
+        assignedStaffNameDisplay.disabled = true; // Luôn khóa ô tên
+    }
+    // ---------------------------------------------------
 
     const btnSave = document.querySelector('.form-actions .btn-primary-green');
     const btnReply = document.querySelector('.form-actions .btn-secondary');
 
-    if (btnSave) { btnSave.disabled = !hasComplaint; btnSave.title = hasComplaint ? "Lưu" : "Chọn khiếu nại"; }
+    if (btnSave) { 
+        btnSave.disabled = !hasComplaint; 
+        btnSave.title = hasComplaint ? "Lưu" : "Chọn khiếu nại"; 
+    }
     if (btnReply) {
         const canReply = hasComplaint && currentStatus !== 'resolved' && currentStatus !== 'closed';
         btnReply.disabled = !canReply;

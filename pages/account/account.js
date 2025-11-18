@@ -49,7 +49,7 @@ function handleUserDisplay() {
   if (loggedInUser && userType) {
     // ---- ĐÃ ĐĂNG NHẬP ----
     console.log(`Đã đăng nhập (account.js) với ${userType}. Hiển thị icon.`);
-    
+
     // Ẩn link Đăng nhập/Đăng ký và dấu |
     login1Link.style.display = 'none';
     login2Link.style.display = 'none';
@@ -101,7 +101,7 @@ function handleUserDisplay() {
   } else {
     // ---- CHƯA ĐĂNG NHẬP ----
     console.log("Chưa đăng nhập (account.js). Hiển thị link login.");
-    
+
     // Hiện link Đăng nhập/Đăng ký và dấu |
     login1Link.style.display = 'inline';
     login2Link.style.display = 'inline';
@@ -112,7 +112,7 @@ function handleUserDisplay() {
     if (userIconLink) {
       userIconLink.style.display = 'none';
     }
-    
+
     userMenu.classList.add("hidden"); // Đảm bảo menu ẩn
     userMenu.style.display = "none";
   }
@@ -208,19 +208,19 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchUserOrders(userId) {
     const headers = getAuthHeaders();
     if (!headers) return [];
-  
+
     try {
       const response = await fetch(`../../api/orders.php?user_id=${userId}`, {
         method: 'GET',
         headers: headers
       });
       const result = await response.json();
-  
+
       if (!response.ok || !result.success) {
         console.error("Phản hồi lỗi từ server:", result);
         throw new Error(result.error_details || `Lỗi khi lấy đơn hàng: ${response.status}`);
       }
-  
+
       // Nếu server trả về data kiểu khác, vẫn có fallback
       return result.data?.orders || [];
 
@@ -230,112 +230,121 @@ document.addEventListener("DOMContentLoaded", () => {
       return [];
     }
   }
-  
-// --- LOGIC XỬ LÝ POPUP KHIẾU NẠI ---
-const complaintOverlay = document.getElementById("complaintOverlay");
-const complaintForm = document.getElementById("complaintForm");
-const closeComplaintPopupBtn = document.getElementById("closeComplaintPopup");
-const complaintOrderIdInput = document.getElementById("complaintOrderId");
-const complaintTitleInput = document.getElementById("complaintTitle");
-const complaintContentInput = document.getElementById("complaintContent");
-const popupContentWrapper = document.querySelector("#complaintOverlay .popup-content-wrapper"); // Lấy wrapper mới
 
-// Mở popup khi click nút "Khiếu Nại"
-orderListContainer.addEventListener('click', (e) => {
-  if (e.target.classList.contains('complaint-btn')) {
-    const orderId = e.target.dataset.orderId;
-    complaintOrderIdInput.value = orderId;
-    
-    complaintOverlay.classList.remove('hidden'); // Hiện overlay
-    // Kích hoạt animation của overlay và content
-    setTimeout(() => { // Đảm bảo trình duyệt render 'display:flex' trước khi thêm 'show'
-      complaintOverlay.classList.add('show');
-      // Đối với content wrapper, vì chúng ta dùng animation keyframes, không cần thêm/xóa class riêng
-      // animation: fadeInUp sẽ tự động chạy khi nó hiển thị và opacity > 0
-    }, 10); 
-  }
-});
+  // --- LOGIC XỬ LÝ POPUP KHIẾU NẠI ---
+  const complaintOverlay = document.getElementById("complaintOverlay");
+  const complaintForm = document.getElementById("complaintForm");
+  const closeComplaintPopupBtn = document.getElementById("closeComplaintPopup");
+  const complaintOrderIdInput = document.getElementById("complaintOrderId");
+  const complaintTitleInput = document.getElementById("complaintTitle");
+  const complaintContentInput = document.getElementById("complaintContent");
+  const popupContentWrapper = document.querySelector("#complaintOverlay .popup-content-wrapper"); // Lấy wrapper mới
 
-// Đóng popup
-function hideComplaintPopup() {
-  // Kích hoạt hiệu ứng đóng
-  complaintOverlay.classList.add('closing'); // Thêm class để kích hoạt fadeOutDown (nếu có)
-  complaintOverlay.classList.remove('show'); // Bắt đầu fade out overlay
+  // Mở popup khi click nút "Khiếu Nại"
+  orderListContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('complaint-btn')) {
+      const orderId = e.target.dataset.orderId;
+      complaintOrderIdInput.value = orderId;
 
-  // Chờ cho animation đóng hoàn tất rồi ẩn hoàn toàn
-  setTimeout(() => {
-    complaintOverlay.classList.add('hidden');
-    complaintOverlay.classList.remove('closing'); // Xóa class closing để chuẩn bị cho lần mở tiếp theo
-    complaintForm.reset(); // Reset form khi đóng
-    // Đặt lại opacity của content wrapper để animation mở lần sau hoạt động
-    if (popupContentWrapper) {
-        popupContentWrapper.style.opacity = 0; 
+      complaintOverlay.classList.remove('hidden'); // Hiện overlay
+      // Kích hoạt animation của overlay và content
+      setTimeout(() => { // Đảm bảo trình duyệt render 'display:flex' trước khi thêm 'show'
+        complaintOverlay.classList.add('show');
+        // Đối với content wrapper, vì chúng ta dùng animation keyframes, không cần thêm/xóa class riêng
+        // animation: fadeInUp sẽ tự động chạy khi nó hiển thị và opacity > 0
+      }, 10);
     }
-  }, 300); // Thời gian này phải khớp với transition/animation duration của overlay và content
-}
+  });
 
-closeComplaintPopupBtn.addEventListener('click', hideComplaintPopup);
-complaintOverlay.addEventListener('click', (e) => {
-  // Chỉ đóng khi click vào nền mờ, không phải click vào nội dung popup
-  if (e.target === complaintOverlay) {
-    hideComplaintPopup();
-  }
-});
+  // Đóng popup
+  function hideComplaintPopup() {
+    // Kích hoạt hiệu ứng đóng
+    complaintOverlay.classList.add('closing'); // Thêm class để kích hoạt fadeOutDown (nếu có)
+    complaintOverlay.classList.remove('show'); // Bắt đầu fade out overlay
 
-// Xử lý gửi form khiếu nại (giữ nguyên logic này)
-complaintForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const order_id = complaintOrderIdInput.value;
-  const title = complaintTitleInput.value.trim();
-  const content = complaintContentInput.value.trim();
-
-  if (!order_id || !title || !content) {
-    alert("Vui lòng điền đầy đủ tiêu đề và nội dung khiếu nại.");
-    return;
-  }
-
-  const headers = getAuthHeaders();
-  if (!headers) return;
-
-  try {
-    const response = await fetch('../../api/complaints.php', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({ order_id, title, content })
-    });
-
-    const result = await response.json();
-
-    if (response.ok && result.success) {
-      alert("✅ Khiếu nại của bạn đã được gửi thành công!");
-      hideComplaintPopup();
-      if (userData && userData.id) {
-        const userOrders = await fetchUserOrders(userData.id);
-        displayOrders(userOrders);
+    // Chờ cho animation đóng hoàn tất rồi ẩn hoàn toàn
+    setTimeout(() => {
+      complaintOverlay.classList.add('hidden');
+      complaintOverlay.classList.remove('closing'); // Xóa class closing để chuẩn bị cho lần mở tiếp theo
+      complaintForm.reset(); // Reset form khi đóng
+      // Đặt lại opacity của content wrapper để animation mở lần sau hoạt động
+      if (popupContentWrapper) {
+        popupContentWrapper.style.opacity = 0;
       }
-    } else {
-      throw new Error(result.message || "Lỗi khi gửi khiếu nại.");
-    }
-  } catch (error) {
-    console.error("Lỗi gửi khiếu nại:", error);
-    alert("❌ Đã xảy ra lỗi khi gửi khiếu nại: " + error.message);
+    }, 300); // Thời gian này phải khớp với transition/animation duration của overlay và content
   }
-});
-  // --- HÀM HIỂN THỊ ĐƠN HÀNG (DẠNG BẢNG) ---
+
+  closeComplaintPopupBtn.addEventListener('click', hideComplaintPopup);
+  complaintOverlay.addEventListener('click', (e) => {
+    // Chỉ đóng khi click vào nền mờ, không phải click vào nội dung popup
+    if (e.target === complaintOverlay) {
+      hideComplaintPopup();
+    }
+  });
+
+  // Xử lý gửi form khiếu nại (giữ nguyên logic này)
+  complaintForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const order_id = complaintOrderIdInput.value;
+    const title = complaintTitleInput.value.trim();
+    const content = complaintContentInput.value.trim();
+
+    if (!order_id || !title || !content) {
+      alert("Vui lòng điền đầy đủ tiêu đề và nội dung khiếu nại.");
+      return;
+    }
+
+    const headers = getAuthHeaders();
+    if (!headers) return;
+
+    try {
+      const response = await fetch('../../api/complaints.php', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ order_id, title, content })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert("✅ Khiếu nại của bạn đã được gửi thành công!");
+        hideComplaintPopup();
+        if (userData && userData.id) {
+          const userOrders = await fetchUserOrders(userData.id);
+          displayOrders(userOrders);
+        }
+      } else {
+        throw new Error(result.message || "Lỗi khi gửi khiếu nại.");
+      }
+    } catch (error) {
+      console.error("Lỗi gửi khiếu nại:", error);
+      alert("❌ Đã xảy ra lỗi khi gửi khiếu nại: " + error.message);
+    }
+  });
+
+  // --- HÀM HIỂN THỊ ĐƠN HÀNG (ĐÃ SỬA HOÀN CHỈNH) ---
   function displayOrders(orders) {
+    // 1. Lấy container chứa danh sách đơn hàng
+    const orderListContainer = document.getElementById("orderList");
+    if (!orderListContainer) return;
+
+    // 2. Xử lý dữ liệu đầu vào (đảm bảo là mảng)
     if (!Array.isArray(orders)) orders = [];
-    orderListContainer.innerHTML = ''; // Xóa các đơn hàng cũ
-    
+    orderListContainer.innerHTML = ''; // Xóa nội dung cũ
+
+    // 3. Nếu không có đơn hàng nào -> Hiện thông báo
     if (orders.length === 0) {
       orderListContainer.innerHTML = '<p class="text-center text-gray-500" style="padding: 20px;">Bạn chưa có đơn hàng nào.</p>';
       return;
     }
 
-    // Tạo bảng HTML
+    // 4. Tạo khung bảng
     const table = document.createElement('table');
     table.className = 'orders-table';
-    table.innerHTML = `
+
+    // 5. Tạo phần đầu bảng (Header)
+    let tableContent = `
       <thead>
         <tr>
           <th>Mã đơn hàng</th>
@@ -347,70 +356,112 @@ complaintForm.addEventListener('submit', async (e) => {
           <th>Khiếu nại</th>
         </tr>
       </thead>
-      <tbody>
-        ${orders.map(order => {
-          const orderDate = new Date(order.created_at);
-          const formattedDate = orderDate.toLocaleDateString('vi-VN') + ' ' + orderDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-          
-          // Hiển thị danh sách sản phẩm từ items
-          let productsList = 'Chưa có sản phẩm';
-          if (order.items && order.items.length > 0) {
-            productsList = order.items.map(item => 
-              `${item.product_name} (x${item.quantity})`
-            ).join('<br>');
-          }
-          
-          const totalAmount = new Intl.NumberFormat('vi-VN', { 
-            style: 'currency', 
-            currency: 'VND' 
-          }).format(order.final_amount);
-          
-          const paymentMethodText = order.payment_method === 'vnpay' ? 'Ví điện tử VNPay' : order.payment_method || 'VNPay';
-          
-          return `
+      <tbody>`;
+
+    // 6. Duyệt qua từng đơn hàng để tạo dòng (Body)
+    // Sử dụng hàm map() để biến mỗi đơn hàng thành một chuỗi HTML <tr>
+    const rows = orders.map(order => {
+      // a) Xử lý ngày tháng
+      const dateStr = order.created_at || order.CreatedAt; // Lấy ngày (chấp nhận cả chữ hoa/thường)
+      const orderDate = dateStr ? new Date(dateStr) : new Date();
+      const formattedDate = orderDate.toLocaleDateString('vi-VN') + ' ' + orderDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+      // b) Xử lý danh sách sản phẩm
+      let productsList = 'Chưa có sản phẩm';
+      if (order.items && order.items.length > 0) {
+        productsList = order.items.map(item =>
+          `${item.product_name} (x${item.quantity})`
+        ).join('<br>');
+      }
+
+      // c) Xử lý tổng tiền
+      const amount = order.final_amount || order.FinalAmount || 0;
+      const totalAmount = new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+      }).format(amount);
+
+      // d) Xử lý trạng thái (màu sắc và chữ)
+      const statusKey = order.order_status || order.OrderStatus || 'pending';
+      const statusClass = getOrderStatusClass(statusKey); // Hàm helper có sẵn trong file của bạn
+      const statusText = getVietnameseStatus(statusKey);  // Hàm helper có sẵn trong file của bạn
+
+      // Trong hàm displayOrders của account.js
+
+      // e) --- LOGIC QUAN TRỌNG: CHỌN NÚT KHIẾU NẠI ---
+      let actionButton = '';
+
+      if (order.complaint_id) {
+        // ==> ĐÃ CÓ KHIẾU NẠI -> HIỆN NÚT "XEM"
+
+        const complaintDataObj = {
+          id: order.complaint_id,
+          title: order.complaint_title,
+          content: order.complaint_content,
+          status: order.complaint_status,
+          // Lấy trường resolution (đảm bảo API trả về đúng tên này)
+          resolution: order.complaint_resolution || ''
+        };
+
+        // --- SỬA ĐỔI QUAN TRỌNG: Dùng encodeURIComponent để an toàn tuyệt đối ---
+        // Không dùng JSON.stringify trực tiếp vào HTML vì dễ lỗi dấu ngoặc kép/xuống dòng
+        const safeDataStr = encodeURIComponent(JSON.stringify(complaintDataObj));
+
+        actionButton = `<button class="view-complaint-btn" data-complaint="${safeDataStr}">Xem Khiếu Nại</button>`;
+      } else {
+        // ==> CHƯA CÓ -> HIỆN NÚT "GỬI"
+        const orderID = order.OrderID || order.order_id || order.id;
+        actionButton = `<button class="complaint-btn" data-order-id="${orderID}">Khiếu Nại</button>`;
+      }
+      // Trả về HTML của một dòng trọn vẹn
+      return `
             <tr>
-              <td><strong>${order.order_code}</strong></td>
+              <td><strong>${order.order_code || order.OrderCode}</strong></td>
               <td>${formattedDate}</td>
               <td>${productsList}</td>
               <td><strong style="color: #2d5016;">${totalAmount}</strong></td>
-              <td><span class="status-badge ${getOrderStatusClass(order.order_status)}">${getVietnameseStatus(order.order_status)}</span></td>
-              <td>${order.note || ''}</td>
+              <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+              <td>${order.note || order.Note || ''}</td>
               <td>
-      <button class="complaint-btn" data-order-id="${order.id}">Khiếu Nại</button>
-    </td>
+                  ${actionButton}
+              </td>
             </tr>
-          `;
-        }).join('')}
-      </tbody>
-    `;
-    
+        `;
+    });
+
+    // 7. Nối tất cả các dòng lại và đóng thẻ tbody
+    tableContent += rows.join('');
+    tableContent += `</tbody>`;
+
+    // 8. Đưa vào bảng và hiển thị ra màn hình
+    table.innerHTML = tableContent;
     orderListContainer.appendChild(table);
   }
 
   // Hàm giúp hiển thị trạng thái tiếng Việt
   function getVietnameseStatus(status) {
-      switch(status) {
-          case 'pending': return 'Đang chờ xác nhận';
-          case 'confirmed': return 'Đã xác nhận';
-          case 'preparing': return 'Đang chuẩn bị hàng';
-          case 'shipping': return 'Đang giao hàng';
-          case 'completed': return 'Đã hoàn thành';
-          case 'cancelled': return 'Đã hủy';
-          default: return status;
-      }
+    switch (status) {
+      case 'pending': return 'Đang chờ xác nhận';
+      case 'confirmed': return 'Đã xác nhận';
+      case 'preparing': return 'Đang chuẩn bị hàng';
+      case 'shipping': return 'Đang giao hàng';
+      case 'completed': return 'Đã hoàn thành';
+      case 'cancelled': return 'Đã hủy';
+      default: return status;
+    }
   }
 
   // Hàm giúp thêm class CSS cho trạng thái
   function getOrderStatusClass(status) {
-      switch(status) {
-          case 'pending': return 'bg-yellow-100 text-yellow-800';
-          case 'confirmed': return 'bg-blue-100 text-blue-800';
-          case 'preparing': return 'bg-indigo-100 text-indigo-800';
-          case 'shipping': return 'bg-purple-100 text-purple-800';
-          case 'completed': return 'bg-green-100 text-green-800';
-          case 'cancelled': return 'bg-red-100 text-red-800';
-          default: return 'bg-gray-100 text-gray-800';
-      }
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed': return 'bg-blue-100 text-blue-800';
+      case 'preparing': return 'bg-indigo-100 text-indigo-800';
+      case 'shipping': return 'bg-purple-100 text-purple-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   }
 
 
@@ -463,20 +514,20 @@ complaintForm.addEventListener('submit', async (e) => {
             headers: headers,
             body: JSON.stringify(dataToUpdate)
           });
-        
+
           const result = await response.json(); // ✅ thêm dòng này
           if (!response.ok || !result.success) {
             throw new Error(result.message || `Lỗi cập nhật: ${response.status}`);
           }
-        
+
           infoUpdated = true;
-        
+
           const updatedUser = result.data?.user || result.data; // ✅ giờ mới có result
-        
+
           // Lưu lại vào localStorage
           localStorage.setItem("currentUser", JSON.stringify(updatedUser));
           userData = updatedUser;
-        
+
           // Cập nhật giao diện
           customerNameDisplay.textContent = updatedUser?.full_name || "(Chưa có tên)";
         } catch (error) {
@@ -486,7 +537,7 @@ complaintForm.addEventListener('submit', async (e) => {
           saveButton.textContent = "Lưu thay đổi";
           return;
         }
-        
+
       }
 
       // b) Đổi mật khẩu
@@ -520,7 +571,7 @@ complaintForm.addEventListener('submit', async (e) => {
               body: JSON.stringify(passwordData)
             });
             const resultChangePassword = await responseChangePassword.json();
-            
+
             if (!responseChangePassword.ok || !resultChangePassword.success) {
               throw new Error(resultChangePassword.message || `Lỗi ${responseChangePassword.status}`);
             }
@@ -560,17 +611,17 @@ complaintForm.addEventListener('submit', async (e) => {
         // ✅ Đúng:
         document.getElementById("personalInfoSection").classList.add("hidden");
         document.getElementById("orderHistorySection").classList.add("hidden");
-    
+
         // Xóa active
         sidebarItems.forEach(el => el.classList.remove('active'));
         item.classList.add('active');
-    
+
         const actionId = item.id;
         switch (actionId) {
           case "infoBtn":
             document.getElementById("personalInfoSection").classList.remove("hidden");
             break;
-    
+
           case "ordersBtn":
             document.getElementById("orderHistorySection").classList.remove("hidden");
             if (userData && userData.id) {
@@ -578,28 +629,28 @@ complaintForm.addEventListener('submit', async (e) => {
               displayOrders(userOrders);
             }
             break;
-    
+
           case "logoutBtn":
             if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) logoutAndRedirect();
             break;
-    
+
           default:
             document.getElementById("personalInfoSection").classList.remove("hidden");
             break;
         }
-    
+
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
     });
-    
-    
-    
+
+
+
 
     // Mặc định kích hoạt mục "Thông tin cá nhân" khi tải trang
     const initialActiveItem = document.getElementById("infoBtn");
     if (initialActiveItem) {
-        initialActiveItem.classList.add('active');
-        document.getElementById("personalInfoSection").classList.remove("hidden");
+      initialActiveItem.classList.add('active');
+      document.getElementById("personalInfoSection").classList.remove("hidden");
     }
   }
 
@@ -673,7 +724,7 @@ function initProductFilter() {
         </div>`;
       grid.insertAdjacentHTML("beforeend", card);
     });
-    
+
     // Re-bind navigation sau khi render
     bindProductCardNavigation();
   }
@@ -728,7 +779,7 @@ function showPopup(products) {
   }
 
   overlay.classList.remove("hidden");
-  
+
   // Re-bind navigation sau khi render popup
   bindProductCardNavigation();
 }
@@ -783,7 +834,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchIcon = document.querySelector(".nav-search");
   const searchBar = document.querySelector(".search-bar");
   const searchInput = document.getElementById("searchInput");
-  
+
   // Reset popup và thanh tìm kiếm khi load trang mới
   if (overlay) {
     overlay.classList.add("hidden");
@@ -812,7 +863,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== Hiển thị popup sản phẩm =====
   function showPopup(products) {
     if (!overlay || !popupProducts) return;
-    
+
     popupProducts.innerHTML = "";
 
     if (!products || !products.length) {
@@ -835,7 +886,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
     overlay.classList.remove("hidden");
-    
+
     // Đảm bảo popup luôn căn giữa
     const popupContainer = document.querySelector(".popup-container");
     if (popupContainer) {
@@ -844,7 +895,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===== Đóng popup =====
-  function hidePopup() { 
+  function hidePopup() {
     overlay.classList.add("hidden");
     // Ẩn thanh tìm kiếm khi đóng popup
     if (searchBar) {
@@ -856,7 +907,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closePopupBtn.addEventListener("click", hidePopup);
   }
   overlay.addEventListener("click", (e) => { if (e.target === overlay) hidePopup(); });
-  
+
   // Đóng popup khi click vào link sản phẩm trong popup
   document.addEventListener("click", (e) => {
     if (e.target.closest(".product-item")) {
@@ -869,7 +920,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Lấy lại searchInput để đảm bảo có giá trị mới nhất
     const currentSearchInput = document.getElementById("searchInput");
     const keyword = currentSearchInput ? currentSearchInput.value.trim() : "";
-    
+
     if (!keyword) {
       alert("Vui lòng nhập từ khóa tìm kiếm");
       return;
@@ -883,7 +934,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const data = await res.json();
       console.log("Search response:", data); // Debug log
-      
+
       // Xử lý response từ products_c.php (format: {success: true, products: [...]})
       let products = [];
       if (data.success && data.products) {
@@ -893,7 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (data.data && data.data.products) {
         products = data.data.products;
       }
-      
+
       // Chuyển đổi snake_case thành PascalCase nếu cần
       products = products.map(p => ({
         ProductID: p.ProductID || p.product_id,
@@ -901,7 +952,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Price: p.Price || p.price,
         ImageURL: p.ImageURL || p.image_url
       }));
-      
+
       showPopup(products);
     } catch (err) {
       console.error("❌ Lỗi tìm kiếm:", err);
@@ -1055,4 +1106,100 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Gọi fetchAndRenderCategories để load danh mục vào select + sidebar
   fetchAndRenderCategories();
+});
+
+// =========================================================
+// LOGIC XỬ LÝ POPUP XEM CHI TIẾT KHIẾU NẠI (ĐÃ SỬA LỖI HIỂN THỊ)
+// =========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const viewOverlay = document.getElementById("viewComplaintOverlay");
+  const closeViewBtn = document.getElementById("closeViewComplaintPopup");
+  const orderListContainer = document.getElementById("orderList");
+
+  // Hàm đóng popup
+  const closeViewPopup = () => {
+    if (viewOverlay) {
+      viewOverlay.classList.remove('show');
+      setTimeout(() => {
+        viewOverlay.classList.add('hidden');
+      }, 300);
+    }
+  };
+
+  // 1. Bắt sự kiện Click
+  if (orderListContainer) {
+    orderListContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('view-complaint-btn')) {
+        e.preventDefault();
+
+        try {
+          // --- GIẢI MÃ DỮ LIỆU AN TOÀN ---
+          const rawData = e.target.dataset.complaint;
+          // Dùng decodeURIComponent để giải mã chuỗi đã mã hóa ở trên
+          const data = JSON.parse(decodeURIComponent(rawData));
+
+          console.log("Dữ liệu khiếu nại xem được:", data); // Debug xem có resolution không
+
+          // --- ĐIỀN DỮ LIỆU ---
+          const titleEl = document.getElementById("viewComplaintTitle");
+          if (titleEl) titleEl.textContent = data.title || '(Không có tiêu đề)';
+
+          const contentEl = document.getElementById("viewComplaintContent");
+          if (contentEl) contentEl.textContent = data.content || '';
+
+          // Trạng thái
+          const statusEl = document.getElementById("viewComplaintStatus");
+          if (statusEl) {
+            const statusMap = {
+              'pending': 'Đang chờ xử lý',
+              'processing': 'Đang xử lý',
+              'resolved': 'Đã giải quyết',
+              'rejected': 'Đã từ chối',
+              'closed': 'Đã đóng'
+            };
+            statusEl.textContent = statusMap[data.status] || data.status;
+            statusEl.className = '';
+            statusEl.classList.add('status-badge'); // Thêm class gốc
+            statusEl.classList.add('status-' + (data.status || 'unknown'));
+          }
+
+          // --- XỬ LÝ PHẦN PHẢN HỒI (RESOLUTION) ---
+          const resEl = document.getElementById("viewComplaintResolution");
+          if (resEl) {
+            // Kiểm tra kỹ dữ liệu resolution
+            if (data.resolution && data.resolution.trim() !== "") {
+              // Thay thế xuống dòng \n thành thẻ <br> để hiển thị đẹp
+              resEl.innerHTML = data.resolution.replace(/\n/g, '<br>');
+              resEl.style.fontStyle = 'normal';
+              resEl.style.color = '#2d5016'; // Màu xanh đậm
+            } else {
+              resEl.textContent = 'Cửa hàng đang xem xét và sẽ phản hồi sớm nhất.';
+              resEl.style.fontStyle = 'italic';
+              resEl.style.color = '#888'; // Màu xám nhạt
+            }
+          }
+
+          // Hiện Popup
+          if (viewOverlay) {
+            viewOverlay.classList.remove('hidden');
+            setTimeout(() => {
+              viewOverlay.classList.add('show');
+            }, 10);
+          }
+
+        } catch (error) {
+          console.error("Lỗi hiển thị popup:", error);
+          alert("Có lỗi khi mở chi tiết. Vui lòng thử lại.");
+        }
+      }
+    });
+  }
+
+  // Sự kiện đóng
+  if (closeViewBtn) closeViewBtn.addEventListener('click', closeViewPopup);
+  if (viewOverlay) {
+    viewOverlay.addEventListener('click', (e) => {
+      if (e.target === viewOverlay) closeViewPopup();
+    });
+  }
 });

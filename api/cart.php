@@ -1,4 +1,15 @@
 <?php
+
+header("Access-Control-Allow-Origin: http://localhost"); // Chỉ cho phép localhost
+header("Access-Control-Allow-Credentials: true"); // Cho phép gửi token
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit();
+}
+
 /**
  * Cart API
  * LA CUISINE NGỌT
