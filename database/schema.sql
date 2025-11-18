@@ -421,7 +421,7 @@ INSERT INTO Promotions
 VALUES
   ('GIAM10TRON15', 'Giảm 10% cho đơn trên 1.500.000đ', 
    'Giảm 10% giá trị đơn hàng từ 1.500.000đ.', 
-   'percent', 10, 1500000, 200, '2025-11-01 00:00:00', '2025-11-15 23:59:59', 
+   'percent', 10, 1500000, 200, '2025-11-01 00:00:00', '2028-12-31 23:59:59', 
    'active', 'all', 1, 'assets/images/buy-1-get-1.jpg')
 ON DUPLICATE KEY UPDATE
     PromotionName = VALUES(PromotionName),
