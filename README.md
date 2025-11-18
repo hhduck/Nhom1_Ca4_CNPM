@@ -230,7 +230,7 @@ docker-compose up -d --build
 2. **Copy project vào thư mục htdocs:**
 ```bash
    # Windows
-   C:\xampp\htdocs\Nhom1_Ca4_CNPM\
+   ...\xampp\htdocs\Nhom1_Ca4_CNPM\
    ```
 
 3. **Khởi động XAMPP:**
@@ -260,10 +260,10 @@ docker-compose up -d --build
 
 ```bash
 # Mở CMD/PowerShell
-cd C:\xampp\mysql\bin
+cd ...\xampp\mysql\bin
 
 # Import database
-mysql -u root -p < "D:\Hoc_tap\Lap_trinh_PHP\htdocs\Nhom1_Ca4_CNPM\database\schema.sql"
+mysql -u root -p < "...\htdocs\Nhom1_Ca4_CNPM\database\schema.sql"
 
 # Nhấn Enter nếu không có password
 ```
