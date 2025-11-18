@@ -231,7 +231,97 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   
+// --- LOGIC XỬ LÝ POPUP KHIẾU NẠI ---
+const complaintOverlay = document.getElementById("complaintOverlay");
+const complaintForm = document.getElementById("complaintForm");
+const closeComplaintPopupBtn = document.getElementById("closeComplaintPopup");
+const complaintOrderIdInput = document.getElementById("complaintOrderId");
+const complaintTitleInput = document.getElementById("complaintTitle");
+const complaintContentInput = document.getElementById("complaintContent");
+const popupContentWrapper = document.querySelector("#complaintOverlay .popup-content-wrapper"); // Lấy wrapper mới
 
+// Mở popup khi click nút "Khiếu Nại"
+orderListContainer.addEventListener('click', (e) => {
+  if (e.target.classList.contains('complaint-btn')) {
+    const orderId = e.target.dataset.orderId;
+    complaintOrderIdInput.value = orderId;
+    
+    complaintOverlay.classList.remove('hidden'); // Hiện overlay
+    // Kích hoạt animation của overlay và content
+    setTimeout(() => { // Đảm bảo trình duyệt render 'display:flex' trước khi thêm 'show'
+      complaintOverlay.classList.add('show');
+      // Đối với content wrapper, vì chúng ta dùng animation keyframes, không cần thêm/xóa class riêng
+      // animation: fadeInUp sẽ tự động chạy khi nó hiển thị và opacity > 0
+    }, 10); 
+  }
+});
+
+// Đóng popup
+function hideComplaintPopup() {
+  // Kích hoạt hiệu ứng đóng
+  complaintOverlay.classList.add('closing'); // Thêm class để kích hoạt fadeOutDown (nếu có)
+  complaintOverlay.classList.remove('show'); // Bắt đầu fade out overlay
+
+  // Chờ cho animation đóng hoàn tất rồi ẩn hoàn toàn
+  setTimeout(() => {
+    complaintOverlay.classList.add('hidden');
+    complaintOverlay.classList.remove('closing'); // Xóa class closing để chuẩn bị cho lần mở tiếp theo
+    complaintForm.reset(); // Reset form khi đóng
+    // Đặt lại opacity của content wrapper để animation mở lần sau hoạt động
+    if (popupContentWrapper) {
+        popupContentWrapper.style.opacity = 0; 
+    }
+  }, 300); // Thời gian này phải khớp với transition/animation duration của overlay và content
+}
+
+closeComplaintPopupBtn.addEventListener('click', hideComplaintPopup);
+complaintOverlay.addEventListener('click', (e) => {
+  // Chỉ đóng khi click vào nền mờ, không phải click vào nội dung popup
+  if (e.target === complaintOverlay) {
+    hideComplaintPopup();
+  }
+});
+
+// Xử lý gửi form khiếu nại (giữ nguyên logic này)
+complaintForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const order_id = complaintOrderIdInput.value;
+  const title = complaintTitleInput.value.trim();
+  const content = complaintContentInput.value.trim();
+
+  if (!order_id || !title || !content) {
+    alert("Vui lòng điền đầy đủ tiêu đề và nội dung khiếu nại.");
+    return;
+  }
+
+  const headers = getAuthHeaders();
+  if (!headers) return;
+
+  try {
+    const response = await fetch('../../api/complaints.php', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ order_id, title, content })
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
+      alert("✅ Khiếu nại của bạn đã được gửi thành công!");
+      hideComplaintPopup();
+      if (userData && userData.id) {
+        const userOrders = await fetchUserOrders(userData.id);
+        displayOrders(userOrders);
+      }
+    } else {
+      throw new Error(result.message || "Lỗi khi gửi khiếu nại.");
+    }
+  } catch (error) {
+    console.error("Lỗi gửi khiếu nại:", error);
+    alert("❌ Đã xảy ra lỗi khi gửi khiếu nại: " + error.message);
+  }
+});
   // --- HÀM HIỂN THỊ ĐƠN HÀNG (DẠNG BẢNG) ---
   function displayOrders(orders) {
     if (!Array.isArray(orders)) orders = [];
@@ -252,8 +342,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <th>Ngày đặt</th>
           <th>Sản phẩm</th>
           <th>Tổng tiền</th>
-          <th>Phương thức thanh toán</th>
           <th>Trạng thái</th>
+          <th>Ghi chú</th>
+          <th>Khiếu nại</th>
         </tr>
       </thead>
       <tbody>
@@ -282,8 +373,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <td>${formattedDate}</td>
               <td>${productsList}</td>
               <td><strong style="color: #2d5016;">${totalAmount}</strong></td>
-              <td>${paymentMethodText}</td>
               <td><span class="status-badge ${getOrderStatusClass(order.order_status)}">${getVietnameseStatus(order.order_status)}</span></td>
+              <td>${order.note || ''}</td>
+              <td>
+      <button class="complaint-btn" data-order-id="${order.id}">Khiếu Nại</button>
+    </td>
             </tr>
           `;
         }).join('')}
