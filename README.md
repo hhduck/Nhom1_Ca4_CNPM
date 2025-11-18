@@ -137,7 +137,7 @@ Nhom1_Ca4_CNPM/
 │   ├── pay/
 │   │   ├── pay.css                 # 🎨 Thanh toán
 │   │   ├── pay.html                # 💳 Chọn phương thức
-│   │   └── pay.js                  # 🧾 Tạo đơn + gọi VNPay
+│   │   └── pay.js                  # 🧾 Tạo đơn + giả lập thanh toán
 │   ├── product/
 │   │   ├── product.css             # 🎨 Chi tiết SP
 │   │   ├── product.html            # 📄 Product detail
@@ -344,7 +344,7 @@ Hoặc: customer02
 - ✅ **Ẩn "THÔNG TIN SẢN PHẨM"** nếu sản phẩm là "Phụ kiện"
 - ✅ **Giỏ hàng** thông minh (thêm, sửa, xóa)
 - ✅ **Đặt hàng** với form đầy đủ thông tin
-- ✅ **Thanh toán online** qua VNPay (tích hợp đầy đủ IPN)
+- ✅ **Thanh toán** - Tạo đơn hàng với phương thức thanh toán (COD, VNPay, v.v.) - phiên bản giả lập
 - ✅ **Theo dõi đơn hàng** của mình (xem dạng bảng với chi tiết sản phẩm)
 - ✅ **Xem khuyến mãi** trên trang home
 - ✅ **Cập nhật thông tin** cá nhân (tên, số điện thoại, địa chỉ)
@@ -533,13 +533,6 @@ GET    /api/search.php?keyword=staff&type=users   - Tìm kiếm users (Admin)
 GET    /api/staff_profile.php/{id}      - Lấy thông tin nhân viên (Owner/Staff)
 PUT    /api/staff_profile.php/{id}      - Cập nhật thông tin nhân viên (Owner/Staff)
 POST   /api/staff_profile.php           - Đổi mật khẩu nhân viên (Owner/Staff)
-```
-
-### 💳 VNPay Payment
-```
-POST   /api/vnpay_checkout.php          - Tạo URL thanh toán VNPay
-POST   /api/vnpay_ipn.php               - Xác nhận thanh toán VNPay (IPN)
-GET    /api/vnpay_config.php            - Cấu hình VNPay (secure_hash, etc.)
 ```
 
 ---
