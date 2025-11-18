@@ -362,6 +362,26 @@ function updateOrderData($db, $orderId, $staffUserId)
             $restoreStmt->execute();
         }
 
+        // CẬP NHẬT NOTE CHO ORDER ITEMS (NẾU CÓ)
+if (!empty($data['items']) && is_array($data['items'])) {
+    $updateItemStmt = $db->prepare("
+        UPDATE OrderItems 
+        SET Note = :note 
+        WHERE OrderItemID = :item_id AND OrderID = :order_id
+    ");
+
+    foreach ($data['items'] as $item) {
+        if (isset($item['order_item_id']) && isset($item['note'])) {
+            $updateItemStmt->execute([
+                ':note' => sanitizeInput($item['note']),
+                ':item_id' => $item['order_item_id'],
+                ':order_id' => $orderId
+            ]);
+        }
+    }
+}
+
+
         $db->commit();
         sendJsonResponse(true, null, "Cập nhật thành công");
     } catch (Exception $e) {
