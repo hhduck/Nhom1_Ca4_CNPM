@@ -3,6 +3,46 @@
  * Sử dụng chung cho tất cả các trang
  */
 
+// Helper: xác định đường dẫn tương đối đến trang login từ vị trí hiện tại
+function getLoginPagePath() {
+    const pathname = window.location.pathname.replace(/\\/g, '/');
+    
+    if (pathname.includes('/staff/')) {
+        const afterStaff = pathname.split('/staff/')[1] || '';
+        const segments = afterStaff.split('/').filter(Boolean);
+        const dirCount = Math.max(segments.length - 1, 0);
+        return '../'.repeat(dirCount + 1) + 'pages/login/login.html';
+    }
+    
+    if (pathname.includes('/admin/')) {
+        const afterAdmin = pathname.split('/admin/')[1] || '';
+        const segments = afterAdmin.split('/').filter(Boolean);
+        const dirCount = Math.max(segments.length - 1, 0);
+        return '../'.repeat(dirCount + 1) + 'pages/login/login.html';
+    }
+    
+    if (pathname.includes('/pages/')) {
+        const afterPages = pathname.split('/pages/')[1] || '';
+        const segments = afterPages.split('/').filter(Boolean);
+        const dirCount = Math.max(segments.length - 1, 0);
+        return '../'.repeat(dirCount) + 'login/login.html';
+    }
+    
+    // Fallback: từ root dự án
+    return 'pages/login/login.html';
+}
+
+function resolveRedirectUrl(path) {
+    if (!path) return path;
+    if (/^(https?:|file:)/i.test(path)) return path;
+    try {
+        return new URL(path, window.location.href).href;
+    } catch (error) {
+        console.warn('Không thể resolve URL, dùng path gốc:', path, error);
+        return path;
+    }
+}
+
 // Function để check user status
 async function checkUserStatus() {
     const currentUserData = localStorage.getItem('currentUser');
@@ -87,10 +127,7 @@ async function checkUserStatus() {
         if (!response.ok) {
             // Nếu 401/403, logout ngay
             if (response.status === 401 || response.status === 403) {
-                let loginPath = '../pages/login/login.html';
-                if (window.location.pathname.includes('/staff/')) {
-                    loginPath = '../../pages/login/login.html';
-                }
+                const loginPath = getLoginPagePath();
                 performLogout(`${loginPath}?message=banned`);
                 return;
             }
@@ -105,10 +142,7 @@ async function checkUserStatus() {
             // Nếu status không phải 'active', logout
             if (user.status !== 'active') {
                 alert('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ.');
-                let loginPath = '../pages/login/login.html';
-                if (window.location.pathname.includes('/staff/')) {
-                    loginPath = '../../pages/login/login.html';
-                }
+                const loginPath = getLoginPagePath();
                 performLogout(`${loginPath}?message=banned`);
             }
         }
@@ -119,15 +153,9 @@ async function checkUserStatus() {
 }
 
 // Function logout chung
-function performLogout(redirectUrl = '../pages/login/login.html') {
-    // Tự động điều chỉnh đường dẫn nếu đang ở trong staff/
-    if (!redirectUrl.startsWith('http') && window.location.pathname.includes('/staff/')) {
-        if (redirectUrl.startsWith('../')) {
-            redirectUrl = '../' + redirectUrl;
-        } else if (!redirectUrl.startsWith('../../')) {
-            redirectUrl = '../../' + redirectUrl;
-        }
-    }
+function performLogout(redirectUrl) {
+    const fallbackLogin = getLoginPagePath();
+    const targetUrl = resolveRedirectUrl(redirectUrl || fallbackLogin);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentStaff');
     localStorage.removeItem('jwtToken');
@@ -135,8 +163,8 @@ function performLogout(redirectUrl = '../pages/login/login.html') {
     localStorage.removeItem('rememberMe');
     localStorage.removeItem('cart'); // Xóa giỏ hàng khi logout
     
-    if (redirectUrl) {
-        window.location.href = redirectUrl;
+    if (targetUrl) {
+        window.location.href = targetUrl;
     }
 }
 
@@ -161,10 +189,7 @@ window.fetch = async function(...args) {
             const data = await clonedResponse.json();
             if (data.message && (data.message.includes('khóa') || data.message.includes('banned') || data.message.includes('không hoạt động'))) {
                 alert('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.');
-                let loginPath = '../pages/login/login.html';
-                if (window.location.pathname.includes('/staff/')) {
-                    loginPath = '../../pages/login/login.html';
-                }
+                const loginPath = getLoginPagePath();
                 performLogout(`${loginPath}?message=banned`);
             }
         } catch (e) {

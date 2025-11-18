@@ -438,30 +438,39 @@ document.addEventListener("DOMContentLoaded", () => {
     orderListContainer.appendChild(table);
   }
 
+  const ORDER_STATUS_TEXT = {
+    pending: 'Chờ xử lý',
+    order_received: 'Đã nhận đơn',
+    preparing: 'Đang chuẩn bị hàng',
+    delivering: 'Đang giao hàng',
+    delivery_successful: 'Giao hàng thành công',
+    delivery_failed: 'Giao hàng thất bại',
+    confirmed: 'Đã xác nhận',
+    shipping: 'Đang giao hàng',
+    completed: 'Đã hoàn thành',
+    cancelled: 'Đã hủy'
+  };
+
   // Hàm giúp hiển thị trạng thái tiếng Việt
   function getVietnameseStatus(status) {
-    switch (status) {
-      case 'pending': return 'Đang chờ xác nhận';
-      case 'confirmed': return 'Đã xác nhận';
-      case 'preparing': return 'Đang chuẩn bị hàng';
-      case 'shipping': return 'Đang giao hàng';
-      case 'completed': return 'Đã hoàn thành';
-      case 'cancelled': return 'Đã hủy';
-      default: return status;
-    }
+    return ORDER_STATUS_TEXT[status] || ORDER_STATUS_TEXT.pending;
   }
 
   // Hàm giúp thêm class CSS cho trạng thái
   function getOrderStatusClass(status) {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
-      case 'preparing': return 'bg-indigo-100 text-indigo-800';
-      case 'shipping': return 'bg-purple-100 text-purple-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+    const statusClassMap = {
+      pending: 'status-pending',
+      order_received: 'status-order_received',
+      preparing: 'status-preparing',
+      delivering: 'status-delivering',
+      delivery_successful: 'status-delivery_successful',
+      delivery_failed: 'status-delivery_failed',
+      confirmed: 'status-confirmed',
+      shipping: 'status-delivering',
+      completed: 'status-delivery_successful',
+      cancelled: 'status-cancelled'
+    };
+    return statusClassMap[status] || 'status-default';
   }
 
 

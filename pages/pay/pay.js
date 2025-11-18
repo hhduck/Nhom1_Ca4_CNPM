@@ -5,6 +5,9 @@
 let globalCartItems = [];
 let globalPromotions = [];
 let globalCurrentUser = null;
+const DIRECT_CHECKOUT_KEY = "directCheckoutItem";
+let isDirectCheckout = false;
+let directCheckoutPayload = null;
 
 const locationData = {
   "TP. Thủ Đức": ["An Khánh", "An Lợi Đông", "An Phú", "Bình Chiểu", "Bình Thọ", "Bình Trưng Đông", "Bình Trưng Tây", "Cát Lái", "Hiệp Bình Chánh", "Hiệp Bình Phước", "Hiệp Phú", "Linh Chiểu", "Linh Đông", "Linh Tây", "Linh Trung", "Linh Xuân", "Long Bình", "Long Phước", "Long Thạnh Mỹ", "Long Trường", "Phú Hữu", "Phước Bình", "Phước Long A", "Phước Long B", "Tam Bình", "Tam Phú", "Tăng Nhơn Phú A", "Tăng Nhơn Phú B", "Thạnh Mỹ Lợi", "Thảo Điền", "Thủ Thiêm", "Trường Thạnh", "Trường Thọ"],
@@ -164,7 +167,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  await loadCartFromAPI(globalCurrentUser.id);
+  const urlParams = new URLSearchParams(window.location.search);
+  const directModeRequested = urlParams.get("direct") === "1";
+  const directCheckoutRaw = sessionStorage.getItem(DIRECT_CHECKOUT_KEY);
+
+  if (directModeRequested) {
+    if (!directCheckoutRaw) {
+      handleDirectCheckoutFailure(
+        "Phiên mua ngay đã hết hạn hoặc không tồn tại. Vui lòng chọn lại sản phẩm từ trang chi tiết."
+      );
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(directCheckoutRaw);
+      const storedUserId = parsed?.user_id;
+      const currentUserId = globalCurrentUser?.id;
+
+      if (
+        parsed &&
+        storedUserId != null &&
+        currentUserId != null &&
+        String(storedUserId) === String(currentUserId)
+      ) {
+        directCheckoutPayload = parsed;
+        isDirectCheckout = true;
+      } else {
+        handleDirectCheckoutFailure(
+          "Không thể xác thực phiên mua ngay. Vui lòng thử lại.",
+          parsed?.source_page || "../product/product.html"
+        );
+        return;
+      }
+    } catch (error) {
+      console.error("Không thể đọc dữ liệu mua ngay:", error);
+      handleDirectCheckoutFailure("Không thể đọc dữ liệu mua ngay. Vui lòng thử lại.");
+      return;
+    }
+  } else if (directCheckoutRaw) {
+    // Người dùng mở trang thanh toán theo luồng giỏ hàng. Xóa dữ liệu mua ngay còn sót.
+    sessionStorage.removeItem(DIRECT_CHECKOUT_KEY);
+  }
+
+  if (isDirectCheckout && directCheckoutPayload) {
+    const initialized = await hydrateDirectCheckoutItems(directCheckoutPayload);
+    if (!initialized) {
+      isDirectCheckout = false;
+      directCheckoutPayload = null;
+      sessionStorage.removeItem(DIRECT_CHECKOUT_KEY);
+      await loadCartFromAPI(globalCurrentUser.id);
+    }
+  } else {
+    await loadCartFromAPI(globalCurrentUser.id);
+  }
+
   setupDeliveryOptions();
   setupValidation();
   await loadPromotions();
@@ -205,6 +261,24 @@ async function loadCartFromAPI(userId) {
     console.error("Lỗi tải giỏ hàng CSDL:", err);
     cartTableBody.innerHTML = `<tr><td colspan="2" style="text-align: center; color: red; padding: 20px;">Lỗi tải giỏ hàng.</td></tr>`;
   }
+}
+
+async function hydrateDirectCheckoutItems(payload) {
+  if (!payload || !Array.isArray(payload.items) || payload.items.length === 0) {
+    return false;
+  }
+
+  globalCartItems = payload.items.map(item => ({
+    product_id: item.product_id,
+    product_name: item.product_name,
+    price: Number(item.price) || 0,
+    quantity: Number(item.quantity) || 1,
+    note: item.note || ""
+  }));
+
+  renderCartTable(globalCartItems);
+  await calculateTotals();
+  return true;
 }
 
 function renderCartTable(items) {
@@ -475,6 +549,11 @@ function setupValidation() {
       return;
     }
 
+    if (!globalCartItems.length) {
+      alert("Giỏ hàng trống. Vui lòng chọn sản phẩm trước khi thanh toán.");
+      return;
+    }
+
     // *** BẮT ĐẦU THANH TOÁN GIẢ ***
     placeOrderBtn.disabled = true;
     placeOrderBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
@@ -527,8 +606,11 @@ function setupValidation() {
         throw new Error(result.message || "Không thể tạo đơn hàng.");
       }
 
-      // Xóa giỏ hàng
-      await clearCartInDatabase(globalCurrentUser.id);
+      if (isDirectCheckout) {
+        sessionStorage.removeItem(DIRECT_CHECKOUT_KEY);
+      } else {
+        await clearCartInDatabase(globalCurrentUser.id);
+      }
 
       // Chuyển hướng đến trang thành công
       alert(`✅ Đặt hàng thành công!\nMã đơn hàng: ${result.data.order_code}\n\nCảm ơn bạn đã tin tưởng La Cuisine Ngọt!`);
@@ -630,5 +712,17 @@ async function isFirstOrderOfTheYear(userId) {
   } catch (e) {
     console.error("Lỗi gọi API check first order:", e);
     return false;
+  }
+}
+
+function handleDirectCheckoutFailure(message, redirectUrl = null) {
+  sessionStorage.removeItem(DIRECT_CHECKOUT_KEY);
+  alert(message);
+  if (redirectUrl) {
+    window.location.href = redirectUrl;
+  } else if (document.referrer) {
+    window.location.href = document.referrer;
+  } else {
+    window.location.href = "../home/home.html";
   }
 }

@@ -67,123 +67,115 @@
 Nhom1_Ca4_CNPM/
 │
 ├── admin/                          # 👑 ADMIN PANEL
-│   ├── admin.html                  # Dashboard quản trị
-│   ├── admin.css                   # Styling admin
-│   └── admin.js                    # Logic admin
+│   ├── admin.css
+│   ├── admin.html
+│   └── admin.js
 │
 ├── api/                            # 🔌 BACKEND API
 │   ├── auth/
-│   │   ├── login.php              # API đăng nhập
-│   │   ├── register.php           # API đăng ký
-│   │   ├── forgot-password.php    # API quên mật khẩu (reset về "123456")
-│   │   └── middleware.php         # Xác thực và phân quyền
+│   │   ├── forgot-password.php
+│   │   ├── login.php
+│   │   ├── middleware.php
+│   │   └── register.php
 │   ├── config/
-│   │   └── database.php           # Kết nối database
-│   ├── products.php               # API sản phẩm (CRUD)
-│   ├── products_c.php             # API sản phẩm (public)
-│   ├── orders.php                 # API đơn hàng (CRUD, xóa)
-│   ├── users.php                  # API người dùng (CRUD, đổi mật khẩu)
-│   ├── cart.php                   # API giỏ hàng
-│   ├── promotions.php             # API khuyến mãi (CRUD)
-│   ├── complaints.php             # API khiếu nại
-│   ├── contacts.php               # API liên hệ (Staff/Admin)
-│   ├── contact-home.php           # API liên hệ (public)
-│   ├── reports.php                # API báo cáo (Admin)
-│   ├── reviews.php                # API đánh giá
-│   ├── categories.php             # API danh mục (CRUD)
-│   ├── search.php                 # API tìm kiếm
-│   ├── staff_profile.php          # API hồ sơ nhân viên
-│   ├── staff_search.php           # API tìm kiếm nhân viên
-│   ├── upload.php                 # API upload file
-│   ├── vnpay_checkout.php         # API thanh toán VNPay
-│   ├── vnpay_config.php           # Cấu hình VNPay
-│   └── vnpay_ipn.php              # API xác nhận thanh toán VNPay (IPN)
+│   │   └── database.php
+│   ├── cart.php
+│   ├── categories.php
+│   ├── complaints.php
+│   ├── contact-home.php
+│   ├── contacts.php
+│   ├── orders.php
+│   ├── products.php
+│   ├── products_c.php
+│   ├── promotions.php
+│   ├── reports.php
+│   ├── reviews.php
+│   ├── search.php
+│   ├── staff_profile.php
+│   ├── staff_search.php
+│   ├── upload.php
+│   └── users.php
 │
 ├── assets/                         # 🎨 TÀI NGUYÊN
 │   ├── css/
-│   │   ├── style.css              # CSS chung
-│   │   └── animations.css         # Hiệu ứng
-│   ├── js/
-│   │   ├── main.js                # JavaScript chung
-│   │   ├── image-handler.js       # Xử lý ảnh
-│   │   └── auth-check.js         # Kiểm tra xác thực client-side (auto logout nếu banned)
-│   └── images/                    # Hình ảnh sản phẩm, khuyến mãi
+│   │   ├── animations.css
+│   │   └── style.css
+│   ├── images/
+│   └── js/
+│       ├── auth-check.js
+│       ├── image-handler.js
+│       └── main.js
 │
-├── database/                       # 🗄️ DATABASE
-│   └── schema.sql                 # Cấu trúc database + Dữ liệu mẫu
+├── database/
+│   └── schema.sql
 │
-├── docker/                         # 🐳 DOCKER SCRIPTS
-│   └── init-db.sh                 # Script khởi tạo database cho Docker
+├── docker/
+│   └── init-db.sh
 │
-├── pages/                          # 📄 CÁC TRANG
-│   ├── home/                      # Trang chủ
-│   │   ├── home.html
-│   │   ├── home.css
-│   │   └── home.js                # Load sản phẩm, khuyến mãi từ API
-│   ├── login/                     # Đăng nhập
-│   │   ├── login.html
-│   │   ├── login.css
-│   │   ├── login.js               # Đăng nhập, quên mật khẩu
-│   │   └── forgot_password.html   # Trang quên mật khẩu
-│   ├── register/                  # Đăng ký
-│   │   ├── register.html
-│   │   ├── register.css
-│   │   └── register.js
-│   ├── product/                   # Chi tiết sản phẩm
-│   │   ├── product.html
-│   │   ├── product.css
-│   │   └── product.js             # Ẩn "THÔNG TIN SẢN PHẨM" nếu là Phụ kiện
-│   ├── cart/                      # Giỏ hàng
-│   │   ├── cart.html
-│   │   ├── cart.css
-│   │   └── cart.js
-│   ├── order-confirmation/        # Xác nhận đơn
-│   │   ├── order-confirmation.html
-│   │   ├── order-confirmation.css
-│   │   └── order-confirmation.js
-│   ├── account/                   # Tài khoản khách hàng
-│   │   ├── account.html
+├── pages/                          # 📄 FRONTEND PAGES
+│   ├── account/
 │   │   ├── account.css
-│   │   └── account.js             # Xem đơn hàng dạng bảng, đổi mật khẩu
-│   ├── contact/                   # Liên hệ
-│   │   ├── contact.html
+│   │   ├── account.html
+│   │   └── account.js
+│   ├── cart/
+│   │   ├── cart.css
+│   │   ├── cart.html
+│   │   └── cart.js
+│   ├── contact/
 │   │   ├── contact.css
+│   │   ├── contact.html
 │   │   └── contact.js
-│   ├── pay/                       # Thanh toán
-│   │   ├── pay.html
+│   ├── home/
+│   │   ├── home.css
+│   │   ├── home.html
+│   │   └── home.js
+│   ├── login/
+│   │   ├── forgot_password.html
+│   │   ├── login.css
+│   │   ├── login.html
+│   │   └── login.js
+│   ├── pay/
 │   │   ├── pay.css
-│   │   ├── pay.js
-│   │   └── pay-success.html       # Trang thanh toán thành công
-│   └── xuatfigma.html             # Trang xuất Figma
+│   │   ├── pay.html
+│   │   └── pay.js
+│   ├── product/
+│   │   ├── product.css
+│   │   ├── product.html
+│   │   └── product.js
+│   └── register/
+│       ├── register.css
+│       ├── register.html
+│       └── register.js
 │
-├── staff/                          # 👨‍💼 NHÂN VIÊN
-│   ├── handleComplaint/          # Xử lý khiếu nại
-│   │   ├── complaint.html
+├── staff/                          # 👨‍💼 STAFF TOOLS
+│   ├── ViewOders/
+│   │   ├── order.css
+│   │   ├── order.html
+│   │   └── order.js
+│   ├── handleComplaint/
 │   │   ├── complaint.css
+│   │   ├── complaint.html
 │   │   └── complaint.js
-│   ├── handleContact/            # Xử lý liên hệ
-│   │   ├── contact.html
+│   ├── handleContact/
 │   │   ├── contact.css
+│   │   ├── contact.html
 │   │   └── contact.js
-│   ├── staffProfile/             # Hồ sơ nhân viên
-│   │   ├── staff_profile.html
-│   │   ├── staff_profile.css
-│   │   └── staff_profile.js       # Cập nhật thông tin, đổi mật khẩu
-│   └── ViewOders/                # Xem đơn hàng (Lưu ý: tên thư mục có typo "Oders")
-│       ├── order.html
-│       ├── order.css
-│       └── order.js
+│   └── staffProfile/
+│       ├── staff_profile.css
+│       ├── staff_profile.html
+│       └── staff_profile.js
 │
-├── .htaccess                      # Apache URL Rewrite rules
-├── api/.htaccess                  # Apache URL Rewrite rules cho API
-├── Dockerfile                      # 🐳 Docker image configuration
-├── docker-compose.yml             # 🐳 Docker Compose configuration
-├── .dockerignore                  # 🐳 Docker ignore file
-├── docker-run.bat                 # 🐳 Script chạy Docker (Windows)
-├── docker-run.sh                  # 🐳 Script chạy Docker (Linux/Mac)
-├── DOCKER.md                      # 🐳 Hướng dẫn Docker chi tiết
-├── QUICKSTART_DOCKER.md           # 🐳 Hướng dẫn Docker nhanh
-└── README.md                      # 📖 Tài liệu này
+├── .dockerignore
+├── .gitignore
+├── .htaccess
+├── api/.htaccess
+├── DOCKER.md
+├── Dockerfile
+├── QUICKSTART_DOCKER.md
+├── docker-compose.yml
+├── docker-run.bat
+├── docker-run.sh
+└── README.md
 ```
 
 ---

@@ -650,11 +650,6 @@ async function loadOrders(filters = {}) {
                         </span>
                     </td>
                     <td>
-                        <span class="status-badge status-${order.payment_status}">
-                            ${getPaymentStatusText(order.payment_status)}
-                        </span>
-                    </td>
-                    <td>
                         <div class="action-btns">
                         <button class="icon-btn" onclick="viewOrderDetail(${order.order_id})" title="Chi tiết">
                             <i class="fas fa-eye"></i>
@@ -667,7 +662,7 @@ async function loadOrders(filters = {}) {
                 </tr>
             `).join('');
         } else {
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Không có đơn hàng nào</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Không có đơn hàng nào</td></tr>';
         }
     } catch (error) {
         console.error('Error loading orders:', error);
@@ -675,7 +670,7 @@ async function loadOrders(filters = {}) {
         const tbody = document.getElementById('orders-tbody');
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="error-state">
+                <td colspan="6" class="error-state">
                     <div class="error-message">
                         <i class="fas fa-exclamation-triangle"></i>
                         <p>Không thể tải danh sách đơn hàng</p>
@@ -2239,16 +2234,6 @@ function getOrderStatusText(status) {
         'delivering': 'Đang giao',
         'delivery_successful': 'Giao hàng thành công',
         'delivery_failed': 'Giao hàng thất bại'
-    };
-    return statusMap[status] || status;
-}
-
-function getPaymentStatusText(status) {
-    const statusMap = {
-        'pending': 'Chờ thanh toán',
-        'paid': 'Đã thanh toán',
-        'failed': 'Thất bại',
-        'refunded': 'Đã hoàn tiền'
     };
     return statusMap[status] || status;
 }

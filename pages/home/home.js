@@ -20,7 +20,61 @@ document.addEventListener('DOMContentLoaded', function () {
   // Load promotions từ API
   loadPromotionsFromAPI();
   setTimeout(initProductFilter, 200);
+  setupHashNavigation();
 });
+
+function setupHashNavigation() {
+  const hashLinks = document.querySelectorAll('.nav-menu a[href*="#"]');
+  
+  hashLinks.forEach(link => {
+    link.addEventListener('click', (event) => {
+      try {
+        const url = new URL(link.href, window.location.origin);
+        const isHomePageLink = url.pathname.endsWith('/pages/home/home.html');
+        const isCurrentHomePage = window.location.pathname.endsWith('/pages/home/home.html');
+        
+        if (isHomePageLink && isCurrentHomePage) {
+          const targetHash = url.hash;
+          if (!targetHash) return;
+          
+          event.preventDefault();
+          
+          if (window.location.hash !== targetHash) {
+            history.pushState(null, '', targetHash);
+          }
+          scrollToHashSection(false, targetHash);
+        }
+      } catch (error) {
+        console.warn('Không thể xử lý hash navigation:', error);
+      }
+    });
+  });
+
+  if (window.location.hash) {
+    setTimeout(() => scrollToHashSection(true), 250);
+  }
+
+  window.addEventListener('hashchange', () => scrollToHashSection(false));
+}
+
+function scrollToHashSection(isInitialScroll = false, hashOverride = null) {
+  const hash = hashOverride || window.location.hash;
+  if (!hash) return;
+
+  const target = document.querySelector(hash);
+  if (!target) return;
+
+  const header = document.querySelector('.navbar');
+  const headerOffset = header ? header.offsetHeight : 0;
+  const offset = headerOffset + 16;
+  const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+  const scrollPosition = Math.max(elementPosition - offset, 0);
+
+  window.scrollTo({
+    top: scrollPosition,
+    behavior: isInitialScroll ? 'auto' : 'smooth'
+  });
+}
 
 // ===== CẬP NHẬT GIỎ HÀNG =====
 async function updateCartCount() {
@@ -546,12 +600,21 @@ function renderPromotions(promotions) {
     return;
   }
   
-  if (promotions.length === 0) {
-    promotionGrid.innerHTML = '<p style="text-align: center; width: 100%;">Hiện tại không có khuyến mãi nào</p>';
+  const now = new Date();
+  const activePromotions = promotions.filter(promo => {
+    if (!promo.start_date || !promo.end_date) return false;
+    const startDate = new Date(promo.start_date);
+    const endDate = new Date(promo.end_date);
+    return !isNaN(startDate) && !isNaN(endDate) && now >= startDate && now <= endDate;
+  });
+
+  if (activePromotions.length === 0) {
+    promotionGrid.innerHTML = '<p style="text-align: center; width: 100%;">Hiện tại không có khuyến mãi đang diễn ra</p>';
     return;
   }
   
-  promotionGrid.innerHTML = promotions.map(promo => {
+  // Đồng bộ với trang thanh toán: chỉ hiển thị khuyến mãi đang hiệu lực
+  promotionGrid.innerHTML = activePromotions.map(promo => {
     const startDate = new Date(promo.start_date);
     const endDate = new Date(promo.end_date);
     const formatDateVN = (date) => {
