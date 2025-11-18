@@ -162,7 +162,35 @@
                 <p>Đang tải đơn hàng...</p>
             </div>
         </div>
-
+<!-- Complaint Popup -->
+<div id="complaintOverlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+    <!-- Thêm popup-content-wrapper ở đây -->
+    <div class="popup-content-wrapper"> 
+        <h2 class="text-2xl font-bold mb-4 text-center">Gửi Khiếu Nại Đơn Hàng</h2>
+        <form id="complaintForm">
+            <input type="hidden" id="complaintOrderId">
+            
+            <div class="mb-4">
+                <label for="complaintTitle" class="block text-gray-700 text-sm font-bold mb-2">Tiêu đề:</label>
+                <input type="text" id="complaintTitle" placeholder="Ví dụ: Giao sai sản phẩm, Chất lượng kém..." required>
+            </div>
+            
+            <div class="mb-6">
+                <label for="complaintContent" class="block text-gray-700 text-sm font-bold mb-2">Nội dung:</label>
+                <textarea id="complaintContent" rows="5" placeholder="Mô tả chi tiết vấn đề bạn gặp phải với đơn hàng..." required></textarea>
+            </div>
+            
+            <div class="complaint-actions"> <!-- Thay đổi class div này -->
+                <button type="button" id="closeComplaintPopup">
+                    Hủy
+                </button>
+                <button type="submit">
+                    Gửi Khiếu Nại
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
       </div> <!-- End .account-info -->
     </div> <!-- End .account-container -->
   </section>
