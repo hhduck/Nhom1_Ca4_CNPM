@@ -139,34 +139,42 @@
 .sidebar {
   position: relative;
   z-index: 10;
-}
 
-.sidebar {
   background-color: #fff;
   border-radius: 20px;
   flex: 0 0 250px;
   padding: 25px;
+
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: column;       /* vẫn giữ bố cục dọc cho tên khách hàng */
+  align-items: center;          /* canh giữa */
 }
 
-.sidebar .customer-name {
-  margin-bottom: 30px;
-  font-weight: 500;
+.customer-name {
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
+
+/* ==== MENU CHO NẰM NGANG === */
 .sidebar-menu {
   list-style: none;
-  width: 100%;
+
+  display: flex;                /* để thành hàng ngang */
+  justify-content: center;      /* canh giữa */
+  align-items: center;
+
+  gap: 15px;                    /* khoảng cách giữa các mục */
+
+  padding: 0;
+  margin: 0;
 }
 
-.sidebar-menu li {
-  padding: 12px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-}
+
+
 
 
 /* Account Info */
@@ -196,7 +204,8 @@
 }
 
 .sidebar-menu li:hover {
-  background-color: #f4f4f4;
+  background-color: #364D3C;
+  color: #fff;
 }
 
 .info-content h3 {
@@ -1547,4 +1556,50 @@ body.searching::before {
 #closeViewComplaintPopup:hover {
   background-color: #333;
   transform: translateY(-2px);
+}
+
+
+
+.account-menu button {
+  background: #f1f1f1;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.account-menu button:hover {
+  background: #e1e1e1;
+}
+/* Bao menu để nằm giữa */
+.account-menu {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Menu ngang */
+.sidebar-menu {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  padding: 0;
+  margin: 0;
+}
+
+/* Mỗi nút menu */
+.sidebar-menu li {
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  background: #e9efeb;
+  color: #000000;
+  display: flex;                /* để canh giữa nội dung */
+  justify-content: center;      
+  align-items: center;
 }
