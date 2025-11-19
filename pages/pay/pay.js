@@ -1,5 +1,5 @@
 // ======================================================
-// pay.js - PHIÊN BẢN THANH TOÁN GIẢ (KHÔNG DÙNG VNPAY)
+// pay.js - THANH TOÁN QR (ĐÃ SỬA)
 // ======================================================
 
 let globalCartItems = [];
@@ -205,7 +205,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
   } else if (directCheckoutRaw) {
-    // Người dùng mở trang thanh toán theo luồng giỏ hàng. Xóa dữ liệu mua ngay còn sót.
     sessionStorage.removeItem(DIRECT_CHECKOUT_KEY);
   }
 
@@ -492,7 +491,7 @@ function setupDeliveryOptions() {
   });
 }
 
-// *** HÀM QUAN TRỌNG: ĐÃ CHỈNH SỬA ĐỂ THANH TOÁN GIẢ ***
+// *** HÀM VALIDATION - CHỈ LƯU DỮ LIỆU VÀ CHUYỂN SANG TRANG QR ***
 function setupValidation() {
   const checkoutForm = document.getElementById("checkoutForm");
   const placeOrderBtn = document.getElementById("placeOrder");
@@ -500,11 +499,13 @@ function setupValidation() {
   checkoutForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
+    // Xóa các thông báo lỗi cũ
     document.querySelectorAll(".error-msg").forEach(el => el.style.display = "none");
     document.querySelectorAll("input.error, select.error").forEach(el => el.classList.remove("error"));
 
     let isValid = true;
 
+    // Validate các trường bắt buộc
     if (!validateField(this.fullname, "Vui lòng nhập họ và tên.")) isValid = false;
     if (!validateField(this.phone, "Số điện thoại phải có 10 số.", /^\d{10}$/)) isValid = false;
     if (!validateField(this.email, "Email không hợp lệ.", /^[^\s@]+@[^\s@]+\.[^\s@]+$/)) isValid = false;
@@ -538,92 +539,61 @@ function setupValidation() {
       return;
     }
 
+    // Kiểm tra mã khuyến mãi
     const promoSelect = document.getElementById("promotionSelect");
     const promoMessage = document.getElementById("promoMessage");
 
     if (promoSelect.value && promoMessage.style.color === "red") {
       alert("Mã khuyến mãi bạn chọn không hợp lệ hoặc không đủ điều kiện. Vui lòng bỏ chọn hoặc chọn mã khác.");
-      placeOrderBtn.disabled = false;
-      placeOrderBtn.innerHTML = 'Thanh toán';
-      promoMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
+    // Kiểm tra giỏ hàng
     if (!globalCartItems.length) {
       alert("Giỏ hàng trống. Vui lòng chọn sản phẩm trước khi thanh toán.");
       return;
     }
 
-    // *** BẮT ĐẦU THANH TOÁN GIẢ ***
+    // Hiển thị loading
     placeOrderBtn.disabled = true;
     placeOrderBtn.innerHTML = '<span class="loading-spinner"></span> Đang xử lý...';
 
+    // Tính toán tổng tiền
     const finalTotals = await calculateTotals(true);
     const orderNoteValue = this.orderNote.value.trim();
 
-    const orderData = {
-      user_id: globalCurrentUser.id,
-      customer_name: this.fullname.value.trim(),
-      customer_phone: this.phone.value.trim(),
-      customer_email: this.email.value.trim(),
-      delivery_method: deliveryMethod,
-      shipping_address: deliveryMethod === 'delivery'
-        ? this.address.value.trim()
-        : '123 An Dương Vương, phường Chợ Quán, TP.HCM',
-      ward: deliveryMethod === 'delivery' ? this.ward.value : '',
-      district: deliveryMethod === 'delivery' ? this.district.value : '',
-      city: 'TP. Hồ Chí Minh',
-      delivery_time: deliveryTimeInput.value,
-      order_note: orderNoteValue || null,
-      items: globalCartItems,
-      promotion_code: document.getElementById('promotionSelect').value || null,
-      total_amount: finalTotals.subtotal,
-      shipping_fee: finalTotals.shipping,
-      vat_amount: finalTotals.vat,
-      discount_amount: finalTotals.discount,
-      final_amount: finalTotals.grand,
+    // ✅ LƯU THÔNG TIN VÀO sessionStorage
+    sessionStorage.setItem('customerPhone', this.phone.value.trim());
+    sessionStorage.setItem('customerEmail', this.email.value.trim());
+    sessionStorage.setItem('customerName', this.fullname.value.trim());
+    sessionStorage.setItem('deliveryMethod', deliveryMethod);
+    sessionStorage.setItem('shippingAddress', deliveryMethod === 'delivery' ? this.address.value.trim() : '123 An Dương Vương, phường Chợ Quán, TP.HCM');
+    sessionStorage.setItem('ward', deliveryMethod === 'delivery' ? this.ward.value : '');
+    sessionStorage.setItem('district', deliveryMethod === 'delivery' ? this.district.value : '');
+    sessionStorage.setItem('deliveryTime', deliveryTimeInput.value);
+    sessionStorage.setItem('orderNote', orderNoteValue || '');
+    sessionStorage.setItem('cartItems', JSON.stringify(globalCartItems));
+    sessionStorage.setItem('promotionCode', document.getElementById('promotionSelect').value || '');
+    sessionStorage.setItem('shippingFee', finalTotals.shipping.toString());
+    sessionStorage.setItem('vatAmount', finalTotals.vat.toString());
+    sessionStorage.setItem('discountAmount', finalTotals.discount.toString());
+    sessionStorage.setItem('totalAmount', finalTotals.subtotal.toString());
+    sessionStorage.setItem('finalAmount', finalTotals.grand.toString());
 
-      // *** THÊM TRƯỜNG NÀY ĐỂ API BIẾT LÀ THANH TOÁN GIẢ ***
-      payment_method: 'fake',
-      payment_status: 'completed',
-      order_status: 'order_received'
-    };
-
-    try {
-      const response = await fetch('../../api/orders.php', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-        },
-        body: JSON.stringify(orderData)
-      });
-
-      const result = await response.json();
-
-      if (!result.success || !result.data) {
-        throw new Error(result.message || "Không thể tạo đơn hàng.");
-      }
-
-      if (isDirectCheckout) {
-        sessionStorage.removeItem(DIRECT_CHECKOUT_KEY);
-      } else {
-        await clearCartInDatabase(globalCurrentUser.id);
-      }
-
-      // Chuyển hướng đến trang thành công
-      alert(`✅ Đặt hàng thành công!\nMã đơn hàng: ${result.data.order_code}\n\nCảm ơn bạn đã tin tưởng La Cuisine Ngọt!`);
-      window.location.href = "../home/home.html";
-
-    } catch (error) {
-      console.error("Lỗi khi đặt hàng:", error);
-      alert("Có lỗi xảy ra: " + error.message);
-      placeOrderBtn.disabled = false;
-      placeOrderBtn.innerHTML = 'Thanh toán';
+    // Lưu cờ isDirectCheckout
+    if (isDirectCheckout) {
+      sessionStorage.setItem('isDirectCheckout', 'true');
     }
+
+    // ✅ TẠO MÃ ĐỢN HÀNG TẠM THỜI
+    const tempOrderCode = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+    // ✅ CHUYỂN HƯỚNG ĐẾN TRANG QR
+    const qrPageUrl = `../payment-qr/qr-payment.html?order_code=${tempOrderCode}&amount=${finalTotals.grand}&customer_name=${encodeURIComponent(this.fullname.value.trim())}`;
+    window.location.href = qrPageUrl;
   });
 
+  // Hàm validate field
   function validateField(input, message, regex = null) {
     if (!input) {
       console.error("Lỗi: Input không tồn tại");
@@ -641,6 +611,7 @@ function setupValidation() {
     return true;
   }
 
+  // Hàm hiển thị lỗi
   function showError(input, message) {
     const formGroup = input.closest('.form-group');
     if (!formGroup) return;
@@ -653,33 +624,7 @@ function setupValidation() {
   }
 }
 
-async function clearCartInDatabase(userId) {
-  try {
-    const response = await fetch(`../../api/cart.php?user_id=${userId}`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-      }
-    });
-    const data = await response.json();
-
-    if (data.success && data.data.items.length > 0) {
-      for (const item of data.data.items) {
-        await fetch(`../../api/cart.php/${item.cart_id}`, {
-          method: 'DELETE',
-          credentials: 'include',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
-          }
-        });
-      }
-    }
-  } catch (error) {
-    console.error("Lỗi khi xóa giỏ hàng:", error);
-  }
-}
-
+// Format tiền tệ
 function formatCurrency(amount) {
   if (isNaN(amount)) return "0 ₫";
   return new Intl.NumberFormat("vi-VN", {
@@ -689,6 +634,7 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
+// Kiểm tra đơn hàng đầu tiên trong năm
 async function isFirstOrderOfTheYear(userId) {
   if (!userId) return false;
 
@@ -715,6 +661,7 @@ async function isFirstOrderOfTheYear(userId) {
   }
 }
 
+// Xử lý khi mua ngay thất bại
 function handleDirectCheckoutFailure(message, redirectUrl = null) {
   sessionStorage.removeItem(DIRECT_CHECKOUT_KEY);
   alert(message);

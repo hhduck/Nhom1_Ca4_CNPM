@@ -14,7 +14,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 /**
- * Orders API - PHIÊN BẢN HỖ TRỢ THANH TOÁN GIẢ
+ * Orders API - HỖ TRỢ THANH TOÁN QR (bank_transfer)
  * LA CUISINE NGỌT
  */
 
@@ -267,13 +267,15 @@ function updateOrderData($db, $orderId, $staffUserId)
 
     if (empty($data)) throw new Exception("Không có dữ liệu để cập nhật", 400);
 
-    $oldStatusQuery = "SELECT OrderStatus FROM Orders WHERE OrderID = :id";
+    $oldStatusQuery = "SELECT OrderStatus, PaymentMethod FROM Orders WHERE OrderID = :id";
     $oldStmt = $db->prepare($oldStatusQuery);
     $oldStmt->bindParam(':id', $orderId, PDO::PARAM_INT);
     $oldStmt->execute();
     $oldStatusResult = $oldStmt->fetch(PDO::FETCH_ASSOC);
     if (!$oldStatusResult) throw new Exception("Không tìm thấy đơn hàng", 404);
+    
     $oldStatus = $oldStatusResult['OrderStatus'];
+    $paymentMethod = $oldStatusResult['PaymentMethod'];
 
     $fieldsToUpdate = [];
     $params = [':id' => $orderId];
@@ -340,6 +342,31 @@ function updateOrderData($db, $orderId, $staffUserId)
             $historyStmt->execute();
         }
 
+        // *** TRỪ KHO KHI NHÂN VIÊN XÁC NHẬN THANH TOÁN QR ***
+        if ($isStatusUpdate && 
+            $newStatus === 'order_received' && 
+            $oldStatus === 'pending' &&
+            $paymentMethod === 'bank_transfer') {
+            
+            // TRỪ KHO
+            $deductStockQuery = "UPDATE Products p
+                                INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
+                                SET p.Quantity = p.Quantity - oi.Quantity 
+                                WHERE oi.OrderID = :order_id";
+            $deductStmt = $db->prepare($deductStockQuery);
+            $deductStmt->bindParam(':order_id', $orderId, PDO::PARAM_INT);
+            $deductStmt->execute();
+            
+            // Cập nhật payment_status
+            $updatePaymentQuery = "UPDATE Orders 
+                                  SET PaymentStatus = 'completed' 
+                                  WHERE OrderID = :order_id";
+            $paymentStmt = $db->prepare($updatePaymentQuery);
+            $paymentStmt->bindParam(':order_id', $orderId, PDO::PARAM_INT);
+            $paymentStmt->execute();
+        }
+
+        // Logic cũ: Cập nhật SoldCount khi giao hàng thành công
         if ($isStatusUpdate && $newStatus === 'delivery_successful' && $oldStatus !== 'delivery_successful') {
             $updateSoldQuery = "UPDATE Products p
                                 INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
@@ -350,6 +377,7 @@ function updateOrderData($db, $orderId, $staffUserId)
             $updateStmt->execute();
         }
 
+        // Logic cũ: Hoàn lại kho khi giao hàng thất bại
         if ($isStatusUpdate && $newStatus === 'delivery_failed' && $oldStatus !== 'delivery_failed') {
             $restoreQuery = "UPDATE Products p
                             INNER JOIN OrderItems oi ON p.ProductID = oi.ProductID
@@ -418,7 +446,7 @@ function deleteOrder($db, $orderId)
     }
 }
 
-// *** HÀM TẠO ĐƠN HÀNG - ĐÃ CHỈNH SỬA HỖ TRỢ THANH TOÁN GIẢ ***
+// *** HÀM TẠO ĐƠN HÀNG - HỖ TRỢ THANH TOÁN QR ***
 function createOrder($db)
 {
     try {
@@ -440,15 +468,22 @@ function createOrder($db)
 
         $orderNote = isset($data['order_note']) ? sanitizeInput($data['order_note']) : null;
 
-        // *** XỬ LÝ THANH TOÁN GIẢ ***
+        // *** XỬ LÝ PHƯƠNG THỨC THANH TOÁN ***
         $paymentMethod = isset($data['payment_method']) ? sanitizeInput($data['payment_method']) : 'vnpay';
-        $paymentStatus = isset($data['payment_status']) ? sanitizeInput($data['payment_status']) : 'pending';
-        $orderStatus = isset($data['order_status']) ? sanitizeInput($data['order_status']) : 'pending';
+        $paymentStatus = 'pending';
+        $orderStatus = 'pending';
 
-        // Nếu là thanh toán giả, tự động cập nhật trạng thái
-        if ($paymentMethod === 'fake') {
+        // Thanh toán chuyển khoản QR
+        if ($paymentMethod === 'bank_transfer') {
+            $paymentStatus = 'pending';     // Chờ nhân viên xác nhận
+            $orderStatus = 'pending';       // Đơn hàng chờ xử lý
+            // KHÔNG trừ kho - chờ nhân viên xác nhận
+        } 
+        // Thanh toán giả (cho test)
+        elseif ($paymentMethod === 'fake') {
             $paymentStatus = 'completed';
             $orderStatus = 'order_received';
+            // Sẽ trừ kho ngay bên dưới
         }
 
         $insertOrder = "INSERT INTO Orders 
@@ -508,7 +543,7 @@ function createOrder($db)
                 ':note' => sanitizeInput($item['note'] ?? '')
             ]);
 
-            // *** TRỪKHO NGAY NẾU LÀ THANH TOÁN GIẢ ***
+            // CHỈ TRỪ KHO nếu là thanh toán giả (fake)
             if ($paymentMethod === 'fake') {
                 $updateStock = "UPDATE Products SET Quantity = Quantity - :quantity WHERE ProductID = :product_id";
                 $stockStmt = $db->prepare($updateStock);

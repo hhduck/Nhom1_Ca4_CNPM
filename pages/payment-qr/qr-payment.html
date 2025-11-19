@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán QR - La Cuisine Ngọt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="qr-payment.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2 style="margin-top: 0; color: #333;">Thanh Toán QR</h2>
+        <p style="color: #666; font-size: 14px;">Quét mã bên dưới để thanh toán</p>
+
+        <div class="qr-box">
+            <div id="loadingQR" class="loading-qr">
+                <i class="fas fa-spinner fa-spin"></i> Đang tạo mã QR...
+            </div>
+            <img id="qrCodeImage" class="qr-img" src="" alt="QR Code">
+        </div>
+
+        <div class="info-box">
+            <div class="info-row">
+                <span>Chủ TK:</span>
+                <strong id="bankNameDisplay">...</strong>
+            </div>
+            <div class="info-row">
+                <span>Số TK:</span>
+                <strong id="bankAccount">...</strong>
+            </div>
+            <div class="info-row">
+                <span>Số tiền:</span>
+                <strong id="amountToPay" class="highlight">...</strong>
+            </div>
+            <div class="info-row">
+                <span>Nội dung:</span>
+                <strong id="transferNote" style="color: #007bff;">...</strong>
+            </div>
+        </div>
+
+        <p style="font-size: 13px; color: #888; margin-bottom: 20px;">
+            <i class="fas fa-info-circle"></i> Nhân viên sẽ xác nhận thanh toán sau khi bạn chuyển khoản.
+        </p>
+
+        <button class="btn-confirm" id="btnConfirm" onclick="handleConfirmPayment()">
+            <div class="spinner" id="btnSpinner"></div>
+            <span id="btnText">Đã thanh toán</span>
+        </button>
+        <button class="btn-cancel" onclick="window.history.back()">Quay lại</button>
+    </div>
+
+    <script src="qr-payment.js"></script>
+
+</body>
+
+</html>

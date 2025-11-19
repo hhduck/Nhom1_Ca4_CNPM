@@ -377,6 +377,34 @@ async function updateOrderData(orderId, field, value) {
 
     console.log("Dữ liệu gửi lên API:", JSON.stringify(dataToUpdate));
 
+    // ===== THÊM ĐOẠN NÀY: Kiểm tra nếu đang xác nhận đơn bank_transfer =====
+    if (field === 'status' && value === 'order_received') {
+        const currentOrder = allOrders.find(o => o.order_id == orderId);
+
+        // Kiểm tra nếu đơn hàng đang ở trạng thái pending và là bank_transfer
+        if (currentOrder &&
+            currentOrder.order_status === 'pending' &&
+            currentOrder.payment_method === 'bank_transfer') {
+
+            // Hiển thị confirm để nhân viên xác nhận đã nhận tiền
+            const confirmReceived = confirm(
+                `⚠️ XÁC NHẬN THANH TOÁN\n\n` +
+                `Đơn hàng: ${currentOrder.order_code}\n` +
+                `Số tiền: ${new Intl.NumberFormat('vi-VN').format(currentOrder.final_amount)}₫\n\n` +
+                `Bạn đã kiểm tra và XÁC NHẬN nhận được tiền chuyển khoản?\n\n` +
+                `(Hệ thống sẽ TRỪ KHO sau khi xác nhận)`
+            );
+
+            if (!confirmReceived) {
+                console.log("Nhân viên hủy xác nhận thanh toán");
+                return; // Dừng lại, không cập nhật
+            }
+
+            console.log("Nhân viên đã xác nhận nhận tiền -> Sẽ trừ kho");
+        }
+    }
+    // ===== KẾT THÚC ĐOẠN THÊM =====
+
     try {
         const token = localStorage.getItem('jwtToken') || 'demo';
         const response = await fetch(endpoint, {

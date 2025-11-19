@@ -1,0 +1,165 @@
+/* qr-payment.css - Giao diện trang thanh toán QR */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f4f6f8 0%, #e8eef3 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Khung chứa mã QR */
+.qr-box {
+    position: relative;
+    margin: 20px auto;
+    border: 2px dashed #007bff;
+    border-radius: 12px;
+    padding: 10px;
+    display: inline-block;
+    background: #fff;
+}
+
+.qr-img {
+    width: 100%;
+    max-width: 280px;
+    display: none;
+    border-radius: 8px;
+}
+
+.loading-qr {
+    padding: 40px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Hộp thông tin chuyển khoản */
+.info-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 14px;
+    color: #555;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.info-row strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.highlight {
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Nút sao chép */
+.copy-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    padding: 0 5px;
+    transition: 0.2s;
+}
+
+.copy-btn:hover {
+    color: #0056b3;
+}
+
+/* Nút xác nhận */
+.btn-confirm {
+    background: #28a745;
+    color: white;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-confirm:hover {
+    background: #218838;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.btn-confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Nút quay lại */
+.btn-cancel {
+    background: white;
+    color: #dc3545;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dc3545;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #ffecec;
+}
+
+/* Spinner loading */
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+
+    .qr-img {
+        max-width: 240px;
+    }
+
+    .info-box {
+        font-size: 13px;
+    }
+}
