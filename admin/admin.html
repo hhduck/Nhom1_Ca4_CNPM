@@ -5,21 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản trị - LA CUISINE NGỌT</title>
-    
+
     <!-- Preload font để tránh FOUT (Flash of Unstyled Text) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inspiration&display=block" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    
+
     <!-- PDF Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+
     <!-- Auth check script -->
     <script src="../assets/js/auth-check.js"></script>
 
@@ -122,9 +122,11 @@
                     <button class="order-tab-btn" onclick="filterOrders('order_received', this)">Đã nhận đơn</button>
                     <button class="order-tab-btn" onclick="filterOrders('preparing', this)">Đang chuẩn bị</button>
                     <button class="order-tab-btn" onclick="filterOrders('delivering', this)">Đang giao</button>
-                    <button class="order-tab-btn" onclick="filterOrders('delivery_successful', this)">Giao hàng thành công</button>
-                    <button class="order-tab-btn" onclick="filterOrders('delivery_failed', this)">Giao hàng thất bại</button>
-                 </div>
+                    <button class="order-tab-btn" onclick="filterOrders('delivery_successful', this)">Giao hàng thành
+                        công</button>
+                    <button class="order-tab-btn" onclick="filterOrders('delivery_failed', this)">Giao hàng thất
+                        bại</button>
+                </div>
             </div>
 
             <div class="table-container">
@@ -235,9 +237,11 @@
             <div class="charts-section">
                 <div class="chart-box">
                     <h3 class="chart-header">Doanh thu (tháng) (VNĐ)</h3>
-                    <div class="report-time-filters" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; margin-top: 10px;">
+                    <div class="report-time-filters"
+                        style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; margin-top: 10px;">
                         <label style="font-weight: 600;">Năm:</label>
-                        <select id="report-year-select" class="form-input" style="width: 120px;" onchange="loadReportByMonth()">
+                        <select id="report-year-select" class="form-input" style="width: 120px;"
+                            onchange="loadReportByMonth()">
                             <!-- Will be populated by JavaScript -->
                         </select>
                     </div>
@@ -246,10 +250,12 @@
 
                 <div class="chart-box">
                     <h3 class="chart-header">Sản phẩm</h3>
-                    <div class="report-time-filters" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; margin-top: 10px;">
+                    <div class="report-time-filters"
+                        style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; margin-top: 10px;">
                         <label style="font-weight: 600;">Tháng:</label>
-                        <select id="report-month-select" class="form-input" style="width: 150px;" onchange="loadReportByMonth()">
-                         
+                        <select id="report-month-select" class="form-input" style="width: 150px;"
+                            onchange="loadReportByMonth()">
+
                             <option value="01">Tháng 1</option>
                             <option value="02">Tháng 2</option>
                             <option value="03">Tháng 3</option>
@@ -340,7 +346,8 @@
                     </div>
                     <div class="form-group full-width">
                         <label class="form-label">URL hình ảnh</label>
-                        <input type="text" id="promo-image-url" class="form-input" placeholder="VD: assets/images/promo.jpg">
+                        <input type="text" id="promo-image-url" class="form-input"
+                            placeholder="VD: assets/images/promo.jpg">
                     </div>
                 </div>
                 <button class="btn-create-promo" onclick="createPromotion()">Tạo khuyến mãi mới</button>
@@ -427,7 +434,8 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Số lượng *</label>
-                        <input type="number" id="product-quantity" class="form-input" placeholder="Nhập số lượng" min="0">
+                        <input type="number" id="product-quantity" class="form-input" placeholder="Nhập số lượng"
+                            min="0">
                     </div>
                     <div class="form-group full-width">
                         <label class="form-label">Mô tả</label>
@@ -464,8 +472,8 @@
                     </div>
                     <div class="form-group full-width">
                         <label class="form-label">Hình ảnh sản phẩm</label>
-                        <input type="text" id="product-image-url" class="form-input" 
-                               placeholder="Nhập đường dẫn ảnh (vd: assets/images/banh.jpg)">
+                        <input type="text" id="product-image-url" class="form-input"
+                            placeholder="Nhập đường dẫn ảnh (vd: assets/images/banh.jpg)">
                         <small style="color: #666; font-size: 12px;">
                             Lưu ý: Đường dẫn bắt đầu từ thư mục gốc dự án
                         </small>
@@ -493,12 +501,12 @@
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModal('orderModal')">Đóng</button>
                 <select id="order-status-select" class="form-input" style="margin-right: 8px;">
-                    <option value="pending">Chờ xác nhận</option>
-                    <option value="confirmed">Đã xác nhận</option>
+                    <option value="pending">Chờ xử lý</option>
+                    <option value="order_received">Đã nhận đơn</option>
                     <option value="preparing">Đang chuẩn bị</option>
-                    <option value="shipping">Đang giao</option>
-                    <option value="completed">Hoàn thành</option>
-                    <option value="cancelled">Đã hủy</option>
+                    <option value="delivering">Đang giao</option>
+                    <option value="delivery_successful">Giao hàng thành công</option>
+                    <option value="delivery_failed">Giao hàng thất bại</option>
                 </select>
                 <button class="btn-primary" onclick="updateOrderStatus()">Cập nhật trạng thái</button>
             </div>
@@ -588,9 +596,11 @@
                 <!-- Content will be loaded dynamically -->
             </div>
             <div class="modal-footer">
-                <button class="btn-danger" onclick="deletePromotion(window.currentPromoId); closeModal('promoDetailModal');">Xóa</button>
+                <button class="btn-danger"
+                    onclick="deletePromotion(window.currentPromoId); closeModal('promoDetailModal');">Xóa</button>
                 <button class="btn-secondary" onclick="closeModal('promoDetailModal')">Đóng</button>
-                <button class="btn-primary" onclick="openEditPromoModal(); closeModal('promoDetailModal');">Chỉnh sửa</button>
+                <button class="btn-primary" onclick="openEditPromoModal(); closeModal('promoDetailModal');">Chỉnh
+                    sửa</button>
             </div>
         </div>
     </div>
@@ -627,7 +637,8 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Đơn hàng tối thiểu</label>
-                        <input type="number" id="edit-promo-min-order" class="form-input" placeholder="Nhập đơn hàng tối thiểu">
+                        <input type="number" id="edit-promo-min-order" class="form-input"
+                            placeholder="Nhập đơn hàng tối thiểu">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Số lượng mã</label>
@@ -652,7 +663,8 @@
                     </div>
                     <div class="form-group full-width">
                         <label class="form-label">URL hình ảnh</label>
-                        <input type="text" id="edit-promo-image-url" class="form-input" placeholder="VD: assets/images/promo.jpg">
+                        <input type="text" id="edit-promo-image-url" class="form-input"
+                            placeholder="VD: assets/images/promo.jpg">
                     </div>
                 </div>
             </div>
